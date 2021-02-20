@@ -16,15 +16,20 @@
   },
   "permissions": ["Hotkeys", "GameInfo"],
   "data": {
-    "start_window": "MainWindow",
+    "start_window": "dashboard",
     "windows": {
-      "MainWindow": {
+      "Background": {
+        "file": "index.html",
+        "is_background_page": true
+      },
+      "dashboard": {
         "file": "index.html",
         "desktop_only": true,
         "native_window": true,
         "resizable": true,
         "transparent": true,
         "override_on_update": true,
+        "show_in_taskbar": true,
         "size": {
           "width": 500,
           "height": 699
@@ -33,6 +38,23 @@
           "width": 500,
           "height": 699
         } 
+      },
+      "in-game-test": {
+        "file": "index.html",
+        "in_game_only": true,
+        "focus_game_takeover": "ReleaseOnHidden",
+        "focus_game_takeover_release_hotkey": "showhide",
+        "resizable": true,
+        "transparent": true,
+        "override_on_update": true,
+        "size": {
+          "width": 1212,
+          "height": 699
+        },
+        "min_size": {
+          "width": 1212,
+          "height": 699
+        }
       }
     },
     "game_targeting": {
