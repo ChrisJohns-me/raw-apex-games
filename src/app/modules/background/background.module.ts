@@ -1,10 +1,10 @@
-import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
+import { SharedModule } from "../shared/shared.module";
 import { BackgroundComponent } from "./background.component";
 
 @NgModule({
     declarations: [BackgroundComponent],
-    imports: [CommonModule],
+    imports: [SharedModule],
     exports: [BackgroundComponent],
 })
 export class BackgroundModule {}

@@ -1,3 +1,4 @@
+import { Injectable } from "@angular/core";
 import { from, Observable, Subject } from "rxjs";
 import { map, mergeMap, shareReplay } from "rxjs/operators";
 
@@ -44,7 +45,10 @@ interface MouseWheelExtension {
     };
 }
 
-export class OWMouseWheel {
+@Injectable({
+    providedIn: "root",
+})
+export class MouseWheelService {
     private static extension$: Observable<MouseWheelExtension>;
     private static onMouseWheelBlocked$: Observable<MouseWheelBlockedEvent>;
 

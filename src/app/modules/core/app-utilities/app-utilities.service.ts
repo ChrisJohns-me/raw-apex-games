@@ -1,8 +1,13 @@
-import { APP_UID } from "@app/config";
+import { Injectable } from "@angular/core";
+import { APP_UID } from "@common/app";
 import { from, Observable } from "rxjs";
-import { SystemInfo } from "./ow-types";
 
-export class OWUtils {
+type SystemInfo = overwolf.utils.SystemInfo;
+
+@Injectable({
+    providedIn: "root",
+})
+export class AppUtilitiesService {
     public static sendKeyStroke(key: string): void {
         overwolf.utils.sendKeyStroke(key);
     }
@@ -32,16 +37,18 @@ export class OWUtils {
         });
     }
 
-    public static getSystemInformation(): Observable<SystemInfo> {
-        const promise = new Promise<SystemInfo>((resolve, reject) => {
-            overwolf.utils.getSystemInformation((result) => {
-                if (result.success) {
-                    resolve(result.systemInfo);
-                } else {
-                    reject(result.error);
-                }
-            });
-        });
+    public static getSystemInformation(): Observable<SystemInfo | undefined> {
+        const promise = new Promise<SystemInfo | undefined>(
+            (resolve, reject) => {
+                overwolf.utils.getSystemInformation((result) => {
+                    if (result.success) {
+                        resolve(result.systemInfo);
+                    } else {
+                        reject(result.error);
+                    }
+                });
+            }
+        );
         return from(promise);
     }
 }

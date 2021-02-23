@@ -14,11 +14,22 @@
     "launcher_icon": "icon.ico",
     "window_icon": "windowIcon.png"
   },
-  "permissions": ["Hotkeys", "GameInfo"],
+  "permissions": [
+    "Hotkeys",
+    "Extensions",
+    "Clipboard",
+    "Profile",
+    "FileSystem",
+    "GameInfo",
+    "Streaming",
+    "Media",
+    "DesktopStreaming",
+    "VideoCaptureSettings"
+  ],
   "data": {
-    "start_window": "dashboard",
+    "start_window": "background",
     "windows": {
-      "Background": {
+      "background": {
         "file": "index.html",
         "is_background_page": true
       },
@@ -32,28 +43,28 @@
         "show_in_taskbar": true,
         "size": {
           "width": 500,
-          "height": 699
+          "height": 500
         },
         "min_size": {
           "width": 500,
-          "height": 699
+          "height": 500
         } 
       },
       "in-game-test": {
         "file": "index.html",
         "in_game_only": true,
-        "focus_game_takeover": "ReleaseOnHidden",
-        "focus_game_takeover_release_hotkey": "showhide",
-        "resizable": true,
+        "resizable": false,
         "transparent": true,
-        "override_on_update": true,
+        "show_in_taskbar": false,
+        "mute": true,
+        "popup_blocker": true,
         "size": {
-          "width": 1212,
-          "height": 699
+          "width": 250,
+          "height": 250
         },
-        "min_size": {
-          "width": 1212,
-          "height": 699
+        "max_size": {
+          "width": 250,
+          "height": 250
         }
       }
     },

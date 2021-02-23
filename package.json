@@ -3,11 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "dev-build": "ng build --watch",
+    "dev-build": "ng build --watch --plugin ~webpack.partial.dev.js",
     "livereload": "livereload ./dist/apex-legends-overwolf-allfather-app -x manifest.json",
     "dev": "concurrently --kill-others --names \"BUILD,LIVERELOAD\" \"npm run dev-build\" \"npm run livereload\""
   },
@@ -21,6 +20,7 @@
     "@angular/platform-browser": "~11.2.1",
     "@angular/platform-browser-dynamic": "~11.2.1",
     "@angular/router": "~11.2.1",
+    "ngx-build-plus": "^11.0.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.3"
@@ -47,6 +47,7 @@
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
     "livereload": "^0.9.1",
+    "localforage": "^1.9.0",
     "prettier": "2.2.1",
     "prettier-eslint": "^12.0.0",
     "prettier-eslint-cli": "^5.0.0",

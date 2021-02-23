@@ -1,20 +1,27 @@
 import { from, Observable } from "rxjs";
 import { map, mergeMap } from "rxjs/operators";
 
-type WindowInfo = overwolf.windows.WindowInfo;
+export type UIWindowInfo = overwolf.windows.WindowInfo;
 type WindowIdResultCallback = overwolf.CallbackFunction<overwolf.windows.WindowIdResult>;
+type MessageBoxParams = overwolf.windows.MessageBoxParams;
 
 function resultCallback(
     resolve: () => void,
     reject: (reason?: any) => void
 ): WindowIdResultCallback {
-    return (result) => {
-        if (result.success) {
+    return (result?) => {
+        if (result?.success) {
             resolve();
         } else {
             reject(result.error);
         }
     };
+}
+
+interface DisplayMessageBoxConfirmedEvent {
+    success: boolean;
+    confirmed: boolean;
+    error: string;
 }
 
 export enum WindowState {
@@ -25,9 +32,45 @@ export enum WindowState {
     Normal = "normal",
 }
 
-export class OWWindow {
+export class UIWindow {
     constructor(private name: string = "") {}
 
+    public static getMainWindow(): Window {
+        return overwolf.windows.getMainWindow();
+    }
+
+    public static getCurrentWindow(): Observable<UIWindowInfo> {
+        const promise = new Promise<UIWindowInfo>((resolve, reject) => {
+            overwolf.windows.getCurrentWindow((result?) => {
+                if (result?.success) {
+                    resolve(result.window);
+                } else {
+                    reject(
+                        `Could not get current window. reason: ${
+                            result.error ?? JSON.stringify(result)
+                        }.`
+                    );
+                }
+            });
+        });
+        return from(promise);
+    }
+
+    public static displayMessageBox(
+        params: MessageBoxParams
+    ): Observable<boolean> {
+        const promise = new Promise<boolean>((resolve, reject) => {
+            overwolf.windows.displayMessageBox(params, (result?) => {
+                const event: DisplayMessageBoxConfirmedEvent = result as any;
+                if (event?.success) {
+                    resolve(event.confirmed);
+                } else {
+                    reject(event.error);
+                }
+            });
+        });
+        return from(promise);
+    }
     public assureObtained(): Observable<void> {
         return this.obtain().pipe(map(() => undefined));
     }
@@ -123,8 +166,8 @@ export class OWWindow {
         );
     }
 
-    private obtain(): Observable<WindowInfo> {
-        const promise = new Promise<WindowInfo>((resolve, reject) => {
+    private obtain(): Observable<UIWindowInfo> {
+        const promise = new Promise<UIWindowInfo>((resolve, reject) => {
             const process = (result: overwolf.windows.WindowResult): void => {
                 if (result.success && result.window) {
                     this.name = result.window.name;
