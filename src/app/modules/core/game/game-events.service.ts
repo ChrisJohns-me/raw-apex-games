@@ -153,25 +153,27 @@ export class GameEventsService implements OnDestroy {
 
     private registerEvents(): void {
         console.debug(`[${this.constructor.name}] registerEvents`);
-        overwolf.games.onGameInfoUpdated.addListener(
-            () => this.onGameInfoUpdated
+        overwolf.games.onGameInfoUpdated.addListener((event) =>
+            this.onGameInfoUpdated(event)
         );
-        overwolf.games.events.onInfoUpdates2.addListener(
-            () => this.onInfoUpdates
+        overwolf.games.events.onInfoUpdates2.addListener((event) =>
+            this.onInfoUpdates(event)
         );
-        overwolf.games.events.onNewEvents.addListener(() => this.onNewEvents);
+        overwolf.games.events.onNewEvents.addListener((event) =>
+            this.onNewEvents(event)
+        );
     }
 
     private unregisterEvents(): void {
         console.debug(`[${this.constructor.name}] unregisterEvents`);
-        overwolf.games.onGameInfoUpdated.removeListener(
-            () => this.onGameInfoUpdated
+        overwolf.games.onGameInfoUpdated.removeListener((event) =>
+            this.onGameInfoUpdated(event)
         );
-        overwolf.games.events.onInfoUpdates2.removeListener(
-            () => this.onInfoUpdates
+        overwolf.games.events.onInfoUpdates2.removeListener((event) =>
+            this.onInfoUpdates(event)
         );
-        overwolf.games.events.onNewEvents.removeListener(
-            () => this.onNewEvents
+        overwolf.games.events.onNewEvents.removeListener((event) =>
+            this.onNewEvents(event)
         );
     }
 }

@@ -53,12 +53,14 @@ export class HotkeyService implements OnDestroy {
     }
 
     private registerEvents(): void {
-        overwolf.settings.hotkeys.onPressed.addListener(() => this.onPressed);
+        overwolf.settings.hotkeys.onPressed.addListener((event) =>
+            this.onPressed(event)
+        );
     }
 
     private unregisterEvents(): void {
-        overwolf.settings.hotkeys.onPressed.removeListener(
-            () => this.onPressed
+        overwolf.settings.hotkeys.onPressed.removeListener((event) =>
+            this.onPressed(event)
         );
     }
 }

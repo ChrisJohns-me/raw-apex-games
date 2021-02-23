@@ -33,15 +33,17 @@ export class UIWindowEventsService implements OnDestroy {
         console.debug(
             `${this.constructor.name}:${this.__$id()} registerEvents`
         );
-        overwolf.windows.onStateChanged.addListener(() => this.onStateChange);
+        overwolf.windows.onStateChanged.addListener((event) =>
+            this.onStateChange(event)
+        );
     }
 
     private unregisterEvents(): void {
         console.debug(
             `${this.constructor.name}:${this.__$id()} unregisterEvents`
         );
-        overwolf.windows.onStateChanged.removeListener(
-            () => this.onStateChange
+        overwolf.windows.onStateChanged.removeListener((event) =>
+            this.onStateChange(event)
         );
     }
 }

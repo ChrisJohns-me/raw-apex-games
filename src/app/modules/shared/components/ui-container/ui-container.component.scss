@@ -1,0 +1,45 @@
+$titlebar-height: 1.75rem;
+
+:host {
+    display: block;
+    background: white;
+    height: 100%;
+    width: 100%;
+}
+
+.titlebar {
+    display: flex;
+    background: blue;
+    height: $titlebar-height;
+    align-items: center;
+
+    &-icon {
+        flex: 0 0;
+    }
+
+    &-primary-title,
+    &-secondary-title {
+        flex: 1 0;
+        padding: 0 0.5rem;
+        color: white;
+    }
+
+    &-controls {
+        flex: 0 0;
+    }
+}
+
+.primary-title {
+}
+
+.secondary-title {
+}
+
+.control-button {
+    margin: 0;
+    padding: 0 1rem;
+    font-size: 1.5rem;
+    // line-height: 100%;
+    line-height: $titlebar-height;
+    height: $titlebar-height;
+}

@@ -1,0 +1,25 @@
+h1 {
+    font-size: 1.2rem;
+    line-height: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.pane-container {
+    display: flex;
+    height: 80%;
+    margin: 3px;
+}
+
+.pane {
+    flex: 0 1 33%;
+    border: 1px solid #e6e6e6;
+    margin: 2px;
+    overflow-y: auto;
+}
+
+.log {
+    white-space: pre;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.75rem;
+    user-select: text;
+}

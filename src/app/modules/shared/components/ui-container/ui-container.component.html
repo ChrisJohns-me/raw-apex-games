@@ -1,0 +1,18 @@
+<section class="titlebar" *ngIf="showTitlebar">
+    <div class="titlebar-icon"></div>
+
+    <div class="titlebar-primary-title">
+        <span class="primary-title" [innerText]="primaryTitle"></span>
+    </div>
+
+    <div class="titlebar-secondary-title">
+        <span class="secondary-title" [innerText]="secondaryTitle"></span>
+    </div>
+
+    <div class="titlebar-controls">
+        <button class="control-button" type="button">&times;</button>
+    </div>
+</section>
+
+<p>app-titlebar works!</p>
+<ng-content></ng-content>

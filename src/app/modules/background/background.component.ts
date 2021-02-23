@@ -1,6 +1,13 @@
-import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
+import {
+    ChangeDetectionStrategy,
+    Component,
+    OnDestroy,
+    OnInit,
+} from "@angular/core";
 import { GameEventsService } from "@core/game";
 import { UIWindowEventsService } from "@core/ui-window";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 import { DashboardWindowService } from "../dashboard-window/dashboard-window.service";
 
 @Component({
@@ -8,16 +15,17 @@ import { DashboardWindowService } from "../dashboard-window/dashboard-window.ser
     template: "",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BackgroundComponent implements OnInit {
+export class BackgroundComponent implements OnInit, OnDestroy {
+    private readonly _unsubscribe = new Subject<void>();
+
     constructor(
         private readonly dashboardWindow: DashboardWindowService,
         private readonly gameEvents: GameEventsService,
         private readonly uiWindowEvents: UIWindowEventsService
     ) {
         console.debug(`${this.constructor.name} instantiated`);
-        this.uiWindowEvents.windowStateChangedEvent$.subscribe((test) => {
-            console.log("result", test);
-        });
+        this.registerGameEvents();
+        this.registerUIWindowEvents();
     }
 
     public ngOnInit(): void {
@@ -27,5 +35,21 @@ export class BackgroundComponent implements OnInit {
 
     public ngOnDestroy(): void {
         console.log(`${this.constructor.name} destroyed`);
+        this._unsubscribe.next();
+        this._unsubscribe.complete();
     }
+
+    private registerGameEvents(): void {
+        this.gameEvents.gameProcessInfoEvent$
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((event) => console.log(event));
+        this.gameEvents.gameDataInfoEvent$
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((event) => console.log(event));
+        this.gameEvents.gameDataFeatureEvent$
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((event) => console.log(event));
+    }
+
+    private registerUIWindowEvents(): void {}
 }
