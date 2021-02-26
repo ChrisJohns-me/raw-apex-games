@@ -34,6 +34,14 @@
                 <h2>Player Location</h2>
                 <p class="log">{{ playerLocation }}</p>
             </div>
+            <div>
+                <h2>Match Time</h2>
+                <p class="log">
+                    Started: {{ matchStartDate | date: "mediumTime" }}<br />
+                    Ended: {{ matchEndDate | date: "mediumTime" }}<br />
+                    Duration: {{ matchDuration | date: "mm:ss.SSS" }}
+                </p>
+            </div>
         </div>
         <div class="pane">
             <h1>

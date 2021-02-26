@@ -150,7 +150,7 @@ export class GameEventsService implements OnDestroy {
                 const rawSquadmateUpdate = matchInfo?.findPropertyByRegEx<string>(/^legendSelect_/);
                 let squadmateUpdate: SquadmatePlayer | undefined;
 
-                if (matchInfo?.game_mode?.length) {
+                if (infoData?.feature === "match_state" && infoData.info.game_info?.match_state === "inactive") {
                     // In lobby, reset squad list
                     if (this._playerSquadmates.value.length) this._playerSquadmates.next([]);
                 } else if (
