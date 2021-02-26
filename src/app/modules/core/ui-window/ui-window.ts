@@ -5,10 +5,7 @@ export type UIWindowInfo = overwolf.windows.WindowInfo;
 type WindowIdResultCallback = overwolf.CallbackFunction<overwolf.windows.WindowIdResult>;
 type MessageBoxParams = overwolf.windows.MessageBoxParams;
 
-function resultCallback(
-    resolve: () => void,
-    reject: (reason?: any) => void
-): WindowIdResultCallback {
+function resultCallback(resolve: () => void, reject: (reason?: any) => void): WindowIdResultCallback {
     return (result?) => {
         if (result?.success) {
             resolve();
@@ -33,7 +30,7 @@ export enum WindowState {
 }
 
 export class UIWindow {
-    constructor(private name: string = "") {}
+    constructor(public name: string = "") {}
 
     public static getMainWindow(): Window {
         return overwolf.windows.getMainWindow();
@@ -45,20 +42,14 @@ export class UIWindow {
                 if (result?.success) {
                     resolve(result.window);
                 } else {
-                    reject(
-                        `Could not get current window. reason: ${
-                            result.error ?? JSON.stringify(result)
-                        }.`
-                    );
+                    reject(`Could not get current window. reason: ${result.error ?? JSON.stringify(result)}.`);
                 }
             });
         });
         return from(promise);
     }
 
-    public static displayMessageBox(
-        params: MessageBoxParams
-    ): Observable<boolean> {
+    public static displayMessageBox(params: MessageBoxParams): Observable<boolean> {
         const promise = new Promise<boolean>((resolve, reject) => {
             overwolf.windows.displayMessageBox(params, (result?) => {
                 const event: DisplayMessageBoxConfirmedEvent = result as any;
@@ -76,42 +67,29 @@ export class UIWindow {
     }
 
     public minimize(): Observable<void> {
-        return this.obtain().pipe(
-            mergeMap((window) => this.minimizeInternal(window.id))
-        );
+        return this.obtain().pipe(mergeMap((window) => this.minimizeInternal(window.id)));
     }
 
     public maximize(): Observable<void> {
-        return this.obtain().pipe(
-            mergeMap((window) => this.maximizeInternal(window.id))
-        );
+        return this.obtain().pipe(mergeMap((window) => this.maximizeInternal(window.id)));
     }
 
     public restore(): Observable<void> {
-        return this.obtain().pipe(
-            mergeMap((window) => this.restoreInternal(window.id))
-        );
+        return this.obtain().pipe(mergeMap((window) => this.restoreInternal(window.id)));
     }
 
     public close(): Observable<void> {
-        return this.obtain().pipe(
-            mergeMap((window) => this.closeInternal(window.id))
-        );
+        return this.obtain().pipe(mergeMap((window) => this.closeInternal(window.id)));
     }
 
     public toggle(close = false): Observable<boolean> {
         return this.obtain().pipe(
             mergeMap((window) => this.getStateInternal(window.id)),
             mergeMap((state) => {
-                if (
-                    state === WindowState.Closed ||
-                    state === WindowState.Minimized
-                ) {
+                if (state === WindowState.Closed || state === WindowState.Minimized) {
                     return this.restore().pipe(map(() => true));
                 }
-                return (close ? this.close() : this.minimize()).pipe(
-                    map(() => false)
-                );
+                return (close ? this.close() : this.minimize()).pipe(map(() => false));
             })
         );
     }
@@ -147,23 +125,15 @@ export class UIWindow {
     }
 
     public bringToFront(grabFocus = false): Observable<void> {
-        return this.obtain().pipe(
-            mergeMap((window) =>
-                this.bringToFrontInternal(window.id, grabFocus)
-            )
-        );
+        return this.obtain().pipe(mergeMap((window) => this.bringToFrontInternal(window.id, grabFocus)));
     }
 
     public sendToBack(): Observable<void> {
-        return this.obtain().pipe(
-            mergeMap((window) => this.sendToBackInternal(window.id))
-        );
+        return this.obtain().pipe(mergeMap((window) => this.sendToBackInternal(window.id)));
     }
 
     public getState(): Observable<WindowState> {
-        return this.obtain().pipe(
-            mergeMap((window) => this.getStateInternal(window.id))
-        );
+        return this.obtain().pipe(mergeMap((window) => this.getStateInternal(window.id)));
     }
 
     private obtain(): Observable<UIWindowInfo> {
@@ -213,16 +183,9 @@ export class UIWindow {
         return from(promise);
     }
 
-    private bringToFrontInternal(
-        id: string,
-        grabFocus: boolean
-    ): Observable<void> {
+    private bringToFrontInternal(id: string, grabFocus: boolean): Observable<void> {
         const promise = new Promise<void>((resolve, reject) => {
-            overwolf.windows.bringToFront(
-                id,
-                grabFocus,
-                resultCallback(resolve, reject)
-            );
+            overwolf.windows.bringToFront(id, grabFocus, resultCallback(resolve, reject));
         });
         return from(promise);
     }

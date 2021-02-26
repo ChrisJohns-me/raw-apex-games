@@ -23,9 +23,7 @@ export class StorageService {
         return from(promise);
     }
 
-    public delete<TValue>(
-        predicate: (key: string, value: TValue) => boolean
-    ): Observable<void> {
+    public delete<TValue>(predicate: (key: string, value: TValue) => boolean): Observable<void> {
         const toDelete: string[] = [];
 
         const iteratePromise = this.db.iterate((value: TValue, key) => {

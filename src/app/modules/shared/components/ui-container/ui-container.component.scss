@@ -1,10 +1,22 @@
 $titlebar-height: 1.75rem;
 
 :host {
-    display: block;
-    background: white;
+    display: flex;
+    flex-direction: column;
     height: 100%;
     width: 100%;
+
+    .titlebar {
+        flex: 0 0;
+    }
+
+    .body {
+        flex: 1 0;
+
+        &.desktop-window {
+            background-color: white;
+        }
+    }
 }
 
 .titlebar {
@@ -42,4 +54,7 @@ $titlebar-height: 1.75rem;
     // line-height: 100%;
     line-height: $titlebar-height;
     height: $titlebar-height;
+}
+
+.body {
 }

@@ -38,17 +38,15 @@ export class AppUtilitiesService {
     }
 
     public static getSystemInformation(): Observable<SystemInfo | undefined> {
-        const promise = new Promise<SystemInfo | undefined>(
-            (resolve, reject) => {
-                overwolf.utils.getSystemInformation((result) => {
-                    if (result.success) {
-                        resolve(result.systemInfo);
-                    } else {
-                        reject(result.error);
-                    }
-                });
-            }
-        );
+        const promise = new Promise<SystemInfo | undefined>((resolve, reject) => {
+            overwolf.utils.getSystemInformation((result) => {
+                if (result.success) {
+                    resolve(result.systemInfo);
+                } else {
+                    reject(result.error);
+                }
+            });
+        });
         return from(promise);
     }
 }

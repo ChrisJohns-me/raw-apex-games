@@ -1,17 +1,23 @@
 h1 {
-    font-size: 1.2rem;
-    line-height: 1.2rem;
+    font-size: 1.25rem;
+    line-height: 1.25rem;
     margin-bottom: 0.5rem;
+}
+
+h2 {
+    font-size: 1rem;
+    line-height: 1rem;
+    margin-bottom: 0.35rem;
 }
 
 .pane-container {
     display: flex;
-    height: 80%;
+    height: 95%;
     margin: 3px;
 }
 
 .pane {
-    flex: 0 1 33%;
+    flex: 0 1 100%;
     border: 1px solid #e6e6e6;
     margin: 2px;
     overflow-y: auto;

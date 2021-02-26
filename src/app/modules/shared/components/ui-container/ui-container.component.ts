@@ -1,4 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { UIWindow } from "@core/ui-window";
+import { Observable } from "rxjs";
+import { map, shareReplay, switchMap } from "rxjs/operators";
 
 @Component({
     selector: "app-ui-container",
@@ -7,9 +10,44 @@ import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UIContainerComponent {
-    @Input() public showTitlebar = true;
+    @Input() public isDesktopWindow = true;
     @Input() public isTitlebarDraggable = true;
     @Input() public isContentDraggable = true;
     @Input() public primaryTitle = "";
     @Input() public secondaryTitle = "";
+
+    private readonly uiWindow = new UIWindow();
+    private obtained$?: Observable<boolean>;
+
+    public ngOnInit(): void {
+        this.obtained$ = this.uiWindow.assureObtained().pipe(
+            map(() => true),
+            shareReplay(1)
+        );
+    }
+
+    public onCloseButtonClick(): void {
+        this.obtained$?.pipe(switchMap(() => this.uiWindow.close())).subscribe();
+    }
+
+    public onTitlebarMouseDown(event: Event): void {
+        if (!this.isTitlebarDraggable) return;
+        if (!(event instanceof MouseEvent)) return;
+        this.onDrag(event);
+    }
+
+    public onContentMouseDown(event: Event): void {
+        if (!this.isContentDraggable) return;
+        if (!(event instanceof MouseEvent)) return;
+        this.onDrag(event);
+    }
+
+    private onDrag(event: MouseEvent): void {
+        const target = event.target as HTMLInputElement;
+        if (target?.tagName === "INPUT") {
+            return;
+        }
+        event.preventDefault();
+        this.obtained$?.subscribe(() => this.uiWindow.dragMove());
+    }
 }

@@ -1,4 +1,8 @@
-<section class="titlebar" *ngIf="showTitlebar">
+<section
+    class="titlebar"
+    *ngIf="isDesktopWindow"
+    (mousedown)="onTitlebarMouseDown($event)"
+>
     <div class="titlebar-icon"></div>
 
     <div class="titlebar-primary-title">
@@ -10,9 +14,20 @@
     </div>
 
     <div class="titlebar-controls">
-        <button class="control-button" type="button">&times;</button>
+        <button
+            class="control-button"
+            type="button"
+            (click)="onCloseButtonClick()"
+        >
+            &times;
+        </button>
     </div>
 </section>
 
-<p>app-titlebar works!</p>
-<ng-content></ng-content>
+<section
+    class="body"
+    [ngClass]="{ 'desktop-window': isDesktopWindow }"
+    (mousedown)="onContentMouseDown($event)"
+>
+    <ng-content></ng-content>
+</section>

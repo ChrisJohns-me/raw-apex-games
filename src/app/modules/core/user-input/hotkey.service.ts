@@ -30,17 +30,15 @@ export class HotkeyService implements OnDestroy {
     public static getHotkeyData(): Observable<HotkeyData[]> {
         type GetAssignedHotkeyResult = overwolf.settings.hotkeys.GetAssignedHotkeyResult;
 
-        const promise = new Promise<GetAssignedHotkeyResult>(
-            (resolve, reject) => {
-                overwolf.settings.hotkeys.get((result?) => {
-                    if (result?.success) {
-                        resolve(result);
-                    } else {
-                        reject(result.error);
-                    }
-                });
-            }
-        );
+        const promise = new Promise<GetAssignedHotkeyResult>((resolve, reject) => {
+            overwolf.settings.hotkeys.get((result?) => {
+                if (result?.success) {
+                    resolve(result);
+                } else {
+                    reject(result.error);
+                }
+            });
+        });
 
         return from(promise).pipe(
             filter((result) => !!Object.keys(result?.games ?? []).length),
@@ -53,14 +51,10 @@ export class HotkeyService implements OnDestroy {
     }
 
     private registerEvents(): void {
-        overwolf.settings.hotkeys.onPressed.addListener((event) =>
-            this.onPressed(event)
-        );
+        overwolf.settings.hotkeys.onPressed.addListener((event) => this.onPressed(event));
     }
 
     private unregisterEvents(): void {
-        overwolf.settings.hotkeys.onPressed.removeListener((event) =>
-            this.onPressed(event)
-        );
+        overwolf.settings.hotkeys.onPressed.removeListener((event) => this.onPressed(event));
     }
 }

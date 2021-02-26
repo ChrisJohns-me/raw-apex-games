@@ -25,11 +25,17 @@
       "node_modules/@overwolf"
     ],
     "paths": {
+      "manifest.json": [
+        "src/overwolf/manifest.json"
+      ],
       "@common/*": [
         "src/app/common/*"
       ],
       "@core/*": [
         "src/app/modules/core/*"
+      ],
+      "@utilities/*": [
+        "src/app/utilities/*"
       ]
     }
   },

@@ -1,9 +1,4 @@
-import {
-    ChangeDetectionStrategy,
-    Component,
-    OnDestroy,
-    OnInit,
-} from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { GameEventsService } from "@core/game";
 import { UIWindowEventsService } from "@core/ui-window";
 import { Subject } from "rxjs";
@@ -40,15 +35,9 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     }
 
     private registerGameEvents(): void {
-        this.gameEvents.gameProcessInfoEvent$
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((event) => console.log(event));
-        this.gameEvents.gameDataInfoEvent$
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((event) => console.log(event));
-        this.gameEvents.gameDataFeatureEvent$
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((event) => console.log(event));
+        this.gameEvents.gameProcessUpdate$.pipe(takeUntil(this._unsubscribe)).subscribe((event) => console.log(event));
+        this.gameEvents.gameInfo$.pipe(takeUntil(this._unsubscribe)).subscribe((event) => console.log(event));
+        this.gameEvents.gameEvent$.pipe(takeUntil(this._unsubscribe)).subscribe((event) => console.log(event));
     }
 
     private registerUIWindowEvents(): void {}

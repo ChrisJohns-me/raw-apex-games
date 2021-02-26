@@ -1,23 +1,55 @@
 <app-ui-container
     [primaryTitle]="primaryTitle"
-    [showTitlebar]="true"
+    [isDesktopWindow]="true"
     [isTitlebarDraggable]="true"
     [isContentDraggable]="false"
 >
-    <button (click)="openInGame()">Open In Game Window</button>
+    <button (click)="onOpenInGameClick()">Open In Game Window</button>
+    <button (click)="onForceRefreshClick()">Force Refresh</button>
 
     <section class="pane-container">
-        <div class="pane">
-            <h1>Process Info</h1>
-            <p class="log">{{ gameProcessInfoEventList }}</p>
+        <div class="pane" style="min-width: 175px; flex: 1 1 50%">
+            <h1>Inferences</h1>
+            <div>
+                <h2>Game Stage</h2>
+                <p class="log">{{ gameStage }}</p>
+            </div>
+            <div>
+                <h2>Game Mode</h2>
+                <p class="log">{{ gameMode }}</p>
+            </div>
+            <div>
+                <h2>Squadmates</h2>
+                <p class="log">{{ playerSquadmates }}</p>
+            </div>
+            <div>
+                <h2>Player Name</h2>
+                <p class="log">{{ playerName }}</p>
+            </div>
+            <div>
+                <h2>Player Legend</h2>
+                <p class="log">{{ playerLegend }}</p>
+            </div>
+            <div>
+                <h2>Player Location</h2>
+                <p class="log">{{ playerLocation }}</p>
+            </div>
         </div>
         <div class="pane">
-            <h1>Data Info</h1>
-            <p class="log">{{ gameDataInfoEventList }}</p>
+            <h1>
+                Info
+                <button (click)="onInjectInfoClick()">Inject</button>
+                <button (click)="gameInfoList = ''">Clear</button>
+            </h1>
+            <p class="log">{{ gameInfoList }}</p>
         </div>
         <div class="pane">
-            <h1>Feature Info</h1>
-            <p class="log">{{ gameDataFeatureEventList }}</p>
+            <h1>
+                Event
+                <button (click)="onInjectEventClick()">Inject</button>
+                <button (click)="gameEventList = ''">Clear</button>
+            </h1>
+            <p class="log">{{ gameEventList }}</p>
         </div>
     </section>
 </app-ui-container>

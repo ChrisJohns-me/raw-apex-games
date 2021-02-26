@@ -28,20 +28,12 @@ interface MouseWheelOptions {
 }
 
 interface MouseWheelExtension {
-    setOptions: (
-        options: MouseWheelOptions,
-        callback: (result: Result) => void
-    ) => void;
-    sendKey: (
-        virtualKeyCode: number,
-        callback: (result: Result) => void
-    ) => void;
+    setOptions: (options: MouseWheelOptions, callback: (result: Result) => void) => void;
+    sendKey: (virtualKeyCode: number, callback: (result: Result) => void) => void;
     start: (callback: (result: Result) => void) => void;
     stop: () => void;
     onMouseWheelBlocked: {
-        addListener: (
-            callback: (event: MouseWheelBlockedEvent) => void
-        ) => void;
+        addListener: (callback: (event: MouseWheelBlockedEvent) => void) => void;
     };
 }
 
@@ -108,20 +100,15 @@ export class MouseWheelService {
 
     private static getExtension(): Observable<MouseWheelExtension> {
         if (!this.extension$) {
-            const promise = new Promise<MouseWheelExtension>(
-                (resolve, reject) => {
-                    overwolf.extensions.current.getExtraObject(
-                        "mousewheel-plugin",
-                        (result) => {
-                            if (result.success) {
-                                resolve(result.object);
-                            } else {
-                                reject(result.error);
-                            }
-                        }
-                    );
-                }
-            );
+            const promise = new Promise<MouseWheelExtension>((resolve, reject) => {
+                overwolf.extensions.current.getExtraObject("mousewheel-plugin", (result) => {
+                    if (result.success) {
+                        resolve(result.object);
+                    } else {
+                        reject(result.error);
+                    }
+                });
+            });
             this.extension$ = from(promise).pipe(shareReplay(1));
         }
         return this.extension$;

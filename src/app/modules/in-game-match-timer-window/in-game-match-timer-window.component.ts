@@ -5,13 +5,13 @@ import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
 @Component({
-    selector: "app-in-game-test-window",
-    templateUrl: "./in-game-test-window.component.html",
-    styleUrls: ["./in-game-test-window.component.scss"],
+    selector: "app-in-game-match-timer-window",
+    templateUrl: "./in-game-match-timer-window.component.html",
+    styleUrls: ["./in-game-match-timer-window.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InGameTestWindowComponent implements OnDestroy {
-    public primaryTitle = "In Game Test";
+export class InGameMatchTimerWindowComponent implements OnDestroy {
+    public primaryTitle = "In Game Match Timer";
     public secondaryTitle = "";
 
     public logList = "";
@@ -46,8 +46,7 @@ export class InGameTestWindowComponent implements OnDestroy {
 }
 
 function createLogItem(input: any): string {
-    const now = new Date();
-    const dateStr = format(now, "h:mm:ssaaaTT");
+    const dateStr = format(new Date(), "h:mm:ssaaa");
     const eventStr = JSON.stringify(input);
     return `[${dateStr}] ${eventStr}\n`;
 }

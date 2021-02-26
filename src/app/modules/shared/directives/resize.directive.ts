@@ -1,32 +1,21 @@
-import {
-    Directive,
-    ElementRef,
-    NgZone,
-    OnDestroy,
-    OnInit,
-} from "@angular/core";
+import { Directive, ElementRef, NgZone, OnDestroy, OnInit } from "@angular/core";
 import { UIWindow } from "@core/ui-window";
 
+// TODO: Not sure if this is needed.
 @Directive({
     selector: "[appResize]",
 })
 export class ResizeDirective implements OnInit, OnDestroy {
     private observer!: ResizeObserver;
 
-    constructor(
-        private readonly elementRef: ElementRef<HTMLElement>,
-        private readonly ngZone: NgZone
-    ) {}
+    constructor(private readonly elementRef: ElementRef<HTMLElement>, private readonly ngZone: NgZone) {}
 
     public ngOnInit(): void {
         const window = new UIWindow();
         window.assureObtained().subscribe(() => {
             this.observer = new ResizeObserver(() => {
                 this.ngZone.run(() => {
-                    const {
-                        offsetWidth,
-                        offsetHeight,
-                    } = this.elementRef.nativeElement;
+                    const { offsetWidth, offsetHeight } = this.elementRef.nativeElement;
                     window.changeSize(offsetWidth, offsetHeight).subscribe();
                 });
             });
