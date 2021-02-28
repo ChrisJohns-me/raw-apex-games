@@ -17,14 +17,12 @@ export class BackgroundComponent implements OnInit, OnDestroy {
         private readonly dashboardWindow: DashboardWindowService,
         private readonly gameEvents: GameEventsService,
         private readonly uiWindowEvents: UIWindowEventsService
-    ) {
-        console.debug(`${this.constructor.name} instantiated`);
-        this.registerGameEvents();
-        this.registerUIWindowEvents();
-    }
+    ) {}
 
     public ngOnInit(): void {
         console.debug(`${this.constructor.name} initialized`);
+        this.registerGameEvents();
+        this.registerUIWindowEvents();
         this.dashboardWindow.open().subscribe();
     }
 

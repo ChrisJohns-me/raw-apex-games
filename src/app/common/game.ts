@@ -9,10 +9,10 @@ export enum GameStage {
     Lobby = "lobby",
     LegendSelection = "legend_selection",
     InGameDropship = "in_game_dropship",
+    InGameDropping = "in_game_dropping",
     InGame = "in_game",
     InGameKnocked = "in_game_knocked",
     InGameSpectating = "in_game_spectating",
-    MatchSummary = "match_summary",
 }
 
 export type GameProcessUpdate = overwolf.games.GameInfoUpdatedEvent | undefined;
@@ -21,7 +21,7 @@ export type GameEvent = overwolf.gep.ApexLegends.ApexLegendsGameEventData | unde
 export type NewGameEvents = overwolf.gep.ApexLegends.ApexLegendsNewGameEvents | undefined;
 export type SquadmatePlayer = overwolf.gep.ApexLegends.ApexLegendsMatchInfoLegendSelect | undefined;
 export type TeammateMatchInfo = overwolf.gep.ApexLegends.ApexLegendsMatchInfoTeammate | undefined;
-export interface GamePlayerLocation {
+export interface MapCoordinates {
     x: number;
     y: number;
     z: number;

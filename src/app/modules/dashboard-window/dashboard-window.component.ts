@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { getFriendlyLegendName } from "@common/legend";
 import { GameEventsService } from "@core/game";
 import { differenceInMilliseconds, format } from "date-fns";
@@ -12,7 +12,7 @@ import { InGameTestWindowService } from "../in-game-test-window/in-game-test-win
     styleUrls: ["./dashboard-window.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardWindowComponent implements OnDestroy {
+export class DashboardWindowComponent implements OnInit, OnDestroy {
     public primaryTitle = "Dashboard";
     public secondaryTitle = "";
 
@@ -21,6 +21,7 @@ export class DashboardWindowComponent implements OnDestroy {
     public gameEventList = "";
     public gameStage = "";
     public gameMode = "";
+    public gameMapName = "";
     public playerName = "";
     public playerLegend = "";
     public playerLocation = "";
@@ -40,7 +41,9 @@ export class DashboardWindowComponent implements OnDestroy {
         private readonly cdr: ChangeDetectorRef,
         private readonly gameEvents: GameEventsService,
         private readonly inGameTestWindow: InGameTestWindowService
-    ) {
+    ) {}
+
+    public ngOnInit(): void {
         this.registerGameEvents();
     }
 
@@ -62,7 +65,6 @@ export class DashboardWindowComponent implements OnDestroy {
     }
 
     public onOpenInGameClick(): void {
-        console.debug("opening in game test window");
         this.inGameTestWindow.open().subscribe();
     }
 
@@ -91,7 +93,7 @@ export class DashboardWindowComponent implements OnDestroy {
                 takeUntil(this._unsubscribe),
                 tap((event) => (this.gameProcessInfoList = createLogItem(event) + this.gameProcessInfoList))
             )
-            .subscribe(() => this.cdr.markForCheck());
+            .subscribe(() => this.cdr.detectChanges());
 
         // Game Info
         this.gameEvents.gameInfo$
@@ -110,7 +112,7 @@ export class DashboardWindowComponent implements OnDestroy {
                     }
                 })
             )
-            .subscribe(() => this.cdr.markForCheck());
+            .subscribe(() => this.cdr.detectChanges());
 
         // Game Events
         this.gameEvents.gameEvent$
@@ -118,7 +120,7 @@ export class DashboardWindowComponent implements OnDestroy {
                 takeUntil(this._unsubscribe),
                 tap((event) => (this.gameEventList = createLogItem(event) + this.gameEventList))
             )
-            .subscribe(() => this.cdr.markForCheck());
+            .subscribe(() => this.cdr.detectChanges());
 
         // Game Stages
         this.gameEvents.gameStage$
@@ -126,7 +128,7 @@ export class DashboardWindowComponent implements OnDestroy {
                 takeUntil(this._unsubscribe),
                 tap((stage) => (this.gameStage = stage))
             )
-            .subscribe(() => this.cdr.markForCheck());
+            .subscribe(() => this.cdr.detectChanges());
 
         // Game Mode
         this.gameEvents.gameMode$
@@ -134,7 +136,15 @@ export class DashboardWindowComponent implements OnDestroy {
                 takeUntil(this._unsubscribe),
                 tap((event) => (this.gameMode = event))
             )
-            .subscribe(() => this.cdr.markForCheck());
+            .subscribe(() => this.cdr.detectChanges());
+
+        // Game Map
+        this.gameEvents.gameMapName$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                tap((mapName) => (this.gameMapName = mapName))
+            )
+            .subscribe(() => this.cdr.detectChanges());
 
         // Player Name
         this.gameEvents.playerName$
@@ -142,7 +152,7 @@ export class DashboardWindowComponent implements OnDestroy {
                 takeUntil(this._unsubscribe),
                 tap((event) => (this.playerName = event))
             )
-            .subscribe(() => this.cdr.markForCheck());
+            .subscribe(() => this.cdr.detectChanges());
 
         // Player Legend
         this.gameEvents.playerLegend$
@@ -150,15 +160,15 @@ export class DashboardWindowComponent implements OnDestroy {
                 takeUntil(this._unsubscribe),
                 tap((event) => (this.playerLegend = event))
             )
-            .subscribe(() => this.cdr.markForCheck());
+            .subscribe(() => this.cdr.detectChanges());
 
         // Player Locations
-        this.gameEvents.playerLocation$
+        this.gameEvents.playerInGameLocation$
             .pipe(
                 takeUntil(this._unsubscribe),
                 tap((event) => (this.playerLocation = JSON.stringify(event)))
             )
-            .subscribe(() => this.cdr.markForCheck());
+            .subscribe(() => this.cdr.detectChanges());
 
         // Squadmates
         this.gameEvents.playerSquadmates$
@@ -173,7 +183,7 @@ export class DashboardWindowComponent implements OnDestroy {
                     this.playerSquadmates = squadmates;
                 })
             )
-            .subscribe(() => this.cdr.markForCheck());
+            .subscribe(() => this.cdr.detectChanges());
     }
 }
 

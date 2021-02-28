@@ -2,13 +2,14 @@ import { Injectable, OnDestroy } from "@angular/core";
 import {
     GameEvent,
     GameInfo,
-    GamePlayerLocation,
     GameProcessUpdate,
     GameStage,
+    MapCoordinates,
     NewGameEvents,
     SquadmatePlayer,
     TeammateMatchInfo,
 } from "@common/game";
+import { GameMapName, GameMaps } from "@common/map";
 import { BehaviorSubject, from, Observable, of, ReplaySubject, Subject, throwError } from "rxjs";
 import {
     catchError,
@@ -62,30 +63,30 @@ export class GameEventsService implements OnDestroy {
     /** */
     public gameMode$: Observable<string>;
     /** */
+    public gameMapName$: Observable<GameMapName | "">;
+    /** */
     public playerName$: Observable<string>;
     /** Relies on playerNameEvent$ */
     public playerLegend$: Observable<string>;
-    public playerLocation$: Observable<GamePlayerLocation>;
+    /** Player's location, once landed after dropship drop */
+    public playerInGameLocation$: Observable<MapCoordinates>;
     public playerSquadmates$: Observable<SquadmatePlayer[]>;
-
-    // Assisting variables
-    private startingPlayerLocation?: GamePlayerLocation;
 
     // Overwolf base events
     private readonly _gameInfo = new Subject<GameInfo>();
     private readonly _gameEvent = new Subject<GameEvent>();
     private readonly _gameProcessUpdate = new ReplaySubject<GameProcessUpdate>(1);
-    // Infered data
+    // Inferred data
     private readonly _gameStage = new BehaviorSubject<GameStage>(GameStage.Lobby);
     private readonly _gameMode = new BehaviorSubject<string>("");
     private readonly _playerName = new BehaviorSubject<string>("");
     private readonly _playerLegend = new BehaviorSubject<string>("");
-    private readonly _playerLocation = new BehaviorSubject<GamePlayerLocation>({
-        x: 0,
-        y: 0,
-        z: 0,
-    });
+    private readonly _rawPlayerLocation = new Subject<MapCoordinates>();
     private readonly _playerSquadmates = new BehaviorSubject<SquadmatePlayer[]>([]);
+
+    // Assisting variables
+    private startingDropshipPlayerLocation?: MapCoordinates;
+    private hasLandedFromDropship = false;
 
     private readonly _unsubscribe = new Subject<void>();
 
@@ -97,12 +98,33 @@ export class GameEventsService implements OnDestroy {
         this.gameProcessUpdate$ = this._gameProcessUpdate.pipe(share());
         this.gameMode$ = this._gameMode.pipe(share());
         this.gameStage$ = this._gameStage.pipe(share());
+        this.gameMapName$ = this.gameStage$.pipe(
+            filter((gameStage) => gameStage === GameStage.InGameDropship),
+            switchMap(() => this._rawPlayerLocation.asObservable()),
+            map((playerLocation) => {
+                const startingZ = this.startingDropshipPlayerLocation?.z ?? playerLocation.z;
+                const now = new Date();
+                const gameMap = GameMaps.find((gameMap) => {
+                    const isActive = gameMap.activeDates?.some((date) => date.to == null && date.from < now);
+                    const matchesDropshipZ = gameMap.dropshipStartingZ === startingZ;
+
+                    return isActive && matchesDropshipZ;
+                });
+
+                if (!gameMap)
+                    console.warn(`Unable to map the dropship's z-position to any known maps. (z: ${startingZ})`);
+                return gameMap?.name ?? "";
+            }),
+            share()
+        );
         this.playerName$ = this._playerName.pipe(share());
         this.playerLegend$ = this._playerLegend.pipe(share());
-        this.playerLocation$ = this._playerLocation.pipe(
+        this.playerInGameLocation$ = this._rawPlayerLocation.pipe(
             tap((pos) => {
-                if (!this.startingPlayerLocation) this.startingPlayerLocation = pos;
+                if (!this.startingDropshipPlayerLocation) this.startingDropshipPlayerLocation = pos;
+                if (this._gameStage.value === GameStage.InGame) this.hasLandedFromDropship = true;
             }),
+            filter(() => !!this.hasLandedFromDropship), // output locations only after player has landed
             share()
         );
         this.playerSquadmates$ = this._playerSquadmates.pipe(share());
@@ -123,21 +145,14 @@ export class GameEventsService implements OnDestroy {
             }),
             tap((infoData) => {
                 // Extract location data
-                if (infoData?.feature === "location") {
-                    const locationData = JSON.tryParse<GamePlayerLocation>(
-                        infoData.info.match_info?.location as string
-                    );
-                    const locX = locationData ? parseInt((locationData.x as unknown) as string) : null;
-                    const locY = locationData ? parseInt((locationData.y as unknown) as string) : null;
-                    const locZ = locationData ? parseInt((locationData.z as unknown) as string) : null;
-                    if (locX != null && locY != null && locZ != null) {
-                        const newPlayerLocation: GamePlayerLocation = {
-                            x: locX,
-                            y: locY,
-                            z: locZ,
-                        };
-                        this._playerLocation.next(newPlayerLocation);
-                    }
+                if (infoData?.feature !== "location") return;
+                const locationData = JSON.tryParse<MapCoordinates>(infoData.info.match_info?.location as string);
+                const x = locationData ? parseInt((locationData.x as unknown) as string) : null;
+                const y = locationData ? parseInt((locationData.y as unknown) as string) : null;
+                const z = locationData ? parseInt((locationData.z as unknown) as string) : null;
+                if (x != null && y != null && z != null) {
+                    const newPlayerLocation: MapCoordinates = { x, y, z };
+                    this._rawPlayerLocation.next(newPlayerLocation);
                 }
             }),
             tap((infoData) => {
@@ -150,10 +165,7 @@ export class GameEventsService implements OnDestroy {
                 const rawSquadmateUpdate = matchInfo?.findPropertyByRegEx<string>(/^legendSelect_/);
                 let squadmateUpdate: SquadmatePlayer | undefined;
 
-                if (infoData?.feature === "match_state" && infoData.info.game_info?.match_state === "inactive") {
-                    // In lobby, reset squad list
-                    if (this._playerSquadmates.value.length) this._playerSquadmates.next([]);
-                } else if (
+                if (
                     rawSquadmateUpdate?.length &&
                     (squadmateUpdate = JSON.tryParse<SquadmatePlayer>(rawSquadmateUpdate)) != null
                 ) {
@@ -186,7 +198,14 @@ export class GameEventsService implements OnDestroy {
             tap((infoData) => {
                 // Extract game mode
                 const gameMode = infoData?.info.match_info?.game_mode;
-                if (gameMode?.length && gameMode !== this._gameMode.value) this._gameMode.next(gameMode);
+                if (gameMode && gameMode !== this._gameMode.value) this._gameMode.next(gameMode);
+            }),
+            tap(() => {
+                // Reset if match is over
+                if (this._gameStage.value !== GameStage.Lobby) return;
+                delete this.startingDropshipPlayerLocation;
+                this.hasLandedFromDropship = false;
+                this._playerSquadmates.next([]);
             }),
             share()
         );
@@ -312,8 +331,11 @@ export class GameEventsService implements OnDestroy {
         const info = infoEvent?.info;
         const feature = infoEvent?.feature;
 
-        if (feature === "match_info" && info?.match_info?.game_mode?.length) {
-            // A playlist has been selected on the lobby screen
+        if (
+            (feature === "match_info" && info?.match_info?.game_mode) ||
+            (feature === "match_state" && info?.game_info?.match_state === "inactive")
+        ) {
+            // Playlist was selected on the lobby screen, or a game has just ended
             return GameStage.Lobby;
         } else if (currentStage === GameStage.Lobby) {
             if (feature === "team" && info?.match_info?.findPropertyByRegEx(/^legendSelect/)) {
@@ -323,17 +345,21 @@ export class GameEventsService implements OnDestroy {
         } else if (currentStage === GameStage.LegendSelection) {
             if (feature === "match_state" && info?.game_info?.match_state === "active") {
                 // Match has started
-                delete this.startingPlayerLocation;
                 return GameStage.InGameDropship;
             }
         } else if (currentStage === GameStage.InGameDropship) {
-            if (feature === "location" && this.startingPlayerLocation && info?.match_info?.location) {
-                const locationData = JSON.tryParse<GamePlayerLocation>(info.match_info?.location as string);
+            if (feature === "location" && this.startingDropshipPlayerLocation && info?.match_info?.location) {
+                const locationData = JSON.tryParse<MapCoordinates>(info.match_info?.location as string);
                 const locationZ = locationData ? parseInt((locationData.z as unknown) as string) : null;
-                if (locationZ != null && locationZ < this.startingPlayerLocation.z) {
+                if (locationZ != null && locationZ < this.startingDropshipPlayerLocation.z) {
                     // Player has started dropping
-                    return GameStage.InGame;
+                    return GameStage.InGameDropping;
                 }
+            }
+        } else if (currentStage === GameStage.InGameDropping) {
+            if (feature === "inventory" && info?.me?.inUse) {
+                // Player has landed
+                return GameStage.InGame;
             }
         } else if (
             currentStage === GameStage.InGame ||
@@ -347,7 +373,7 @@ export class GameEventsService implements OnDestroy {
                 let teammateUpdate: TeammateMatchInfo | undefined;
 
                 if (
-                    rawTeammateUpdate?.length &&
+                    rawTeammateUpdate &&
                     (teammateUpdate = JSON.tryParse<TeammateMatchInfo>(rawTeammateUpdate)) != null &&
                     teammateUpdate.name === activePlayerName
                 ) {
@@ -360,13 +386,7 @@ export class GameEventsService implements OnDestroy {
                         return GameStage.InGameSpectating;
                     }
                 }
-            } else if (feature === "match_state" && info?.game_info?.match_state === "inactive") {
-                // Match has ended
-                delete this.startingPlayerLocation;
-                return GameStage.MatchSummary;
             }
-        } else if (currentStage === GameStage.MatchSummary) {
-            // ...
         }
 
         return;
