@@ -16,7 +16,7 @@ export class HotkeyService implements OnDestroy {
     private readonly _unsubscribe = new Subject<void>();
 
     constructor() {
-        console.debug(`${this.constructor.name}:${this.__$id()} instantiated`);
+        console.debug(`${this.constructor.name} instantiated`);
         this.hotkeyPressedEvent$ = this._hotkeyPressed;
         this.registerEvents();
     }

@@ -5,6 +5,7 @@
     [isContentDraggable]="false"
 >
     <button (click)="onOpenInGameClick()">Open In Game Window</button>
+    <button (click)="onOpenMatchTimerClick()">Open Match Timer</button>
     <button (click)="onForceRefreshClick()">Force Refresh</button>
 
     <section class="pane-container">
@@ -43,7 +44,7 @@
                 <p class="log">
                     Started: {{ matchStartDate | date: "mediumTime" }}<br />
                     Ended: {{ matchEndDate | date: "mediumTime" }}<br />
-                    Duration: {{ matchDuration | date: "mm:ss.SSS" }}
+                    Duration: {{ matchDurationDate | date: "mm:ss.SSS" }}
                 </p>
             </div>
         </div>

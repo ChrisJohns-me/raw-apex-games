@@ -2,15 +2,10 @@
     <ng-container [ngSwitch]="winInfo.name">
         <app-background *ngSwitchCase="'background'"></app-background>
 
-        <app-dashboard-window
-            *ngSwitchCase="'dashboard'"
-        ></app-dashboard-window>
-        <app-in-game-test-window
-            *ngSwitchCase="'in-game-test'"
-        ></app-in-game-test-window>
+        <app-dashboard-window *ngSwitchCase="'dashboard'"></app-dashboard-window>
+        <app-in-game-match-timer-window *ngSwitchCase="'in-game-match-timer'"></app-in-game-match-timer-window>
+        <app-in-game-test-window *ngSwitchCase="'in-game-test'"></app-in-game-test-window>
 
-        <div *ngSwitchDefault>
-            Could not match window with name: {{ winInfo.name }}
-        </div>
+        <div *ngSwitchDefault>Could not match window with name: {{ winInfo.name }}</div>
     </ng-container>
 </ng-container>

@@ -62,6 +62,7 @@ export class UIWindow {
         });
         return from(promise);
     }
+
     public assureObtained(): Observable<void> {
         return this.obtain().pipe(map(() => undefined));
     }

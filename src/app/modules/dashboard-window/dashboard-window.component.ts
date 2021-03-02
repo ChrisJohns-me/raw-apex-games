@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { getFriendlyLegendName } from "@common/legend";
 import { GameEventsService } from "@core/game";
-import { differenceInMilliseconds, format } from "date-fns";
+import { format } from "date-fns";
 import { Subject } from "rxjs";
 import { takeUntil, tap } from "rxjs/operators";
+import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
 import { InGameTestWindowService } from "../in-game-test-window/in-game-test-window.service";
 
 @Component({
@@ -26,21 +27,21 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     public playerLegend = "";
     public playerLocation = "";
     public playerSquadmates = "";
+
+    public get matchDurationDate(): Date | undefined {
+        return this.matchDurationMs ? new Date(this.matchDurationMs) : undefined;
+    }
     public matchStartDate?: Date;
     public matchEndDate?: Date;
-    /** Duration in milliseconds */
-    public get matchDuration(): number {
-        if (!this.matchStartDate) return 0;
-        const endDate = this.matchEndDate ?? new Date();
-        return differenceInMilliseconds(endDate, this.matchStartDate);
-    }
+    public matchDurationMs?: number;
 
     private _unsubscribe = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly gameEvents: GameEventsService,
-        private readonly inGameTestWindow: InGameTestWindowService
+        private readonly inGameTestWindow: InGameTestWindowService,
+        private readonly inGameMatchTimerWindow: InGameMatchTimerWindowService
     ) {}
 
     public ngOnInit(): void {
@@ -66,6 +67,10 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
 
     public onOpenInGameClick(): void {
         this.inGameTestWindow.open().subscribe();
+    }
+
+    public onOpenMatchTimerClick(): void {
+        this.inGameMatchTimerWindow.open().subscribe();
     }
 
     private __injectFn(name: string, eventFn: (event: any, delayMs: number) => void): void {
@@ -99,18 +104,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this.gameEvents.gameInfo$
             .pipe(
                 takeUntil(this._unsubscribe),
-                tap((event) => (this.gameInfoList = createLogItem(event) + this.gameInfoList)),
-                tap((infoData) => {
-                    if (infoData?.feature === "match_state" && infoData.info?.game_info?.match_state === "active") {
-                        this.matchStartDate = new Date();
-                        delete this.matchEndDate;
-                    } else if (
-                        infoData?.feature === "match_state" &&
-                        infoData.info?.game_info?.match_state === "inactive"
-                    ) {
-                        this.matchEndDate = new Date();
-                    }
-                })
+                tap((event) => (this.gameInfoList = createLogItem(event) + this.gameInfoList))
             )
             .subscribe(() => this.cdr.detectChanges());
 
@@ -143,6 +137,16 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this._unsubscribe),
                 tap((mapName) => (this.gameMapName = mapName))
+            )
+            .subscribe(() => this.cdr.detectChanges());
+
+        // Game Match Time
+        this.gameEvents.gameMatchTime$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                tap((matchTime) => (this.matchStartDate = matchTime.start)),
+                tap((matchTime) => (this.matchEndDate = matchTime.end)),
+                tap((matchTime) => (this.matchDurationMs = matchTime.durationMs))
             )
             .subscribe(() => this.cdr.detectChanges());
 

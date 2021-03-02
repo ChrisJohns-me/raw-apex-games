@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { GameEventsService } from "@core/game";
 import { UIWindowEventsService } from "@core/ui-window";
-import { Subject } from "rxjs";
+import { merge, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { DashboardWindowService } from "../dashboard-window/dashboard-window.service";
+import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
 
 @Component({
     selector: "app-background",
@@ -15,6 +16,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
 
     constructor(
         private readonly dashboardWindow: DashboardWindowService,
+        private readonly matchTimerWindow: InGameMatchTimerWindowService,
         private readonly gameEvents: GameEventsService,
         private readonly uiWindowEvents: UIWindowEventsService
     ) {}
@@ -24,6 +26,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
         this.registerGameEvents();
         this.registerUIWindowEvents();
         this.dashboardWindow.open().subscribe();
+        this.matchTimerWindow.open().subscribe();
     }
 
     public ngOnDestroy(): void {
@@ -33,9 +36,14 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     }
 
     private registerGameEvents(): void {
-        this.gameEvents.gameProcessUpdate$.pipe(takeUntil(this._unsubscribe)).subscribe((event) => console.log(event));
-        this.gameEvents.gameInfo$.pipe(takeUntil(this._unsubscribe)).subscribe((event) => console.log(event));
-        this.gameEvents.gameEvent$.pipe(takeUntil(this._unsubscribe)).subscribe((event) => console.log(event));
+        merge(
+            this.gameEvents.gameProcessUpdate$,
+            this.gameEvents.gameInfo$,
+            this.gameEvents.gameEvent$,
+            this.gameEvents.gameMatchTime$
+        )
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe();
     }
 
     private registerUIWindowEvents(): void {}

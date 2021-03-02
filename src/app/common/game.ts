@@ -26,3 +26,8 @@ export interface MapCoordinates {
     y: number;
     z: number;
 }
+export interface GameTime {
+    start?: Date;
+    end?: Date;
+    durationMs: number;
+}

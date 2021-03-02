@@ -1,5 +1,7 @@
 <app-ui-container [isDesktopWindow]="false" [isContentDraggable]="true">
-    <div class="log-container">
-        <p class="log">{{ logList }}</p>
+    <div class="timer-container tilt-box" *ngIf="isMatchDurationDateValid && showTimer" (click)="(0 == 0)">
+        <p class="timer-display untilt-content">
+            <ng-container>{{ matchDurationDate | date: "mm:ss" }}</ng-container>
+        </p>
     </div>
 </app-ui-container>

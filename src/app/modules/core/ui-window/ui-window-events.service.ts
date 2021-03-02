@@ -12,28 +12,28 @@ export class UIWindowEventsService implements OnDestroy {
     private readonly _windowStateChangedEvent = new Subject<UIWindowStateChangedEvent>();
 
     constructor() {
-        console.debug(`${this.constructor.name}:${this.__$id()} instantiated`);
+        console.debug(`${this.constructor.name} instantiated`);
         this.windowStateChangedEvent$ = this._windowStateChangedEvent;
         this.registerEvents();
     }
 
     public ngOnDestroy(): void {
-        console.debug(`${this.constructor.name}:${this.__$id()} destroyed`);
+        console.debug(`${this.constructor.name} destroyed`);
         this.unregisterEvents();
     }
 
     private onStateChange(event: overwolf.windows.WindowStateChangedEvent): void {
-        console.debug(`${this.constructor.name}:${this.__$id()} onStateChange`);
+        console.debug(`${this.constructor.name} onStateChange`);
         this._windowStateChangedEvent.next(event);
     }
 
     private registerEvents(): void {
-        console.debug(`${this.constructor.name}:${this.__$id()} registerEvents`);
+        console.debug(`${this.constructor.name} registerEvents`);
         overwolf.windows.onStateChanged.addListener((event) => this.onStateChange(event));
     }
 
     private unregisterEvents(): void {
-        console.debug(`${this.constructor.name}:${this.__$id()} unregisterEvents`);
+        console.debug(`${this.constructor.name} unregisterEvents`);
         overwolf.windows.onStateChanged.removeListener((event) => this.onStateChange(event));
     }
 }

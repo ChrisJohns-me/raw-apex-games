@@ -3,8 +3,8 @@ import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { AppModule } from "./app/app.module";
 import { environment } from "./environments/environment";
 import "./prototypes/json";
+import "./prototypes/math";
 import "./prototypes/object";
-import "./temp";
 
 if (environment.production) {
     enableProdMode();

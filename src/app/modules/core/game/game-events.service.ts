@@ -4,13 +4,15 @@ import {
     GameInfo,
     GameProcessUpdate,
     GameStage,
+    GameTime,
     MapCoordinates,
     NewGameEvents,
     SquadmatePlayer,
     TeammateMatchInfo,
 } from "@common/game";
 import { GameMapName, GameMaps } from "@common/map";
-import { BehaviorSubject, from, Observable, of, ReplaySubject, Subject, throwError } from "rxjs";
+import { SingletonServiceProviderFactory } from "@core/singleton-service.provider.factory";
+import { BehaviorSubject, from, interval, Observable, of, ReplaySubject, Subject, throwError } from "rxjs";
 import {
     catchError,
     delay,
@@ -47,6 +49,7 @@ const OW_REQUIRED_FEATURES = [
 
 @Injectable({
     providedIn: "root",
+    useFactory: () => SingletonServiceProviderFactory("GameEventsService", GameEventsService),
 })
 export class GameEventsService implements OnDestroy {
     public areFeaturesRegistered = false;
@@ -64,6 +67,8 @@ export class GameEventsService implements OnDestroy {
     public gameMode$: Observable<string>;
     /** */
     public gameMapName$: Observable<GameMapName | "">;
+    /** In milliseconds */
+    public gameMatchTime$: Observable<GameTime>;
     /** */
     public playerName$: Observable<string>;
     /** Relies on playerNameEvent$ */
@@ -85,19 +90,49 @@ export class GameEventsService implements OnDestroy {
     private readonly _playerSquadmates = new BehaviorSubject<SquadmatePlayer[]>([]);
 
     // Assisting variables
+    private matchStartDate?: Date;
+    private matchEndDate?: Date;
     private startingDropshipPlayerLocation?: MapCoordinates;
     private hasLandedFromDropship = false;
 
     private readonly _unsubscribe = new Subject<void>();
 
+    private tempIdentifier = String(Math.floor(Math.random() * 10000000));
     constructor() {
-        console.debug(`[${this.constructor.name}:${this.__$id()}] instantiated`);
+        console.debug(`[${this.constructor.name}:${this.tempIdentifier}] instantiated`);
 
         this.registerEvents();
 
         this.gameProcessUpdate$ = this._gameProcessUpdate.pipe(share());
         this.gameMode$ = this._gameMode.pipe(share());
         this.gameStage$ = this._gameStage.pipe(share());
+        this.gameMatchTime$ = this._gameInfo.pipe(
+            filter((infoData) => infoData?.feature === "match_state"),
+            map((infoData) => infoData?.info?.game_info?.match_state),
+            filter((matchState) => matchState === "active" || matchState === "inactive"),
+            map((matchState) => {
+                const now = new Date();
+                if (matchState === "active") {
+                    this.matchStartDate = now;
+                    delete this.matchEndDate;
+                    return true;
+                } else {
+                    this.matchEndDate = now;
+                    return false;
+                }
+            }),
+            switchMap((isInGame) => (isInGame ? interval(1000) : of(null))),
+            map(() => ({
+                start: this.matchStartDate,
+                end: this.matchEndDate,
+                durationMs: Math.max(
+                    0,
+                    (this.matchEndDate ?? new Date()).valueOf() - (this.matchStartDate ?? new Date()).valueOf()
+                ),
+            })),
+            share()
+        );
+
         this.gameMapName$ = this.gameStage$.pipe(
             filter((gameStage) => gameStage === GameStage.InGameDropship),
             switchMap(() => this._rawPlayerLocation.asObservable()),
@@ -245,7 +280,7 @@ export class GameEventsService implements OnDestroy {
      * @todo Handle "Not in a game."
      */
     private setRequiredFeatures(): Observable<boolean> {
-        console.debug(`[${this.constructor.name}:${this.__$id()}] setRequiredFeatures`);
+        console.debug(`[${this.constructor.name}:${this.tempIdentifier}] setRequiredFeatures`);
 
         if (this.areFeaturesRegistered) return of(true);
         if (this.isFeatureRegistrationInProgress) return of(false);
@@ -294,7 +329,7 @@ export class GameEventsService implements OnDestroy {
      * @param update
      */
     private onGameInfoUpdated(update: GameProcessUpdate): void {
-        console.debug(`[${this.constructor.name}:${this.__$id()}] onGameInfoUpdated`);
+        console.debug(`[${this.constructor.name}:${this.tempIdentifier}] onGameInfoUpdated`);
         if (!update?.gameInfo) return;
         this._gameProcessUpdate.next(update);
     }
@@ -304,7 +339,7 @@ export class GameEventsService implements OnDestroy {
      * @param infoUpdate
      */
     private onInfoUpdates(infoUpdate: GameInfo): void {
-        console.debug(`[${this.constructor.name}:${this.__$id()}] onInfoUpdates`);
+        console.debug(`[${this.constructor.name}:${this.tempIdentifier}] onInfoUpdates`);
         if (!infoUpdate) {
             console.warn("Unrecognized info.", infoUpdate);
             return;
@@ -317,7 +352,7 @@ export class GameEventsService implements OnDestroy {
      * @param newGameEvent
      */
     private onNewEvents(newGameEvent: NewGameEvents): void {
-        console.debug(`[${this.constructor.name}:${this.__$id()}] onNewEvents`);
+        console.debug(`[${this.constructor.name}:${this.tempIdentifier}] onNewEvents`);
         const events = newGameEvent?.events;
         if (!events || !Array.isArray(events)) {
             console.warn("Unrecognized event.", events);
@@ -393,14 +428,14 @@ export class GameEventsService implements OnDestroy {
     }
 
     private registerEvents(): void {
-        console.debug(`[${this.constructor.name}:${this.__$id()}] registerEvents`);
+        console.debug(`[${this.constructor.name}:${this.tempIdentifier}] registerEvents`);
         overwolf.games.onGameInfoUpdated.addListener((event) => this.onGameInfoUpdated(event));
         overwolf.games.events.onInfoUpdates2.addListener((event) => this.onInfoUpdates(event));
         overwolf.games.events.onNewEvents.addListener((event) => this.onNewEvents(event as any));
     }
 
     private unregisterEvents(): void {
-        console.debug(`[${this.constructor.name}:${this.__$id()}] unregisterEvents`);
+        console.debug(`[${this.constructor.name}:${this.tempIdentifier}] unregisterEvents`);
         overwolf.games.onGameInfoUpdated.removeListener((event) => this.onGameInfoUpdated(event));
         overwolf.games.events.onInfoUpdates2.removeListener((event) => this.onInfoUpdates(event));
         overwolf.games.events.onNewEvents.removeListener((event) => this.onNewEvents(event as any));
