@@ -4,7 +4,7 @@
     [isTitlebarDraggable]="true"
     [isContentDraggable]="false"
 >
-    <button (click)="onOpenInGameClick()">Open In Game Window</button>
+    <button (click)="onOpenUltimateCountdownClick()">Open Ultimate Countdown</button>
     <button (click)="onOpenMatchTimerClick()">Open Match Timer</button>
     <button (click)="onForceRefreshClick()">Force Refresh</button>
 
@@ -51,18 +51,20 @@
         <div class="pane">
             <h1>
                 Info
-                <button (click)="onInjectInfoClick()">Inject</button>
+                <button (click)="onInjectInfoCmdClick()">Inject Raw</button>
+                <button (click)="onInjectInfoLogClick()">Inject Log</button>
                 <button (click)="gameInfoList = ''">Clear</button>
             </h1>
-            <p class="log">{{ gameInfoList }}</p>
+            <textarea class="log-box" readonly>{{ gameInfoList }}</textarea>
         </div>
         <div class="pane">
             <h1>
                 Event
-                <button (click)="onInjectEventClick()">Inject</button>
+                <button (click)="onInjectEventCmdClick()">Inject Raw</button>
+                <button (click)="onInjectEventLogClick()">Inject Log</button>
                 <button (click)="gameEventList = ''">Clear</button>
             </h1>
-            <p class="log">{{ gameEventList }}</p>
+            <textarea class="log-box" readonly>{{ gameEventList }}</textarea>
         </div>
     </section>
 </app-ui-container>

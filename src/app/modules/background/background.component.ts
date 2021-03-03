@@ -5,6 +5,7 @@ import { merge, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { DashboardWindowService } from "../dashboard-window/dashboard-window.service";
 import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
+import { InGameUltimateCountdownWindowService } from "../in-game-ultimate-countdown-window/in-game-ultimate-countdown-window.service";
 
 @Component({
     selector: "app-background",
@@ -16,17 +17,16 @@ export class BackgroundComponent implements OnInit, OnDestroy {
 
     constructor(
         private readonly dashboardWindow: DashboardWindowService,
-        private readonly matchTimerWindow: InGameMatchTimerWindowService,
         private readonly gameEvents: GameEventsService,
-        private readonly uiWindowEvents: UIWindowEventsService
+        private readonly matchTimerWindow: InGameMatchTimerWindowService,
+        private readonly uiWindowEvents: UIWindowEventsService,
+        private readonly ultimateCountdownWindow: InGameUltimateCountdownWindowService
     ) {}
 
     public ngOnInit(): void {
         console.debug(`${this.constructor.name} initialized`);
         this.registerGameEvents();
-        this.registerUIWindowEvents();
-        this.dashboardWindow.open().subscribe();
-        this.matchTimerWindow.open().subscribe();
+        this.registerUIWindows();
     }
 
     public ngOnDestroy(): void {
@@ -40,11 +40,16 @@ export class BackgroundComponent implements OnInit, OnDestroy {
             this.gameEvents.gameProcessUpdate$,
             this.gameEvents.gameInfo$,
             this.gameEvents.gameEvent$,
+            this.gameEvents.gameStage$,
             this.gameEvents.gameMatchTime$
         )
             .pipe(takeUntil(this._unsubscribe))
             .subscribe();
     }
 
-    private registerUIWindowEvents(): void {}
+    private registerUIWindows(): void {
+        merge(this.dashboardWindow.open(), this.matchTimerWindow.open(), this.ultimateCountdownWindow.open())
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe();
+    }
 }

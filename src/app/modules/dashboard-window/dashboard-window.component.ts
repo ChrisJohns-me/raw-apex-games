@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { getFriendlyLegendName } from "@common/legend";
 import { GameEventsService } from "@core/game";
-import { format } from "date-fns";
+import { differenceInMilliseconds, format } from "date-fns";
 import { Subject } from "rxjs";
 import { takeUntil, tap } from "rxjs/operators";
 import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
-import { InGameTestWindowService } from "../in-game-test-window/in-game-test-window.service";
+import { InGameUltimateCountdownWindowService } from "../in-game-ultimate-countdown-window/in-game-ultimate-countdown-window.service";
 
 @Component({
     selector: "app-dashboard-window",
@@ -40,8 +40,8 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly gameEvents: GameEventsService,
-        private readonly inGameTestWindow: InGameTestWindowService,
-        private readonly inGameMatchTimerWindow: InGameMatchTimerWindowService
+        private readonly inGameUltimateCooldownWindow: InGameUltimateCountdownWindowService,
+        private readonly matchTimerWindow: InGameMatchTimerWindowService
     ) {}
 
     public ngOnInit(): void {
@@ -53,27 +53,35 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this._unsubscribe.complete();
     }
 
-    public onInjectInfoClick(): void {
-        this.__injectFn("Info", (...args) => this.gameEvents.__debugInjectGameInfoEvent(...args));
+    public onInjectInfoCmdClick(): void {
+        this.__injectCmdFn("Info", (...args) => this.gameEvents.__debugInjectGameInfoEvent(...args));
     }
 
-    public onInjectEventClick(): void {
-        this.__injectFn("Event", (...args) => this.gameEvents.__debugInjectGameDataEvent(...args));
+    public onInjectEventCmdClick(): void {
+        this.__injectCmdFn("Event", (...args) => this.gameEvents.__debugInjectGameDataEvent(...args));
+    }
+
+    public onInjectInfoLogClick(): void {
+        this.__injectLogFn("Info", (...args) => this.gameEvents.__debugInjectGameInfoEvent(...args));
+    }
+
+    public onInjectEventLogClick(): void {
+        this.__injectLogFn("Event", (...args) => this.gameEvents.__debugInjectGameDataEvent(...args));
     }
 
     public onForceRefreshClick(): void {
         this.cdr.detectChanges();
     }
 
-    public onOpenInGameClick(): void {
-        this.inGameTestWindow.open().subscribe();
+    public onOpenUltimateCountdownClick(): void {
+        this.inGameUltimateCooldownWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
     }
 
     public onOpenMatchTimerClick(): void {
-        this.inGameMatchTimerWindow.open().subscribe();
+        this.matchTimerWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
     }
 
-    private __injectFn(name: string, eventFn: (event: any, delayMs: number) => void): void {
+    private __injectCmdFn(name: string, eventFn: (event: any, delayMs: number) => void): void {
         let delayMs = 250;
         const inputInject = prompt(`Inject ${name} (JSON)`, "");
         const inputInjectParsed = JSON.tryParse(inputInject ?? "");
@@ -89,6 +97,50 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         }
 
         eventFn(inputInjectParsed, delayMs);
+    }
+
+    private __injectLogFn(name: string, eventFn: (event: Record<string, any>, delay: number) => void): void {
+        interface Command {
+            timestamp: Date;
+            command: unknown;
+        }
+        let speed = 1;
+        const inputInject = prompt(`Inject ${name} (RAW Log)`, "");
+        const inputInjectArr = inputInject?.split("\n");
+
+        if (!inputInjectArr || !Array.isArray(inputInjectArr) || !inputInjectArr.length) {
+            console.error("Unexpected data.", inputInject, inputInjectArr);
+            return;
+        }
+
+        const speedInput = prompt("Replay Speed (1=realtime, empty=full speed)", "1");
+        speed = parseInt(speedInput ?? String(speed));
+
+        const matchRegEx = /^\[(.+?)\] (.*)$/m;
+
+        // Gather the commands
+        const commands: Command[] = inputInjectArr
+            .map((line) => {
+                const timestampMatch = line.match(matchRegEx)?.[1];
+                const commandMatch = line.match(matchRegEx)?.[2];
+                if (!timestampMatch || !commandMatch) return;
+                const timestamp = new Date("Jan 1, 2020 " + timestampMatch);
+                const command = JSON.tryParse(commandMatch);
+                return { timestamp, command };
+            })
+            .filter((cmd) => !!cmd && !!cmd.command && !!cmd.timestamp) as Command[];
+
+        // Sort by date
+        commands.sort((cmdA, cmdB) => cmdA.timestamp.getTime() - cmdB.timestamp.getTime());
+
+        const firstTimestamp = commands[0].timestamp;
+
+        // Run the commands
+        commands.forEach((cmd) => {
+            if (!cmd) return;
+            const startTimeDiff = differenceInMilliseconds(cmd.timestamp, firstTimestamp);
+            setTimeout(() => eventFn(cmd.command as any, 0), startTimeDiff / speed);
+        });
     }
 
     private registerGameEvents(): void {

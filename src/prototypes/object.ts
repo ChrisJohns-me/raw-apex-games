@@ -1,13 +1,14 @@
 declare interface Object {
     /**
      * @description Uses .find() with RegExp.
+     * @example findPropertyByRegEx(/^key_/)
      */
     findPropertyByRegEx<T>(regEx: RegExp): T | undefined;
 
     /**
      * @summary Creates an array derived from filtering an object's keys using RegExp.
      * @returns Array of filtered properties.
-     * @example incrementedPropertyToArray({unrelated_key: "empty", key_0: "value0", key_1: "value1", key_2: "value2"}, "key_")
+     * @example {unrelated_key: "empty", key_0: "value0", key_1: "value1", key_2: "value2"}.incrementedPropertyToArray(/^key_/)
      * @returns ["value0", "value1", "value2"]
      */
     incrementedPropertiesToArray<T>(regEx: RegExp): T[];

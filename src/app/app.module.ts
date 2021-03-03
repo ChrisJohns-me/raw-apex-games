@@ -5,7 +5,7 @@ import { BackgroundModule } from "./modules/background/background.module";
 import { CoreModule } from "./modules/core/core.module";
 import { DashboardWindowModule } from "./modules/dashboard-window/dashboard-window.module";
 import { InGameMatchTimerWindowModule } from "./modules/in-game-match-timer-window/in-game-match-timer-window.module";
-import { InGameTestWindowModule } from "./modules/in-game-test-window/in-game-test-window.module";
+import { InGameUltimateCountdownWindowModule } from "./modules/in-game-ultimate-countdown-window/in-game-ultimate-countdown-window.module";
 
 @NgModule({
     declarations: [AppComponent],
@@ -15,7 +15,7 @@ import { InGameTestWindowModule } from "./modules/in-game-test-window/in-game-te
         CoreModule,
         DashboardWindowModule,
         InGameMatchTimerWindowModule,
-        InGameTestWindowModule,
+        InGameUltimateCountdownWindowModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

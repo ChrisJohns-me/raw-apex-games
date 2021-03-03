@@ -127,7 +127,7 @@ export class GameEventsService implements OnDestroy {
                 end: this.matchEndDate,
                 durationMs: Math.max(
                     0,
-                    (this.matchEndDate ?? new Date()).valueOf() - (this.matchStartDate ?? new Date()).valueOf()
+                    (this.matchEndDate ?? new Date()).getTime() - (this.matchStartDate ?? new Date()).getTime()
                 ),
             })),
             share()

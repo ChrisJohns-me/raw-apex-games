@@ -71,25 +71,25 @@
                     "height": 50
                 }
             },
-            "in-game-test": {
+            "in-game-ultimate-countdown": {
                 "file": "index.html",
-                "in_game_only": true,
+                "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
                 "show_in_taskbar": false,
                 "mute": true,
                 "popup_blocker": true,
                 "size": {
-                    "width": 1280,
-                    "height": 900
+                    "width": 200,
+                    "height": 50
                 },
                 "min_size": {
-                    "width": 1280,
-                    "height": 900
+                    "width": 200,
+                    "height": 50
                 },
                 "max_size": {
-                    "width": 1280,
-                    "height": 900
+                    "width": 200,
+                    "height": 50
                 }
             }
         },
