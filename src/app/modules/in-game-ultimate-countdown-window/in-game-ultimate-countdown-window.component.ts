@@ -5,10 +5,10 @@ import { isValid } from "date-fns";
 import { Subject, timer } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
+import { averageRate, JSONTryParse } from "src/utilities";
 
 const DEBUG = !environment.production;
 
-const ULTIMATE_MAX_MS = 600 * 1000;
 const NUM_PROGRESS_HISTORY = 4;
 const ULTIMATE_ACCEL_DETECTION = 0.2;
 const UI_COUNTDOWN_REFRESH_RATE = 1000;
@@ -26,7 +26,7 @@ interface UltimateProgress {
 })
 export class InGameUltimateCountdownWindowComponent implements OnInit, OnDestroy {
     public isDateValid = isValid;
-    public isDebug = DEBUG && false;
+    public isDebugShow = DEBUG && false;
     public primaryTitle = "In Game Ultimate Countdown";
     public secondaryTitle = "";
 
@@ -87,7 +87,7 @@ export class InGameUltimateCountdownWindowComponent implements OnInit, OnDestroy
                 filter((infoData) => infoData?.feature === "me" && !!infoData.info.me?.ultimate_cooldown),
                 map((infoData) => {
                     const ultCooldownJSON = infoData?.info.me?.ultimate_cooldown;
-                    const ultCooldownObj = JSON.tryParse<MeUltimateCooldown>(ultCooldownJSON as string);
+                    const ultCooldownObj = JSONTryParse<MeUltimateCooldown>(ultCooldownJSON as string);
                     const ultCooldown = parseInt(ultCooldownObj?.ultimate_cooldown as string);
                     return ultCooldown / 100;
                 }),
@@ -135,8 +135,8 @@ export class InGameUltimateCountdownWindowComponent implements OnInit, OnDestroy
     private calcReadyDate(percent: number, history: UltimateProgress[], date: Date): Date | undefined {
         const timestamps = history.map((h) => h.timestamp.getTime());
         const percents = history.map((h) => h.percent);
-        this.avgTimestampRate = (this.avgTimestampRate + timestamps.averageRate()) / 2;
-        this.avgPercentRate = (this.avgPercentRate + percents.averageRate()) / 2;
+        this.avgTimestampRate = (this.avgTimestampRate + averageRate(timestamps)) / 2;
+        this.avgPercentRate = (this.avgPercentRate + averageRate(percents)) / 2;
         const percentRemaining = 1 - percent;
 
         const avgRemaining = (percentRemaining / (this.avgPercentRate * this.avgTimestampRate)) * this.avgTimestampRate;
