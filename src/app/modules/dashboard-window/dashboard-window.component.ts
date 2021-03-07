@@ -19,6 +19,7 @@ import { merge, Subject } from "rxjs";
 import { delay, filter, takeUntil, tap } from "rxjs/operators";
 import { JSONTryParse } from "src/utilities";
 import { BackgroundService } from "../background/background.service";
+import { InGameDamageCollectorWindowService } from "../in-game-damage-collector-window/in-game-damage-collector-window.service";
 import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
 import { InGameUltTimerWindowService } from "../in-game-ult-timer-window/in-game-ult-timer-window.service";
 
@@ -56,8 +57,9 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     constructor(
         private readonly backgroundService: BackgroundService,
         private readonly cdr: ChangeDetectorRef,
+        private readonly damageCollectorWindow: InGameDamageCollectorWindowService,
         private readonly googleFormsMatchSummaryTracker: GoogleFormsMatchSummaryTrackerService,
-        private readonly inGameUltimateCooldownWindow: InGameUltTimerWindowService,
+        private readonly inGameUltTimerWindow: InGameUltTimerWindowService,
         private readonly matchTimerWindow: InGameMatchTimerWindowService,
         private readonly overwolfDataProvider: OverwolfDataProviderService,
         private readonly overwolfExposedData: OverwolfExposedDataService,
@@ -86,11 +88,15 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     }
 
     public onOpenUltTimerClick(): void {
-        this.inGameUltimateCooldownWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
+        this.inGameUltTimerWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
     }
 
     public onOpenMatchTimerClick(): void {
         this.matchTimerWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
+    }
+
+    public onOpenDamageCollectorClick(): void {
+        this.damageCollectorWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
     }
 
     public onInjectLogClick(): void {

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/
 import { merge, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { DashboardWindowService } from "../dashboard-window/dashboard-window.service";
+import { InGameDamageCollectorWindowService } from "../in-game-damage-collector-window/in-game-damage-collector-window.service";
 import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
 import { InGameUltTimerWindowService } from "../in-game-ult-timer-window/in-game-ult-timer-window.service";
 import { BackgroundService } from "./background.service";
@@ -15,8 +16,9 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     private readonly _unsubscribe = new Subject<void>();
 
     constructor(
-        private readonly dashboardWindow: DashboardWindowService,
         private readonly backgroundService: BackgroundService,
+        private readonly damageCollectorWindow: InGameDamageCollectorWindowService,
+        private readonly dashboardWindow: DashboardWindowService,
         private readonly matchTimerWindow: InGameMatchTimerWindowService,
         private readonly ultTimerWindow: InGameUltTimerWindowService
     ) {}
@@ -32,7 +34,12 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     }
 
     private registerUIWindows(): void {
-        merge(this.dashboardWindow.open(), this.matchTimerWindow.open(), this.ultTimerWindow.open())
+        merge(
+            this.dashboardWindow.open(),
+            this.damageCollectorWindow.open(),
+            this.matchTimerWindow.open(),
+            this.ultTimerWindow.open()
+        )
             .pipe(takeUntil(this._unsubscribe))
             .subscribe();
     }

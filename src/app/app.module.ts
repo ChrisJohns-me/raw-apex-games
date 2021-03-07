@@ -5,6 +5,7 @@ import { AppComponent } from "./app.component";
 import { BackgroundModule } from "./modules/background/background.module";
 import { CoreModule } from "./modules/core/core.module";
 import { DashboardWindowModule } from "./modules/dashboard-window/dashboard-window.module";
+import { InGameDamageCollectorWindowModule } from "./modules/in-game-damage-collector-window/in-game-damage-collector-window.module";
 import { InGameMatchTimerWindowModule } from "./modules/in-game-match-timer-window/in-game-match-timer-window.module";
 import { InGameUltTimerWindowModule } from "./modules/in-game-ult-timer-window/in-game-ult-timer-window.module";
 
@@ -16,6 +17,7 @@ import { InGameUltTimerWindowModule } from "./modules/in-game-ult-timer-window/i
         CoreModule,
         DashboardWindowModule,
         HttpClientModule,
+        InGameDamageCollectorWindowModule,
         InGameMatchTimerWindowModule,
         InGameUltTimerWindowModule,
     ],

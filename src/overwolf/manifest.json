@@ -91,6 +91,27 @@
                     "width": 200,
                     "height": 50
                 }
+            },
+            "in-game-damage-collector": {
+                "file": "index.html",
+                "in_game_only": false,
+                "resizable": false,
+                "transparent": true,
+                "show_in_taskbar": false,
+                "mute": true,
+                "popup_blocker": true,
+                "size": {
+                    "width": 500,
+                    "height": 500
+                },
+                "min_size": {
+                    "width": 500,
+                    "height": 500
+                },
+                "max_size": {
+                    "width": 500,
+                    "height": 500
+                }
             }
         },
         "game_targeting": {
