@@ -4,6 +4,7 @@
     [isTitlebarDraggable]="true"
     [isContentDraggable]="false"
 >
+    <button (click)="onSimulateCPULoadClick(10000)">Simulate CPU Load</button>
     <button (click)="onOpenUltimateCountdownClick()">Open Ultimate Countdown</button>
     <button (click)="onOpenMatchTimerClick()">Open Match Timer</button>
     <button (click)="onForceRefreshClick()">Force Refresh</button>
@@ -38,6 +39,10 @@
             <div>
                 <h2>Player Location</h2>
                 <p class="log">{{ playerLocation }}</p>
+            </div>
+            <div>
+                <h2>Ultimate</h2>
+                <p class="log">{{ ultimatePercent | percent: "0.0-0" }}</p>
             </div>
             <div>
                 <h2>Match Time</h2>

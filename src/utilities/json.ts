@@ -1,8 +1,4 @@
-declare interface JSON {
-    tryParse<T>(text?: string): T | undefined;
-}
-
-JSON.tryParse = function <T>(text?: string): T | undefined {
+export function JSONTryParse<T = AnyObject>(text?: string): T | undefined {
     if (!text || !text.length) return undefined;
     try {
         return JSON.parse(text);
@@ -10,4 +6,4 @@ JSON.tryParse = function <T>(text?: string): T | undefined {
         console.error(error);
         return undefined;
     }
-};
+}

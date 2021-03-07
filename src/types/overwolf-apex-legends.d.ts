@@ -16,7 +16,10 @@ declare namespace overwolf.gep.ApexLegends {
         attackerName: string;
         victimName: string;
         weaponName: string;
-        action: "kill" | "knockdown" | "assist" | "Bleed Out" | "Melee";
+        // "Caustic Gas" ~= "knockdown"
+        // "Melee" ~= "knockdown"
+        // "Bleed Out" ~= "kill"
+        action: "kill" | "knockdown" | "assist" | "Bleed Out" | "Melee" | "Caustic Gas" | "headshot_kill";
     }
 
     interface ApexLegendsGameEventKnockdown {
@@ -24,14 +27,16 @@ declare namespace overwolf.gep.ApexLegends {
     }
 
     interface ApexLegendsEventData {
-        match_start: string;
-        kill_feed: string | ApexLegendsGameEventKillFeed;
         damage: string | ApexLegendsGameEventDamage;
         death: string;
-        knocked_out: string | ApexLegendsGameEventKnockdown;
         healed_from_ko: string;
-        respawn: string;
+        kill_feed: string | ApexLegendsGameEventKillFeed;
+        kill: string;
+        knockdown: string;
+        knocked_out: string | ApexLegendsGameEventKnockdown;
         match_end: string;
+        match_start: string;
+        respawn: string;
     }
 
     // --------------------------------------------------------------------------
@@ -134,7 +139,7 @@ declare namespace overwolf.gep.ApexLegends {
 
     interface ApexLegendsMatchInfoMatchSummary {
         rank: string | number; // Position active player's squad reached
-        teams: string | number; // TODO: Remaining teams? Or starting teams?
+        teams: string | number; // Remaining teams
         squadKills: string | number;
     }
 
@@ -161,22 +166,22 @@ declare namespace overwolf.gep.ApexLegends {
     }
 
     enum ApexLegendsGameInfoKey {
+        Damage = "damage",
         Death = "death",
+        Inventory = "inventory",
         Kill = "kill",
-        MatchState = "match_state",
-        Me = "me",
-        Revive = "revive",
-        Team = "team",
-        Roster = "roster",
         KillFeed = "kill_feed",
-        Rank = "rank",
-        MatchSummary = "match_summary",
         Location = "location",
         MatchInfo = "match_info",
+        MatchState = "match_state",
+        MatchSummary = "match_summary",
+        Me = "me",
         Phase = "phase",
+        Rank = "rank",
+        Revive = "revive",
+        Roster = "roster",
+        Team = "team",
         Victory = "victory",
-        Damage = "damage",
-        Inventory = "inventory",
     }
 
     interface ApexLegendsInfoUpdates extends overwolf.games.events.InfoUpdate2 {

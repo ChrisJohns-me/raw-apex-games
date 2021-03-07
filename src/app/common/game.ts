@@ -21,13 +21,28 @@ export type GameEvent = overwolf.gep.ApexLegends.ApexLegendsGameEventData | unde
 export type NewGameEvents = overwolf.gep.ApexLegends.ApexLegendsNewGameEvents | undefined;
 export type SquadmatePlayer = overwolf.gep.ApexLegends.ApexLegendsMatchInfoLegendSelect | undefined;
 export type TeammateMatchInfo = overwolf.gep.ApexLegends.ApexLegendsMatchInfoTeammate | undefined;
+
 export interface MapCoordinates {
     x: number;
     y: number;
     z: number;
 }
+
 export interface GameTime {
     start?: Date;
     end?: Date;
     durationMs: number;
+}
+
+export enum PlatformHardware {
+    Xbox = 0,
+    PlayStation = 1,
+    PC = 2,
+}
+
+export enum PlatformSoftware {
+    Xbox = 0,
+    PlayStation = 1,
+    Origin = 2,
+    Steam = 7,
 }

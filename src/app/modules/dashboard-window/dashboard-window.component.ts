@@ -3,7 +3,9 @@ import { getFriendlyLegendName } from "@common/legend";
 import { GameEventsService } from "@core/game";
 import { differenceInMilliseconds, format } from "date-fns";
 import { Subject } from "rxjs";
-import { takeUntil, tap } from "rxjs/operators";
+import { filter, map, takeUntil, tap } from "rxjs/operators";
+import { JSONTryParse } from "src/utilities";
+import { cpuLoad } from "src/utilities/cpu-load";
 import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
 import { InGameUltimateCountdownWindowService } from "../in-game-ultimate-countdown-window/in-game-ultimate-countdown-window.service";
 
@@ -27,6 +29,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     public playerLegend = "";
     public playerLocation = "";
     public playerSquadmates = "";
+    public ultimatePercent = 0;
 
     public get matchDurationDate(): Date | undefined {
         return this.matchDurationMs ? new Date(this.matchDurationMs) : undefined;
@@ -51,6 +54,13 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     public ngOnDestroy(): void {
         this._unsubscribe.next();
         this._unsubscribe.complete();
+    }
+
+    public onSimulateCPULoadClick(duration: number): void {
+        const delay = 5000;
+        setTimeout(() => {
+            cpuLoad(duration);
+        }, delay);
     }
 
     public onInjectInfoCmdClick(): void {
@@ -84,7 +94,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     private __injectCmdFn(name: string, eventFn: (event: any, delayMs: number) => void): void {
         let delayMs = 250;
         const inputInject = prompt(`Inject ${name} (JSON)`, "");
-        const inputInjectParsed = JSON.tryParse(inputInject ?? "");
+        const inputInjectParsed = JSONTryParse(inputInject ?? "");
 
         if (!inputInjectParsed) {
             console.error("Unexpected data.", inputInject, inputInjectParsed);
@@ -125,7 +135,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
                 const commandMatch = line.match(matchRegEx)?.[2];
                 if (!timestampMatch || !commandMatch) return;
                 const timestamp = new Date("Jan 1, 2020 " + timestampMatch);
-                const command = JSON.tryParse(commandMatch);
+                const command = JSONTryParse(commandMatch);
                 return { timestamp, command };
             })
             .filter((cmd) => !!cmd && !!cmd.command && !!cmd.timestamp) as Command[];
@@ -144,6 +154,35 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     }
 
     private registerGameEvents(): void {
+        // TODO: Cleanup. Possibly moving stuff into this `merge()`
+        // merge(
+        //     this.gameEvents.gameProcessUpdate$,
+        //     this.gameEvents.gameInfo$,
+        //     this.gameEvents.gameEvent$,
+        //     this.gameEvents.gameStage$,
+        //     this.gameEvents.gameMode$,
+        //     this.gameEvents.gameMapName$,
+        //     this.gameEvents.gameMatchTime$,
+        //     this.gameEvents.playerName$,
+        //     this.gameEvents.playerLegend$,
+        //     this.gameEvents.playerInGameLocation$,
+        //     this.gameEvents.playerSquadmates$,
+        // ).pipe(
+        //     takeUntil(this._unsubscribe),
+        //     tap((event) => (this.gameProcessInfoList = createLogItem(event) + this.gameProcessInfoList)),
+        //     tap((event) => (this.gameInfoList = createLogItem(event) + this.gameInfoList)),
+        //     tap((event) => (this.gameEventList = createLogItem(event) + this.gameEventList)),
+        //     tap((stage) => (this.gameStage = stage)),
+        //     tap((event) => (this.gameMode = event)),
+        //     tap((mapName) => (this.gameMapName = mapName)),
+        //     tap((matchTime) => (this.matchStartDate = matchTime.start)),,
+        //     tap((matchTime) => (this.matchEndDate = matchTime.end)),,
+        //     tap((matchTime) => (this.matchDurationMs = matchTime.durationMs)),
+        //     tap((event) => (this.playerName = event)),
+        //     tap((event) => (this.playerLegend = event)),
+        //     tap((event) => (this.playerLocation = JSON.stringify(event))),
+        // ).subscribe(() => this.cdr.detectChanges());
+
         // Game Process Updates
         this.gameEvents.gameProcessUpdate$
             .pipe(
@@ -223,6 +262,22 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this._unsubscribe),
                 tap((event) => (this.playerLocation = JSON.stringify(event)))
+            )
+            .subscribe(() => this.cdr.detectChanges());
+
+        // Ultimate Percent
+        type MeUltimateCooldown = overwolf.gep.ApexLegends.ApexLegendsMatchInfoMeUltimateCooldown;
+        this.gameEvents.gameInfo$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                filter((infoData) => infoData?.feature === "me" && !!infoData.info.me?.ultimate_cooldown),
+                map((infoData) => {
+                    const ultCooldownJSON = infoData?.info.me?.ultimate_cooldown;
+                    const ultCooldownObj = JSONTryParse<MeUltimateCooldown>(ultCooldownJSON as string);
+                    const ultCooldown = parseInt(ultCooldownObj?.ultimate_cooldown as string);
+                    return ultCooldown / 100;
+                }),
+                tap((ultimatePercent) => (this.ultimatePercent = ultimatePercent))
             )
             .subscribe(() => this.cdr.detectChanges());
 

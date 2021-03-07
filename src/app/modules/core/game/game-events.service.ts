@@ -25,6 +25,7 @@ import {
     tap,
     throttleTime,
 } from "rxjs/operators";
+import { findPropertyByRegEx, JSONTryParse } from "src/utilities";
 
 const OW_REQUIRED_FEATURES_RETRY_COUNT = 10;
 const OW_REQUIRED_FEATURES_RETRY_DELAY = 1000 * 3;
@@ -181,7 +182,7 @@ export class GameEventsService implements OnDestroy {
             tap((infoData) => {
                 // Extract location data
                 if (infoData?.feature !== "location") return;
-                const locationData = JSON.tryParse<MapCoordinates>(infoData.info.match_info?.location as string);
+                const locationData = JSONTryParse<MapCoordinates>(infoData.info.match_info?.location as string);
                 const x = locationData ? parseInt((locationData.x as unknown) as string) : null;
                 const y = locationData ? parseInt((locationData.y as unknown) as string) : null;
                 const z = locationData ? parseInt((locationData.z as unknown) as string) : null;
@@ -197,12 +198,12 @@ export class GameEventsService implements OnDestroy {
             }),
             tap((infoData) => {
                 const matchInfo = infoData?.info.match_info;
-                const rawSquadmateUpdate = matchInfo?.findPropertyByRegEx<string>(/^legendSelect_/);
+                const rawSquadmateUpdate = findPropertyByRegEx<string>(matchInfo, /^legendSelect_/);
                 let squadmateUpdate: SquadmatePlayer | undefined;
 
                 if (
                     rawSquadmateUpdate?.length &&
-                    (squadmateUpdate = JSON.tryParse<SquadmatePlayer>(rawSquadmateUpdate)) != null
+                    (squadmateUpdate = JSONTryParse<SquadmatePlayer>(rawSquadmateUpdate)) != null
                 ) {
                     // Extract squadmate
                     const smExists = this._playerSquadmates.value.some(
@@ -373,7 +374,7 @@ export class GameEventsService implements OnDestroy {
             // Playlist was selected on the lobby screen, or a game has just ended
             return GameStage.Lobby;
         } else if (currentStage === GameStage.Lobby) {
-            if (feature === "team" && info?.match_info?.findPropertyByRegEx(/^legendSelect/)) {
+            if (feature === "team" && findPropertyByRegEx(info?.match_info, /^legendSelect/)) {
                 // A legend has been selected on the character selection screen
                 return GameStage.LegendSelection;
             }
@@ -384,7 +385,7 @@ export class GameEventsService implements OnDestroy {
             }
         } else if (currentStage === GameStage.InGameDropship) {
             if (feature === "location" && this.startingDropshipPlayerLocation && info?.match_info?.location) {
-                const locationData = JSON.tryParse<MapCoordinates>(info.match_info?.location as string);
+                const locationData = JSONTryParse<MapCoordinates>(info.match_info?.location as string);
                 const locationZ = locationData ? parseInt((locationData.z as unknown) as string) : null;
                 if (locationZ != null && locationZ < this.startingDropshipPlayerLocation.z) {
                     // Player has started dropping
@@ -404,12 +405,12 @@ export class GameEventsService implements OnDestroy {
             if (feature === "team") {
                 // Handle active player's status
                 const activePlayerName = this._playerName.value;
-                const rawTeammateUpdate = info?.match_info?.findPropertyByRegEx<string>(/^teammate_/);
+                const rawTeammateUpdate = findPropertyByRegEx<string>(info?.match_info, /^teammate_/);
                 let teammateUpdate: TeammateMatchInfo | undefined;
 
                 if (
                     rawTeammateUpdate &&
-                    (teammateUpdate = JSON.tryParse<TeammateMatchInfo>(rawTeammateUpdate)) != null &&
+                    (teammateUpdate = JSONTryParse<TeammateMatchInfo>(rawTeammateUpdate)) != null &&
                     teammateUpdate.name === activePlayerName
                 ) {
                     if (teammateUpdate.state === "alive") {
