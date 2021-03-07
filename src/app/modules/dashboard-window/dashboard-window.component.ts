@@ -5,7 +5,6 @@ import { differenceInMilliseconds, format } from "date-fns";
 import { Subject } from "rxjs";
 import { filter, map, takeUntil, tap } from "rxjs/operators";
 import { JSONTryParse } from "src/utilities";
-import { cpuLoad } from "src/utilities/cpu-load";
 import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
 import { InGameUltimateCountdownWindowService } from "../in-game-ultimate-countdown-window/in-game-ultimate-countdown-window.service";
 
@@ -54,13 +53,6 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     public ngOnDestroy(): void {
         this._unsubscribe.next();
         this._unsubscribe.complete();
-    }
-
-    public onSimulateCPULoadClick(duration: number): void {
-        const delay = 5000;
-        setTimeout(() => {
-            cpuLoad(duration);
-        }, delay);
     }
 
     public onInjectInfoCmdClick(): void {
