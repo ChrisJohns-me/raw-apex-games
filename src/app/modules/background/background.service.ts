@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
 import { getFriendlyGameMode } from "@common/game-mode";
 import { getFriendlyLegendName } from "@common/legend";
+import { getFriendlyMapName } from "@common/map";
 import { Observable, of, ReplaySubject, Subject } from "rxjs";
 import { catchError, delay, map, retryWhen, take, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
@@ -54,7 +55,7 @@ export class BackgroundService implements OnDestroy {
 
         const params = {
             "entry.894638192": getFriendlyLegendName(matchSummary.legend) ?? "",
-            "entry.424316428": matchSummary.map ?? "",
+            "entry.424316428": getFriendlyMapName(matchSummary.map) ?? "",
             "entry.606820101": getFriendlyGameMode(matchSummary.gameMode) ?? "",
             "entry.2001849655": String(matchSummary.placement ?? ""),
             "entry.1889749617": String(matchSummary.damage ?? ""),

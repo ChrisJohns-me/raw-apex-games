@@ -98,7 +98,7 @@ export class GameEventsService implements OnDestroy {
 
     private readonly _unsubscribe = new Subject<void>();
 
-    private tempIdentifier = String(Math.floor(Math.random() * 10000000));
+    public tempIdentifier = String(Math.floor(Math.random() * 10000000));
     constructor() {
         console.debug(`[${this.constructor.name}:${this.tempIdentifier}] instantiated`);
 
@@ -106,7 +106,17 @@ export class GameEventsService implements OnDestroy {
 
         this.gameProcessUpdate$ = this._gameProcessUpdate.pipe(share());
         this.gameMode$ = this._gameMode.pipe(share());
-        this.gameStage$ = this._gameStage.pipe(share());
+        this.gameStage$ = this._gameStage.pipe(
+            tap((gameStage) => {
+                console.log(`[${this.constructor.name}](Game Stage): ${gameStage}`);
+                if (gameStage === GameStage.Lobby) {
+                    delete this.startingDropshipPlayerLocation;
+                    this.hasLandedFromDropship = false;
+                    this._playerSquadmates.next([]);
+                }
+            }),
+            share()
+        );
         this.gameMatchTime$ = this._gameInfo.pipe(
             filter((infoData) => infoData?.feature === "match_state"),
             map((infoData) => infoData?.info?.game_info?.match_state),
@@ -159,8 +169,13 @@ export class GameEventsService implements OnDestroy {
         this.playerLegend$ = this._playerLegend.pipe(share());
         this.playerInGameLocation$ = this._rawPlayerLocation.pipe(
             tap((pos) => {
-                if (!this.startingDropshipPlayerLocation) this.startingDropshipPlayerLocation = pos;
-                if (this._gameStage.value === GameStage.InGame) this.hasLandedFromDropship = true;
+                if (!this.startingDropshipPlayerLocation) {
+                    console.log(`[${this.constructor.name}](Starting Dropship Position):`, pos);
+                    this.startingDropshipPlayerLocation = pos;
+                }
+                if (this._gameStage.value === GameStage.InGame) {
+                    this.hasLandedFromDropship = true;
+                }
             }),
             filter(() => !!this.hasLandedFromDropship), // output locations only after player has landed
             share()
@@ -236,14 +251,8 @@ export class GameEventsService implements OnDestroy {
             tap((infoData) => {
                 // Extract game mode
                 const gameMode = infoData?.info.match_info?.game_mode;
-                if (gameMode && gameMode !== this._gameMode.value) this._gameMode.next(gameMode);
-            }),
-            tap(() => {
-                // Reset if match is over
-                if (this._gameStage.value !== GameStage.Lobby) return;
-                delete this.startingDropshipPlayerLocation;
-                this.hasLandedFromDropship = false;
-                this._playerSquadmates.next([]);
+                if (gameMode && gameMode !== this._gameMode.value && gameMode.indexOf("nametext") == -1)
+                    this._gameMode.next(gameMode);
             }),
             share()
         );
@@ -372,18 +381,21 @@ export class GameEventsService implements OnDestroy {
             (feature === "match_info" && info?.match_info?.game_mode) ||
             (feature === "match_state" && info?.game_info?.match_state === "inactive")
         ) {
+            console.debug(`${[this.constructor.name]}(Game Stage): Lobby`);
             // Playlist was selected on the lobby screen, or a game has just ended
             return GameStage.Lobby;
         }
 
         // Legend Selection
         if (feature === "team" && findPropertyByRegEx(info?.match_info, /^legendSelect/)) {
+            console.debug(`${[this.constructor.name]}(Game Stage): Legend Selection`);
             // A legend has been selected on the character selection screen
             return GameStage.LegendSelection;
         }
 
         // In Game Dropship
         if (feature === "match_state" && info?.game_info?.match_state === "active") {
+            console.debug(`${[this.constructor.name]}(Game Stage): In Game Dropship`);
             // Match has started
             return GameStage.InGameDropship;
         }
@@ -398,6 +410,7 @@ export class GameEventsService implements OnDestroy {
             const locationData = JSONTryParse<MapCoordinates>(info.match_info?.location as string);
             const locationZ = locationData ? parseInt((locationData.z as unknown) as string) : null;
             if (locationZ != null && locationZ < this.startingDropshipPlayerLocation.z) {
+                console.debug(`${[this.constructor.name]}(Game Stage): In Game Dropping`);
                 // Player has started dropping
                 return GameStage.InGameDropping;
             }
@@ -405,6 +418,7 @@ export class GameEventsService implements OnDestroy {
 
         // In Game
         if (currentStage === GameStage.InGameDropping && feature === "inventory" && info?.me?.inUse) {
+            console.debug(`${[this.constructor.name]}(Game Stage): In Game`);
             // Player has landed
             return GameStage.InGame;
         }
@@ -427,11 +441,14 @@ export class GameEventsService implements OnDestroy {
                 teammateUpdate.name === activePlayerName
             ) {
                 if (teammateUpdate.state === "alive") {
+                    console.debug(`${[this.constructor.name]}(Game Stage): In Game 2`);
                     // Active player has been revived
                     return GameStage.InGame;
                 } else if (teammateUpdate.state === "knockedout") {
+                    console.debug(`${[this.constructor.name]}(Game Stage): In Game Knocked`);
                     return GameStage.InGameKnocked;
                 } else if (teammateUpdate.state === "dead") {
+                    console.debug(`${[this.constructor.name]}(Game Stage): In Game Dead`);
                     return GameStage.InGameSpectating;
                 }
             }

@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { getFriendlyGameMode } from "@common/game-mode";
 import { getFriendlyLegendName } from "@common/legend";
+import { getFriendlyMapName } from "@common/map";
 import { GameEventsService } from "@core/game";
-import { differenceInMilliseconds, format } from "date-fns";
+import { differenceInMilliseconds } from "date-fns";
 import { Subject } from "rxjs";
 import { delay, filter, map, takeUntil, tap } from "rxjs/operators";
 import { JSONTryParse } from "src/utilities";
@@ -141,7 +142,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
                 const timestampMatch = line.match(matchRegEx)?.[1];
                 const commandMatch = line.match(matchRegEx)?.[2];
                 if (!timestampMatch || !commandMatch) return;
-                const timestamp = new Date("Jan 1, 2020 " + timestampMatch);
+                const timestamp = new Date(timestampMatch);
                 const command = JSONTryParse(commandMatch);
                 return { timestamp, command };
             })
@@ -234,7 +235,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this.gameEvents.gameMapName$
             .pipe(
                 takeUntil(this._unsubscribe),
-                tap((mapName) => (this.gameMapName = mapName))
+                tap((mapName) => (this.gameMapName = getFriendlyMapName(mapName)))
             )
             .subscribe(() => this.cdr.detectChanges());
 
@@ -260,7 +261,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this.gameEvents.playerLegend$
             .pipe(
                 takeUntil(this._unsubscribe),
-                tap((event) => (this.playerLegend = event))
+                tap((legend) => (this.playerLegend = getFriendlyLegendName(legend)))
             )
             .subscribe(() => this.cdr.detectChanges());
 
@@ -306,13 +307,19 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
 
     private registerBackgroundEvents(): void {
         const showReportedDuration = 120 * 1000;
+
+        const hasTrackedFn = (value: boolean): void => {
+            this.hasRecentlyTrackedMatchSummary = value;
+            this.cdr.detectChanges();
+        };
+
         this.backgroundService.lastMatchSummary
             .pipe(
                 takeUntil(this._unsubscribe),
                 filter((matchSummary) => !!matchSummary && !!matchSummary.legend && (matchSummary.placement ?? 0) > 0),
-                tap(() => (this.hasRecentlyTrackedMatchSummary = true)),
+                tap(() => hasTrackedFn(true)),
                 delay(showReportedDuration),
-                tap(() => (this.hasRecentlyTrackedMatchSummary = false))
+                tap(() => hasTrackedFn(false))
             )
             .subscribe();
     }
@@ -320,7 +327,6 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
 
 function createLogItem(input: any): string {
     const now = new Date();
-    const dateStr = format(now, "h:mm:ss.SSS");
     const eventStr = JSON.stringify(input);
-    return `[${dateStr}] ${eventStr}\n`;
+    return `[${now.getTime()}] ${eventStr}\n`;
 }

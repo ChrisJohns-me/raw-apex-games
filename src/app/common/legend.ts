@@ -3,12 +3,11 @@
  * @param keyName "#character_bangalore_NAME"
  * @returns "bangalore"
  */
-export function getFriendlyLegendName(keyName?: string): string {
-    if (!keyName) return "";
-    const prefix = "#character_";
-    const suffix = "_NAME";
-    const regEx = new RegExp(prefix + "(.+?)" + suffix);
-    const matches = keyName.match(regEx);
-    const legendName = matches?.[1];
-    return legendName ?? "";
+export function getFriendlyLegendName(legendName?: string): string {
+    if (!legendName) return "";
+    let newLegendName = legendName.toLowerCase();
+    newLegendName = newLegendName.replace(/#character_/g, "");
+    newLegendName = newLegendName.replace(/_name/g, "");
+    newLegendName = newLegendName.replace(/_/g, " ");
+    return newLegendName ?? "";
 }

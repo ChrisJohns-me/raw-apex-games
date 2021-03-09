@@ -1,5 +1,17 @@
 import { MapCoordinates } from "./game";
 
+/**
+ * Extracts map's name from key value.
+ * @param keyName "kings_canyon"
+ * @returns "kings canyon"
+ */
+export function getFriendlyMapName(mapName?: string): string {
+    if (!mapName) return "";
+    let newMapName = mapName.toLowerCase();
+    newMapName = newMapName.replace(/_/g, " ");
+    return newMapName ?? "";
+}
+
 // TODO: Refactor to pull this data from the remote API.
 export enum GameMapName {
     KingsCanyon = "kings_canyon",
