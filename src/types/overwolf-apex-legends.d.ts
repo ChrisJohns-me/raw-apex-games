@@ -146,7 +146,7 @@ declare namespace overwolf.gep.ApexLegends {
     interface ApexLegendsMatchInfo {
         pseudo_match_id?: string;
         game_mode?: ApexLegendsGameMode;
-        tabs?: ApexLegendsMatchInfoTabs;
+        tabs?: string | ApexLegendsMatchInfoTabs;
         team_info?: "active" | "eliminated";
         match_summary?: string | ApexLegendsMatchInfoMatchSummary;
         location?: string | ApexLegendsMatchInfoLocation;

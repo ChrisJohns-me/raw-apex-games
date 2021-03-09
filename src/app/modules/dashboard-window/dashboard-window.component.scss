@@ -35,3 +35,30 @@ h2 {
     height: 85%;
     box-sizing: border-box;
 }
+
+.control-bar {
+    display: flex;
+    align-items: center;
+
+    * {
+        flex: 0 0 auto;
+    }
+
+    &-right {
+        margin-left: auto;
+        margin-right: 1rem;
+    }
+}
+
+.pulse {
+    animation: pulse 750ms alternate infinite;
+}
+
+@keyframes pulse {
+    from {
+        opacity: 100%;
+    }
+    to {
+        opacity: 0%;
+    }
+}

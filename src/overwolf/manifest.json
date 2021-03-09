@@ -128,12 +128,13 @@
                 "https://discord.gg/v5cfBTq",
                 "https://twitter.com/",
                 "https://www.facebook.com",
-                "https://www.reddit.com"
+                "https://www.reddit.com",
+                "https://*.google.com"
             ]
         },
         "force_browser": "user",
         "developer": {
-            "enable_auto_refresh": true,
+            "enable_auto_refresh": false,
             "reload_delay": 1000,
             "filter": "*.*"
         }

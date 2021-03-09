@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { getFriendlyGameMode } from "@common/game-mode";
 import { getFriendlyLegendName } from "@common/legend";
 import { GameEventsService } from "@core/game";
 import { differenceInMilliseconds, format } from "date-fns";
 import { Subject } from "rxjs";
-import { filter, map, takeUntil, tap } from "rxjs/operators";
+import { delay, filter, map, takeUntil, tap } from "rxjs/operators";
 import { JSONTryParse } from "src/utilities";
+import { BackgroundService } from "../background/background.service";
 import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
 import { InGameUltimateCountdownWindowService } from "../in-game-ultimate-countdown-window/in-game-ultimate-countdown-window.service";
 
@@ -17,6 +19,14 @@ import { InGameUltimateCountdownWindowService } from "../in-game-ultimate-countd
 export class DashboardWindowComponent implements OnInit, OnDestroy {
     public primaryTitle = "Dashboard";
     public secondaryTitle = "";
+
+    public hasRecentlyTrackedMatchSummary = false;
+    public get isTrackingEnabled(): boolean {
+        return this.backgroundService.isTrackingEnabled;
+    }
+    public set isTrackingEnabled(value: boolean) {
+        this.backgroundService.setTrackingEnabled(value);
+    }
 
     public gameProcessInfoList = "";
     public gameInfoList = "";
@@ -40,6 +50,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     private _unsubscribe = new Subject<void>();
 
     constructor(
+        private readonly backgroundService: BackgroundService,
         private readonly cdr: ChangeDetectorRef,
         private readonly gameEvents: GameEventsService,
         private readonly inGameUltimateCooldownWindow: InGameUltimateCountdownWindowService,
@@ -48,6 +59,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
 
     public ngOnInit(): void {
         this.registerGameEvents();
+        this.registerBackgroundEvents();
     }
 
     public ngOnDestroy(): void {
@@ -84,6 +96,8 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     }
 
     private __injectCmdFn(name: string, eventFn: (event: any, delayMs: number) => void): void {
+        this.isTrackingEnabled = false;
+
         let delayMs = 250;
         const inputInject = prompt(`Inject ${name} (JSON)`, "");
         const inputInjectParsed = JSONTryParse(inputInject ?? "");
@@ -102,6 +116,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     }
 
     private __injectLogFn(name: string, eventFn: (event: Record<string, any>, delay: number) => void): void {
+        this.isTrackingEnabled = false;
         interface Command {
             timestamp: Date;
             command: unknown;
@@ -211,7 +226,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this.gameEvents.gameMode$
             .pipe(
                 takeUntil(this._unsubscribe),
-                tap((event) => (this.gameMode = event))
+                tap((event) => (this.gameMode = getFriendlyGameMode(event)))
             )
             .subscribe(() => this.cdr.detectChanges());
 
@@ -287,6 +302,19 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
                 })
             )
             .subscribe(() => this.cdr.detectChanges());
+    }
+
+    private registerBackgroundEvents(): void {
+        const showReportedDuration = 120 * 1000;
+        this.backgroundService.lastMatchSummary
+            .pipe(
+                takeUntil(this._unsubscribe),
+                filter((matchSummary) => !!matchSummary && !!matchSummary.legend && (matchSummary.placement ?? 0) > 0),
+                tap(() => (this.hasRecentlyTrackedMatchSummary = true)),
+                delay(showReportedDuration),
+                tap(() => (this.hasRecentlyTrackedMatchSummary = false))
+            )
+            .subscribe();
     }
 }
 

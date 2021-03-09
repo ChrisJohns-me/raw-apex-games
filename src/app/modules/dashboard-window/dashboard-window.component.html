@@ -4,9 +4,16 @@
     [isTitlebarDraggable]="true"
     [isContentDraggable]="false"
 >
-    <button (click)="onOpenUltimateCountdownClick()">Open Ultimate Countdown</button>
-    <button (click)="onOpenMatchTimerClick()">Open Match Timer</button>
-    <button (click)="onForceRefreshClick()">Force Refresh</button>
+    <div class="control-bar">
+        <button (click)="onOpenUltimateCountdownClick()">Open Ultimate Countdown</button>
+        <button (click)="onOpenMatchTimerClick()">Open Match Timer</button>
+        <button (click)="onForceRefreshClick()">Force Refresh</button>
+        <button (click)="isTrackingEnabled = !isTrackingEnabled">
+            {{ isTrackingEnabled ? "🟢 Tracking Is On" : "❌ Tracking Is Off" }}
+        </button>
+
+        <span class="control-bar-right pulse" *ngIf="hasRecentlyTrackedMatchSummary">✔️ Last Match Tracked</span>
+    </div>
 
     <section class="pane-container">
         <div class="pane" style="min-width: 175px; flex: 1 1 50%">

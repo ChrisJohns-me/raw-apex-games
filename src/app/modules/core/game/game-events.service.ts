@@ -11,7 +11,6 @@ import {
     TeammateMatchInfo,
 } from "@common/game";
 import { GameMapName, GameMaps } from "@common/map";
-import { SingletonServiceProviderFactory } from "@core/singleton-service.provider.factory";
 import { BehaviorSubject, from, interval, Observable, of, ReplaySubject, Subject, throwError } from "rxjs";
 import {
     catchError,
@@ -25,6 +24,7 @@ import {
     tap,
     throttleTime,
 } from "rxjs/operators";
+import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { findPropertyByRegEx, JSONTryParse } from "src/utilities";
 
 const OW_REQUIRED_FEATURES_RETRY_COUNT = 10;
@@ -148,7 +148,9 @@ export class GameEventsService implements OnDestroy {
                 });
 
                 if (!gameMap)
-                    console.warn(`Unable to map the dropship's z-position to any known maps. (z: ${startingZ})`);
+                    console.warn(
+                        `Unable to map the dropship's starting z-position to any known maps. (z: ${startingZ})`
+                    );
                 return gameMap?.name ?? "";
             }),
             share()
@@ -340,7 +342,6 @@ export class GameEventsService implements OnDestroy {
      * @param infoUpdate
      */
     private onInfoUpdates(infoUpdate: GameInfo): void {
-        console.debug(`[${this.constructor.name}:${this.tempIdentifier}] onInfoUpdates`);
         if (!infoUpdate) {
             console.warn("Unrecognized info.", infoUpdate);
             return;
@@ -353,7 +354,6 @@ export class GameEventsService implements OnDestroy {
      * @param newGameEvent
      */
     private onNewEvents(newGameEvent: NewGameEvents): void {
-        console.debug(`[${this.constructor.name}:${this.tempIdentifier}] onNewEvents`);
         const events = newGameEvent?.events;
         if (!events || !Array.isArray(events)) {
             console.warn("Unrecognized event.", events);
@@ -367,60 +367,72 @@ export class GameEventsService implements OnDestroy {
         const info = infoEvent?.info;
         const feature = infoEvent?.feature;
 
+        // Lobby
         if (
             (feature === "match_info" && info?.match_info?.game_mode) ||
             (feature === "match_state" && info?.game_info?.match_state === "inactive")
         ) {
             // Playlist was selected on the lobby screen, or a game has just ended
             return GameStage.Lobby;
-        } else if (currentStage === GameStage.Lobby) {
-            if (feature === "team" && findPropertyByRegEx(info?.match_info, /^legendSelect/)) {
-                // A legend has been selected on the character selection screen
-                return GameStage.LegendSelection;
-            }
-        } else if (currentStage === GameStage.LegendSelection) {
-            if (feature === "match_state" && info?.game_info?.match_state === "active") {
-                // Match has started
-                return GameStage.InGameDropship;
-            }
-        } else if (currentStage === GameStage.InGameDropship) {
-            if (feature === "location" && this.startingDropshipPlayerLocation && info?.match_info?.location) {
-                const locationData = JSONTryParse<MapCoordinates>(info.match_info?.location as string);
-                const locationZ = locationData ? parseInt((locationData.z as unknown) as string) : null;
-                if (locationZ != null && locationZ < this.startingDropshipPlayerLocation.z) {
-                    // Player has started dropping
-                    return GameStage.InGameDropping;
-                }
-            }
-        } else if (currentStage === GameStage.InGameDropping) {
-            if (feature === "inventory" && info?.me?.inUse) {
-                // Player has landed
-                return GameStage.InGame;
-            }
-        } else if (
-            currentStage === GameStage.InGame ||
-            currentStage === GameStage.InGameKnocked ||
-            currentStage === GameStage.InGameSpectating
-        ) {
-            if (feature === "team") {
-                // Handle active player's status
-                const activePlayerName = this._playerName.value;
-                const rawTeammateUpdate = findPropertyByRegEx<string>(info?.match_info, /^teammate_/);
-                let teammateUpdate: TeammateMatchInfo | undefined;
+        }
 
-                if (
-                    rawTeammateUpdate &&
-                    (teammateUpdate = JSONTryParse<TeammateMatchInfo>(rawTeammateUpdate)) != null &&
-                    teammateUpdate.name === activePlayerName
-                ) {
-                    if (teammateUpdate.state === "alive") {
-                        // Active player has been revived
-                        return GameStage.InGame;
-                    } else if (teammateUpdate.state === "knockedout") {
-                        return GameStage.InGameKnocked;
-                    } else if (teammateUpdate.state === "dead") {
-                        return GameStage.InGameSpectating;
-                    }
+        // Legend Selection
+        if (feature === "team" && findPropertyByRegEx(info?.match_info, /^legendSelect/)) {
+            // A legend has been selected on the character selection screen
+            return GameStage.LegendSelection;
+        }
+
+        // In Game Dropship
+        if (feature === "match_state" && info?.game_info?.match_state === "active") {
+            // Match has started
+            return GameStage.InGameDropship;
+        }
+
+        // In Game Dropping
+        if (
+            currentStage === GameStage.InGameDropship &&
+            feature === "location" &&
+            this.startingDropshipPlayerLocation &&
+            info?.match_info?.location
+        ) {
+            const locationData = JSONTryParse<MapCoordinates>(info.match_info?.location as string);
+            const locationZ = locationData ? parseInt((locationData.z as unknown) as string) : null;
+            if (locationZ != null && locationZ < this.startingDropshipPlayerLocation.z) {
+                // Player has started dropping
+                return GameStage.InGameDropping;
+            }
+        }
+
+        // In Game
+        if (currentStage === GameStage.InGameDropping && feature === "inventory" && info?.me?.inUse) {
+            // Player has landed
+            return GameStage.InGame;
+        }
+
+        // In Game Knocked, In Game Spectating
+        if (
+            (currentStage === GameStage.InGame ||
+                currentStage === GameStage.InGameKnocked ||
+                currentStage === GameStage.InGameSpectating) &&
+            feature === "team"
+        ) {
+            // Handle active player's status
+            const activePlayerName = this._playerName.value;
+            const rawTeammateUpdate = findPropertyByRegEx<string>(info?.match_info, /^teammate_/);
+            let teammateUpdate: TeammateMatchInfo | undefined;
+
+            if (
+                rawTeammateUpdate &&
+                (teammateUpdate = JSONTryParse<TeammateMatchInfo>(rawTeammateUpdate)) != null &&
+                teammateUpdate.name === activePlayerName
+            ) {
+                if (teammateUpdate.state === "alive") {
+                    // Active player has been revived
+                    return GameStage.InGame;
+                } else if (teammateUpdate.state === "knockedout") {
+                    return GameStage.InGameKnocked;
+                } else if (teammateUpdate.state === "dead") {
+                    return GameStage.InGameSpectating;
                 }
             }
         }
@@ -429,14 +441,12 @@ export class GameEventsService implements OnDestroy {
     }
 
     private registerEvents(): void {
-        console.debug(`[${this.constructor.name}:${this.tempIdentifier}] registerEvents`);
         overwolf.games.onGameInfoUpdated.addListener((event) => this.onGameInfoUpdated(event));
         overwolf.games.events.onInfoUpdates2.addListener((event) => this.onInfoUpdates(event));
         overwolf.games.events.onNewEvents.addListener((event) => this.onNewEvents(event as any));
     }
 
     private unregisterEvents(): void {
-        console.debug(`[${this.constructor.name}:${this.tempIdentifier}] unregisterEvents`);
         overwolf.games.onGameInfoUpdated.removeListener((event) => this.onGameInfoUpdated(event));
         overwolf.games.events.onInfoUpdates2.removeListener((event) => this.onInfoUpdates(event));
         overwolf.games.events.onNewEvents.removeListener((event) => this.onNewEvents(event as any));
