@@ -72,6 +72,10 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     }
 
     private registerTracking(): void {
+        this.gameEvents.gameStage$.pipe(takeUntil(this._unsubscribe)).subscribe((gameStage) => {
+            console.log(`[${this.constructor.name}]GameStage; ${gameStage}`);
+        });
+
         let isTracking = false;
         let isReportTriggered = false;
         const tabs$ = this.gameEvents.gameInfo$.pipe(
