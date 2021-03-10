@@ -11,7 +11,17 @@ import {
     TeammateMatchInfo,
 } from "@common/game";
 import { GameMapName, GameMaps } from "@common/map";
-import { BehaviorSubject, from, interval, Observable, of, ReplaySubject, Subject, throwError } from "rxjs";
+import {
+    BehaviorSubject,
+    combineLatest,
+    from,
+    interval,
+    Observable,
+    of,
+    ReplaySubject,
+    Subject,
+    throwError,
+} from "rxjs";
 import {
     catchError,
     delay,
@@ -71,7 +81,7 @@ export class GameEventsService implements OnDestroy {
     /** In milliseconds */
     public gameMatchTime$: Observable<GameTime>;
     /** */
-    public playerName$: Observable<string>;
+    public playerName$ = new BehaviorSubject<string>("");
     /** Relies on playerNameEvent$ */
     public playerLegend$: Observable<string>;
     /** Player's location, once landed after dropship drop */
@@ -85,7 +95,6 @@ export class GameEventsService implements OnDestroy {
     // Inferred data
     private readonly _gameStage = new BehaviorSubject<GameStage>(GameStage.Lobby);
     private readonly _gameMode = new BehaviorSubject<string>("");
-    private readonly _playerName = new BehaviorSubject<string>("");
     private readonly _playerLegend = new BehaviorSubject<string>("");
     private readonly _rawPlayerLocation = new Subject<MapCoordinates>();
     private readonly _playerSquadmates = new BehaviorSubject<SquadmatePlayer[]>([]);
@@ -117,13 +126,20 @@ export class GameEventsService implements OnDestroy {
             }),
             share()
         );
-        this.gameMatchTime$ = this._gameInfo.pipe(
-            filter((infoData) => infoData?.feature === "match_state"),
-            map((infoData) => infoData?.info?.game_info?.match_state),
-            filter((matchState) => matchState === "active" || matchState === "inactive"),
-            map((matchState) => {
+        this.gameMatchTime$ = combineLatest(this._gameInfo, this._gameEvent).pipe(
+            map(([gameInfo, gameEvent]) => {
+                const started1 =
+                    gameInfo?.feature === "match_state" && gameInfo.info.game_info?.match_state === "active";
+                const started2 = gameEvent?.name === "match_start";
+                const ended1 =
+                    gameInfo?.feature === "match_state" && gameInfo.info.game_info?.match_state === "inactive";
+                const ended2 = gameEvent?.name === "match_end";
+                return [started1 || started2, ended1 || ended2];
+            }),
+            filter(([started, ended]) => started || ended),
+            map(([started]) => {
                 const now = new Date();
-                if (matchState === "active") {
+                if (started) {
                     this.matchStartDate = now;
                     delete this.matchEndDate;
                     return true;
@@ -165,7 +181,7 @@ export class GameEventsService implements OnDestroy {
             }),
             share()
         );
-        this.playerName$ = this._playerName.pipe(share());
+
         this.playerLegend$ = this._playerLegend.pipe(share());
         this.playerInGameLocation$ = this._rawPlayerLocation.pipe(
             tap((pos) => {
@@ -188,6 +204,20 @@ export class GameEventsService implements OnDestroy {
             switchMap(() => this.setRequiredFeatures()),
             filter((isSuccessful) => !!isSuccessful),
             switchMap(() => this._gameEvent),
+            tap((gameEvent) => {
+                type KillFeed = overwolf.gep.ApexLegends.ApexLegendsGameEventKillFeed;
+                // Ensure Player Name is set
+                if (this.playerName$.value) return;
+                if (gameEvent?.name !== "kill_feed" || !gameEvent.data) return;
+                const killFeed = JSONTryParse<KillFeed>(gameEvent.data as string);
+                const newPlayerName = killFeed?.local_player_name;
+                if (newPlayerName) this.playerName$.next(newPlayerName);
+            }),
+            tap((gameEvent) => {
+                // Determine game stage
+                const gameStage = this.classifyGameStage(this._gameStage.value, undefined, gameEvent);
+                if (gameStage && gameStage !== this._gameStage.value) this._gameStage.next(gameStage);
+            }),
             share()
         );
         this.gameInfo$ = this._gameInfo.pipe(
@@ -211,7 +241,7 @@ export class GameEventsService implements OnDestroy {
             tap((infoData) => {
                 // Extract player name
                 const playerName = infoData?.info.me?.name?.trim();
-                if (playerName) this._playerName.next(playerName);
+                if (playerName) this.playerName$.next(playerName);
             }),
             tap((infoData) => {
                 const matchInfo = infoData?.info.match_info;
@@ -241,7 +271,7 @@ export class GameEventsService implements OnDestroy {
 
                     // Extract legend from squadmate update
                     const activePlayerLegend = this._playerSquadmates.value.find(
-                        (sm) => sm?.playerName === this._playerName.value
+                        (sm) => sm?.playerName === this.playerName$.value
                     );
                     if (activePlayerLegend?.legendName && this._playerLegend.value !== activePlayerLegend.legendName) {
                         this._playerLegend.next(activePlayerLegend.legendName);
@@ -265,24 +295,22 @@ export class GameEventsService implements OnDestroy {
     }
 
     public __debugInjectGameInfoEvent(event: Record<string, any> | Record<string, any>[], delayMs: number): void {
-        this.__debugInjectionFn(event, delayMs, (arg) => this.onInfoUpdates(arg));
+        if (Array.isArray(event)) {
+            event.forEach((e, index) => {
+                setTimeout(() => this.onInfoUpdates(e as any), delayMs * index);
+            });
+        } else {
+            this.onInfoUpdates(event as any);
+        }
     }
 
     public __debugInjectGameDataEvent(event: Record<string, any> | Record<string, any>[], delayMs: number): void {
-        this.__debugInjectionFn(event, delayMs, (arg) => this.onNewEvents(arg));
-    }
-
-    private __debugInjectionFn(
-        event: Record<string, any> | Record<string, any>[],
-        delayMs: number,
-        eventFn: (event: any) => void
-    ): void {
         if (Array.isArray(event)) {
             event.forEach((e, index) => {
-                setTimeout(() => eventFn(e), delayMs * index);
+                setTimeout(() => this.onNewEvents({ events: [e as any] }), delayMs * index);
             });
         } else {
-            eventFn(event as any);
+            this.onNewEvents({ events: [event as any] });
         }
     }
 
@@ -368,18 +396,19 @@ export class GameEventsService implements OnDestroy {
             console.warn("Unrecognized event.", events);
             return;
         }
-
         newGameEvent?.events.forEach((e) => this._gameEvent.next(e));
     }
 
-    private classifyGameStage(currentStage: GameStage, infoEvent: GameInfo): GameStage | undefined {
-        const info = infoEvent?.info;
-        const feature = infoEvent?.feature;
-
+    private classifyGameStage(
+        currentStage: GameStage,
+        infoEvent?: GameInfo,
+        gameEvent?: GameEvent
+    ): GameStage | undefined {
         // Lobby
         if (
-            (feature === "match_info" && info?.match_info?.game_mode) ||
-            (feature === "match_state" && info?.game_info?.match_state === "inactive")
+            (infoEvent?.feature === "match_info" && infoEvent?.info?.match_info?.game_mode) ||
+            (infoEvent?.feature === "match_state" && infoEvent?.info?.game_info?.match_state === "inactive") ||
+            gameEvent?.name === "match_end"
         ) {
             console.debug(`${[this.constructor.name]}(Game Stage): Lobby`);
             // Playlist was selected on the lobby screen, or a game has just ended
@@ -387,14 +416,17 @@ export class GameEventsService implements OnDestroy {
         }
 
         // Legend Selection
-        if (feature === "team" && findPropertyByRegEx(info?.match_info, /^legendSelect/)) {
+        if (infoEvent?.feature === "team" && findPropertyByRegEx(infoEvent?.info?.match_info, /^legendSelect/)) {
             console.debug(`${[this.constructor.name]}(Game Stage): Legend Selection`);
             // A legend has been selected on the character selection screen
             return GameStage.LegendSelection;
         }
 
         // In Game Dropship
-        if (feature === "match_state" && info?.game_info?.match_state === "active") {
+        if (
+            gameEvent?.name === "match_start" ||
+            (infoEvent?.feature === "match_state" && infoEvent?.info?.game_info?.match_state === "active")
+        ) {
             console.debug(`${[this.constructor.name]}(Game Stage): In Game Dropship`);
             // Match has started
             return GameStage.InGameDropship;
@@ -403,11 +435,11 @@ export class GameEventsService implements OnDestroy {
         // In Game Dropping
         if (
             currentStage === GameStage.InGameDropship &&
-            feature === "location" &&
+            infoEvent?.feature === "location" &&
             this.startingDropshipPlayerLocation &&
-            info?.match_info?.location
+            infoEvent?.info?.match_info?.location
         ) {
-            const locationData = JSONTryParse<MapCoordinates>(info.match_info?.location as string);
+            const locationData = JSONTryParse<MapCoordinates>(infoEvent?.info.match_info?.location as string);
             const locationZ = locationData ? parseInt((locationData.z as unknown) as string) : null;
             if (locationZ != null && locationZ < this.startingDropshipPlayerLocation.z) {
                 console.debug(`${[this.constructor.name]}(Game Stage): In Game Dropping`);
@@ -417,7 +449,11 @@ export class GameEventsService implements OnDestroy {
         }
 
         // In Game
-        if (currentStage === GameStage.InGameDropping && feature === "inventory" && info?.me?.inUse) {
+        if (
+            currentStage === GameStage.InGameDropping &&
+            infoEvent?.feature === "inventory" &&
+            infoEvent?.info?.me?.inUse
+        ) {
             console.debug(`${[this.constructor.name]}(Game Stage): In Game`);
             // Player has landed
             return GameStage.InGame;
@@ -428,11 +464,11 @@ export class GameEventsService implements OnDestroy {
             (currentStage === GameStage.InGame ||
                 currentStage === GameStage.InGameKnocked ||
                 currentStage === GameStage.InGameSpectating) &&
-            feature === "team"
+            infoEvent?.feature === "team"
         ) {
             // Handle active player's status
-            const activePlayerName = this._playerName.value;
-            const rawTeammateUpdate = findPropertyByRegEx<string>(info?.match_info, /^teammate_/);
+            const activePlayerName = this.playerName$.value;
+            const rawTeammateUpdate = findPropertyByRegEx<string>(infoEvent?.info?.match_info, /^teammate_/);
             let teammateUpdate: TeammateMatchInfo | undefined;
 
             if (

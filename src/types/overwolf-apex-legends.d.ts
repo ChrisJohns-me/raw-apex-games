@@ -7,8 +7,8 @@ declare namespace overwolf.gep.ApexLegends {
     interface ApexLegendsGameEventDamage {
         targetName: string;
         damageAmount: string | number;
-        armor: boolean;
-        headshot: boolean;
+        armor: string | boolean;
+        headshot: string | boolean;
     }
 
     interface ApexLegendsGameEventKillFeed {

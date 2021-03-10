@@ -50,6 +50,7 @@ export class InGameMatchTimerWindowComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this._unsubscribe),
                 tap((matchTime) => {
+                    if (!this.showTimer) console.debug(`[${this.constructor.name}] Showing timer`);
                     this.showTimer = true;
                     this.matchStartDate = matchTime.start;
                     this.matchEndDate = matchTime.end;
@@ -58,6 +59,7 @@ export class InGameMatchTimerWindowComponent implements OnInit, OnDestroy {
                 }),
                 debounceTime(SHOW_TIMER_TIMEOUT),
                 tap(() => {
+                    if (this.showTimer) console.debug(`[${this.constructor.name}] Hiding match timer`);
                     this.showTimer = false;
                     this.cdr.detectChanges();
                 })
