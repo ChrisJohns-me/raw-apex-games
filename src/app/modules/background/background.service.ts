@@ -1,8 +1,8 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
+import { getFriendlyMapName } from "@common/game-map";
 import { getFriendlyGameMode } from "@common/game-mode";
 import { getFriendlyLegendName } from "@common/legend";
-import { getFriendlyMapName } from "@common/map";
 import { Observable, of, ReplaySubject, Subject } from "rxjs";
 import { catchError, delay, map, retryWhen, take, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";

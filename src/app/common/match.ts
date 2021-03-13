@@ -1,9 +1,25 @@
+export enum MatchState {
+    Active = "active",
+    Inactive = "inactive",
+}
+
+export interface MatchTime {
+    start?: Date;
+    end?: Date;
+    durationMs: number;
+}
+
+export interface GameMode {
+    id: string;
+    friendlyName: string;
+}
+
 /**
  * Extracts a game mode's friendly name from in-game value.
- * @param keyName "#PL_TRIO"
+ * @param name "#PL_TRIO"
  * @returns "trio"
  */
-export function getFriendlyGameMode(gameMode?: string): string {
+export function getFriendlyGameModeName(gameMode?: GameMode["id"]): GameMode["friendlyName"] {
     if (!gameMode) return "";
     let newGameMode = gameMode.toLowerCase();
     newGameMode = newGameMode.replace(/#pl/g, "");

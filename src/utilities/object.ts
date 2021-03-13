@@ -1,11 +1,21 @@
 /**
  * @description Uses .find() with RegExp.
- * @example findPropertyByRegEx(/^key_/)
+ * @example findKeyByRegEx({ key_99: "foo" }, /^key_/) = key_99
  */
-export function findPropertyByRegEx<V extends ObjectPropertyTypes<T>, T extends AnyObject = AnyObject>(
-    obj: T | undefined,
+export function findKeyByKeyRegEx<T extends AnyObject = AnyObject>(obj: Optional<T>, regEx: RegExp): Optional<string> {
+    if (!obj) return undefined;
+    const key = Object.keys(obj).find((key) => regEx.test(key));
+    return key;
+}
+
+/**
+ * @description Uses .find() with RegExp.
+ * @example findValueByKeyRegEx({ key_99: "foo" }/^key_/) = foo
+ */
+export function findValueByKeyRegEx<V extends ObjectPropertyTypes<T>, T extends AnyObject = AnyObject>(
+    obj: Optional<T>,
     regEx: RegExp
-): V | undefined {
+): Optional<V> {
     if (!obj) return undefined;
     const key = Object.keys(obj).find((key) => regEx.test(key));
     const value = !!key && Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : undefined;
@@ -18,8 +28,8 @@ export function findPropertyByRegEx<V extends ObjectPropertyTypes<T>, T extends 
  * @example {unrelated_key: "empty", key_0: "value0", key_1: "value1", key_2: "value2"}.incrementedPropertyToArray(/^key_/)
  * @returns ["value0", "value1", "value2"]
  */
-export function incrementedPropertiesToArray<V extends ObjectPropertyTypes<T>, T extends AnyObject = AnyObject>(
-    obj: T | undefined,
+export function incrementedKeysToValueArray<V extends ObjectPropertyTypes<T>, T extends AnyObject = AnyObject>(
+    obj: Optional<T>,
     regEx: RegExp
 ): V[] {
     if (!obj) return [];
@@ -42,8 +52,8 @@ export function incrementedPropertiesToArray<V extends ObjectPropertyTypes<T>, T
  * @example {unrelated_key: "empty", key_0: "value0", key_1: "value1", key_2: "value2"}.incrementedPropertiesToKeyedArray(/^key_(\d+)/)
  * @returns [0: "value0", 1: "value1", 2: "value2"]
  */
-export function incrementedPropertiesToKeyedObject<V extends ObjectPropertyTypes<T>, T extends AnyObject = AnyObject>(
-    obj: T | undefined,
+export function incrementedKeysToKeyedObject<V extends ObjectPropertyTypes<T>, T extends AnyObject = AnyObject>(
+    obj: Optional<T>,
     regEx: RegExp
 ): V {
     if (!obj) return {} as V;

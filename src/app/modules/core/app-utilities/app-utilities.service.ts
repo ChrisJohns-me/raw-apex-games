@@ -37,8 +37,8 @@ export class AppUtilitiesService {
         });
     }
 
-    public static getSystemInformation(): Observable<SystemInfo | undefined> {
-        const promise = new Promise<SystemInfo | undefined>((resolve, reject) => {
+    public static getSystemInformation(): Observable<Optional<SystemInfo>> {
+        const promise = new Promise<Optional<SystemInfo>>((resolve, reject) => {
             overwolf.utils.getSystemInformation((result) => {
                 if (result.success) {
                     resolve(result.systemInfo);

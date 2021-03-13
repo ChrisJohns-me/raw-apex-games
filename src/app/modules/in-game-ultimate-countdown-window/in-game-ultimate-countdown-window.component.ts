@@ -36,7 +36,7 @@ export class InGameUltimateCountdownWindowComponent implements OnInit, OnDestroy
      * @returns {Date} time remaining
      * @returns {undefined} if ready date is invalid
      */
-    public get ultimateReadyRemaining(): Date | undefined {
+    public get ultimateReadyRemaining(): Optional<Date> {
         if (!isValid(this.ultimateReadyDate)) return new Date(0);
         const readyDate = this.ultimateReadyDate as Date;
         const now = new Date();
@@ -132,7 +132,7 @@ export class InGameUltimateCountdownWindowComponent implements OnInit, OnDestroy
         this.ultimateProgressHistory = this.ultimateProgressHistory.slice(-NUM_PROGRESS_HISTORY);
     }
 
-    private calcReadyDate(percent: number, history: UltimateProgress[], date: Date): Date | undefined {
+    private calcReadyDate(percent: number, history: UltimateProgress[], date: Date): Optional<Date> {
         const timestamps = history.map((h) => h.timestamp.getTime());
         const percents = history.map((h) => h.percent);
         this.avgTimestampRate = (this.avgTimestampRate + averageRate(timestamps)) / 2;

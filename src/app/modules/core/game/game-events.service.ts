@@ -10,7 +10,7 @@ import {
     SquadmatePlayer,
     TeammateMatchInfo,
 } from "@common/game";
-import { GameMapName, GameMaps } from "@common/map";
+import { GameMapName, GameMaps } from "@common/game-map";
 import {
     BehaviorSubject,
     combineLatest,
@@ -35,7 +35,7 @@ import {
     throttleTime,
 } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import { findPropertyByRegEx, JSONTryParse } from "src/utilities";
+import { findValueByPropertyRegEx, JSONTryParse } from "src/utilities";
 
 const OW_REQUIRED_FEATURES_RETRY_COUNT = 10;
 const OW_REQUIRED_FEATURES_RETRY_DELAY = 1000 * 3;
@@ -245,7 +245,7 @@ export class GameEventsService implements OnDestroy {
             }),
             tap((infoData) => {
                 const matchInfo = infoData?.info.match_info;
-                const rawSquadmateUpdate = findPropertyByRegEx<string>(matchInfo, /^legendSelect_/);
+                const rawSquadmateUpdate = findValueByPropertyRegEx<string>(matchInfo, /^legendSelect_/);
                 let squadmateUpdate: SquadmatePlayer | undefined;
 
                 if (
@@ -416,7 +416,7 @@ export class GameEventsService implements OnDestroy {
         }
 
         // Legend Selection
-        if (infoEvent?.feature === "team" && findPropertyByRegEx(infoEvent?.info?.match_info, /^legendSelect/)) {
+        if (infoEvent?.feature === "team" && findValueByPropertyRegEx(infoEvent?.info?.match_info, /^legendSelect/)) {
             console.debug(`${[this.constructor.name]}(Game Stage): Legend Selection`);
             // A legend has been selected on the character selection screen
             return GameStage.LegendSelection;
@@ -468,7 +468,7 @@ export class GameEventsService implements OnDestroy {
         ) {
             // Handle active player's status
             const activePlayerName = this.playerName$.value;
-            const rawTeammateUpdate = findPropertyByRegEx<string>(infoEvent?.info?.match_info, /^teammate_/);
+            const rawTeammateUpdate = findValueByPropertyRegEx<string>(infoEvent?.info?.match_info, /^teammate_/);
             let teammateUpdate: TeammateMatchInfo | undefined;
 
             if (

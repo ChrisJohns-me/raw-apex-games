@@ -25,6 +25,7 @@ export const SingletonServiceProviderFactory = (
     if (!owWindow[REFERENCES_KEY][referenceKey]) {
         if (typeof service === "function") {
             owWindow[REFERENCES_KEY][referenceKey] = new service(...deps);
+            addInstanceListing(referenceKey);
             console.debug(`${logPrefix} Adding as a singleton service`);
         } else {
             console.error(`${logPrefix} Not an Angular service`);
@@ -33,5 +34,24 @@ export const SingletonServiceProviderFactory = (
         console.debug(`${logPrefix} Using existing singleton service`);
     }
 
-    return owWindow[REFERENCES_KEY][referenceKey];
+    const singletonService = owWindow[REFERENCES_KEY][referenceKey];
+    return singletonService;
 };
+
+// =====
+// TODO: Delete; Used for debugging.
+const listingReferenceKey = "$__singletonInstantiations";
+declare interface Window {
+    [listingReferenceKey]: Array<{ referenceName: string; createdDate: Date }>;
+}
+/**
+ * Adds the singleton class (whether newly instantiated, or referenced).
+ * Probably temporary.
+ * @param reference Class reference.
+ */
+function addInstanceListing(name: string): void {
+    const owWindow = (UIWindow.getMainWindow() as unknown) as Window;
+    if (!owWindow[listingReferenceKey] || !Array.isArray(owWindow[listingReferenceKey]))
+        owWindow[listingReferenceKey] = [];
+    owWindow[listingReferenceKey].push({ referenceName: name, createdDate: new Date() });
+}

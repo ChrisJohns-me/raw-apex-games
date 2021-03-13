@@ -15,7 +15,7 @@ export class InGameMatchTimerWindowComponent implements OnInit, OnDestroy {
     public primaryTitle = "In Game Match Timer";
     public secondaryTitle = "";
 
-    public get matchDurationDate(): Date | undefined {
+    public get matchDurationDate(): Optional<Date> {
         return this.matchDurationMs ? new Date(this.matchDurationMs) : undefined;
     }
 

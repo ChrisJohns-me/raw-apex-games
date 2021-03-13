@@ -1,0 +1,180 @@
+{
+    "$schema": "./weapon-list-schema.json",
+    "weapons": [
+        {
+            "id": "30_30_repeater",
+            "friendlyName": "30-30 Repeater",
+            "killfeedRegExPattern": "/30_30_repeater/i",
+            "class": "assault_rifle",
+            "ammoType": "heavy"
+        },
+        {
+            "id": "alternator",
+            "friendlyName": "Alternator",
+            "killfeedRegExPattern": "/alternator/i",
+            "class": "smg",
+            "ammoType": "light"
+        },
+        {
+            "id": "charge_rifle",
+            "friendlyName": "Charge Rifle",
+            "killfeedRegExPattern": "/charge_rifle/i",
+            "class": "sniper",
+            "ammoType": "sniper"
+        },
+        {
+            "id": "devotion",
+            "friendlyName": "Devotion",
+            "killfeedRegExPattern": "/devotion/i",
+            "class": "lmg",
+            "ammoType": "energy"
+        },
+        {
+            "id": "eva_8",
+            "friendlyName": "EVA-8 Auto",
+            "killfeedRegExPattern": "/eva_8/i",
+            "class": "shotgun",
+            "ammoType": "shotgun"
+        },
+        {
+            "id": "g7_scout",
+            "friendlyName": "G7 Scout",
+            "killfeedRegExPattern": "/g7_scout/i",
+            "class": "assault_rifle",
+            "ammoType": "light"
+        },
+        {
+            "id": "havoc",
+            "friendlyName": "HAVOC Rifle",
+            "killfeedRegExPattern": "/havoc/i",
+            "class": "assault_rifle",
+            "ammoType": "energy"
+        },
+        {
+            "id": "hemlok",
+            "friendlyName": "Hemlok Burst",
+            "killfeedRegExPattern": "/hemlok/i",
+            "class": "assault_rifle",
+            "ammoType": "heavy"
+        },
+        {
+            "id": "kraber",
+            "friendlyName": "Kraber .50-Cal",
+            "killfeedRegExPattern": "/kraber/i",
+            "class": "sniper",
+            "ammoType": "sniper"
+        },
+        {
+            "id": "l_star",
+            "friendlyName": "L-STAR",
+            "killfeedRegExPattern": "/l_star/i",
+            "class": "lmg",
+            "ammoType": "energy"
+        },
+        {
+            "id": "longbow",
+            "friendlyName": "Longbow DMR",
+            "killfeedRegExPattern": "/longbow/i",
+            "class": "sniper",
+            "ammoType": "sniper"
+        },
+        {
+            "id": "m600_spitfire",
+            "friendlyName": "M600 Spitfire",
+            "killfeedRegExPattern": "/m600_spitfire/i",
+            "class": "lmg",
+            "ammoType": "heavy"
+        },
+        {
+            "id": "mastiff",
+            "friendlyName": "Mastiff",
+            "killfeedRegExPattern": "/mastiff/i",
+            "class": "shotgun",
+            "ammoType": "shotgun"
+        },
+        {
+            "id": "mozambique",
+            "friendlyName": "Mozambique",
+            "killfeedRegExPattern": "/mozambique/i",
+            "class": "shotgun",
+            "ammoType": "shotgun"
+        },
+        {
+            "id": "p2020",
+            "friendlyName": "P2020",
+            "killfeedRegExPattern": "/p2020/i",
+            "class": "pistol",
+            "ammoType": "light"
+        },
+        {
+            "id": "peacekeeper",
+            "friendlyName": "Peacekeeper",
+            "killfeedRegExPattern": "/peacekeeper/i",
+            "class": "shotgun",
+            "ammoType": "shotgun"
+        },
+        {
+            "id": "prowler",
+            "friendlyName": "Prowler",
+            "killfeedRegExPattern": "/prowler/i",
+            "class": "smg",
+            "ammoType": "heavy"
+        },
+        {
+            "id": "r301",
+            "friendlyName": "R-301",
+            "killfeedRegExPattern": "/r301/i",
+            "class": "assault_rifle",
+            "ammoType": "light"
+        },
+        {
+            "id": "r99",
+            "friendlyName": "R-99",
+            "killfeedRegExPattern": "/r99/i",
+            "class": "smg",
+            "ammoType": "light"
+        },
+        {
+            "id": "re45",
+            "friendlyName": "RE-45",
+            "killfeedRegExPattern": "/re45/i",
+            "class": "pistol",
+            "ammoType": "light"
+        },
+        {
+            "id": "sentinel",
+            "friendlyName": "Sentinel",
+            "killfeedRegExPattern": "/sentinel/i",
+            "class": "sniper",
+            "ammoType": "sniper"
+        },
+        {
+            "id": "triple_take",
+            "friendlyName": "Triple Take",
+            "killfeedRegExPattern": "/triple_take/i",
+            "class": "sniper",
+            "ammoType": "sniper"
+        },
+        {
+            "id": "vk47_flatline",
+            "friendlyName": "VK47 Flatline",
+            "killfeedRegExPattern": "/vk47_flatline/i",
+            "class": "assault_rifle",
+            "ammoType": "heavy"
+        },
+        {
+            "id": "volt",
+            "friendlyName": "Volt",
+            "killfeedRegExPattern": "/volt/i",
+            "class": "smg",
+            "ammoType": "energy"
+        },
+        {
+            "id": "wingman",
+            "friendlyName": "Wingman",
+            "killfeedRegExPattern": "/wingman/i",
+            "class": "pistol",
+            "ammoType": "heavy"
+        }
+    ]
+}

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { getFriendlyMapName } from "@common/game-map";
 import { getFriendlyGameMode } from "@common/game-mode";
 import { getFriendlyLegendName } from "@common/legend";
-import { getFriendlyMapName } from "@common/map";
 import { GameEventsService } from "@core/game";
 import { differenceInMilliseconds } from "date-fns";
 import { Subject } from "rxjs";
@@ -41,7 +41,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     public playerSquadmates = "";
     public ultimatePercent = 0;
 
-    public get matchDurationDate(): Date | undefined {
+    public get matchDurationDate(): Optional<Date> {
         return this.matchDurationMs ? new Date(this.matchDurationMs) : undefined;
     }
     public matchStartDate?: Date;
