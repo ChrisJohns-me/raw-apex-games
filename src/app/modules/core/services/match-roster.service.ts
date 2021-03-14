@@ -28,8 +28,8 @@ export class MatchRosterService implements OnDestroy {
     public readonly killfeed$ = new Subject<KillfeedEvent>();
     public readonly teammates$ = new BehaviorSubject<Optional<MatchRoster>>(undefined);
 
-    private _roster: Optional<MatchRoster>;
-    private _owRawRoster: Optional<Partial<OWMatchInfo>>;
+    private _roster?: MatchRoster;
+    private _owRawRoster?: Partial<OWMatchInfo>;
 
     private readonly _unsubscribe = new Subject<void>();
 
@@ -83,7 +83,7 @@ export class MatchRosterService implements OnDestroy {
 
     /**
      * Occurs when there's a any update item for the roster
-     * @param OWMatchInfo Incoming Overwolf match info
+     * @param {OWMatchInfo} matchInfo Incoming Overwolf match info
      */
     private rawRosterUpdate(matchInfo?: OWMatchInfo): void {
         if (!matchInfo) return;
@@ -142,7 +142,6 @@ export class MatchRosterService implements OnDestroy {
                 map((gameEvent) => gameEvent.data as OWGameEventKillFeed)
             )
             .subscribe((killfeed) => {
-                const attacker = this._roster?.players.find((p) => p.name === killfeed.attackerName);
                 const victim = this._roster?.players.find((p) => p.name === killfeed.victimName);
                 const weapon = new Weapon({ fromKillfeedName: killfeed.weaponName });
                 const act = killfeed.action;
@@ -154,8 +153,8 @@ export class MatchRosterService implements OnDestroy {
                 else if (isElimination) this.eliminatePlayerOnRoster(victim.name);
 
                 const newKillfeedEvent: KillfeedEvent = {
-                    attacker,
-                    victim,
+                    attackerName: killfeed.attackerName,
+                    victimName: killfeed.victimName,
                     isKnockdown,
                     isElimination,
                     weapon,
@@ -166,13 +165,13 @@ export class MatchRosterService implements OnDestroy {
     }
     //#endregion
 
-    private eliminatePlayerOnRoster(playerName: string): void {
-        this._roster?.eliminatePlayer(playerName);
+    private eliminatePlayerOnRoster(victimName: string): void {
+        this._roster?.eliminatePlayer(victimName);
         this.roster$.next(this._roster);
     }
 
-    private knockdownPlayerOnRoster(playerName: string): void {
-        this._roster?.knockdownPlayer(playerName);
+    private knockdownPlayerOnRoster(victimName: string): void {
+        this._roster?.knockdownPlayer(victimName);
         this.roster$.next(this._roster);
     }
 }

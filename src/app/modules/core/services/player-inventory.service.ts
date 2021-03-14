@@ -1,10 +1,14 @@
 import { Injectable, OnDestroy } from "@angular/core";
+import { InventoryItem } from "@common/inventory-item";
+import { InventoryStore } from "@common/inventory-store";
 import { MatchState } from "@common/match";
+import { Weapon } from "@common/weapon";
 import { BehaviorSubject, Subject } from "rxjs";
 import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
+import { findKeyByKeyRegEx, findValueByKeyRegEx } from "src/utilities";
 import { MatchService } from "./match.service";
-import { OverwolfDataProviderService } from "./overwolf-data-provider";
+import { OverwolfDataProviderService, OWMatchInfoMeInventory } from "./overwolf-data-provider";
 
 @Injectable({
     providedIn: "root",
@@ -13,8 +17,11 @@ import { OverwolfDataProviderService } from "./overwolf-data-provider";
         SingletonServiceProviderFactory("PlayerInventoryService", PlayerInventoryService, deps),
 })
 export class PlayerInventoryService implements OnDestroy {
-    public readonly inUse$ = new BehaviorSubject<string>("");
-    public readonly weapons$ = new BehaviorSubject<[string, string]>(["", ""]);
+    public readonly inventory$ = new BehaviorSubject<InventoryStore>(new InventoryStore());
+    public readonly inUse$ = new BehaviorSubject<InventoryItem>(new InventoryItem());
+    public readonly weapons$ = new BehaviorSubject<[Weapon, Weapon]>([new Weapon(), new Weapon()]);
+
+    private _inventory?: InventoryStore;
 
     private readonly _unsubscribe = new Subject<void>();
 
@@ -30,24 +37,54 @@ export class PlayerInventoryService implements OnDestroy {
     }
 
     private start(): void {
+        this.setupInventory();
         this.setupInUse();
         this.setupWeapons();
     }
 
-    //#region Inventory item in use
+    //#region Inventory
+    private setupInventory(): void {
+        this.match.state$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                filter((matchState) => matchState === MatchState.Active),
+                tap(() => {
+                    this._inventory = new InventoryStore();
+                    this.inventory$.next(this._inventory);
+                }),
+                switchMap(() => this.overwolf.infoUpdates$),
+                filter((infoUpdate) => infoUpdate.feature === "inventory")
+            )
+            .subscribe((infoUpdate) => {
+                const inventorySlotId = findKeyByKeyRegEx(infoUpdate.info.me, /^inventory_/);
+                const inventoryUpdate = findValueByKeyRegEx<OWMatchInfoMeInventory>(infoUpdate.info.me, /^inventory_/);
+                if (!inventorySlotId || !inventoryUpdate) return;
+
+                const slotId = parseInt(inventorySlotId.replace("inventory_", ""));
+                const item = new InventoryItem({ fromId: inventoryUpdate.name });
+                const amount = parseInt((inventoryUpdate.amount as unknown) as string);
+
+                this._inventory?.setSlot(slotId, item, amount);
+                if (this._inventory) this.inventory$.next(this._inventory);
+            });
+    }
+    //#endregion
+
+    //#region Item in use
     private setupInUse(): void {
         this.match.state$
             .pipe(
                 takeUntil(this._unsubscribe),
                 distinctUntilChanged(),
                 filter((matchState) => matchState === MatchState.Active),
-                tap(() => this.inUse$.next("")),
+                tap(() => this.inUse$.next(new InventoryItem())),
                 switchMap(() => this.overwolf.infoUpdates$),
                 filter((infoUpdate) => infoUpdate.feature === "inventory"),
                 map((infoUpdate) => infoUpdate.info.me?.inUse?.inUse)
             )
             .subscribe((inUse) => {
-                if (inUse) this.inUse$.next(inUse);
+                const newInventoryItem = new InventoryItem({ fromInUseName: inUse });
+                this.inUse$.next(newInventoryItem);
             });
     }
     //#endregion
@@ -59,14 +96,17 @@ export class PlayerInventoryService implements OnDestroy {
                 takeUntil(this._unsubscribe),
                 distinctUntilChanged(),
                 filter((matchState) => matchState === MatchState.Active),
-                tap(() => this.weapons$.next(["", ""])),
+                tap(() => this.weapons$.next([new Weapon(), new Weapon()])),
                 switchMap(() => this.overwolf.infoUpdates$),
                 filter((infoUpdate) => infoUpdate.feature === "inventory"),
                 map((infoUpdate) => infoUpdate.info.me?.weapons)
             )
             .subscribe((weapons) => {
-                const newWeapons: [string, string] = [weapons?.weapon0 ?? "", weapons?.weapon1 ?? ""];
-                if (newWeapons && (newWeapons[0] || newWeapons[1])) this.weapons$.next(newWeapons);
+                const newWeapons: [Weapon, Weapon] = [
+                    new Weapon({ fromInfoWeapons: weapons?.weapon0 }),
+                    new Weapon({ fromInfoWeapons: weapons?.weapon1 }),
+                ];
+                this.weapons$.next(newWeapons);
             });
     }
     //#endregion

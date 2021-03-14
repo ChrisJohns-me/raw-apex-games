@@ -1,0 +1,11 @@
+{
+    "$schema": "./weapon-list-schema.json",
+    "inventoryItems": [
+        {
+            "id": "0",
+            "inUseRegExPattern": "/Knockdown Shield/",
+            "friendlyName": "Knockdown Shield",
+            "imageName": ""
+        }
+    ]
+}

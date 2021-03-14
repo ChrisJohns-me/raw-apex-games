@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 import { recursiveJSONParse } from "src/utilities";
-import { OWGameEvent } from "../../overwolf-types";
+import { OWGameEvent } from "../../../overwolf-types";
 
 export class NewGameEventHandler {
     public readonly newGameEvent = new Subject<OWGameEvent>();

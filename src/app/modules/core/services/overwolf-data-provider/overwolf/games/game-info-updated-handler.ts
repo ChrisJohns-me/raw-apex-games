@@ -1,5 +1,5 @@
 import { ReplaySubject } from "rxjs";
-import { OWGameInfoUpdatedEvent } from "../overwolf-types";
+import { OWGameInfoUpdatedEvent } from "../../overwolf-types";
 
 export class GameInfoUpdatedHandler {
     public readonly gameInfoUpdated = new ReplaySubject<OWGameInfoUpdatedEvent>();

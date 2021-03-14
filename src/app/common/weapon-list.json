@@ -2,8 +2,17 @@
     "$schema": "./weapon-list-schema.json",
     "weapons": [
         {
+            "id": "melee",
+            "friendlyName": "Melee",
+            "matchInfoRegExPattern": "/Melee/i",
+            "killfeedRegExPattern": "/Melee/i",
+            "class": "",
+            "ammoType": ""
+        },
+        {
             "id": "30_30_repeater",
             "friendlyName": "30-30 Repeater",
+            "matchInfoRegExPattern": "/30_30_repeater/i",
             "killfeedRegExPattern": "/30_30_repeater/i",
             "class": "assault_rifle",
             "ammoType": "heavy"
@@ -11,6 +20,7 @@
         {
             "id": "alternator",
             "friendlyName": "Alternator",
+            "matchInfoRegExPattern": "/alternator/i",
             "killfeedRegExPattern": "/alternator/i",
             "class": "smg",
             "ammoType": "light"
@@ -18,6 +28,7 @@
         {
             "id": "charge_rifle",
             "friendlyName": "Charge Rifle",
+            "matchInfoRegExPattern": "/charge_rifle/i",
             "killfeedRegExPattern": "/charge_rifle/i",
             "class": "sniper",
             "ammoType": "sniper"
@@ -25,6 +36,7 @@
         {
             "id": "devotion",
             "friendlyName": "Devotion",
+            "matchInfoRegExPattern": "/devotion/i",
             "killfeedRegExPattern": "/devotion/i",
             "class": "lmg",
             "ammoType": "energy"
@@ -32,13 +44,15 @@
         {
             "id": "eva_8",
             "friendlyName": "EVA-8 Auto",
-            "killfeedRegExPattern": "/eva_8/i",
+            "matchInfoRegExPattern": "/eva_8/i",
+            "killfeedRegExPattern": "/eva8/i",
             "class": "shotgun",
             "ammoType": "shotgun"
         },
         {
             "id": "g7_scout",
             "friendlyName": "G7 Scout",
+            "matchInfoRegExPattern": "/G7 Scout/i",
             "killfeedRegExPattern": "/g7_scout/i",
             "class": "assault_rifle",
             "ammoType": "light"
@@ -46,6 +60,7 @@
         {
             "id": "havoc",
             "friendlyName": "HAVOC Rifle",
+            "matchInfoRegExPattern": "/havoc/i",
             "killfeedRegExPattern": "/havoc/i",
             "class": "assault_rifle",
             "ammoType": "energy"
@@ -53,6 +68,7 @@
         {
             "id": "hemlok",
             "friendlyName": "Hemlok Burst",
+            "matchInfoRegExPattern": "/hemlok/i",
             "killfeedRegExPattern": "/hemlok/i",
             "class": "assault_rifle",
             "ammoType": "heavy"
@@ -60,6 +76,7 @@
         {
             "id": "kraber",
             "friendlyName": "Kraber .50-Cal",
+            "matchInfoRegExPattern": "/kraber/i",
             "killfeedRegExPattern": "/kraber/i",
             "class": "sniper",
             "ammoType": "sniper"
@@ -67,6 +84,7 @@
         {
             "id": "l_star",
             "friendlyName": "L-STAR",
+            "matchInfoRegExPattern": "/l_star/i",
             "killfeedRegExPattern": "/l_star/i",
             "class": "lmg",
             "ammoType": "energy"
@@ -74,6 +92,7 @@
         {
             "id": "longbow",
             "friendlyName": "Longbow DMR",
+            "matchInfoRegExPattern": "/longbow/i",
             "killfeedRegExPattern": "/longbow/i",
             "class": "sniper",
             "ammoType": "sniper"
@@ -81,13 +100,15 @@
         {
             "id": "m600_spitfire",
             "friendlyName": "M600 Spitfire",
-            "killfeedRegExPattern": "/m600_spitfire/i",
+            "matchInfoRegExPattern": "/m600_spitfire/i",
+            "killfeedRegExPattern": "/spitfire/i",
             "class": "lmg",
             "ammoType": "heavy"
         },
         {
             "id": "mastiff",
             "friendlyName": "Mastiff",
+            "matchInfoRegExPattern": "/mastiff/i",
             "killfeedRegExPattern": "/mastiff/i",
             "class": "shotgun",
             "ammoType": "shotgun"
@@ -95,6 +116,7 @@
         {
             "id": "mozambique",
             "friendlyName": "Mozambique",
+            "matchInfoRegExPattern": "/mozambique/i",
             "killfeedRegExPattern": "/mozambique/i",
             "class": "shotgun",
             "ammoType": "shotgun"
@@ -102,6 +124,7 @@
         {
             "id": "p2020",
             "friendlyName": "P2020",
+            "matchInfoRegExPattern": "/p2020/i",
             "killfeedRegExPattern": "/p2020/i",
             "class": "pistol",
             "ammoType": "light"
@@ -109,6 +132,7 @@
         {
             "id": "peacekeeper",
             "friendlyName": "Peacekeeper",
+            "matchInfoRegExPattern": "/peacekeeper/i",
             "killfeedRegExPattern": "/peacekeeper/i",
             "class": "shotgun",
             "ammoType": "shotgun"
@@ -116,6 +140,7 @@
         {
             "id": "prowler",
             "friendlyName": "Prowler",
+            "matchInfoRegExPattern": "/prowler/i",
             "killfeedRegExPattern": "/prowler/i",
             "class": "smg",
             "ammoType": "heavy"
@@ -123,6 +148,7 @@
         {
             "id": "r301",
             "friendlyName": "R-301",
+            "matchInfoRegExPattern": "/R-301/i",
             "killfeedRegExPattern": "/r301/i",
             "class": "assault_rifle",
             "ammoType": "light"
@@ -130,13 +156,15 @@
         {
             "id": "r99",
             "friendlyName": "R-99",
-            "killfeedRegExPattern": "/r99/i",
+            "matchInfoRegExPattern": "/R-99/i",
+            "killfeedRegExPattern": "/r97/i",
             "class": "smg",
             "ammoType": "light"
         },
         {
             "id": "re45",
             "friendlyName": "RE-45",
+            "matchInfoRegExPattern": "/RE-45 Auto/i",
             "killfeedRegExPattern": "/re45/i",
             "class": "pistol",
             "ammoType": "light"
@@ -144,6 +172,7 @@
         {
             "id": "sentinel",
             "friendlyName": "Sentinel",
+            "matchInfoRegExPattern": "/sentinel/i",
             "killfeedRegExPattern": "/sentinel/i",
             "class": "sniper",
             "ammoType": "sniper"
@@ -151,6 +180,7 @@
         {
             "id": "triple_take",
             "friendlyName": "Triple Take",
+            "matchInfoRegExPattern": "/triple_take/i",
             "killfeedRegExPattern": "/triple_take/i",
             "class": "sniper",
             "ammoType": "sniper"
@@ -158,13 +188,15 @@
         {
             "id": "vk47_flatline",
             "friendlyName": "VK47 Flatline",
-            "killfeedRegExPattern": "/vk47_flatline/i",
+            "matchInfoRegExPattern": "/vk47_flatline/i",
+            "killfeedRegExPattern": "/flatline/i",
             "class": "assault_rifle",
             "ammoType": "heavy"
         },
         {
             "id": "volt",
             "friendlyName": "Volt",
+            "matchInfoRegExPattern": "/volt/i",
             "killfeedRegExPattern": "/volt/i",
             "class": "smg",
             "ammoType": "energy"
@@ -172,6 +204,7 @@
         {
             "id": "wingman",
             "friendlyName": "Wingman",
+            "matchInfoRegExPattern": "/wingman/i",
             "killfeedRegExPattern": "/wingman/i",
             "class": "pistol",
             "ammoType": "heavy"

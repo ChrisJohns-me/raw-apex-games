@@ -17,6 +17,9 @@
                 "killfeedRegExPattern": {
                     "type": "string"
                 },
+                "matchInfoRegExPattern": {
+                    "type": "string"
+                },
                 "imageName": {
                     "type": "string"
                 },

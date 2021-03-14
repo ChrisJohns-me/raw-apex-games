@@ -35,10 +35,10 @@ export class MatchRoster {
     }
     //#endregion
 
-    private updateRosterPlayerStatus(playerName: string, newStatus: PlayerStatus): void {
+    private updateRosterPlayerStatus(playerName: string, status: PlayerStatus): void {
         this.players.forEach((player) => {
             if (player.name !== playerName) return;
-            player.setStatus(newStatus);
+            player.setStatus(status);
         });
     }
 }

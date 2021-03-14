@@ -1,5 +1,5 @@
 import { wordsToUpperCase } from "src/utilities/string";
-import * as WeaponListJSON from "./weapon-list.json";
+import * as WeaponJSONData from "./weapon-list.json";
 
 enum WeaponAmmo {
     Light = "light",
@@ -27,6 +27,8 @@ interface WeaponStatistics {
     legDamage: number;
 }
 
+type WeaponJSONItem = typeof WeaponJSONData["weapons"][0];
+
 export class Weapon {
     public id?: string;
     public friendlyName?: string;
@@ -34,23 +36,44 @@ export class Weapon {
     public imageName?: string;
     public class?: WeaponClassName;
     public statistics?: WeaponStatistics;
+    public isEmpty = false;
 
-    constructor(init?: { fromKillfeedName?: string; fromId?: string }) {
-        if (init?.fromKillfeedName) {
-            this.loadFromJSON(init.fromKillfeedName);
-        } else if (init?.fromId) {
-            this.loadFromJSON(undefined, init.fromId);
-        }
+    /**
+     * @param {string} init.fromId Create weapon based on it's identifier.
+     * @param {string} init.fromKillfeedName Create weapon from Overwolf's `"name": "kill_feed"` event naming.
+     * @param {string} init.fromInfoWeapons Create weapon from Overwolf's `"feature": "inventory"` event naming.
+     */
+    constructor(init?: { fromId?: string; fromKillfeedName?: string; fromInfoWeapons?: string }) {
+        if (init?.fromId) this.loadById(init.fromId);
+        else if (init?.fromKillfeedName) this.loadByKillfeedName(init.fromKillfeedName);
+        else if (init?.fromInfoWeapons) this.loadByInfoWeaponName(init.fromInfoWeapons);
+
+        this.isEmpty = !init || !init.fromKillfeedName || !init.fromInfoWeapons || !init.fromId;
     }
 
-    private loadFromJSON(killfeedName?: string, id?: string): void {
-        const weaponList = WeaponListJSON.weapons;
-        const foundWeapon = weaponList.find((w) => {
-            killfeedName ? new RegExp(w.killfeedRegExPattern).test(killfeedName) : w.id === id;
-        });
+    private loadById(id: string): void {
+        const callbackFn = (weaponJSONItem: WeaponJSONItem) => weaponJSONItem.id === id;
+        this.loadFromJSON(id, callbackFn);
+    }
+
+    private loadByKillfeedName(killfeedName: string): void {
+        const callbackFn = (weaponJSONItem: WeaponJSONItem) =>
+            !!new RegExp(weaponJSONItem.killfeedRegExPattern).test(killfeedName);
+        this.loadFromJSON(killfeedName, callbackFn);
+    }
+
+    private loadByInfoWeaponName(infoWeaponName: string): void {
+        const callbackFn = (weaponJSONItem: WeaponJSONItem) =>
+            !!new RegExp(weaponJSONItem.matchInfoRegExPattern).test(infoWeaponName);
+        this.loadFromJSON(infoWeaponName, callbackFn);
+    }
+
+    private loadFromJSON(searchItemName: string, callbackFn: (input: WeaponJSONItem) => boolean): void {
+        const weaponList = WeaponJSONData.weapons;
+        const foundWeapon = weaponList.find((w) => callbackFn(w));
 
         if (!foundWeapon) {
-            console.debug(`Unable to find weapon with name "${killfeedName ?? id}"`);
+            console.warn(`Unable to find weapon with name "${searchItemName}"`);
             return;
         }
 
