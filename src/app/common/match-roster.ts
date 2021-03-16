@@ -5,6 +5,12 @@ export class MatchRoster {
     public get teams(): Team[] {
         return this._teams;
     }
+    public get aliveTeams(): Team[] {
+        return this._teams.filter((t) => t.status === TeamStatus.Alive);
+    }
+    public get eliminatedTeams(): Team[] {
+        return this._teams.filter((t) => t.status === TeamStatus.Eliminated);
+    }
     public get players(): Player[] {
         return ([] as Player[]).concat(...this._teams.map((t) => t.members));
     }

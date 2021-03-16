@@ -1,0 +1,23 @@
+export const OWCONFIG = {
+    REQUIRED_FEATURES_RETRY_COUNT: 10,
+    REQUIRED_FEATURES_RETRY_DELAY: 1000 * 3,
+    REQUIRED_FEATURES: [
+        "death",
+        "kill",
+        "match_state",
+        "me",
+        "revive",
+        "team",
+        "roster",
+        "kill_feed",
+        "rank",
+        "match_summary",
+        "location",
+        "match_info",
+        "phase",
+        "victory",
+        "damage",
+        "inventory",
+    ],
+    APEXLEGENDSCLASSID: 21566,
+};

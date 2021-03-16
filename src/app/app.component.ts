@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
-import { UIWindow, UIWindowInfo } from "@core/ui-window";
+import { UIWindow, UIWindowInfo } from "@core/_refactor/ui-window";
 import { Observable } from "rxjs";
 
 @Component({

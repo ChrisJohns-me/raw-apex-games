@@ -19,51 +19,64 @@
         <div class="pane" style="min-width: 175px; flex: 1 1 50%">
             <h1>Inferences</h1>
             <div>
-                <h2>Game Stage</h2>
-                <p class="log">{{ gameStage }}</p>
-            </div>
-            <div>
-                <h2>Game Mode</h2>
-                <p class="log">{{ gameMode }}</p>
-            </div>
-            <div>
-                <h2>Game Map</h2>
-                <p class="log">{{ gameMapName }}</p>
-            </div>
-            <div>
-                <h2>Squadmates</h2>
-                <p class="log">{{ playerSquadmates }}</p>
-            </div>
-            <div>
-                <h2>Player Name</h2>
-                <p class="log">{{ playerName }}</p>
-            </div>
-            <div>
-                <h2>Player Legend</h2>
-                <p class="log">{{ playerLegend }}</p>
-            </div>
-            <div>
-                <h2>Player Location</h2>
-                <p class="log">{{ playerLocation }}</p>
-            </div>
-            <div>
-                <h2>Ultimate</h2>
-                <p class="log">{{ ultimatePercent | percent: "0.0-0" }}</p>
-            </div>
-            <div>
-                <h2>Match Time</h2>
+                <p class="log">GamePhase: {{ game.phase$ | async }}</p>
+                <p class="log">IsInFocus: {{ gameProcess.isInFocus$ | async }}</p>
+                <p class="log">IsRunning: {{ gameProcess.isRunning$ | async }}</p>
+                <p class="log">GameMode: {{ (match.gameMode$ | async)?.friendlyName }}</p>
+                <p class="log">Map: {{ (match.map$ | async)?.friendlyName }}</p>
+                <p class="log">State: {{ match.state$ | async }}</p>
+                <p class="log">MatchDuration: {{ (match.time$ | async)?.durationMs | date: "mm:ss" }}</p>
+                <p class="log">Teammates: {{ (matchRoster.teammates$ | async)?.players }}</p>
+                <p class="log">PlayerName: {{ player.playerName$ | async }}</p>
+                <p class="log">PlayerStatus: {{ player.status$ | async }}</p>
+                <p class="log">Damage: {{ (playerActivity.damageRoster$ | async)?.activePlayerDamageInflicted }}</p>
                 <p class="log">
-                    Started: {{ matchStartDate | date: "mediumTime" }}<br />
-                    Ended: {{ matchEndDate | date: "mediumTime" }}<br />
-                    Duration: {{ matchDurationDate | date: "mm:ss" }}
+                    Eliminations: {{ (playerActivity.damageRoster$ | async)?.activePlayerEliminationsInflicted }}
+                </p>
+                <p class="log">
+                    Headshots: {{ (playerActivity.damageRoster$ | async)?.activePlayerHeadshotsInflicted }}
+                </p>
+                <p class="log">
+                    Knockdowns: {{ (playerActivity.damageRoster$ | async)?.activePlayerKnockdownsInflicted }}
+                </p>
+                <p class="log">Placement: {{ playerActivity.placement$ | async }}</p>
+                <p class="log">Victory: {{ playerActivity.victory$ | async }}</p>
+                <p class="log">InUse: {{ playerInventory.inUse$ | async }}</p>
+                <p class="log">
+                    Inventory:
+                    <span *ngFor="let slotItem; in: playerInventory.inventorySlots$ | async">{{ slotItem }}</span>
+                </p>
+                <p class="log">
+                    Weapons:
+                    <span *ngFor="let weaponItem; in: playerInventory.weaponSlots$ | async">{{ weaponItem }}</span>
+                </p>
+                <p class="log">Legend: {{ playerLegend.legend$ | async }}</p>
+                <p class="log">
+                    UltimateCooldownPercent: {{ playerLegend.ultimateCooldown$ | async | percent: "0.0-0" }}
+                </p>
+                <p class="log">
+                    Coordinates:
+                    <span *ngFor="let coordinate; in: playerLocation.coordinates$ | async">{{ coordinate }}, </span>
+                </p>
+                <p class="log">
+                    LandingCoordinates:
+                    <span *ngFor="let coordinate; in: playerLocation.landingCoordinates$ | async"
+                        >{{ coordinate }},
+                    </span>
+                </p>
+                <p class="log">LocationPhase: {{ playerLocation.locationPhase$ | async }}</p>
+                <p class="log">
+                    StartingCoordinates:
+                    <span *ngFor="let coordinate; in: playerLocation.startingCoordinates$ | async"
+                        >{{ coordinate }},
+                    </span>
                 </p>
             </div>
         </div>
         <div class="pane">
             <h1>
                 Info
-                <button (click)="onInjectInfoCmdClick()">Inject Raw</button>
-                <button (click)="onInjectInfoLogClick()">Inject Log</button>
+                <button (click)="onInjectInfoClick()">Inject From Log</button>
                 <button (click)="gameInfoList = ''">Clear</button>
             </h1>
             <textarea class="log-box" readonly>{{ gameInfoList }}</textarea>
@@ -71,8 +84,7 @@
         <div class="pane">
             <h1>
                 Event
-                <button (click)="onInjectEventCmdClick()">Inject Raw</button>
-                <button (click)="onInjectEventLogClick()">Inject Log</button>
+                <button (click)="onInjectEventClick()">Inject From Log</button>
                 <button (click)="gameEventList = ''">Clear</button>
             </h1>
             <textarea class="log-box" readonly>{{ gameEventList }}</textarea>

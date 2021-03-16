@@ -1,0 +1,135 @@
+{
+    "$schema": "./weapon-statistics-schema.json",
+    "weaponStatistics": [
+        {
+            "id": "melee",
+            "class": "",
+            "ammoType": ""
+        },
+        {
+            "id": "30_30_repeater",
+            "class": "assault_rifle",
+            "ammoType": "heavy"
+        },
+        {
+            "id": "alternator",
+            "class": "smg",
+            "ammoType": "light"
+        },
+        {
+            "id": "charge_rifle",
+            "class": "sniper",
+            "ammoType": "sniper"
+        },
+        {
+            "id": "devotion",
+            "class": "lmg",
+            "ammoType": "energy"
+        },
+        {
+            "id": "eva_8",
+            "class": "shotgun",
+            "ammoType": "shotgun"
+        },
+        {
+            "id": "g7_scout",
+            "class": "assault_rifle",
+            "ammoType": "light"
+        },
+        {
+            "id": "havoc",
+            "class": "assault_rifle",
+            "ammoType": "energy"
+        },
+        {
+            "id": "hemlok",
+            "class": "assault_rifle",
+            "ammoType": "heavy"
+        },
+        {
+            "id": "kraber",
+            "class": "sniper",
+            "ammoType": "sniper"
+        },
+        {
+            "id": "l_star",
+            "class": "lmg",
+            "ammoType": "energy"
+        },
+        {
+            "id": "longbow",
+            "class": "sniper",
+            "ammoType": "sniper"
+        },
+        {
+            "id": "m600_spitfire",
+            "class": "lmg",
+            "ammoType": "heavy"
+        },
+        {
+            "id": "mastiff",
+            "class": "shotgun",
+            "ammoType": "shotgun"
+        },
+        {
+            "id": "mozambique",
+            "class": "shotgun",
+            "ammoType": "shotgun"
+        },
+        {
+            "id": "p2020",
+            "class": "pistol",
+            "ammoType": "light"
+        },
+        {
+            "id": "peacekeeper",
+            "class": "shotgun",
+            "ammoType": "shotgun"
+        },
+        {
+            "id": "prowler",
+            "class": "smg",
+            "ammoType": "heavy"
+        },
+        {
+            "id": "r301",
+            "class": "assault_rifle",
+            "ammoType": "light"
+        },
+        {
+            "id": "r99",
+            "class": "smg",
+            "ammoType": "light"
+        },
+        {
+            "id": "re45",
+            "class": "pistol",
+            "ammoType": "light"
+        },
+        {
+            "id": "sentinel",
+            "class": "sniper",
+            "ammoType": "sniper"
+        },
+        {
+            "id": "triple_take",
+            "class": "sniper",
+            "ammoType": "sniper"
+        },
+        {
+            "id": "vk47_flatline",
+            "class": "assault_rifle",
+            "ammoType": "heavy"
+        },
+        {
+            "id": "volt",
+            "class": "smg",
+            "ammoType": "energy"
+        },
+        {
+            "id": "wingman",
+            "class": "pistol",
+            "ammoType": "heavy"
+        }
+    ]
+}

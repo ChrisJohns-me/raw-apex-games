@@ -7,12 +7,6 @@ export enum PlayerStatus {
     Eliminated = "eliminated",
 }
 
-export enum LocationPhase {
-    Dropship = "dropship",
-    Dropping = "dropping",
-    HasLanded = "has_landed",
-}
-
 export class Player {
     public readonly name: string;
     public isLocalPlayer: boolean;

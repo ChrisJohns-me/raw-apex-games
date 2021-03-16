@@ -1,11 +1,14 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { GameStage } from "@common/game";
-import { GameEventsService } from "@core/game";
+import { MatchState } from "@common/match";
+import { PlayerStatus } from "@common/player";
+import { MatchService } from "@core/match.service";
+import { PlayerLegendService } from "@core/player-legend.service";
+import { PlayerService } from "@core/player.service";
 import { isValid } from "date-fns";
-import { Subject, timer } from "rxjs";
-import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
+import { combineLatest, Subject, timer } from "rxjs";
+import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
-import { averageRate, JSONTryParse } from "src/utilities";
+import { averageRate } from "src/utilities";
 
 const DEBUG = !environment.production;
 
@@ -51,7 +54,12 @@ export class InGameUltimateCountdownWindowComponent implements OnInit, OnDestroy
 
     private _unsubscribe = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef, private readonly gameEvents: GameEventsService) {
+    constructor(
+        private readonly cdr: ChangeDetectorRef,
+        private readonly match: MatchService,
+        private readonly player: PlayerService,
+        private readonly playerLegend: PlayerLegendService
+    ) {
         console.debug(`[${this.constructor.name}] instantiated`);
     }
 
@@ -65,32 +73,31 @@ export class InGameUltimateCountdownWindowComponent implements OnInit, OnDestroy
     }
 
     private registerGameEvents(): void {
-        type MeUltimateCooldown = overwolf.gep.ApexLegends.ApexLegendsMatchInfoMeUltimateCooldown;
-        this.gameEvents.gameStage$
+        // Show or Hide window
+        combineLatest([this.match.state$, this.player.status$])
+            .pipe(takeUntil(this._unsubscribe), distinctUntilChanged())
+            .subscribe(([matchState, playerStatus]) => {
+                if (matchState === MatchState.Active && playerStatus === PlayerStatus.Alive) {
+                    this.showCountdown = true;
+                } else {
+                    this.showCountdown = false;
+                    this.resetPercentHistory();
+                }
+                console.debug(
+                    `Match State is "${matchState}". ${this.showCountdown ? "Showing" : "Hiding"} Ultimate Countdown`
+                );
+            });
+
+        // Start Ultimate calculation
+        combineLatest([this.match.state$, this.player.status$])
             .pipe(
                 takeUntil(this._unsubscribe),
-                // Showing or hiding window
-                tap((gameStage) => {
-                    if (gameStage === GameStage.InGame) {
-                        this.showCountdown = true;
-                    } else {
-                        this.showCountdown = false;
-                        this.resetPercentHistory();
-                    }
-                    console.debug(
-                        `Game Stage is "${gameStage}". ${this.showCountdown ? "Showing" : "Hiding"} Ultimate Countdown`
-                    );
-                }),
-                // Start Ultimate calculation
-                filter((gameStage) => gameStage === GameStage.InGame || gameStage === GameStage.InGameKnocked),
-                switchMap(() => this.gameEvents.gameInfo$),
-                filter((infoData) => infoData?.feature === "me" && !!infoData.info.me?.ultimate_cooldown),
-                map((infoData) => {
-                    const ultCooldownJSON = infoData?.info.me?.ultimate_cooldown;
-                    const ultCooldownObj = JSONTryParse<MeUltimateCooldown>(ultCooldownJSON as string);
-                    const ultCooldown = parseInt(ultCooldownObj?.ultimate_cooldown as string);
-                    return ultCooldown / 100;
-                }),
+                distinctUntilChanged(),
+                filter(
+                    ([matchState, playerStatus]) =>
+                        matchState === MatchState.Active && playerStatus === PlayerStatus.Alive
+                ),
+                switchMap(() => this.playerLegend.ultimateCooldown$),
                 tap((percent) => this.addPercentHistory((this.ultimatePercent = percent))),
                 map((percent) => {
                     const adjustedNow = new Date().getTime();

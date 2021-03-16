@@ -1,0 +1,267 @@
+{
+    "$schema": "./items-schema.json",
+    "items": [
+        {
+            "id": "melee",
+            "friendlyName": "Melee",
+            "inGameInfoNameRegExPattern": "/^(Melee|Empty Handed)$/i",
+            "inGameEventNameRegExPattern": "/^Melee$/i"
+        },
+        {
+            "id": "generic_heal",
+            "friendlyName": "Health/Shield",
+            "inGameInfoNameRegExPattern": "/^Health/Shield$/i"
+        },
+        {
+            "id": "ammo_light",
+            "friendlyName": "Light Ammo",
+            "inGameInfoNameRegExPattern": null,
+            "inGameInventoryIdRegExPattern": "/^126$/"
+        },
+        {
+            "id": "ammo_energy",
+            "friendlyName": "Energy Ammo",
+            "inGameInfoNameRegExPattern": null,
+            "inGameInventoryIdRegExPattern": "/^127$/"
+        },
+        {
+            "id": "ammo_shotgun",
+            "friendlyName": "Shotgun Ammo",
+            "inGameInfoNameRegExPattern": null,
+            "inGameInventoryIdRegExPattern": "/^128$/"
+        },
+        {
+            "id": "ammo_heavy",
+            "friendlyName": "Heavy Ammo",
+            "inGameInfoNameRegExPattern": null,
+            "inGameInventoryIdRegExPattern": "/^129$/"
+        },
+        {
+            "id": "ammo_sniper",
+            "friendlyName": "Sniper Ammo",
+            "inGameInfoNameRegExPattern": null,
+            "inGameInventoryIdRegExPattern": "/^130$/"
+        },
+        {
+            "id": "ultimate_accelerant",
+            "friendlyName": "Ultimate Accelerant",
+            "inGameInventoryIdRegExPattern": "/^131$/"
+        },
+        {
+            "id": "syringe",
+            "friendlyName": "Syringe",
+            "inGameInventoryIdRegExPattern": "/^134$/"
+        },
+        {
+            "id": "shield_battery",
+            "friendlyName": "Shield Battery",
+            "inGameInventoryIdRegExPattern": "/^135$/"
+        },
+        {
+            "id": "shield_cell",
+            "friendlyName": "Shield Cell",
+            "inGameInventoryIdRegExPattern": "/^136$/"
+        },
+        {
+            "id": "med_kit",
+            "friendlyName": "Med Kit",
+            "inGameInventoryIdRegExPattern": null
+        },
+        {
+            "id": "phoenix_kit",
+            "friendlyName": "Phoenix Kit",
+            "inGameInventoryIdRegExPattern": null
+        },
+        {
+            "id": "knockdownshield",
+            "friendlyName": "Knockdown Shield",
+            "inGameInfoNameRegExPattern": "/^Knockdown Shield$/i"
+        },
+        {
+            "id": "30_30_repeater",
+            "friendlyName": "30-30 Repeater",
+            "inGameInfoNameRegExPattern": "/^mp_weapon_3030$/i",
+            "inGameEventNameRegExPattern": "/^3030repeater$/i"
+        },
+        {
+            "id": "alternator",
+            "friendlyName": "Alternator",
+            "inGameInfoNameRegExPattern": "/^Alternator SMG$/i",
+            "inGameEventNameRegExPattern": "/^alternator$/i"
+        },
+        {
+            "id": "charge_rifle",
+            "friendlyName": "Charge Rifle",
+            "inGameInfoNameRegExPattern": "/^Charge Rifle$/i",
+            "inGameEventNameRegExPattern": "/^charge_rifle$/i"
+        },
+        {
+            "id": "devotion",
+            "friendlyName": "Devotion",
+            "inGameInfoNameRegExPattern": "/^Devotion$/i",
+            "inGameEventNameRegExPattern": "/^devotion$/i"
+        },
+        {
+            "id": "eva_8",
+            "friendlyName": "EVA-8 Auto",
+            "inGameInfoNameRegExPattern": "/^eva_8$/i",
+            "inGameEventNameRegExPattern": "/^eva8$/i"
+        },
+        {
+            "id": "g7_scout",
+            "friendlyName": "G7 Scout",
+            "inGameInfoNameRegExPattern": "/^G7 Scout$/i",
+            "inGameEventNameRegExPattern": "/^g7_scout$/i"
+        },
+        {
+            "id": "havoc",
+            "friendlyName": "HAVOC Rifle",
+            "inGameInfoNameRegExPattern": "/^HAVOC$/i",
+            "inGameEventNameRegExPattern": "/^havoc$/i"
+        },
+        {
+            "id": "hemlok",
+            "friendlyName": "Hemlok Burst",
+            "inGameInfoNameRegExPattern": "/^Hemlok Burst AR$/i",
+            "inGameEventNameRegExPattern": "/^hemlok$/i"
+        },
+        {
+            "id": "kraber",
+            "friendlyName": "Kraber .50-Cal",
+            "inGameInfoNameRegExPattern": "/^kraber$/i",
+            "inGameEventNameRegExPattern": "/^kraber$/i"
+        },
+        {
+            "id": "l_star",
+            "friendlyName": "L-STAR",
+            "inGameInfoNameRegExPattern": "/^l_star$/i",
+            "inGameEventNameRegExPattern": "/^l_star$/i"
+        },
+        {
+            "id": "longbow",
+            "friendlyName": "Longbow DMR",
+            "inGameInfoNameRegExPattern": "/^Longbow DMR$/i",
+            "inGameEventNameRegExPattern": "/^longbow$/i"
+        },
+        {
+            "id": "m600_spitfire",
+            "friendlyName": "M600 Spitfire",
+            "inGameInfoNameRegExPattern": "/^M600 Spitfire$/i",
+            "inGameEventNameRegExPattern": "/^spitfire$/i"
+        },
+        {
+            "id": "mastiff",
+            "friendlyName": "Mastiff",
+            "inGameInfoNameRegExPattern": "/^Mastiff Shotgun$/i",
+            "inGameEventNameRegExPattern": "/^mastiff$/i"
+        },
+        {
+            "id": "mozambique",
+            "friendlyName": "Mozambique",
+            "inGameInfoNameRegExPattern": "/^Mozambique Shotgun$/i",
+            "inGameEventNameRegExPattern": "/^mozambique$/i"
+        },
+        {
+            "id": "p2020",
+            "friendlyName": "P2020",
+            "inGameInfoNameRegExPattern": "/^P2020$/i",
+            "inGameEventNameRegExPattern": "/^p2020$/i"
+        },
+        {
+            "id": "peacekeeper",
+            "friendlyName": "Peacekeeper",
+            "inGameInfoNameRegExPattern": "/^peacekeeper$/i",
+            "inGameEventNameRegExPattern": "/^peacekeeper$/i"
+        },
+        {
+            "id": "prowler",
+            "friendlyName": "Prowler",
+            "inGameInfoNameRegExPattern": "/^prowler$/i",
+            "inGameEventNameRegExPattern": "/^prowler$/i"
+        },
+        {
+            "id": "r301",
+            "friendlyName": "R-301",
+            "inGameInfoNameRegExPattern": "/^R-301 Carbine$/i",
+            "inGameEventNameRegExPattern": "/^r301$/i"
+        },
+        {
+            "id": "r99",
+            "friendlyName": "R-99",
+            "inGameInfoNameRegExPattern": "/^R-99$/i",
+            "inGameEventNameRegExPattern": "/^r97$/i"
+        },
+        {
+            "id": "re45",
+            "friendlyName": "RE-45",
+            "inGameInfoNameRegExPattern": "/^RE-45 Auto$/i",
+            "inGameEventNameRegExPattern": "/^re45$/i"
+        },
+        {
+            "id": "sentinel",
+            "friendlyName": "Sentinel",
+            "inGameInfoNameRegExPattern": "/^sentinel$/i",
+            "inGameEventNameRegExPattern": "/^sentinel$/i"
+        },
+        {
+            "id": "triple_take",
+            "friendlyName": "Triple Take",
+            "inGameInfoNameRegExPattern": "/^Triple Take$/i",
+            "inGameEventNameRegExPattern": "/^triple_take$/i"
+        },
+        {
+            "id": "vk47_flatline",
+            "friendlyName": "VK47 Flatline",
+            "inGameInfoNameRegExPattern": "/^vk47_flatline$/i",
+            "inGameEventNameRegExPattern": "/^flatline$/i"
+        },
+        {
+            "id": "volt",
+            "friendlyName": "Volt",
+            "inGameInfoNameRegExPattern": "/^Volt SMG$/i",
+            "inGameEventNameRegExPattern": "/^volt$/i"
+        },
+        {
+            "id": "wingman",
+            "friendlyName": "Wingman",
+            "inGameInfoNameRegExPattern": "/^wingman$/i",
+            "inGameEventNameRegExPattern": "/^wingman$/i"
+        },
+        {
+            "id": "heat_shield",
+            "friendlyName": "Heat Shield",
+            "inGameInfoNameRegExPattern": "/^mp_ability_void_ring$/i"
+        },
+        {
+            "id": "zipline",
+            "friendlyName": "Zipline Gun",
+            "inGameInfoNameRegExPattern": "/^Zipline Gun$/i"
+        },
+        {
+            "id": "launch_pad",
+            "friendlyName": "Launch Pad",
+            "inGameInfoNameRegExPattern": "/^Launch Pad$/i"
+        },
+        {
+            "id": "grenade_thermite",
+            "friendlyName": "Thermite Grenade",
+            "inGameInfoNameRegExPattern": "/^Thermite Grenade$/i",
+            "inGameEventNameRegExPattern": "/grenade_incendiary/i",
+            "inGameInventoryIdRegExPattern": "/158/"
+        },
+        {
+            "id": "grenade_frag",
+            "friendlyName": "Frag Grenade",
+            "inGameInfoNameRegExPattern": "/^Frag Grenade$/i",
+            "inGameEventNameRegExPattern": "/grenade_frag/i",
+            "inGameInventoryIdRegExPattern": "/159/"
+        },
+        {
+            "id": "grenade_arc_star",
+            "friendlyName": "Arc Star",
+            "inGameInfoNameRegExPattern": "/^Arc Star$/i",
+            "inGameEventNameRegExPattern": "/grenade_arc/i",
+            "inGameInventoryIdRegExPattern": "/160/"
+        }
+    ]
+}

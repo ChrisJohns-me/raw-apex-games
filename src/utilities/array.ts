@@ -19,7 +19,7 @@ export function averageRate(nums: number[]): number {
     for (let i = 0; i < nums.length; i++) {
         const curr = nums[i];
         const next = nums[i + 1];
-        if (next == null || isNaN(next)) continue;
+        if (next == null || !isFinite(next)) continue;
         const change = next - curr;
         avgRate = avgRate != null ? (avgRate + change) / 2 : change;
     }

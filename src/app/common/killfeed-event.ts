@@ -1,9 +1,9 @@
-import { Weapon } from "./weapon";
+import { WeaponItem } from "./weapon-item";
 
 export interface KillfeedEvent {
     attackerName?: string;
     victimName: string;
     isKnockdown: boolean;
     isElimination: boolean;
-    weapon: Weapon;
+    weapon: WeaponItem;
 }

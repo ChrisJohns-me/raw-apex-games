@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { UIWindow, WindowName } from "@core/ui-window";
+import { UIWindow, WindowName } from "@core/_refactor/ui-window";
 import { Observable } from "rxjs";
 
 @Injectable({

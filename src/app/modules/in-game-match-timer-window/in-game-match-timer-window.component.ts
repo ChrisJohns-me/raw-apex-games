@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { GameEventsService } from "@core/game";
+import { MatchService } from "@core/match.service";
 import { Subject } from "rxjs";
 import { debounceTime, takeUntil, tap } from "rxjs/operators";
 
@@ -21,18 +21,15 @@ export class InGameMatchTimerWindowComponent implements OnInit, OnDestroy {
 
     public get isMatchDurationDateValid(): boolean {
         const date = this.matchDurationDate;
-        return !!date && Object.prototype.toString.call(date) === "[object Date]" && !Number.isNaN(date);
+        return !!date && Object.prototype.toString.call(date) === "[object Date]" && isFinite(date.getTime());
     }
 
     public showTimer = false;
 
-    private matchStartDate?: Date;
-    private matchEndDate?: Date;
     private matchDurationMs?: number;
-
     private _unsubscribe = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef, private readonly gameEvents: GameEventsService) {
+    constructor(private readonly cdr: ChangeDetectorRef, private readonly match: MatchService) {
         console.debug(`[${this.constructor.name}] instantiated`);
     }
 
@@ -46,14 +43,12 @@ export class InGameMatchTimerWindowComponent implements OnInit, OnDestroy {
     }
 
     private registerGameEvents(): void {
-        this.gameEvents.gameMatchTime$
+        this.match.time$
             .pipe(
                 takeUntil(this._unsubscribe),
                 tap((matchTime) => {
                     if (!this.showTimer) console.debug(`[${this.constructor.name}] Showing timer`);
                     this.showTimer = true;
-                    this.matchStartDate = matchTime.start;
-                    this.matchEndDate = matchTime.end;
                     this.matchDurationMs = matchTime.durationMs;
                     this.cdr.detectChanges();
                 }),

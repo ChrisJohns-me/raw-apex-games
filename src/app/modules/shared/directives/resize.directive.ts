@@ -1,5 +1,5 @@
 import { Directive, ElementRef, NgZone, OnDestroy, OnInit } from "@angular/core";
-import { UIWindow } from "@core/ui-window";
+import { UIWindow } from "@core/_refactor/ui-window";
 
 // TODO: Not sure if this is needed.
 @Directive({

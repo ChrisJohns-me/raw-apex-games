@@ -1,11 +1,20 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { getFriendlyMapName } from "@common/game-map";
-import { getFriendlyGameMode } from "@common/game-mode";
-import { getFriendlyLegendName } from "@common/legend";
-import { GameEventsService } from "@core/game";
+import { GameProcessService } from "@core/game-process.service";
+import { GameService } from "@core/game.service";
+import { GoogleFormsMatchSummaryTrackerService } from "@core/google-forms-match-summary-tracker.service";
+import { MatchRosterService } from "@core/match-roster.service";
+import { MatchService } from "@core/match.service";
+import { OverwolfDataProviderService } from "@core/overwolf-data-provider";
+import { OverwolfExposedDataService } from "@core/overwolf-exposed-data.service";
+import { PlayerActivityService } from "@core/player-activity.service";
+import { PlayerInventoryService } from "@core/player-inventory.service";
+import { PlayerLegendService } from "@core/player-legend.service";
+import { PlayerLocationService } from "@core/player-location.service";
+import { PlayerService } from "@core/player.service";
+import { TeammateService } from "@core/teammate.service";
 import { differenceInMilliseconds } from "date-fns";
-import { Subject } from "rxjs";
-import { delay, filter, map, takeUntil, tap } from "rxjs/operators";
+import { merge, Subject } from "rxjs";
+import { delay, filter, takeUntil, tap } from "rxjs/operators";
 import { JSONTryParse } from "src/utilities";
 import { BackgroundService } from "../background/background.service";
 import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
@@ -23,39 +32,36 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
 
     public hasRecentlyTrackedMatchSummary = false;
     public get isTrackingEnabled(): boolean {
-        return this.backgroundService.isTrackingEnabled;
+        return this.googleFormsMatchSummaryTracker.isTrackingEnabled;
     }
     public set isTrackingEnabled(value: boolean) {
-        this.backgroundService.setTrackingEnabled(value);
+        this.googleFormsMatchSummaryTracker.setTrackingEnabled(value);
     }
 
     public gameProcessInfoList = "";
     public gameInfoList = "";
     public gameEventList = "";
-    public gameStage = "";
-    public gameMode = "";
-    public gameMapName = "";
-    public playerName = "";
-    public playerLegend = "";
-    public playerLocation = "";
-    public playerSquadmates = "";
-    public ultimatePercent = 0;
-
-    public get matchDurationDate(): Optional<Date> {
-        return this.matchDurationMs ? new Date(this.matchDurationMs) : undefined;
-    }
-    public matchStartDate?: Date;
-    public matchEndDate?: Date;
-    public matchDurationMs?: number;
 
     private _unsubscribe = new Subject<void>();
 
     constructor(
         private readonly backgroundService: BackgroundService,
         private readonly cdr: ChangeDetectorRef,
-        private readonly gameEvents: GameEventsService,
+        private readonly googleFormsMatchSummaryTracker: GoogleFormsMatchSummaryTrackerService,
         private readonly inGameUltimateCooldownWindow: InGameUltimateCountdownWindowService,
-        private readonly matchTimerWindow: InGameMatchTimerWindowService
+        private readonly matchTimerWindow: InGameMatchTimerWindowService,
+        private readonly overwolfDataProvider: OverwolfDataProviderService,
+        private readonly overwolfExposedData: OverwolfExposedDataService,
+        public readonly game: GameService,
+        public readonly gameProcess: GameProcessService,
+        public readonly match: MatchService,
+        public readonly matchRoster: MatchRosterService,
+        public readonly player: PlayerService,
+        public readonly playerActivity: PlayerActivityService,
+        public readonly playerInventory: PlayerInventoryService,
+        public readonly playerLegend: PlayerLegendService,
+        public readonly playerLocation: PlayerLocationService,
+        public readonly teammate: TeammateService
     ) {}
 
     public ngOnInit(): void {
@@ -66,22 +72,6 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     public ngOnDestroy(): void {
         this._unsubscribe.next();
         this._unsubscribe.complete();
-    }
-
-    public onInjectInfoCmdClick(): void {
-        this.__injectCmdFn("Info", (...args) => this.gameEvents.__debugInjectGameInfoEvent(...args));
-    }
-
-    public onInjectEventCmdClick(): void {
-        this.__injectCmdFn("Event", (...args) => this.gameEvents.__debugInjectGameDataEvent(...args));
-    }
-
-    public onInjectInfoLogClick(): void {
-        this.__injectLogFn("Info", (...args) => this.gameEvents.__debugInjectGameInfoEvent(...args));
-    }
-
-    public onInjectEventLogClick(): void {
-        this.__injectLogFn("Event", (...args) => this.gameEvents.__debugInjectGameDataEvent(...args));
     }
 
     public onForceRefreshClick(): void {
@@ -96,27 +86,17 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this.matchTimerWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
     }
 
-    private __injectCmdFn(name: string, eventFn: (event: any, delayMs: number) => void): void {
-        this.isTrackingEnabled = false;
-
-        let delayMs = 250;
-        const inputInject = prompt(`Inject ${name} (JSON)`, "");
-        const inputInjectParsed = JSONTryParse(inputInject ?? "");
-
-        if (!inputInjectParsed) {
-            console.error("Unexpected data.", inputInject, inputInjectParsed);
-            return;
-        }
-
-        if (Array.isArray(inputInjectParsed)) {
-            const inputDelayMs = prompt("Delay (milliseconds)", String(delayMs));
-            delayMs = parseInt(inputDelayMs ?? String(delayMs));
-        }
-
-        eventFn(inputInjectParsed, delayMs);
+    public onInjectInfoClick(): void {
+        // TODO: Doubt these work...
+        this.injectOverwolfData("Info", this.overwolfExposedData.injectOnInfoUpdates2);
     }
 
-    private __injectLogFn(name: string, eventFn: (event: Record<string, any>, delay: number) => void): void {
+    public onInjectEventClick(): void {
+        // TODO: Doubt these work...
+        this.injectOverwolfData("Event", this.overwolfExposedData.injectOnNewGameEvents);
+    }
+
+    private injectOverwolfData(name: string, eventFn: (event: any, delay: number) => void): void {
         this.isTrackingEnabled = false;
         interface Command {
             timestamp: Date;
@@ -124,7 +104,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         }
         let speed = 1;
         const inputInject = prompt(`Inject ${name} (RAW Log)`, "");
-        const inputInjectArr = inputInject?.split("\n");
+        const inputInjectArr = inputInject?.trim().split("\n");
 
         if (!inputInjectArr || !Array.isArray(inputInjectArr) || !inputInjectArr.length) {
             console.error("Unexpected data.", inputInject, inputInjectArr);
@@ -150,7 +130,6 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
 
         // Sort by date
         commands.sort((cmdA, cmdB) => cmdA.timestamp.getTime() - cmdB.timestamp.getTime());
-
         const firstTimestamp = commands[0].timestamp;
 
         // Run the commands
@@ -163,145 +142,40 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
 
     private registerGameEvents(): void {
         // TODO: Cleanup. Possibly moving stuff into this `merge()`
-        // merge(
-        //     this.gameEvents.gameProcessUpdate$,
-        //     this.gameEvents.gameInfo$,
-        //     this.gameEvents.gameEvent$,
-        //     this.gameEvents.gameStage$,
-        //     this.gameEvents.gameMode$,
-        //     this.gameEvents.gameMapName$,
-        //     this.gameEvents.gameMatchTime$,
-        //     this.gameEvents.playerName$,
-        //     this.gameEvents.playerLegend$,
-        //     this.gameEvents.playerInGameLocation$,
-        //     this.gameEvents.playerSquadmates$,
-        // ).pipe(
-        //     takeUntil(this._unsubscribe),
-        //     tap((event) => (this.gameProcessInfoList = createLogItem(event) + this.gameProcessInfoList)),
-        //     tap((event) => (this.gameInfoList = createLogItem(event) + this.gameInfoList)),
-        //     tap((event) => (this.gameEventList = createLogItem(event) + this.gameEventList)),
-        //     tap((stage) => (this.gameStage = stage)),
-        //     tap((event) => (this.gameMode = event)),
-        //     tap((mapName) => (this.gameMapName = mapName)),
-        //     tap((matchTime) => (this.matchStartDate = matchTime.start)),,
-        //     tap((matchTime) => (this.matchEndDate = matchTime.end)),,
-        //     tap((matchTime) => (this.matchDurationMs = matchTime.durationMs)),
-        //     tap((event) => (this.playerName = event)),
-        //     tap((event) => (this.playerLegend = event)),
-        //     tap((event) => (this.playerLocation = JSON.stringify(event))),
-        // ).subscribe(() => this.cdr.detectChanges());
-
-        // Game Process Updates
-        this.gameEvents.gameProcessUpdate$
-            .pipe(
-                takeUntil(this._unsubscribe),
+        merge(
+            this.overwolfExposedData.rawGameInfoUpdated$.pipe(
                 tap((event) => (this.gameProcessInfoList = createLogItem(event) + this.gameProcessInfoList))
-            )
-            .subscribe(() => this.cdr.detectChanges());
-
-        // Game Info
-        this.gameEvents.gameInfo$
-            .pipe(
-                takeUntil(this._unsubscribe),
+            ),
+            this.overwolfExposedData.rawInfoUpdates$.pipe(
                 tap((event) => (this.gameInfoList = createLogItem(event) + this.gameInfoList))
-            )
-            .subscribe(() => this.cdr.detectChanges());
-
-        // Game Events
-        this.gameEvents.gameEvent$
-            .pipe(
-                takeUntil(this._unsubscribe),
+            ),
+            this.overwolfExposedData.rawNewGameEvent$.pipe(
                 tap((event) => (this.gameEventList = createLogItem(event) + this.gameEventList))
             )
-            .subscribe(() => this.cdr.detectChanges());
-
-        // Game Stages
-        this.gameEvents.gameStage$
-            .pipe(
-                takeUntil(this._unsubscribe),
-                tap((stage) => (this.gameStage = stage))
-            )
-            .subscribe(() => this.cdr.detectChanges());
-
-        // Game Mode
-        this.gameEvents.gameMode$
-            .pipe(
-                takeUntil(this._unsubscribe),
-                tap((event) => (this.gameMode = getFriendlyGameMode(event)))
-            )
-            .subscribe(() => this.cdr.detectChanges());
-
-        // Game Map
-        this.gameEvents.gameMapName$
-            .pipe(
-                takeUntil(this._unsubscribe),
-                tap((mapName) => (this.gameMapName = getFriendlyMapName(mapName)))
-            )
-            .subscribe(() => this.cdr.detectChanges());
-
-        // Game Match Time
-        this.gameEvents.gameMatchTime$
-            .pipe(
-                takeUntil(this._unsubscribe),
-                tap((matchTime) => (this.matchStartDate = matchTime.start)),
-                tap((matchTime) => (this.matchEndDate = matchTime.end)),
-                tap((matchTime) => (this.matchDurationMs = matchTime.durationMs))
-            )
-            .subscribe(() => this.cdr.detectChanges());
-
-        // Player Name
-        this.gameEvents.playerName$
-            .pipe(
-                takeUntil(this._unsubscribe),
-                tap((event) => (this.playerName = event))
-            )
-            .subscribe(() => this.cdr.detectChanges());
-
-        // Player Legend
-        this.gameEvents.playerLegend$
-            .pipe(
-                takeUntil(this._unsubscribe),
-                tap((legend) => (this.playerLegend = getFriendlyLegendName(legend)))
-            )
-            .subscribe(() => this.cdr.detectChanges());
-
-        // Player Locations
-        this.gameEvents.playerInGameLocation$
-            .pipe(
-                takeUntil(this._unsubscribe),
-                tap((event) => (this.playerLocation = JSON.stringify(event)))
-            )
-            .subscribe(() => this.cdr.detectChanges());
-
-        // Ultimate Percent
-        type MeUltimateCooldown = overwolf.gep.ApexLegends.ApexLegendsMatchInfoMeUltimateCooldown;
-        this.gameEvents.gameInfo$
-            .pipe(
-                takeUntil(this._unsubscribe),
-                filter((infoData) => infoData?.feature === "me" && !!infoData.info.me?.ultimate_cooldown),
-                map((infoData) => {
-                    const ultCooldownJSON = infoData?.info.me?.ultimate_cooldown;
-                    const ultCooldownObj = JSONTryParse<MeUltimateCooldown>(ultCooldownJSON as string);
-                    const ultCooldown = parseInt(ultCooldownObj?.ultimate_cooldown as string);
-                    return ultCooldown / 100;
-                }),
-                tap((ultimatePercent) => (this.ultimatePercent = ultimatePercent))
-            )
-            .subscribe(() => this.cdr.detectChanges());
-
-        // Squadmates
-        this.gameEvents.playerSquadmates$
-            .pipe(
-                takeUntil(this._unsubscribe),
-                tap((event) => {
-                    let squadmates = "";
-                    event.forEach((sm) => {
-                        squadmates += `${squadmates.length ? "\n" : ""}`;
-                        squadmates += `${sm?.playerName} (${getFriendlyLegendName(sm?.legendName)})`;
-                    });
-                    this.playerSquadmates = squadmates;
-                })
-            )
+            // this.game.phase$,
+            // this.gameProcess.isInFocus$,
+            // this.gameProcess.isRunning$,
+            // this.match.gameMode$,
+            // this.match.map$,
+            // this.match.state$,
+            // this.match.time$,
+            // this.matchRoster.teammates$,
+            // this.player.playerName$,
+            // this.player.status$,
+            // this.playerActivity.damageRoster$,
+            // this.playerActivity.placement$,
+            // this.playerActivity.victory$,
+            // this.playerInventory.inUse$,
+            // this.playerInventory.inventory$,
+            // this.playerInventory.weapons$,
+            // this.playerLegend.legend$,
+            // this.playerLegend.ultimateCooldownPercent$,
+            // this.playerLocation.coordinates$,
+            // this.playerLocation.landingCoordinates$,
+            // this.playerLocation.locationPhase$,
+            // this.playerLocation.startingCoordinates$,
+        )
+            .pipe(takeUntil(this._unsubscribe))
             .subscribe(() => this.cdr.detectChanges());
     }
 
@@ -313,7 +187,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
             this.cdr.detectChanges();
         };
 
-        this.backgroundService.lastMatchSummary
+        this.googleFormsMatchSummaryTracker.lastMatchSummary
             .pipe(
                 takeUntil(this._unsubscribe),
                 filter((matchSummary) => !!matchSummary && !!matchSummary.legend && (matchSummary.placement ?? 0) > 0),

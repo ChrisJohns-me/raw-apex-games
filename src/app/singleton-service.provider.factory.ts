@@ -1,5 +1,5 @@
 import { Provider } from "@angular/core";
-import { UIWindow } from "./modules/core/ui-window";
+import { UIWindow } from "./modules/core/_refactor/ui-window";
 
 export const REFERENCES_KEY = "$singletonReferences";
 type Singleton = Provider;

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
-import { UIWindow } from "@core/ui-window";
+import { UIWindow } from "@core/_refactor/ui-window";
 import { Observable } from "rxjs";
 import { map, shareReplay, switchMap } from "rxjs/operators";
 
