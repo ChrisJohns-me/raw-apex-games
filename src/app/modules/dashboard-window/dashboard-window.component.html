@@ -5,9 +5,11 @@
     [isContentDraggable]="false"
 >
     <div class="control-bar">
-        <button (click)="onOpenUltimateCountdownClick()">Open Ultimate Countdown</button>
+        <button (click)="onOpenUltimateCountdownClick()">Open Ult Countdown</button>
         <button (click)="onOpenMatchTimerClick()">Open Match Timer</button>
         <button (click)="onForceRefreshClick()">Force Refresh</button>
+        <button (click)="uiShowInfoLog = !uiShowInfoLog">{{ uiShowInfoLog ? "Hide" : "Show" }} Info Log</button>
+        <button (click)="uiShowEventLog = !uiShowEventLog">{{ uiShowEventLog ? "Hide" : "Show" }} Event Log</button>
         <button (click)="isTrackingEnabled = !isTrackingEnabled">
             {{ isTrackingEnabled ? "🟢 Tracking Is On" : "❌ Tracking Is Off" }}
         </button>
@@ -16,56 +18,58 @@
     </div>
 
     <section class="pane-container">
-        <div class="pane" style="min-width: 175px; flex: 1 1 50%">
+        <div class="pane" style="min-width: 150px; max-width: 300px; flex: 1 1 50%">
             <h1>Inferences</h1>
             <div>
-                <p class="log">GamePhase: {{ game.phase$ | async }}</p>
-                <p class="log">IsInFocus: {{ gameProcess.isInFocus$ | async }}</p>
-                <p class="log">IsRunning: {{ gameProcess.isRunning$ | async }}</p>
-                <p class="log">GameMode: {{ (match.gameMode$ | async)?.friendlyName }}</p>
-                <p class="log">Map: {{ (match.map$ | async)?.friendlyName }}</p>
-                <p class="log">State: {{ match.state$ | async }}</p>
-                <p class="log">MatchDuration: {{ (match.time$ | async)?.durationMs | date: "mm:ss" }}</p>
-                <p class="log">Teammates: {{ (matchRoster.teammates$ | async)?.players }}</p>
-                <p class="log">PlayerName: {{ player.playerName$ | async }}</p>
-                <p class="log">PlayerStatus: {{ player.status$ | async }}</p>
-                <p class="log">Damage: {{ (playerActivity.damageRoster$ | async)?.activePlayerDamageInflicted }}</p>
-                <p class="log">
+                <p class="inference-item">GamePhase: {{ game.phase$ | async }}</p>
+                <p class="inference-item">IsInFocus: {{ gameProcess.isInFocus$ | async }}</p>
+                <p class="inference-item">IsRunning: {{ gameProcess.isRunning$ | async }}</p>
+                <p class="inference-item">GameMode: {{ (match.gameMode$ | async)?.friendlyName }}</p>
+                <p class="inference-item">Map: {{ (matchMap.map$ | async)?.friendlyName }}</p>
+                <p class="inference-item">State: {{ match.state$ | async }}</p>
+                <p class="inference-item">MatchDuration: {{ (match.time$ | async)?.durationMs | date: "mm:ss" }}</p>
+                <p class="inference-item">Teammates: {{ (matchRoster.teammates$ | async)?.players }}</p>
+                <p class="inference-item">PlayerName: {{ player.playerName$ | async }}</p>
+                <p class="inference-item">PlayerStatus: {{ player.status$ | async }}</p>
+                <p class="inference-item">
+                    Damage: {{ (playerActivity.damageRoster$ | async)?.activePlayerDamageInflicted }}
+                </p>
+                <p class="inference-item">
                     Eliminations: {{ (playerActivity.damageRoster$ | async)?.activePlayerEliminationsInflicted }}
                 </p>
-                <p class="log">
+                <p class="inference-item">
                     Headshots: {{ (playerActivity.damageRoster$ | async)?.activePlayerHeadshotsInflicted }}
                 </p>
-                <p class="log">
+                <p class="inference-item">
                     Knockdowns: {{ (playerActivity.damageRoster$ | async)?.activePlayerKnockdownsInflicted }}
                 </p>
-                <p class="log">Placement: {{ playerActivity.placement$ | async }}</p>
-                <p class="log">Victory: {{ playerActivity.victory$ | async }}</p>
-                <p class="log">InUse: {{ playerInventory.inUse$ | async }}</p>
-                <p class="log">
+                <p class="inference-item">Placement: {{ playerActivity.placement$ | async }}</p>
+                <p class="inference-item">Victory: {{ playerActivity.victory$ | async }}</p>
+                <p class="inference-item">InUse: {{ (playerInventory.inUse$ | async)?.friendlyName }}</p>
+                <p class="inference-item">
                     Inventory:
                     <span *ngFor="let slotItem; in: playerInventory.inventorySlots$ | async">{{ slotItem }}</span>
                 </p>
-                <p class="log">
+                <p class="inference-item">
                     Weapons:
                     <span *ngFor="let weaponItem; in: playerInventory.weaponSlots$ | async">{{ weaponItem }}</span>
                 </p>
-                <p class="log">Legend: {{ playerLegend.legend$ | async }}</p>
-                <p class="log">
+                <p class="inference-item">Legend: {{ playerLegend.legend$ | async }}</p>
+                <p class="inference-item">
                     UltimateCooldownPercent: {{ playerLegend.ultimateCooldown$ | async | percent: "0.0-0" }}
                 </p>
-                <p class="log">
+                <p class="inference-item">
                     Coordinates:
                     <span *ngFor="let coordinate; in: playerLocation.coordinates$ | async">{{ coordinate }}, </span>
                 </p>
-                <p class="log">
+                <p class="inference-item">
                     LandingCoordinates:
                     <span *ngFor="let coordinate; in: playerLocation.landingCoordinates$ | async"
                         >{{ coordinate }},
                     </span>
                 </p>
-                <p class="log">LocationPhase: {{ playerLocation.locationPhase$ | async }}</p>
-                <p class="log">
+                <p class="inference-item">LocationPhase: {{ playerLocation.locationPhase$ | async }}</p>
+                <p class="inference-item">
                     StartingCoordinates:
                     <span *ngFor="let coordinate; in: playerLocation.startingCoordinates$ | async"
                         >{{ coordinate }},
@@ -73,20 +77,28 @@
                 </p>
             </div>
         </div>
-        <div class="pane">
-            <h1>
-                Info
-                <button (click)="onInjectInfoClick()">Inject From Log</button>
-                <button (click)="gameInfoList = ''">Clear</button>
-            </h1>
+        <div class="pane" *ngIf="uiShowInfoLog">
+            <h1>Info</h1>
+            <button (click)="onInjectInfoClick()">Inject From Log</button>
+            <button (click)="gameInfoList = ''">Clear</button>
+            <label>
+                <input type="checkbox" [checked]="autoClearInfoLog" (change)="autoClearInfoLog = !autoClearInfoLog" />
+                Auto Clear
+            </label>
             <textarea class="log-box" readonly>{{ gameInfoList }}</textarea>
         </div>
-        <div class="pane">
-            <h1>
-                Event
-                <button (click)="onInjectEventClick()">Inject From Log</button>
-                <button (click)="gameEventList = ''">Clear</button>
-            </h1>
+        <div class="pane" *ngIf="uiShowEventLog">
+            <h1>Event</h1>
+            <button (click)="onInjectEventClick()">Inject From Log</button>
+            <button (click)="gameEventList = ''">Clear</button>
+            <label>
+                <input
+                    type="checkbox"
+                    [checked]="autoClearEventLog"
+                    (change)="autoClearEventLog = !autoClearEventLog"
+                />
+                Auto Clear
+            </label>
             <textarea class="log-box" readonly>{{ gameEventList }}</textarea>
         </div>
     </section>

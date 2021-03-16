@@ -17,17 +17,17 @@ h2 {
 }
 
 .pane {
-    flex: 0 1 100%;
+    flex: 1 1 100%;
     border: 1px solid #e6e6e6;
     margin: 2px;
     overflow-y: auto;
 }
 
-.log {
-    white-space: pre;
+.inference-item {
     font-family: "Courier New", Courier, monospace;
     font-size: 0.75rem;
     user-select: text;
+    margin: 0.15rem;
 }
 
 .log-box {

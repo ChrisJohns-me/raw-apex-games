@@ -10,7 +10,8 @@ import { PlayerService } from "./player.service";
 @Injectable({
     providedIn: "root",
     deps: [OverwolfDataProviderService, PlayerService],
-    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("PlayerService", PlayerLegendService, deps),
+    useFactory: (...deps: unknown[]) =>
+        SingletonServiceProviderFactory("PlayerLegendService", PlayerLegendService, deps),
 })
 export class PlayerLegendService implements OnDestroy {
     public readonly legend$ = new BehaviorSubject<Optional<Legend>>(undefined);

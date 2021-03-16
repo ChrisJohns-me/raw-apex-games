@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { GamePhase } from "@common/game";
 import { GameProcessService } from "@core/game-process.service";
 import { GameService } from "@core/game.service";
 import { GoogleFormsMatchSummaryTrackerService } from "@core/google-forms-match-summary-tracker.service";
+import { MatchMapService } from "@core/match-map.service";
 import { MatchRosterService } from "@core/match-roster.service";
 import { MatchService } from "@core/match.service";
 import { OverwolfDataProviderService } from "@core/overwolf-data-provider";
@@ -14,7 +16,7 @@ import { PlayerService } from "@core/player.service";
 import { TeammateService } from "@core/teammate.service";
 import { differenceInMilliseconds } from "date-fns";
 import { merge, Subject } from "rxjs";
-import { delay, filter, takeUntil, tap } from "rxjs/operators";
+import { delay, distinctUntilChanged, filter, takeUntil, tap } from "rxjs/operators";
 import { JSONTryParse } from "src/utilities";
 import { BackgroundService } from "../background/background.service";
 import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
@@ -29,6 +31,12 @@ import { InGameUltimateCountdownWindowService } from "../in-game-ultimate-countd
 export class DashboardWindowComponent implements OnInit, OnDestroy {
     public primaryTitle = "Dashboard";
     public secondaryTitle = "";
+
+    public uiShowInfoLog = true;
+    public uiShowEventLog = true;
+
+    public autoClearInfoLog = false;
+    public autoClearEventLog = false;
 
     public hasRecentlyTrackedMatchSummary = false;
     public get isTrackingEnabled(): boolean {
@@ -55,6 +63,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         public readonly game: GameService,
         public readonly gameProcess: GameProcessService,
         public readonly match: MatchService,
+        public readonly matchMap: MatchMapService,
         public readonly matchRoster: MatchRosterService,
         public readonly player: PlayerService,
         public readonly playerActivity: PlayerActivityService,
@@ -65,6 +74,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     ) {}
 
     public ngOnInit(): void {
+        this.registerAutoClearLogs();
         this.registerGameEvents();
         this.registerBackgroundEvents();
     }
@@ -140,8 +150,20 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         });
     }
 
+    private registerAutoClearLogs(): void {
+        this.game.phase$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                distinctUntilChanged(),
+                filter((gamePhase) => gamePhase === GamePhase.Lobby)
+            )
+            .subscribe(() => {
+                if (this.autoClearInfoLog) this.gameInfoList = "";
+                if (this.autoClearEventLog) this.gameEventList = "";
+            });
+    }
+
     private registerGameEvents(): void {
-        // TODO: Cleanup. Possibly moving stuff into this `merge()`
         merge(
             this.overwolfExposedData.rawGameInfoUpdated$.pipe(
                 tap((event) => (this.gameProcessInfoList = createLogItem(event) + this.gameProcessInfoList))
@@ -152,28 +174,6 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
             this.overwolfExposedData.rawNewGameEvent$.pipe(
                 tap((event) => (this.gameEventList = createLogItem(event) + this.gameEventList))
             )
-            // this.game.phase$,
-            // this.gameProcess.isInFocus$,
-            // this.gameProcess.isRunning$,
-            // this.match.gameMode$,
-            // this.match.map$,
-            // this.match.state$,
-            // this.match.time$,
-            // this.matchRoster.teammates$,
-            // this.player.playerName$,
-            // this.player.status$,
-            // this.playerActivity.damageRoster$,
-            // this.playerActivity.placement$,
-            // this.playerActivity.victory$,
-            // this.playerInventory.inUse$,
-            // this.playerInventory.inventory$,
-            // this.playerInventory.weapons$,
-            // this.playerLegend.legend$,
-            // this.playerLegend.ultimateCooldownPercent$,
-            // this.playerLocation.coordinates$,
-            // this.playerLocation.landingCoordinates$,
-            // this.playerLocation.locationPhase$,
-            // this.playerLocation.startingCoordinates$,
         )
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(() => this.cdr.detectChanges());

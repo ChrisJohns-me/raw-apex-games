@@ -15,7 +15,7 @@ import {
     providedIn: "root",
     deps: [OverwolfDataProviderService],
     useFactory: (...deps: unknown[]) =>
-        SingletonServiceProviderFactory("OverwolfDataInjectionService", OverwolfExposedDataService, deps),
+        SingletonServiceProviderFactory("OverwolfExposedDataService", OverwolfExposedDataService, deps),
 })
 export class OverwolfExposedDataService implements OnDestroy {
     public get rawGameInfoUpdated$(): ReplaySubject<OWGameInfoUpdatedEvent> {

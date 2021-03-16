@@ -18,7 +18,7 @@ export const SingletonServiceProviderFactory = (
     service: Provider,
     deps: any[] = []
 ): Singleton => {
-    const logPrefix = `[SingletonServiceProviderFactory] "${referenceKey}"`;
+    const logPrefix = `[Singleton] "${referenceKey}"`;
     const owWindow = (UIWindow.getMainWindow() as unknown) as Window;
 
     if (!owWindow[REFERENCES_KEY]) owWindow[REFERENCES_KEY] = {};

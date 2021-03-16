@@ -51,25 +51,23 @@ export class OverwolfDataProviderService implements OnDestroy {
         GAMEINFOUPDATED: new OverwolfEventHookHandler(
             overwolf.games.onGameInfoUpdated.addListener,
             overwolf.games.onGameInfoUpdated.removeListener,
-            this.gameInfoUpdatedDelegate.onGameInfoUpdated
+            (e) => this.gameInfoUpdatedDelegate.onGameInfoUpdated(e)
         ),
         INFOUPDATES2: new OverwolfEventHookHandler(
             overwolf.games.events.onInfoUpdates2.addListener,
             overwolf.games.events.onInfoUpdates2.removeListener,
-            this.infoUpdatesDelegate.onInfoUpdates2
+            (e) => this.infoUpdatesDelegate.onInfoUpdates2(e)
         ),
         NEWGAMEEVENT: new OverwolfEventHookHandler(
             overwolf.games.events.onNewEvents.addListener,
             overwolf.games.events.onNewEvents.removeListener,
-            this.newGameEventDelegate.onNewGameEvents
+            (e) => this.newGameEventDelegate.onNewGameEvents(e)
         ),
     };
 
     private readonly gameStatusEventHooks: { [key: string]: OverwolfEventHookHandler } = {
-        RUNNINGGAMEINFO: new OverwolfEventHookHandler(
-            overwolf.games.getRunningGameInfo,
-            undefined,
-            this.onGameStatusGameInfoUpdated
+        RUNNINGGAMEINFO: new OverwolfEventHookHandler(overwolf.games.getRunningGameInfo, undefined, (e) =>
+            this.onGameStatusGameInfoUpdated(e)
         ),
         GAMEINFOUPDATED: new OverwolfEventHookHandler(
             overwolf.games.onGameInfoUpdated.addListener,
@@ -79,7 +77,7 @@ export class OverwolfDataProviderService implements OnDestroy {
         GAMELAUNCHED: new OverwolfEventHookHandler(
             overwolf.games.onGameLaunched.addListener,
             overwolf.games.onGameLaunched.removeListener,
-            this.onGameStatusGameInfoUpdated
+            (e) => this.onGameStatusGameInfoUpdated(e)
         ),
     };
 
