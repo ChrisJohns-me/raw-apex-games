@@ -14,9 +14,7 @@ export class TeammateService implements OnDestroy {
 
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {
-        console.debug(`[${this.constructor.name}] Instantiated`);
-    }
+    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();

@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { DamageRoster } from "@common/damage-roster";
 import { MatchState } from "@common/match";
 import { BehaviorSubject, Subject } from "rxjs";
-import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
+import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { parseBoolean } from "src/utilities";
 import { MatchRosterService } from "./match-roster.service";
@@ -18,7 +18,7 @@ import { PlayerService } from "./player.service";
 })
 export class PlayerActivityService implements OnDestroy {
     public readonly damageRoster$ = new BehaviorSubject<Optional<DamageRoster>>(undefined);
-    public readonly placement$ = new BehaviorSubject<number>(Infinity);
+    public readonly placement$ = new BehaviorSubject<Optional<number>>(undefined);
     public readonly victory$ = new BehaviorSubject<boolean>(false);
 
     private _damageRoster: Optional<DamageRoster>;
@@ -30,9 +30,7 @@ export class PlayerActivityService implements OnDestroy {
         private readonly matchRoster: MatchRosterService,
         private readonly overwolf: OverwolfDataProviderService,
         private readonly player: PlayerService
-    ) {
-        console.debug(`[${this.constructor.name}] Instantiated`);
-    }
+    ) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -52,11 +50,14 @@ export class PlayerActivityService implements OnDestroy {
         this.match.state$
             .pipe(
                 takeUntil(this._unsubscribe),
-                distinctUntilChanged(),
                 filter((matchState) => matchState === MatchState.Active),
-                tap(() => (this._damageRoster = new DamageRoster(this.player.playerName$.value)))
+                tap(() => (this._damageRoster = undefined)),
+                switchMap(() => this.player.playerName$)
             )
-            .subscribe();
+            .subscribe((newPlayerName) => {
+                if (!this._damageRoster) this._damageRoster = new DamageRoster(newPlayerName);
+                else if (newPlayerName) this._damageRoster.activePlayerName = newPlayerName;
+            });
     }
 
     private setupDamageEvents(): void {
@@ -78,7 +79,7 @@ export class PlayerActivityService implements OnDestroy {
     }
 
     private setupKillfeedEvents(): void {
-        this.matchRoster.killfeed$.pipe(takeUntil(this._unsubscribe)).subscribe((killfeed) => {
+        this.matchRoster.killfeedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe((killfeed) => {
             if (killfeed.isKnockdown) {
                 this._damageRoster?.knockdownPlayer(killfeed.victimName, killfeed.attackerName);
             } else if (killfeed.isElimination) {
@@ -87,6 +88,7 @@ export class PlayerActivityService implements OnDestroy {
             this.damageRoster$.next(this._damageRoster);
         });
     }
+    //#endregion
 
     //#region Placement
     // TODO: This value needs to be verified.
@@ -94,7 +96,6 @@ export class PlayerActivityService implements OnDestroy {
         this.match.state$
             .pipe(
                 takeUntil(this._unsubscribe),
-                distinctUntilChanged(),
                 filter((matchState) => matchState === MatchState.Active),
                 switchMap(() => this.matchRoster.roster$),
                 filter((matchRoster) => !!matchRoster),
@@ -117,7 +118,6 @@ export class PlayerActivityService implements OnDestroy {
         this.match.state$
             .pipe(
                 takeUntil(this._unsubscribe),
-                distinctUntilChanged(),
                 tap((matchState) => (matchState === MatchState.Active ? setVictoryFn(false) : null)),
                 switchMap(() => this.overwolf.infoUpdates$),
                 filter((infoUpdate) => infoUpdate.feature === "rank"),

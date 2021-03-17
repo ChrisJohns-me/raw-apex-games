@@ -4,7 +4,7 @@ import { Item } from "@common/item";
 import { MatchState } from "@common/match";
 import { WeaponItem } from "@common/weapon-item";
 import { BehaviorSubject, Subject } from "rxjs";
-import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
+import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { findKeyByKeyRegEx, findValueByKeyRegEx } from "src/utilities";
 import { MatchService } from "./match.service";
@@ -17,21 +17,16 @@ import { OverwolfDataProviderService, OWMatchInfoMeInventory } from "./overwolf-
         SingletonServiceProviderFactory("PlayerInventoryService", PlayerInventoryService, deps),
 })
 export class PlayerInventoryService implements OnDestroy {
-    public readonly inUse$ = new BehaviorSubject<Item>(new Item());
-    public readonly weaponSlots$ = new BehaviorSubject<InventorySlots<WeaponItem>>({
-        0: new WeaponItem(),
-        1: new WeaponItem(),
-    });
-    public readonly inventorySlots$ = new BehaviorSubject<InventorySlots>({});
+    public readonly inUse$ = new BehaviorSubject<Optional<Item>>(undefined);
+    public readonly weaponSlots$ = new BehaviorSubject<Optional<InventorySlots<WeaponItem>>>(undefined);
+    public readonly inventorySlots$ = new BehaviorSubject<Optional<InventorySlots>>(undefined);
 
     private inventoryInfoUpdates$ = this.overwolf.infoUpdates$.pipe(
         filter((infoUpdate) => infoUpdate.feature === "inventory")
     );
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {
-        console.debug(`[${this.constructor.name}] Instantiated`);
-    }
+    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -50,7 +45,7 @@ export class PlayerInventoryService implements OnDestroy {
             .pipe(
                 takeUntil(this._unsubscribe),
                 filter((matchState) => matchState === MatchState.Active),
-                tap(() => this.inventorySlots$.next({})),
+                tap(() => this.inventorySlots$.next(undefined)),
                 switchMap(() => this.inventoryInfoUpdates$)
             )
             .subscribe((infoUpdate) => {
@@ -75,9 +70,8 @@ export class PlayerInventoryService implements OnDestroy {
         this.match.state$
             .pipe(
                 takeUntil(this._unsubscribe),
-                distinctUntilChanged(),
                 filter((matchState) => matchState === MatchState.Active),
-                tap(() => this.inUse$.next(new Item())),
+                tap(() => this.inUse$.next(undefined)),
                 switchMap(() => this.inventoryInfoUpdates$),
                 map((infoUpdate) => infoUpdate.info.me?.inUse?.inUse)
             )
@@ -93,16 +87,15 @@ export class PlayerInventoryService implements OnDestroy {
         this.match.state$
             .pipe(
                 takeUntil(this._unsubscribe),
-                distinctUntilChanged(),
                 filter((matchState) => matchState === MatchState.Active),
-                tap(() => this.weaponSlots$.next([new WeaponItem(), new WeaponItem()])),
+                tap(() => this.weaponSlots$.next(undefined)),
                 switchMap(() => this.inventoryInfoUpdates$),
                 map((infoUpdate) => infoUpdate.info.me?.weapons)
             )
             .subscribe((weapons) => {
                 const newWeapons: [WeaponItem, WeaponItem] = [
-                    new WeaponItem({ fromInfoWeapons: weapons?.weapon0 }),
-                    new WeaponItem({ fromInfoWeapons: weapons?.weapon1 }),
+                    new WeaponItem({ fromInGameInfoName: weapons?.weapon0 }),
+                    new WeaponItem({ fromInGameInfoName: weapons?.weapon1 }),
                 ];
                 this.weaponSlots$.next(newWeapons);
             });

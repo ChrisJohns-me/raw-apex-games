@@ -3,18 +3,7 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { MatchState } from "@common/match";
 import { MatchSummary } from "@common/match-summary";
 import { combineLatest, Observable, of, ReplaySubject, Subject } from "rxjs";
-import {
-    catchError,
-    delay,
-    distinctUntilChanged,
-    filter,
-    map,
-    retryWhen,
-    switchMap,
-    take,
-    takeUntil,
-    tap,
-} from "rxjs/operators";
+import { catchError, delay, filter, map, retryWhen, switchMap, take, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { Config } from "src/config";
 import { MatchMapService } from "./match-map.service";
@@ -52,9 +41,7 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
         private readonly matchMap: MatchMapService,
         private readonly playerActivity: PlayerActivityService,
         private readonly playerLegend: PlayerLegendService
-    ) {
-        console.debug(`[${this.constructor.name}] Instantiated`);
-    }
+    ) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -104,7 +91,6 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
         this.match.state$
             .pipe(
                 takeUntil(this._unsubscribe),
-                distinctUntilChanged(),
                 filter((matchState) => matchState === MatchState.Inactive),
                 switchMap(() =>
                     combineLatest([

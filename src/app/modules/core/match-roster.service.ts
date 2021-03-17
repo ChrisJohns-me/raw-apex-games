@@ -6,7 +6,7 @@ import { Player } from "@common/player";
 import { Team } from "@common/team";
 import { WeaponItem } from "@common/weapon-item";
 import { BehaviorSubject, Subject } from "rxjs";
-import { distinctUntilChanged, filter, map, takeUntil } from "rxjs/operators";
+import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { findValueByKeyRegEx } from "src/utilities";
 import { MatchService } from "./match.service";
@@ -25,11 +25,13 @@ import { PlayerService } from "./player.service";
 })
 export class MatchRosterService implements OnDestroy {
     public readonly roster$ = new BehaviorSubject<Optional<MatchRoster>>(undefined);
-    public readonly killfeed$ = new Subject<KillfeedEvent>();
+    public readonly killfeedEvent$ = new Subject<KillfeedEvent>();
+    public readonly killfeedEventList$ = new BehaviorSubject<KillfeedEvent[]>([]);
     // TODO:
     public readonly teammates$ = new BehaviorSubject<Optional<MatchRoster>>(undefined);
 
     private _roster?: MatchRoster;
+    private _killfeedList: KillfeedEvent[] = [];
     private _owRawRoster?: Partial<OWMatchInfo>;
 
     private readonly _unsubscribe = new Subject<void>();
@@ -38,9 +40,7 @@ export class MatchRosterService implements OnDestroy {
         private readonly match: MatchService,
         private readonly overwolf: OverwolfDataProviderService,
         private readonly player: PlayerService
-    ) {
-        console.debug(`[${this.constructor.name}] Instantiated`);
-    }
+    ) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -67,7 +67,7 @@ export class MatchRosterService implements OnDestroy {
             .subscribe((matchInfo) => this.rawRosterUpdate(matchInfo));
 
         // Clear or emit roster from match state change
-        this.match.state$.pipe(takeUntil(this._unsubscribe), distinctUntilChanged()).subscribe((newMatchState) => {
+        this.match.state$.pipe(takeUntil(this._unsubscribe)).subscribe((newMatchState) => {
             if (!this._owRawRoster) return;
             if (newMatchState === MatchState.Active) {
                 const newRoster = this.createRoster(this._owRawRoster);
@@ -75,8 +75,8 @@ export class MatchRosterService implements OnDestroy {
                 this.roster$.next(newRoster);
             } else if (newMatchState === MatchState.Inactive) {
                 this.roster$.next(undefined);
+                this._owRawRoster = undefined;
             }
-            this._owRawRoster = undefined;
         });
     }
 
@@ -93,9 +93,12 @@ export class MatchRosterService implements OnDestroy {
             if (playerName) this.eliminatePlayerOnRoster(playerName);
         } else if (rosterItem?.state === "knockedout") {
             if (playerName) this.knockdownPlayerOnRoster(playerName);
-        } else if (typeof rosterItem === "object" && rosterItem == null) {
-            // Roster item was deleted, indicating that the player has left the game
-            if (playerName) this.eliminatePlayerOnRoster(playerName);
+        } else if (
+            typeof matchInfo === "object" &&
+            (String(rosterItem) == "null" || String(rosterItem) == "undefined")
+        ) {
+            // Roster item was deleted, indicating that the player has quit the game
+            this.rosterPlayerQuit(Object.keys(matchInfo)[0]);
         }
 
         // Perform the action to Add / Remove roster item from roster list
@@ -119,21 +122,79 @@ export class MatchRosterService implements OnDestroy {
                 platformSoftware: player.platform_sw,
             });
 
-            if (!teams.find((t) => t.teamId === player.team_id)) {
-                const newTeam = new Team(player.team_id, {
+            const foundTeam = teams.find((t) => t.teamId === player.team_id);
+            if (!foundTeam) {
+                const newTeam = new Team({
+                    teamId: player.team_id,
                     isFriendly: player.isTeammate,
                     members: [newPlayer],
                 });
                 teams.push(newTeam);
+            } else {
+                foundTeam.addMember(newPlayer);
             }
         }
 
         return new MatchRoster(teams);
     }
+
+    /**
+     * Takes roster deletion events.
+     * Ensures player is eliminated from the roster.
+     * Generates an elimination killfeed event (if it does not already exist) from the last knockdown killfeed event.
+     * @param rosterId Roster key from "match_info", ie. "roster_0"
+     */
+    private rosterPlayerQuit(rosterId: string): void {
+        const deletedPlayer =
+            typeof (this._owRawRoster as AnyObject)[rosterId] === "object"
+                ? (this._owRawRoster as AnyObject)[rosterId]
+                : undefined;
+        const deletedPlayerName = deletedPlayer?.name;
+        if (!deletedPlayerName) return;
+
+        this.eliminatePlayerOnRoster(deletedPlayerName);
+
+        // Generate a kill feed event from last known knockdown
+        //  only if an elimination is not found after the knockdown
+        const deletedPlayerKillfeed = [...this._killfeedList]
+            .filter((e) => e.victimName === deletedPlayerName)
+            .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+
+        const deletedPlayerLastKnockdown = deletedPlayerKillfeed.find((e) => e.isKnockdown);
+        const deletedPlayerLastElimination = deletedPlayerKillfeed.find((e) => e.isElimination);
+
+        if (!deletedPlayerLastKnockdown) return; // Deleted player has no knockdown event
+        if (
+            deletedPlayerLastElimination &&
+            deletedPlayerLastKnockdown.timestamp.getTime() < deletedPlayerLastElimination.timestamp.getTime()
+        ) {
+            // Deleted player's elimination killfeed event has already been recorded
+            return;
+        }
+
+        console.debug(
+            `[${this.constructor.name}] Player quit; Auto-generated elimination killfeed event from knockdown for victim: "${deletedPlayerName}"`
+        );
+        const newKillfeedEvent: KillfeedEvent = {
+            ...deletedPlayerLastKnockdown,
+            timestamp: new Date(),
+            isElimination: true,
+            isKnockdown: false,
+            weapon: new WeaponItem({ fromInGameEventName: "Bleed Out" }),
+        };
+        this.killfeedEvent$.next(newKillfeedEvent);
+    }
     //#endregion
 
     //#region Killfeed
     private setupKillfeed(): void {
+        this.match.state$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                filter((matchState) => matchState === MatchState.Active)
+            )
+            .subscribe(() => (this._killfeedList = []));
+
         this.overwolf.newGameEvent$
             .pipe(
                 takeUntil(this._unsubscribe),
@@ -142,7 +203,7 @@ export class MatchRosterService implements OnDestroy {
             )
             .subscribe((killfeed) => {
                 const victim = this._roster?.players.find((p) => p.name === killfeed.victimName);
-                const weapon = new WeaponItem({ fromKillfeedName: killfeed.weaponName });
+                const weapon = new WeaponItem({ fromInGameEventName: killfeed.weaponName });
                 const act = killfeed.action;
                 const isKnockdown = !!(act === "Melee" || act === "Caustic Gas" || act === "knockdown");
                 const isElimination = !!(act === "Bleed Out" || act === "kill" || act === "headshot_kill");
@@ -152,6 +213,7 @@ export class MatchRosterService implements OnDestroy {
                 else if (isElimination) this.eliminatePlayerOnRoster(victim.name);
 
                 const newKillfeedEvent: KillfeedEvent = {
+                    timestamp: new Date(),
                     attackerName: killfeed.attackerName,
                     victimName: killfeed.victimName,
                     isKnockdown,
@@ -159,7 +221,10 @@ export class MatchRosterService implements OnDestroy {
                     weapon,
                 };
 
-                this.killfeed$.next(newKillfeedEvent);
+                this.killfeedEvent$.next(newKillfeedEvent);
+
+                this._killfeedList.push(newKillfeedEvent);
+                this.killfeedEventList$.next(this._killfeedList);
             });
     }
     //#endregion

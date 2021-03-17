@@ -2,6 +2,12 @@ import { Player, PlayerStatus, PlayerStatus as TeamStatus } from "./player";
 
 export { TeamStatus };
 
+type TeamConstructor = {
+    teamId: number;
+    isFriendly?: boolean;
+    members?: Player[];
+};
+
 export class Team {
     public readonly teamId: number;
     public readonly isFriendly: boolean;
@@ -25,16 +31,10 @@ export class Team {
 
     private _members: Player[] = [];
 
-    constructor(
-        teamId: number,
-        init?: {
-            isFriendly?: boolean;
-            members?: Player[];
-        }
-    ) {
+    constructor({ teamId, isFriendly, members }: TeamConstructor) {
         this.teamId = teamId;
-        this.isFriendly = init?.isFriendly ?? false;
-        this._members = init?.members && Array.isArray(init?.members) ? init.members : [];
+        this.isFriendly = isFriendly ?? false;
+        this._members = members && Array.isArray(members) ? members : [];
     }
 
     public setTeamStatus(status: TeamStatus): void {

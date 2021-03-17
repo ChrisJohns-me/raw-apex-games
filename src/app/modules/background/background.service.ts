@@ -51,9 +51,7 @@ export class BackgroundService implements OnDestroy {
         private readonly playerLegend: PlayerLegendService,
         private readonly playerLocation: PlayerLocationService,
         private readonly teammate: TeammateService
-    ) {
-        console.debug(`[${this.constructor.name}] Instantiated`);
-    }
+    ) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();

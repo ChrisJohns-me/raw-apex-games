@@ -19,9 +19,7 @@ export class PlayerLegendService implements OnDestroy {
 
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor(private readonly overwolf: OverwolfDataProviderService, private readonly player: PlayerService) {
-        console.debug(`[${this.constructor.name}] Instantiated`);
-    }
+    constructor(private readonly overwolf: OverwolfDataProviderService, private readonly player: PlayerService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();

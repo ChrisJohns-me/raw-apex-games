@@ -1,6 +1,6 @@
 import * as ItemListJSONData from "./items.json";
 
-// new Item({ fromId: "melee" }
+// new Item({ fromId: "empty" }
 // new Item({ fromId: "frag_grenade" }
 // new WeaponItem({ fromId: "eva8_auto" })
 // new InventoryItem({ fromId: "shield_cell" })
@@ -9,35 +9,37 @@ import * as ItemListJSONData from "./items.json";
 // playerInventory.setWeapons();
 
 type ItemJSON = typeof ItemListJSONData["items"][number];
+type ItemConstructor = {
+    fromId?: string;
+    fromInGameEventName?: string;
+    fromInGameInfoName?: string;
+    fromInGameInventoryId?: string;
+};
 
 export class Item {
     public id?: string;
     public friendlyName?: string;
     public imageName?: string;
     /** Empty handed, or empty item */
-    public isDefault = true;
-
-    /**
-     * @param {string} init.fromId Unique identifier; unique to this app.
-     * @param {string} init.fromInGameEventName Overwolf's killfeed event name; from the "kill_feed" event.
-     * @param {string} init.fromInGameInfoName Overwolf's inventory item slot name; from the "inventory.inUse" feature.
-     * @param {string} init.fromInGameInventoryId Overwolf's inventory item slot name; from the "inventory_0.name" feature.
-     */
-    constructor(init?: {
-        fromId?: string;
-        fromInGameEventName?: string;
-        fromInGameInfoName?: string;
-        fromInGameInventoryId?: string;
-    }) {
-        if (init?.fromId) this.loadById(init.fromId);
-        else if (init?.fromInGameEventName) this.loadByInGameEventName(init.fromInGameEventName);
-        else if (init?.fromInGameInfoName) this.loadByInGameInfoName(init.fromInGameInfoName);
-        else if (init?.fromInGameInventoryId) this.loadByInGameInventoryId(init.fromInGameInventoryId);
-        else if (!init) this.isDefault = true;
+    public get isDefault(): boolean {
+        return this.id === "default";
     }
 
     /**
-     * @example "r99", "r301", "flatline"
+     * @param {string} fromId Unique identifier; unique to this app.
+     * @param {string} fromInGameEventName Overwolf's killfeed event name; from the "kill_feed" event.
+     * @param {string} fromInGameInfoName Overwolf's inventory item slot name; from the "inventory.inUse" feature.
+     * @param {string} fromInGameInventoryId Overwolf's inventory item slot name; from the "inventory_0.name" feature.
+     */
+    constructor({ fromId, fromInGameEventName, fromInGameInfoName, fromInGameInventoryId }: ItemConstructor) {
+        if (fromId) this.loadById(fromId);
+        else if (fromInGameEventName) this.loadByInGameEventName(fromInGameEventName);
+        else if (fromInGameInfoName) this.loadByInGameInfoName(fromInGameInfoName);
+        else if (fromInGameInventoryId) this.loadByInGameInventoryId(fromInGameInventoryId);
+    }
+
+    /**
+     * @example "empty", "r99", "r301", "flatline"
      */
     private loadById(id: string): void {
         const callbackFn = (predicateItem: ItemJSON) => predicateItem.id === id;
@@ -50,7 +52,7 @@ export class Item {
     private loadByInGameEventName(inGameEventName: string): void {
         const callbackFn = (predicateItem: ItemJSON) => {
             if (!predicateItem.inGameEventNameRegExPattern) return false;
-            return new RegExp(predicateItem.inGameEventNameRegExPattern).test(inGameEventName);
+            return new RegExp(predicateItem.inGameEventNameRegExPattern, "i").test(inGameEventName);
         };
         this.loadFromJSON(inGameEventName, callbackFn);
     }
@@ -61,7 +63,7 @@ export class Item {
     private loadByInGameInfoName(inGameInfoName: string): void {
         const callbackFn = (predicateItem: ItemJSON) => {
             if (!predicateItem.inGameInfoNameRegExPattern) return false;
-            return new RegExp(predicateItem.inGameInfoNameRegExPattern).test(inGameInfoName);
+            return new RegExp(predicateItem.inGameInfoNameRegExPattern, "i").test(inGameInfoName);
         };
         this.loadFromJSON(inGameInfoName, callbackFn);
     }
@@ -72,7 +74,7 @@ export class Item {
     private loadByInGameInventoryId(inGameInventoryId: string): void {
         const callbackFn = (predicateItem: ItemJSON) => {
             if (!predicateItem.inGameInventoryIdRegExPattern) return false;
-            return new RegExp(predicateItem.inGameInventoryIdRegExPattern).test(inGameInventoryId);
+            return new RegExp(predicateItem.inGameInventoryIdRegExPattern, "i").test(inGameInventoryId);
         };
         this.loadFromJSON(inGameInventoryId, callbackFn);
     }

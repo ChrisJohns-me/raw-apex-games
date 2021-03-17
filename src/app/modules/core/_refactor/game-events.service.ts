@@ -110,8 +110,6 @@
 
 //     public tempIdentifier = String(Math.floor(Math.random() * 10000000));
 //     constructor() {
-//         console.debug(`[${this.constructor.name}:${this.tempIdentifier}] instantiated`);
-
 //         this.registerEvents();
 
 //         this.gameProcessUpdate$ = this._gameProcessUpdate.pipe(share());

@@ -28,7 +28,11 @@ interface WeaponStatistics {
 }
 
 // type WeaponJSONItem = typeof WeaponJSONData["weapons"][0];
-
+type WeaponItemConstructor = {
+    fromId?: string;
+    fromInGameEventName?: string;
+    fromInGameInfoName?: string;
+};
 // TODO: Load statistics from JSON
 export class WeaponItem extends Item {
     public ammoType?: WeaponAmmo;
@@ -36,11 +40,11 @@ export class WeaponItem extends Item {
     public statistics?: WeaponStatistics;
 
     /**
-     * @param {string} init.fromId Create weapon based on it's identifier.
-     * @param {string} init.fromKillfeedName Create weapon from Overwolf's `"name": "kill_feed"` event naming.
-     * @param {string} init.fromInfoWeapons Create weapon from Overwolf's `"feature": "inventory"` event naming.
+     * @param {string} fromId Create weapon based on it's identifier.
+     * @param {string} fromInGameEventName Create weapon from Overwolf's `"name": "kill_feed"` event naming.
+     * @param {string} fromInGameInfoName Create weapon from Overwolf's `"feature": "inventory"` event naming.
      */
-    constructor(init?: { fromId?: string; fromKillfeedName?: string; fromInfoWeapons?: string }) {
-        super(init);
+    constructor({ fromId, fromInGameEventName, fromInGameInfoName }: WeaponItemConstructor) {
+        super({ fromId, fromInGameEventName, fromInGameInfoName });
     }
 }

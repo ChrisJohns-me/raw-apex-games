@@ -23,9 +23,7 @@ export class MatchService implements OnDestroy {
 
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor(private readonly overwolf: OverwolfDataProviderService) {
-        console.debug(`[${this.constructor.name}] Instantiated`);
-    }
+    constructor(private readonly overwolf: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -40,7 +38,7 @@ export class MatchService implements OnDestroy {
 
     //#region Match State
     private setupState(): void {
-        const setNewStateFn = (newState?: MatchState): void => {
+        const stateChangedFn = (newState?: MatchState): void => {
             if (newState && newState !== this.state$.value) this.state$.next(newState);
         };
 
@@ -49,26 +47,26 @@ export class MatchService implements OnDestroy {
             [MatchState.Inactive]: (infoUpdate, gameEvent) =>
                 (infoUpdate?.feature === "match_info" && !!infoUpdate?.info?.match_info?.game_mode) ||
                 (infoUpdate?.feature === "match_state" && infoUpdate?.info?.game_info?.match_state === "inactive") ||
-                (infoUpdate?.feature === "team" && infoUpdate.info.match_info?.team_info?.team_state === "active") ||
+                (infoUpdate?.feature === "team" &&
+                    infoUpdate.info.match_info?.team_info?.team_state === "eliminated") ||
+                (infoUpdate?.feature === "team" && infoUpdate.info.match_info?.team_info?.team_state == null) ||
                 gameEvent?.name === "match_end",
             // Location data is being emitted, or a game has just begun
             [MatchState.Active]: (infoUpdate, gameEvent) =>
                 infoUpdate?.feature === "location" ||
                 (infoUpdate?.feature === "match_state" && infoUpdate?.info?.game_info?.match_state === "active") ||
-                (infoUpdate?.feature === "team" &&
-                    infoUpdate.info.match_info?.team_info?.team_state === "eliminated") ||
-                (infoUpdate?.feature === "team" && infoUpdate.info.match_info?.team_info?.team_state == null) ||
+                (infoUpdate?.feature === "team" && infoUpdate.info.match_info?.team_info?.team_state === "active") ||
                 gameEvent?.name === "match_start",
         });
 
         this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe)).subscribe((infoUpdate) => {
             const newState = triggers.triggeredFirstKey(infoUpdate, undefined);
-            setNewStateFn(newState);
+            stateChangedFn(newState);
         });
 
         this.overwolf.newGameEvent$.pipe(takeUntil(this._unsubscribe)).subscribe((gameEvent) => {
             const newState = triggers.triggeredFirstKey(undefined, gameEvent);
-            setNewStateFn(newState);
+            stateChangedFn(newState);
         });
     }
     //#endregion

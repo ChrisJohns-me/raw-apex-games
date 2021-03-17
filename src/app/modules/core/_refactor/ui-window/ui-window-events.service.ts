@@ -12,13 +12,13 @@ export class UIWindowEventsService implements OnDestroy {
     private readonly _windowStateChangedEvent = new Subject<UIWindowStateChangedEvent>();
 
     constructor() {
-        console.debug(`${this.constructor.name} instantiated`);
+        console.debug(`${this.constructor.name} UIWindow created`);
         this.windowStateChangedEvent$ = this._windowStateChangedEvent;
         this.registerEvents();
     }
 
     public ngOnDestroy(): void {
-        console.debug(`${this.constructor.name} destroyed`);
+        console.debug(`${this.constructor.name} UIWindow destroyed`);
         this.unregisterEvents();
     }
 

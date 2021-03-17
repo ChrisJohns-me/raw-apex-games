@@ -14,9 +14,9 @@ import { PlayerLegendService } from "@core/player-legend.service";
 import { PlayerLocationService } from "@core/player-location.service";
 import { PlayerService } from "@core/player.service";
 import { TeammateService } from "@core/teammate.service";
-import { differenceInMilliseconds } from "date-fns";
-import { merge, Subject } from "rxjs";
-import { delay, distinctUntilChanged, filter, takeUntil, tap } from "rxjs/operators";
+import { differenceInMilliseconds, format, isDate } from "date-fns";
+import { interval, merge, Subject } from "rxjs";
+import { delay, filter, takeUntil, tap } from "rxjs/operators";
 import { JSONTryParse } from "src/utilities";
 import { BackgroundService } from "../background/background.service";
 import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
@@ -29,14 +29,11 @@ import { InGameUltimateCountdownWindowService } from "../in-game-ultimate-countd
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardWindowComponent implements OnInit, OnDestroy {
+    public Infinity = Infinity;
     public primaryTitle = "Dashboard";
     public secondaryTitle = "";
 
-    public uiShowInfoLog = true;
-    public uiShowEventLog = true;
-
-    public autoClearInfoLog = false;
-    public autoClearEventLog = false;
+    public autoClearLog = false;
 
     public hasRecentlyTrackedMatchSummary = false;
     public get isTrackingEnabled(): boolean {
@@ -46,9 +43,8 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this.googleFormsMatchSummaryTracker.setTrackingEnabled(value);
     }
 
-    public gameProcessInfoList = "";
-    public gameInfoList = "";
-    public gameEventList = "";
+    public gameLog = "";
+    private gameLogStartTime?: Date;
 
     private _unsubscribe = new Subject<void>();
 
@@ -77,6 +73,10 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this.registerAutoClearLogs();
         this.registerGameEvents();
         this.registerBackgroundEvents();
+
+        interval(5000)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(() => this.cdr.detectChanges());
     }
 
     public ngOnDestroy(): void {
@@ -96,24 +96,14 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this.matchTimerWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
     }
 
-    public onInjectInfoClick(): void {
-        // TODO: Doubt these work...
-        this.injectOverwolfData("Info", this.overwolfExposedData.injectOnInfoUpdates2);
-    }
-
-    public onInjectEventClick(): void {
-        // TODO: Doubt these work...
-        this.injectOverwolfData("Event", this.overwolfExposedData.injectOnNewGameEvents);
-    }
-
-    private injectOverwolfData(name: string, eventFn: (event: any, delay: number) => void): void {
+    public onInjectLogClick(): void {
         this.isTrackingEnabled = false;
         interface Command {
             timestamp: Date;
-            command: unknown;
+            command: any;
         }
         let speed = 1;
-        const inputInject = prompt(`Inject ${name} (RAW Log)`, "");
+        const inputInject = prompt(`Inject ${name} Log`, "");
         const inputInjectArr = inputInject?.trim().split("\n");
 
         if (!inputInjectArr || !Array.isArray(inputInjectArr) || !inputInjectArr.length) {
@@ -132,8 +122,9 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
                 const timestampMatch = line.match(matchRegEx)?.[1];
                 const commandMatch = line.match(matchRegEx)?.[2];
                 if (!timestampMatch || !commandMatch) return;
-                const timestamp = new Date(timestampMatch);
                 const command = JSONTryParse(commandMatch);
+                if (!isDate(new Date(timestampMatch))) console.warn(`Timestamp could not be extracted from log.`);
+                const timestamp = isDate(new Date(timestampMatch)) ? new Date(timestampMatch) : new Date();
                 return { timestamp, command };
             })
             .filter((cmd) => !!cmd && !!cmd.command && !!cmd.timestamp) as Command[];
@@ -145,38 +136,49 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         // Run the commands
         commands.forEach((cmd) => {
             if (!cmd) return;
+            const commandFn =
+                cmd.command?.feature != null
+                    ? this.overwolfExposedData.injectOnInfoUpdates2
+                    : this.overwolfExposedData.injectOnNewGameEvents;
+
             const startTimeDiff = differenceInMilliseconds(cmd.timestamp, firstTimestamp);
-            setTimeout(() => eventFn(cmd.command as any, 0), startTimeDiff / speed);
+            setTimeout(() => commandFn.bind(this.overwolfExposedData)(cmd.command), startTimeDiff / speed);
         });
+    }
+
+    public clearLog(): void {
+        this.gameLogStartTime = undefined;
+        this.gameLog = "";
     }
 
     private registerAutoClearLogs(): void {
         this.game.phase$
             .pipe(
                 takeUntil(this._unsubscribe),
-                distinctUntilChanged(),
-                filter((gamePhase) => gamePhase === GamePhase.Lobby)
+                filter((gamePhase) => gamePhase === GamePhase.Lobby),
+                filter(() => this.autoClearLog)
             )
             .subscribe(() => {
-                if (this.autoClearInfoLog) this.gameInfoList = "";
-                if (this.autoClearEventLog) this.gameEventList = "";
+                this.clearLog();
             });
     }
 
     private registerGameEvents(): void {
         merge(
-            this.overwolfExposedData.rawGameInfoUpdated$.pipe(
-                tap((event) => (this.gameProcessInfoList = createLogItem(event) + this.gameProcessInfoList))
-            ),
-            this.overwolfExposedData.rawInfoUpdates$.pipe(
-                tap((event) => (this.gameInfoList = createLogItem(event) + this.gameInfoList))
-            ),
-            this.overwolfExposedData.rawNewGameEvent$.pipe(
-                tap((event) => (this.gameEventList = createLogItem(event) + this.gameEventList))
-            )
+            this.overwolfExposedData.rawInfoUpdates$.pipe(tap((event) => this.addLogItem(event) + this.gameLog)),
+            this.overwolfExposedData.rawNewGameEvent$.pipe(tap((event) => this.addLogItem(event) + this.gameLog))
         )
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(() => this.cdr.detectChanges());
+    }
+
+    private addLogItem(input: any): void {
+        if (!this.gameLogStartTime) this.gameLogStartTime = new Date();
+
+        // const timestamp = new Date(new Date().getTime() - this.gameLogStartTime.getTime()).getTime();
+        const timestamp = format(new Date(), "yyyy-MM-dd hh:mm:ss.SSS aa");
+        const eventStr = JSON.stringify(input);
+        this.gameLog = `[${timestamp}] ${eventStr}\n` + this.gameLog;
     }
 
     private registerBackgroundEvents(): void {
@@ -197,10 +199,4 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
             )
             .subscribe();
     }
-}
-
-function createLogItem(input: any): string {
-    const now = new Date();
-    const eventStr = JSON.stringify(input);
-    return `[${now.getTime()}] ${eventStr}\n`;
 }

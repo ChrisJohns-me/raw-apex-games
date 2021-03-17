@@ -18,7 +18,7 @@ export const SingletonServiceProviderFactory = (
     service: Provider,
     deps: any[] = []
 ): Singleton => {
-    const logPrefix = `[Singleton] "${referenceKey}"`;
+    const logPrefix = `[SingletonServiceProvider] "${referenceKey}"`;
     const owWindow = (UIWindow.getMainWindow() as unknown) as Window;
 
     if (!owWindow[REFERENCES_KEY]) owWindow[REFERENCES_KEY] = {};
@@ -26,7 +26,7 @@ export const SingletonServiceProviderFactory = (
         if (typeof service === "function") {
             owWindow[REFERENCES_KEY][referenceKey] = new service(...deps);
             addInstanceListing(referenceKey);
-            console.debug(`${logPrefix} Adding as a singleton service`);
+            console.debug(`${logPrefix} Instantiating as a singleton service`);
         } else {
             console.error(`${logPrefix} Not an Angular service`);
         }

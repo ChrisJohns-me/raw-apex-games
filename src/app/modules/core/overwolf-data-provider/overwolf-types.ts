@@ -1,6 +1,6 @@
 export type OWGameEvent = overwolf.gep.ApexLegends.GameEvent;
 export type OWGameEventKillFeed = overwolf.gep.ApexLegends.GameEventKillFeed;
-export type OWGameInfoUpdatedEvent = overwolf.games.GameInfoUpdatedEvent;
+// export type OWGameInfoUpdatedEvent = overwolf.games.GameInfoUpdatedEvent;
 export type OWInfoUpdates2Event = overwolf.gep.ApexLegends.InfoUpdates2Event; // overwolf.games.events.InfoUpdates2Event
 export type OWMatchInfo = overwolf.gep.ApexLegends.MatchInfo;
 export type OWMatchInfoMeInventory = overwolf.gep.ApexLegends.MatchInfoMeInventory;

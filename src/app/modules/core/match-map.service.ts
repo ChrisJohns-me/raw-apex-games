@@ -16,9 +16,7 @@ export class MatchMapService implements OnDestroy {
 
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor(private readonly playerLocation: PlayerLocationService) {
-        console.debug(`[${this.constructor.name}] Instantiated`);
-    }
+    constructor(private readonly playerLocation: PlayerLocationService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();

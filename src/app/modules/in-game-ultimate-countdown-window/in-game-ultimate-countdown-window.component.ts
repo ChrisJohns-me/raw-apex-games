@@ -59,9 +59,7 @@ export class InGameUltimateCountdownWindowComponent implements OnInit, OnDestroy
         private readonly match: MatchService,
         private readonly player: PlayerService,
         private readonly playerLegend: PlayerLegendService
-    ) {
-        console.debug(`[${this.constructor.name}] instantiated`);
-    }
+    ) {}
 
     public ngOnInit(): void {
         this.registerGameEvents();

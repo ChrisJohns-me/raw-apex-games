@@ -1,3 +1,8 @@
+a {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 h1 {
     font-size: 1.25rem;
     line-height: 1.25rem;
@@ -21,6 +26,22 @@ h2 {
     border: 1px solid #e6e6e6;
     margin: 2px;
     overflow-y: auto;
+}
+
+.has-tooltip {
+    cursor: help;
+    
+    &::after {
+        display: inline-block;
+        content: "?";
+        color: #808080;
+        font-size: smaller;
+        vertical-align: super;
+    }
+}
+
+.sub-inference-items {
+    margin-left: 1rem;
 }
 
 .inference-item {

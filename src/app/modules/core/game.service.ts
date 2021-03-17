@@ -3,7 +3,7 @@ import { GamePhase } from "@common/game";
 import { TriggerConditions } from "@common/game-event-triggers";
 import { MatchState } from "@common/match";
 import { BehaviorSubject, Subject } from "rxjs";
-import { distinctUntilChanged, takeUntil } from "rxjs/operators";
+import { takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { findValueByKeyRegEx } from "src/utilities";
 import { MatchService } from "./match.service";
@@ -19,9 +19,7 @@ export class GameService implements OnDestroy {
 
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {
-        console.debug(`[${this.constructor.name}] Instantiated`);
-    }
+    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -50,7 +48,7 @@ export class GameService implements OnDestroy {
             setNewPhaseFn(newPhase);
         });
 
-        this.match.state$.pipe(distinctUntilChanged(), takeUntil(this._unsubscribe)).subscribe((matchState) => {
+        this.match.state$.pipe(takeUntil(this._unsubscribe)).subscribe((matchState) => {
             const newPhase = triggers.triggeredFirstKey(undefined, matchState);
             setNewPhaseFn(newPhase);
         });

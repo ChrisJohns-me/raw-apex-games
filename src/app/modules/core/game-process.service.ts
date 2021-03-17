@@ -1,9 +1,8 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { filter, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { OverwolfDataProviderService } from "./overwolf-data-provider";
-import { OWRunningGameInfo } from "./overwolf-data-provider/overwolf-types";
 import { OWCONFIG } from "./overwolf-data-provider/overwolf/overwolf-config";
 
 @Injectable({
@@ -17,9 +16,7 @@ export class GameProcessService implements OnDestroy {
 
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor(private readonly overwolf: OverwolfDataProviderService) {
-        console.debug(`[${this.constructor.name}] Instantiated`);
-    }
+    constructor(private readonly overwolf: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -31,16 +28,15 @@ export class GameProcessService implements OnDestroy {
     }
 
     private setupGameInfoUpdated(): void {
-        this.overwolf.gameInfoUpdated$.pipe(takeUntil(this._unsubscribe)).subscribe((gameInfoUpdated) => {
-            if (gameInfoUpdated.runningChanged && gameInfoUpdated.gameInfo) {
-                this.onGameInfoIsRunningChanged(gameInfoUpdated.gameInfo);
-            }
-        });
-    }
-
-    private onGameInfoIsRunningChanged(runningGameInfo: OWRunningGameInfo): void {
-        if (runningGameInfo.classId !== OWCONFIG.APEXLEGENDSCLASSID) return;
-        this.isRunning$.next(runningGameInfo.isRunning);
-        this.isInFocus$.next(runningGameInfo.isInFocus);
+        this.overwolf.gameInfo$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                filter((gameInfo) => gameInfo?.classId === OWCONFIG.APEXLEGENDSCLASSID)
+            )
+            .subscribe((gameInfo) => {
+                if (!gameInfo) return;
+                if (gameInfo.isRunning !== this.isRunning$.value) this.isRunning$.next(gameInfo.isRunning);
+                if (gameInfo.isInFocus !== this.isInFocus$.value) this.isInFocus$.next(gameInfo.isInFocus);
+            });
     }
 }

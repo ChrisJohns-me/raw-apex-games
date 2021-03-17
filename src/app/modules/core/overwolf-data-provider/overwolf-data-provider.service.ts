@@ -1,12 +1,24 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { BehaviorSubject, from, Observable, of, ReplaySubject, Subject, throwError } from "rxjs";
-import { catchError, delay, filter, map, mergeMap, retryWhen, switchMap, takeUntil, tap } from "rxjs/operators";
+import { BehaviorSubject, from, Observable, of, Subject, throwError } from "rxjs";
+import {
+    catchError,
+    delay,
+    distinctUntilChanged,
+    filter,
+    map,
+    mergeMap,
+    retryWhen,
+    share,
+    switchMap,
+    takeUntil,
+    tap,
+} from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { OverwolfEventHookHandler } from "./overwolf-hook-handler";
-import { OWGameEvent, OWGameInfoUpdatedEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./overwolf-types";
+import { OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./overwolf-types";
 import { InfoUpdatesDelegate } from "./overwolf/games/events/info-updates-delegate";
 import { NewGameEventDelegate } from "./overwolf/games/events/new-game-event-delegate";
-import { GameInfoUpdatedDelegate } from "./overwolf/games/game-info-updated-delegate";
+import { GameInfoDelegate } from "./overwolf/games/game-info-delegate";
 import { OWCONFIG } from "./overwolf/overwolf-config";
 
 /**
@@ -23,35 +35,28 @@ import { OWCONFIG } from "./overwolf/overwolf-config";
         SingletonServiceProviderFactory("OverwolfDataProviderService", OverwolfDataProviderService, deps),
 })
 export class OverwolfDataProviderService implements OnDestroy {
-    //#region Outputs
-    public get gameInfoUpdated$(): ReplaySubject<OWGameInfoUpdatedEvent> {
-        return this.gameInfoUpdatedDelegate.gameInfoUpdated;
+    //#region Delegate Outputs
+    public get gameInfo$(): BehaviorSubject<Optional<OWRunningGameInfo>> {
+        return this.gameInfoDelegate.gameInfo$;
     }
     public get infoUpdates$(): Subject<OWInfoUpdates2Event> {
-        return this.infoUpdatesDelegate.infoUpdates;
+        return this.infoUpdatesDelegate.infoUpdates$;
     }
     public get newGameEvent$(): Subject<OWGameEvent> {
-        return this.newGameEventDelegate.newGameEvent;
+        return this.newGameEventDelegate.newGameEvent$;
     }
-    //#endregion
 
-    //#region Delegates
-    private readonly gameInfoUpdatedDelegate = new GameInfoUpdatedDelegate();
+    private readonly gameInfoDelegate = new GameInfoDelegate();
     private readonly infoUpdatesDelegate = new InfoUpdatesDelegate();
     private readonly newGameEventDelegate = new NewGameEventDelegate();
-    //#endregion
-
-    private areFeaturesRegistered = false;
-    private isFeatureRegistrationInProgress = false;
-
-    private readonly gameIsRunning$ = new BehaviorSubject<boolean>(false);
-    private readonly gameIsInFocus$ = new BehaviorSubject<boolean>(false);
-
     private readonly delegateEventHooks: { [key: string]: OverwolfEventHookHandler } = {
+        RUNNINGGAMEINFO: new OverwolfEventHookHandler(overwolf.games.getRunningGameInfo, undefined, (e) =>
+            this.gameInfoDelegate.onGameInfo(e)
+        ),
         GAMEINFOUPDATED: new OverwolfEventHookHandler(
             overwolf.games.onGameInfoUpdated.addListener,
             overwolf.games.onGameInfoUpdated.removeListener,
-            (e) => this.gameInfoUpdatedDelegate.onGameInfoUpdated(e)
+            (e) => this.gameInfoDelegate.onGameInfo(e?.gameInfo)
         ),
         INFOUPDATES2: new OverwolfEventHookHandler(
             overwolf.games.events.onInfoUpdates2.addListener,
@@ -64,92 +69,93 @@ export class OverwolfDataProviderService implements OnDestroy {
             (e) => this.newGameEventDelegate.onNewGameEvents(e)
         ),
     };
+    //#endregion
 
-    private readonly gameStatusEventHooks: { [key: string]: OverwolfEventHookHandler } = {
+    //#region Game Monitor
+    private areFeaturesRegistered = false;
+    private isFeatureRegistrationInProgress = false;
+    private readonly gameMonitorGameInfoDelegate = new GameInfoDelegate();
+    private readonly gameMonitorEventHooks: { [key: string]: OverwolfEventHookHandler } = {
         RUNNINGGAMEINFO: new OverwolfEventHookHandler(overwolf.games.getRunningGameInfo, undefined, (e) =>
-            this.onGameStatusGameInfoUpdated(e)
+            this.gameMonitorGameInfoDelegate.onGameInfo(e)
         ),
         GAMEINFOUPDATED: new OverwolfEventHookHandler(
             overwolf.games.onGameInfoUpdated.addListener,
             overwolf.games.onGameInfoUpdated.removeListener,
-            (updateEvent) => this.onGameStatusGameInfoUpdated(updateEvent.gameInfo)
+            (e) => this.gameMonitorGameInfoDelegate.onGameInfo(e?.gameInfo)
         ),
         GAMELAUNCHED: new OverwolfEventHookHandler(
             overwolf.games.onGameLaunched.addListener,
             overwolf.games.onGameLaunched.removeListener,
-            (e) => this.onGameStatusGameInfoUpdated(e)
+            (e) => this.gameMonitorGameInfoDelegate.onGameInfo(e)
         ),
     };
+    //#endregion
 
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor() {
-        console.debug(`[${this.constructor.name}] Instantiated`);
-    }
+    // constructor() {}
 
     public ngOnDestroy(): void {
         this.unregisterDelegateEventHooks();
-        this.unregisterGameStatusEventHooks();
+        this.unregisterGameMonitorEventHooks();
         this._unsubscribe.next();
         this._unsubscribe.complete();
     }
 
     public start(): void {
-        this.registerGameStatusEventHooks();
-        const gameIsNotRunningFn = () => {
+        this.registerGameMonitorEventHooks();
+
+        const notRunningFn = () => {
             this.unregisterDelegateEventHooks();
-            this.areFeaturesRegistered = false;
-            this.isFeatureRegistrationInProgress = false;
+            console.warn(`[${this.constructor.name}] Overwolf Data Provider Service is not running.`);
         };
 
-        this.gameIsRunning$
+        const isRunning$ = this.gameMonitorGameInfoDelegate.gameInfo$.pipe(
+            takeUntil(this._unsubscribe),
+            map((gameInfo) => gameInfo?.isRunning ?? false),
+            distinctUntilChanged(),
+            share()
+        );
+
+        isRunning$
             .pipe(
-                takeUntil(this._unsubscribe),
-                tap((gameIsRunning) =>
-                    console.debug(
-                        `[${this.constructor.name}] Game Status "${gameIsRunning ? "Is Running" : "Is Not Running"}"`
-                    )
-                ),
-                tap((gameIsRunning) => {
-                    if (!gameIsRunning) gameIsNotRunningFn();
-                }),
-                filter((gameIsRunning) => !!gameIsRunning),
+                filter((isRunning) => !!isRunning),
                 switchMap(() => this.registerRequiredFeatures())
             )
             .subscribe((areFeaturesRegistered) => {
-                if (areFeaturesRegistered) {
-                    console.debug(`[${this.constructor.name}] Overwolf Data Provider Service is ready.`);
-                    this.registerDelegateEventHooks();
-                } else {
-                    console.warn(`[${this.constructor.name}] Overwolf Data Provider Service is not running.`);
-                    this.unregisterDelegateEventHooks();
+                if (!areFeaturesRegistered) {
+                    notRunningFn();
+                    return;
                 }
+                this.registerDelegateEventHooks();
+                console.debug(`[${this.constructor.name}] Overwolf Data Provider Service is ready.`);
             });
+
+        isRunning$.pipe(filter((isRunning) => !isRunning)).subscribe(() => {
+            notRunningFn();
+        });
     }
 
-    //#region Game status hooks
-    private registerGameStatusEventHooks(): void {
-        Object.values(this.gameStatusEventHooks).forEach((hook) => hook.activate());
+    //#region Game Monitor hooks
+    private registerGameMonitorEventHooks(): void {
+        Object.values(this.gameMonitorEventHooks).forEach((hook) => hook.activate());
     }
 
-    private unregisterGameStatusEventHooks(): void {
-        Object.values(this.gameStatusEventHooks).forEach((hook) => hook.deactivate());
-    }
-
-    private onGameStatusGameInfoUpdated(runningGameInfo?: OWRunningGameInfo): void {
-        if (!runningGameInfo || runningGameInfo.classId !== OWCONFIG.APEXLEGENDSCLASSID) return;
-        this.gameIsRunning$.next(runningGameInfo.isRunning);
-        this.gameIsInFocus$.next(runningGameInfo.isInFocus);
+    private unregisterGameMonitorEventHooks(): void {
+        Object.values(this.gameMonitorEventHooks).forEach((hook) => hook.deactivate());
     }
     //#endregion
 
     //#region Delegate event hooks
     private registerDelegateEventHooks(): void {
         Object.values(this.delegateEventHooks).forEach((hook) => hook.activate());
+        console.debug(`[${this.constructor.name}] Game Delegate Hooks Registered`);
     }
 
     private unregisterDelegateEventHooks(): void {
         Object.values(this.delegateEventHooks).forEach((hook) => hook.deactivate());
+        console.debug(`[${this.constructor.name}] Game Delegate Hooks UnRegistered`);
     }
     //#endregion
 

@@ -2,8 +2,8 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { TriggerConditions } from "@common/game-event-triggers";
 import { MapCoordinates } from "@common/game-map";
 import { MatchState } from "@common/match";
-import { BehaviorSubject, Subject } from "rxjs";
-import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
+import { BehaviorSubject, Observable, Subject } from "rxjs";
+import { filter, map, share, switchMap, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { MatchService } from "./match.service";
 import { OverwolfDataProviderService, OWInfoUpdates2Event } from "./overwolf-data-provider";
@@ -22,12 +22,14 @@ export enum LocationPhase {
         SingletonServiceProviderFactory("PlayerLocationService", PlayerLocationService, deps),
 })
 export class PlayerLocationService implements OnDestroy {
-    public readonly coordinates$ = new BehaviorSubject<MapCoordinates>({ x: Infinity, y: Infinity, z: Infinity });
-    public readonly locationPhase$ = new BehaviorSubject<LocationPhase>(LocationPhase.Dropship);
-    public startingCoordinates$ = new BehaviorSubject<Optional<MapCoordinates>>(undefined);
-    public landingCoordinates$ = new BehaviorSubject<Optional<MapCoordinates>>(undefined);
-    public endingCoordinates$ = new BehaviorSubject<Optional<MapCoordinates>>(undefined);
+    public readonly coordinates$ = new BehaviorSubject<Optional<MapCoordinates>>(undefined);
+    public readonly locationPhase$ = new BehaviorSubject<Optional<LocationPhase>>(undefined);
+    public readonly startingCoordinates$ = new BehaviorSubject<Optional<MapCoordinates>>(undefined);
+    public readonly landingCoordinates$ = new BehaviorSubject<Optional<MapCoordinates>>(undefined);
+    public readonly endingCoordinates$ = new BehaviorSubject<Optional<MapCoordinates>>(undefined);
 
+    private readonly matchStateStarted$: Observable<void>;
+    private readonly matchStateEnded$: Observable<void>;
     private readonly _unsubscribe = new Subject<void>();
 
     constructor(
@@ -35,7 +37,26 @@ export class PlayerLocationService implements OnDestroy {
         private readonly overwolf: OverwolfDataProviderService,
         private readonly playerInventory: PlayerInventoryService
     ) {
-        console.debug(`[${this.constructor.name}] Instantiated`);
+        this.matchStateStarted$ = this.match.state$.pipe(
+            takeUntil(this._unsubscribe),
+            filter((matchState) => matchState === MatchState.Active),
+            tap(() => {
+                this.coordinates$.next(undefined);
+                this.locationPhase$.next(undefined);
+                this.startingCoordinates$.next(undefined);
+                this.landingCoordinates$.next(undefined);
+                this.endingCoordinates$.next(undefined);
+            }),
+            map(() => undefined),
+            share()
+        );
+
+        this.matchStateEnded$ = this.match.state$.pipe(
+            takeUntil(this._unsubscribe),
+            filter((matchState) => matchState === MatchState.Inactive),
+            map(() => undefined),
+            share()
+        );
     }
 
     public ngOnDestroy(): void {
@@ -59,13 +80,13 @@ export class PlayerLocationService implements OnDestroy {
                 map((infoUpdate) => infoUpdate.info.match_info?.location)
             )
             .subscribe((coord) => {
-                const newCoordinates: MapCoordinates = {
+                const newCoords: MapCoordinates = {
                     x: parseInt(String(coord?.x)),
                     y: parseInt(String(coord?.y)),
                     z: parseInt(String(coord?.z)),
                 };
-                if (!isFinite(newCoordinates.x) || !isFinite(newCoordinates.y) || !isFinite(newCoordinates.z)) return;
-                this.coordinates$.next(newCoordinates);
+                if (!isFinite(newCoords.x) || !isFinite(newCoords.y) || !isFinite(newCoords.z)) return;
+                this.coordinates$.next(newCoords);
             });
     }
     //#endregion
@@ -76,8 +97,8 @@ export class PlayerLocationService implements OnDestroy {
             if (newPhase && newPhase !== this.locationPhase$.value) this.locationPhase$.next(newPhase);
         };
 
-        const triggers = new TriggerConditions<LocationPhase, [OWInfoUpdates2Event?, MatchState?]>({
-            [LocationPhase.Dropship]: (infoUpdate, matchState) => matchState === MatchState.Active,
+        const triggers = new TriggerConditions<LocationPhase, [OWInfoUpdates2Event?, boolean?]>({
+            [LocationPhase.Dropship]: (infoUpdate, isMatchReset) => !!isMatchReset && !this.startingCoordinates$.value,
             [LocationPhase.Dropping]: (infoUpdate) =>
                 this.locationPhase$.value === LocationPhase.Dropship &&
                 infoUpdate?.feature === "location" &&
@@ -88,12 +109,12 @@ export class PlayerLocationService implements OnDestroy {
         });
 
         this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe)).subscribe((infoUpdate) => {
-            const newStatus = triggers.triggeredFirstKey(infoUpdate, undefined);
+            const newStatus = triggers.triggeredFirstKey(infoUpdate, false);
             setNewLocationPhaseFn(newStatus);
         });
 
-        this.match.state$.pipe(distinctUntilChanged(), takeUntil(this._unsubscribe)).subscribe((matchState) => {
-            const newStatus = triggers.triggeredFirstKey(undefined, matchState);
+        this.matchStateStarted$.subscribe(() => {
+            const newStatus = triggers.triggeredFirstKey(undefined, true);
             setNewLocationPhaseFn(newStatus);
         });
     }
@@ -101,42 +122,36 @@ export class PlayerLocationService implements OnDestroy {
 
     //#region Starting/Ending Coordinates
     private setupCompletedCoordinates() {
-        this.match.state$
+        this.matchStateStarted$
             .pipe(
-                takeUntil(this._unsubscribe),
-                distinctUntilChanged(),
-                tap((matchState) => {
-                    if (matchState === MatchState.Active) {
-                        this.startingCoordinates$.next(undefined);
-                        this.endingCoordinates$.next(undefined);
-                    }
-                }),
-                map((matchState): [MatchState, MapCoordinates] => [matchState, this.coordinates$.value])
+                switchMap(() => this.coordinates$),
+                filter(() => !this.startingCoordinates$.value),
+                filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z))
             )
-            .subscribe(([matchState, coordinates]) => {
-                if (matchState === MatchState.Active && !this.startingCoordinates$.value) {
-                    this.startingCoordinates$.next(coordinates);
-                } else if (matchState === MatchState.Inactive && !this.endingCoordinates$.value) {
-                    this.endingCoordinates$.next(coordinates);
-                }
-            });
+            .subscribe((coord) => this.startingCoordinates$.next(coord));
+
+        this.matchStateEnded$
+            .pipe(
+                filter(() => !!this.startingCoordinates$.value && !this.endingCoordinates$.value),
+                map(() => this.coordinates$.value),
+                filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z)),
+                filter((coord) => !!coord && coord.z < (this.startingCoordinates$.value?.z ?? -Infinity))
+            )
+            .subscribe((coord) => this.endingCoordinates$.next(coord));
     }
     //#endregion
 
     //#region Landing Coordinates
     private setupLandingCoordinates(): void {
-        this.match.state$
+        this.matchStateStarted$
             .pipe(
-                takeUntil(this._unsubscribe),
-                distinctUntilChanged(),
-                filter((matchState) => matchState === MatchState.Active),
-                tap(() => this.landingCoordinates$.next(undefined)),
                 switchMap(() => this.playerInventory.inUse$),
-                filter((inUse) => !this.landingCoordinates$.value && inUse.id === "knockdownshield")
+                filter((inUse) => !!inUse?.isDefault),
+                map(() => this.coordinates$.value),
+                filter(() => !this.landingCoordinates$.value),
+                filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z))
             )
-            .subscribe(() => {
-                this.landingCoordinates$.next(this.coordinates$.value);
-            });
+            .subscribe((coord) => this.landingCoordinates$.next(coord));
     }
     //#endregion
 }

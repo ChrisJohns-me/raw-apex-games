@@ -29,9 +29,7 @@ export class InGameMatchTimerWindowComponent implements OnInit, OnDestroy {
     private matchDurationMs?: number;
     private _unsubscribe = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef, private readonly match: MatchService) {
-        console.debug(`[${this.constructor.name}] instantiated`);
-    }
+    constructor(private readonly cdr: ChangeDetectorRef, private readonly match: MatchService) {}
 
     public ngOnInit(): void {
         this.registerGameEvents();

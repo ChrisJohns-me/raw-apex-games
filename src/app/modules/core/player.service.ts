@@ -24,9 +24,7 @@ export class PlayerService implements OnDestroy {
 
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {
-        console.debug(`[${this.constructor.name}] Instantiated`);
-    }
+    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -42,7 +40,7 @@ export class PlayerService implements OnDestroy {
     //#region Player Name
     private setupPlayerName(): void {
         const checkNameFn = (name?: string): void => {
-            if (name?.length && name !== this.playerName$.value) this.playerName$.next(name);
+            if (name && name !== this.playerName$.value) this.playerName$.next(name);
         };
 
         this.overwolf.infoUpdates$

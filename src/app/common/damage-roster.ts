@@ -22,6 +22,10 @@ export class DamageRoster {
     public get activePlayerKnockdownsInflicted(): number {
         return this.getPlayerKnockdownsInflicted(this.activePlayerName);
     }
+    /**
+     * Kills that have been confirmed by killfeed + enemy player disconnections.
+     * May not equal proper count, due to enemy players still connected and spectating.
+     * */
     public get activePlayerEliminationsInflicted(): number {
         return this.getPlayerEliminationsInflicted(this.activePlayerName);
     }

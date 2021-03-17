@@ -3,7 +3,7 @@ import { recursiveJSONParse } from "src/utilities";
 import { OWGameEvent } from "../../../overwolf-types";
 
 export class NewGameEventDelegate {
-    public readonly newGameEvent = new Subject<OWGameEvent>();
+    public readonly newGameEvent$ = new Subject<OWGameEvent>();
 
     /**
      * Feature events: Kill feed, damage, etc.
@@ -18,7 +18,7 @@ export class NewGameEventDelegate {
         }
         newGameEvent?.events.forEach((e) => {
             const cleanedGameEvent = this.cleanGameEvent(e);
-            this.newGameEvent.next(cleanedGameEvent);
+            this.newGameEvent$.next(cleanedGameEvent);
         });
     }
 
