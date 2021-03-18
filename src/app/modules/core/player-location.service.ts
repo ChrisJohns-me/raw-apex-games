@@ -1,9 +1,8 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { TriggerConditions } from "@common/game-event-triggers";
 import { MapCoordinates } from "@common/game-map";
-import { MatchState } from "@common/match";
-import { BehaviorSubject, Observable, Subject } from "rxjs";
-import { filter, map, share, switchMap, takeUntil, tap } from "rxjs/operators";
+import { BehaviorSubject, Subject } from "rxjs";
+import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { MatchService } from "./match.service";
 import { OverwolfDataProviderService, OWInfoUpdates2Event } from "./overwolf-data-provider";
@@ -28,36 +27,13 @@ export class PlayerLocationService implements OnDestroy {
     public readonly landingCoordinates$ = new BehaviorSubject<Optional<MapCoordinates>>(undefined);
     public readonly endingCoordinates$ = new BehaviorSubject<Optional<MapCoordinates>>(undefined);
 
-    private readonly matchStateStarted$: Observable<void>;
-    private readonly matchStateEnded$: Observable<void>;
     private readonly _unsubscribe = new Subject<void>();
 
     constructor(
         private readonly match: MatchService,
         private readonly overwolf: OverwolfDataProviderService,
         private readonly playerInventory: PlayerInventoryService
-    ) {
-        this.matchStateStarted$ = this.match.state$.pipe(
-            takeUntil(this._unsubscribe),
-            filter((matchState) => matchState === MatchState.Active),
-            tap(() => {
-                this.coordinates$.next(undefined);
-                this.locationPhase$.next(undefined);
-                this.startingCoordinates$.next(undefined);
-                this.landingCoordinates$.next(undefined);
-                this.endingCoordinates$.next(undefined);
-            }),
-            map(() => undefined),
-            share()
-        );
-
-        this.matchStateEnded$ = this.match.state$.pipe(
-            takeUntil(this._unsubscribe),
-            filter((matchState) => matchState === MatchState.Inactive),
-            map(() => undefined),
-            share()
-        );
-    }
+    ) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -65,10 +41,25 @@ export class PlayerLocationService implements OnDestroy {
     }
 
     public start(): void {
+        this.setupMatchStateEvents();
         this.setupCoordinates();
         this.setupLocationPhase();
         this.setupCompletedCoordinates();
         this.setupLandingCoordinates();
+    }
+
+    private setupMatchStateEvents(): void {
+        this.match.started$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+            this.coordinates$.next(undefined);
+            this.locationPhase$.next(undefined);
+            this.startingCoordinates$.next(undefined);
+            this.landingCoordinates$.next(undefined);
+            this.endingCoordinates$.next(undefined);
+        });
+
+        // this.match.ended$.pipe(
+        //     takeUntil(this._unsubscribe),
+        // ).subscribe(() => {});
     }
 
     //#region Coordinates
@@ -113,7 +104,7 @@ export class PlayerLocationService implements OnDestroy {
             setNewLocationPhaseFn(newStatus);
         });
 
-        this.matchStateStarted$.subscribe(() => {
+        this.match.started$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             const newStatus = triggers.triggeredFirstKey(undefined, true);
             setNewLocationPhaseFn(newStatus);
         });
@@ -122,16 +113,18 @@ export class PlayerLocationService implements OnDestroy {
 
     //#region Starting/Ending Coordinates
     private setupCompletedCoordinates() {
-        this.matchStateStarted$
+        this.match.started$
             .pipe(
+                takeUntil(this._unsubscribe),
                 switchMap(() => this.coordinates$),
                 filter(() => !this.startingCoordinates$.value),
                 filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z))
             )
             .subscribe((coord) => this.startingCoordinates$.next(coord));
 
-        this.matchStateEnded$
+        this.match.ended$
             .pipe(
+                takeUntil(this._unsubscribe),
                 filter(() => !!this.startingCoordinates$.value && !this.endingCoordinates$.value),
                 map(() => this.coordinates$.value),
                 filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z)),
@@ -143,8 +136,9 @@ export class PlayerLocationService implements OnDestroy {
 
     //#region Landing Coordinates
     private setupLandingCoordinates(): void {
-        this.matchStateStarted$
+        this.match.started$
             .pipe(
+                takeUntil(this._unsubscribe),
                 switchMap(() => this.playerInventory.inUse$),
                 filter((inUse) => !!inUse?.isDefault),
                 map(() => this.coordinates$.value),

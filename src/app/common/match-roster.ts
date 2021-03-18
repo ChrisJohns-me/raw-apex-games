@@ -23,7 +23,7 @@ export class MatchRoster {
     public get alivePlayers(): Player[] {
         return ([] as Player[]).concat(...this._teams.map((t) => t.members));
     }
-    /** Shares same limitations to and is opposite to `alivePlayers`; */
+    /** Shares same limitations to and is opposite to `alivePlayers` */
     public get eliminatedPlayers(): Player[] {
         return ([] as Player[]).concat(...this._teams.map((t) => t.members));
     }

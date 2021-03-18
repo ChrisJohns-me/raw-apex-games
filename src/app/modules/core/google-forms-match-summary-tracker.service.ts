@@ -1,6 +1,5 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
-import { MatchState } from "@common/match";
 import { MatchSummary } from "@common/match-summary";
 import { combineLatest, Observable, of, ReplaySubject, Subject } from "rxjs";
 import { catchError, delay, filter, map, retryWhen, switchMap, take, takeUntil, tap } from "rxjs/operators";
@@ -88,10 +87,9 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
         let isTracking = false;
         let isReportTriggered = false;
 
-        this.match.state$
+        this.match.ended$
             .pipe(
                 takeUntil(this._unsubscribe),
-                filter((matchState) => matchState === MatchState.Inactive),
                 switchMap(() =>
                     combineLatest([
                         this.playerLegend.legend$,
@@ -99,7 +97,7 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
                         this.match.gameMode$,
                         this.playerActivity.placement$,
                         this.playerActivity.damageRoster$,
-                        this.match.time$,
+                        this.match.currentState$,
                     ])
                 ),
                 filter(() => {
@@ -111,14 +109,18 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
                     return isTrackingEnabled;
                 }),
                 tap(([legend, gameMap, gameMode, placement, damageRoster, matchTime]) => {
+                    const matchDurationMs =
+                        !!matchTime.endDate && !!matchTime.startDate
+                            ? matchTime.endDate?.getTime() - matchTime.startDate?.getTime()
+                            : undefined;
                     this.unreportedMatchSummary = {
-                        kills: damageRoster?.activePlayerEliminationsInflicted,
+                        kills: damageRoster?.activePlayerEliminationsInflictedSum,
                         legend: legend,
-                        damage: damageRoster?.activePlayerDamageInflicted,
+                        damage: damageRoster?.activePlayerDamageInflictedSum,
                         map: gameMap,
                         placement: placement,
                         gameMode: gameMode ?? undefined,
-                        durationMs: matchTime?.durationMs,
+                        durationMs: matchDurationMs,
                     };
                 }),
                 filter(() => isTracking && isReportTriggered),

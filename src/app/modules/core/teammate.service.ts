@@ -11,7 +11,6 @@ import { OverwolfDataProviderService } from "./overwolf-data-provider";
 })
 export class TeammateService implements OnDestroy {
     // public readonly teammates$ = new BehaviorSubject<>();
-
     private readonly _unsubscribe = new Subject<void>();
 
     constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {}

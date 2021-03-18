@@ -3,10 +3,10 @@ export enum MatchState {
     Inactive = "inactive",
 }
 
-export interface MatchTime {
-    start?: Date;
-    end?: Date;
-    durationMs: number;
+export interface MatchStateChangeEvent {
+    startDate?: Date;
+    endDate?: Date;
+    state: MatchState;
 }
 
 export interface GameMode {

@@ -15,7 +15,7 @@ import { PlayerLocationService } from "@core/player-location.service";
 import { PlayerService } from "@core/player.service";
 import { TeammateService } from "@core/teammate.service";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
-import { interval, merge, Subject } from "rxjs";
+import { merge, Subject } from "rxjs";
 import { delay, filter, takeUntil, tap } from "rxjs/operators";
 import { JSONTryParse } from "src/utilities";
 import { BackgroundService } from "../background/background.service";
@@ -41,6 +41,11 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     }
     public set isTrackingEnabled(value: boolean) {
         this.googleFormsMatchSummaryTracker.setTrackingEnabled(value);
+    }
+    public get matchDuration(): Date {
+        const startDate = this.match.currentState$.value.startDate ?? new Date();
+        const endDate = this.match.currentState$.value.endDate ?? new Date();
+        return new Date(endDate.getTime() - startDate.getTime());
     }
 
     public gameLog = "";
@@ -73,19 +78,11 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this.registerAutoClearLogs();
         this.registerGameEvents();
         this.registerBackgroundEvents();
-
-        interval(5000)
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe(() => this.cdr.detectChanges());
     }
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
         this._unsubscribe.complete();
-    }
-
-    public onForceRefreshClick(): void {
-        this.cdr.detectChanges();
     }
 
     public onOpenUltimateCountdownClick(): void {
@@ -112,7 +109,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         }
 
         const speedInput = prompt("Replay Speed (1=realtime, empty=full speed)", "1");
-        speed = parseInt(speedInput ?? String(speed));
+        speed = parseFloat(speedInput ?? String(speed));
 
         const matchRegEx = /^\[(.+?)\] (.*)$/m;
 
@@ -158,9 +155,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
                 filter((gamePhase) => gamePhase === GamePhase.Lobby),
                 filter(() => this.autoClearLog)
             )
-            .subscribe(() => {
-                this.clearLog();
-            });
+            .subscribe(() => this.clearLog());
     }
 
     private registerGameEvents(): void {
@@ -175,7 +170,6 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     private addLogItem(input: any): void {
         if (!this.gameLogStartTime) this.gameLogStartTime = new Date();
 
-        // const timestamp = new Date(new Date().getTime() - this.gameLogStartTime.getTime()).getTime();
         const timestamp = format(new Date(), "yyyy-MM-dd hh:mm:ss.SSS aa");
         const eventStr = JSON.stringify(input);
         this.gameLog = `[${timestamp}] ${eventStr}\n` + this.gameLog;

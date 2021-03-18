@@ -59,7 +59,7 @@ export class PlayerLegendService implements OnDestroy {
                 filter((infoUpdate) => infoUpdate.feature === "me" && !!infoUpdate.info.me?.ultimate_cooldown),
                 map((infoUpdate) => String(infoUpdate.info.me?.ultimate_cooldown?.ultimate_cooldown ?? "")),
                 map((ultimateCooldown) => parseFloat(String(ultimateCooldown))),
-                map((ultimateCooldown) => (isFinite(ultimateCooldown) ? mathClamp(ultimateCooldown / 100, 1, 0) : 0))
+                map((ultimateCooldown) => (isFinite(ultimateCooldown) ? mathClamp(ultimateCooldown / 100, 0, 1) : 0))
             )
             .subscribe((percent) => {
                 this.ultimateCooldown$.next(percent);

@@ -1,8 +1,13 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { TriggerConditions } from "@common/game-event-triggers";
-import { GameMode, getFriendlyGameModeName, MatchState, MatchTime } from "@common/match";
-import { BehaviorSubject, interval, of, Subject } from "rxjs";
-import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
+import {
+    GameMode,
+    getFriendlyGameModeName,
+    MatchState,
+    MatchStateChangeEvent as MatchStateChangedEvent,
+} from "@common/match";
+import { BehaviorSubject, merge, Subject } from "rxjs";
+import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { OverwolfDataProviderService, OWGameEvent, OWInfoUpdates2Event } from "./overwolf-data-provider";
 
@@ -12,15 +17,12 @@ import { OverwolfDataProviderService, OWGameEvent, OWInfoUpdates2Event } from ".
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchService", MatchService, deps),
 })
 export class MatchService implements OnDestroy {
-    /** Active/Inactive - Distinct until changed */
-    public readonly state$ = new BehaviorSubject<MatchState>(MatchState.Inactive);
-    /** @summary Provides match time details; emits updates. */
-    public readonly time$ = new BehaviorSubject<MatchTime>({ durationMs: 0 });
+    public readonly started$ = new Subject<MatchStateChangedEvent>();
+    public readonly ended$ = new Subject<MatchStateChangedEvent>();
+    public readonly currentState$ = new BehaviorSubject<MatchStateChangedEvent>({ state: MatchState.Inactive });
     public readonly gameMode$ = new BehaviorSubject<GameMode>({ id: "", friendlyName: "" });
 
-    private matchStartDate?: Date;
-    private matchEndDate?: Date;
-
+    private currentStartDate?: Date;
     private readonly _unsubscribe = new Subject<void>();
 
     constructor(private readonly overwolf: OverwolfDataProviderService) {}
@@ -31,71 +33,67 @@ export class MatchService implements OnDestroy {
     }
 
     public start(): void {
-        this.setupState();
-        this.setupTime();
+        this.setupStartEndEvents();
+        this.setupStateEvents();
         this.setupGameMode();
     }
 
+    private setupStartEndEvents(): void {
+        merge(this.started$, this.ended$)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((newState) => this.currentState$.next(newState));
+    }
+
     //#region Match State
-    private setupState(): void {
-        const stateChangedFn = (newState?: MatchState): void => {
-            if (newState && newState !== this.state$.value) this.state$.next(newState);
+    private setupStateEvents(): void {
+        const newStateChangeFn = (newState?: MatchState): void => {
+            if (!newState || newState === this.currentState$.value.state) return;
+            if (newState === MatchState.Active) {
+                this.currentStartDate = new Date();
+                this.started$.next({ state: newState, startDate: this.currentStartDate });
+            } else if (newState === MatchState.Inactive) {
+                this.ended$.next({ state: newState, startDate: this.currentStartDate, endDate: new Date() });
+            }
         };
 
-        const triggers = new TriggerConditions<MatchState, [OWInfoUpdates2Event?, OWGameEvent?]>({
-            // Playlist was selected on the lobby screen, or a game has just ended
-            [MatchState.Inactive]: (infoUpdate, gameEvent) =>
-                (infoUpdate?.feature === "match_info" && !!infoUpdate?.info?.match_info?.game_mode) ||
-                (infoUpdate?.feature === "match_state" && infoUpdate?.info?.game_info?.match_state === "inactive") ||
-                (infoUpdate?.feature === "team" &&
-                    infoUpdate.info.match_info?.team_info?.team_state === "eliminated") ||
-                (infoUpdate?.feature === "team" && infoUpdate.info.match_info?.team_info?.team_state == null) ||
-                gameEvent?.name === "match_end",
-            // Location data is being emitted, or a game has just begun
-            [MatchState.Active]: (infoUpdate, gameEvent) =>
-                infoUpdate?.feature === "location" ||
-                (infoUpdate?.feature === "match_state" && infoUpdate?.info?.game_info?.match_state === "active") ||
-                (infoUpdate?.feature === "team" && infoUpdate.info.match_info?.team_info?.team_state === "active") ||
-                gameEvent?.name === "match_start",
+        const triggers = new TriggerConditions<MatchState, [MatchState?, OWInfoUpdates2Event?, OWGameEvent?]>({
+            [MatchState.Inactive]: (matchState, infoUpdate, gameEvent) => {
+                const notInactive = matchState !== MatchState.Inactive;
+                const gameModeChanged =
+                    infoUpdate?.feature === "match_info" && !!infoUpdate?.info?.match_info?.game_mode;
+                const infoStateInactive =
+                    infoUpdate?.feature === "match_state" && infoUpdate?.info?.game_info?.match_state === "inactive";
+                const teamEliminated =
+                    infoUpdate?.feature === "team" &&
+                    infoUpdate.info.match_info?.team_info?.team_state === "eliminated";
+                const teamDeleted =
+                    infoUpdate?.feature === "team" && infoUpdate.info.match_info?.team_info?.team_state == null;
+                const matchEnd = gameEvent?.name === "match_end";
+                return (
+                    notInactive && (gameModeChanged || infoStateInactive || teamEliminated || teamDeleted || matchEnd)
+                );
+            },
+            [MatchState.Active]: (matchState, infoUpdate, gameEvent) => {
+                const notActive = matchState !== MatchState.Active;
+                const locationUpdate = infoUpdate?.feature === "location";
+                const infoStateActive =
+                    infoUpdate?.feature === "match_state" && infoUpdate?.info?.game_info?.match_state === "active";
+                const teamActive =
+                    infoUpdate?.feature === "team" && infoUpdate.info.match_info?.team_info?.team_state === "active";
+                const matchStart = gameEvent?.name === "match_start";
+                return notActive && (locationUpdate || infoStateActive || teamActive || matchStart);
+            },
         });
 
         this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe)).subscribe((infoUpdate) => {
-            const newState = triggers.triggeredFirstKey(infoUpdate, undefined);
-            stateChangedFn(newState);
+            const newState = triggers.triggeredFirstKey(this.currentState$.value.state, infoUpdate, undefined);
+            newStateChangeFn(newState);
         });
 
         this.overwolf.newGameEvent$.pipe(takeUntil(this._unsubscribe)).subscribe((gameEvent) => {
-            const newState = triggers.triggeredFirstKey(undefined, gameEvent);
-            stateChangedFn(newState);
+            const newState = triggers.triggeredFirstKey(this.currentState$.value.state, undefined, gameEvent);
+            newStateChangeFn(newState);
         });
-    }
-    //#endregion
-
-    //#region Match Time
-    private setupTime(): void {
-        const updateInterval = 1000;
-        this.state$
-            .pipe(
-                takeUntil(this._unsubscribe),
-                tap((state) => {
-                    if (state === MatchState.Active) {
-                        this.matchStartDate = new Date();
-                        delete this.matchEndDate;
-                    } else if (state === MatchState.Inactive) {
-                        this.matchEndDate = new Date();
-                    }
-                }),
-                switchMap((state) => (state === MatchState.Active ? interval(updateInterval) : of(null))),
-                map(() => ({
-                    start: this.matchStartDate,
-                    end: this.matchEndDate,
-                    durationMs: Math.max(
-                        0,
-                        (this.matchEndDate ?? new Date()).getTime() - (this.matchStartDate ?? new Date()).getTime()
-                    ),
-                }))
-            )
-            .subscribe((matchTime) => this.time$.next(matchTime));
     }
     //#endregion
 

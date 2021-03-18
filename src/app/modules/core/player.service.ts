@@ -91,8 +91,8 @@ export class PlayerService implements OnDestroy {
             setNewStatusFn(newStatus);
         });
 
-        this.match.state$.pipe(takeUntil(this._unsubscribe)).subscribe((matchState) => {
-            const newStatus = triggers.triggeredFirstKey(undefined, undefined, matchState);
+        this.match.currentState$.pipe(takeUntil(this._unsubscribe)).subscribe((matchStateChanged) => {
+            const newStatus = triggers.triggeredFirstKey(undefined, undefined, matchStateChanged.state);
             setNewStatusFn(newStatus);
         });
     }

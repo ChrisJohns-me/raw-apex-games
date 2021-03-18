@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { MatchState } from "@common/match";
 import { MatchService } from "@core/match.service";
-import { Subject } from "rxjs";
-import { debounceTime, takeUntil, tap } from "rxjs/operators";
+import { isValid } from "date-fns";
+import { Subject, timer } from "rxjs";
+import { delay, filter, switchMap, takeUntil, tap } from "rxjs/operators";
 
 const SHOW_TIMER_TIMEOUT = 15000;
-
+const UI_TIMER_REFRESH_RATE = 1000;
 @Component({
     selector: "app-in-game-match-timer-window",
     templateUrl: "./in-game-match-timer-window.component.html",
@@ -12,27 +14,32 @@ const SHOW_TIMER_TIMEOUT = 15000;
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InGameMatchTimerWindowComponent implements OnInit, OnDestroy {
+    public isDateValid = isValid;
+
     public primaryTitle = "In Game Match Timer";
     public secondaryTitle = "";
 
-    public get matchDurationDate(): Optional<Date> {
-        return this.matchDurationMs ? new Date(this.matchDurationMs) : undefined;
+    public get isMatchActive(): boolean {
+        return !this.matchEndDate;
     }
 
-    public get isMatchDurationDateValid(): boolean {
-        const date = this.matchDurationDate;
-        return !!date && Object.prototype.toString.call(date) === "[object Date]" && isFinite(date.getTime());
+    public get matchDurationDate(): Date {
+        const startMs = (this.matchStartDate ?? new Date()).getTime();
+        const endMs = (this.matchEndDate ?? new Date()).getTime();
+        return new Date(endMs - startMs);
     }
 
     public showTimer = false;
 
-    private matchDurationMs?: number;
+    private matchStartDate?: Date;
+    private matchEndDate?: Date;
     private _unsubscribe = new Subject<void>();
 
     constructor(private readonly cdr: ChangeDetectorRef, private readonly match: MatchService) {}
 
     public ngOnInit(): void {
-        this.registerGameEvents();
+        this.setupMatchDates();
+        this.setupShowHideEvents();
     }
 
     public ngOnDestroy(): void {
@@ -40,23 +47,34 @@ export class InGameMatchTimerWindowComponent implements OnInit, OnDestroy {
         this._unsubscribe.complete();
     }
 
-    private registerGameEvents(): void {
-        this.match.time$
+    private setupShowHideEvents(): void {
+        this.match.currentState$
             .pipe(
                 takeUntil(this._unsubscribe),
-                tap((matchTime) => {
-                    if (!this.showTimer) console.debug(`[${this.constructor.name}] Showing timer`);
-                    this.showTimer = true;
-                    this.matchDurationMs = matchTime.durationMs;
-                    this.cdr.detectChanges();
-                }),
-                debounceTime(SHOW_TIMER_TIMEOUT),
-                tap(() => {
-                    if (this.showTimer) console.debug(`[${this.constructor.name}] Hiding match timer`);
-                    this.showTimer = false;
-                    this.cdr.detectChanges();
+                filter((matchStateChanged) => matchStateChanged.state === MatchState.Active),
+                tap(() => (this.showTimer = true)),
+                switchMap(() => timer(0, UI_TIMER_REFRESH_RATE))
+            )
+            .subscribe(() => this.cdr.detectChanges());
+
+        this.match.ended$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                delay(SHOW_TIMER_TIMEOUT),
+                tap(() => (this.showTimer = false))
+            )
+            .subscribe(() => this.cdr.detectChanges());
+    }
+
+    private setupMatchDates(): void {
+        this.match.currentState$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                tap((matchStateChanged) => {
+                    this.matchStartDate = matchStateChanged.startDate;
+                    this.matchEndDate = matchStateChanged.endDate;
                 })
             )
-            .subscribe();
+            .subscribe(() => this.cdr.detectChanges());
     }
 }

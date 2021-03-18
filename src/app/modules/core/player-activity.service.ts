@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { DamageRoster } from "@common/damage-roster";
 import { MatchState } from "@common/match";
+import { PlayerTabs } from "@common/player-tabs";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
@@ -17,12 +18,22 @@ import { PlayerService } from "./player.service";
         SingletonServiceProviderFactory("PlayerActivityService", PlayerActivityService, deps),
 })
 export class PlayerActivityService implements OnDestroy {
+    /** */
+    public readonly numDamage$ = new BehaviorSubject<number>(0);
+    /** */
+    public readonly numKills$ = new BehaviorSubject<number>(0);
+    /** */
+    public readonly numAssists$ = new BehaviorSubject<number>(0);
+    /** */
+    public readonly numSpectators$ = new BehaviorSubject<number>(0);
+
     public readonly damageRoster$ = new BehaviorSubject<Optional<DamageRoster>>(undefined);
-    public readonly placement$ = new BehaviorSubject<Optional<number>>(undefined);
+    public readonly placement$ = new BehaviorSubject<number>(0);
     public readonly victory$ = new BehaviorSubject<boolean>(false);
+    /** Info directly from Overwolf's match_info.tabs data */
+    public readonly playerTabs$ = new BehaviorSubject<Optional<PlayerTabs>>(undefined);
 
     private _damageRoster: Optional<DamageRoster>;
-
     private readonly _unsubscribe = new Subject<void>();
 
     constructor(
@@ -38,6 +49,9 @@ export class PlayerActivityService implements OnDestroy {
     }
 
     public start(): void {
+        this.setupMatchStateEvents();
+        this.setupPlayerSmartData();
+        this.setupPlayerTabs();
         this.setupDamageRoster();
         this.setupDamageEvents();
         this.setupKillfeedEvents();
@@ -45,12 +59,57 @@ export class PlayerActivityService implements OnDestroy {
         this.setupVictory();
     }
 
-    //#region Damage Roster
-    private setupDamageRoster(): void {
-        this.match.state$
+    private setupMatchStateEvents(): void {
+        this.match.started$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+            this.numDamage$.next(0);
+            this.numKills$.next(0);
+            this.numAssists$.next(0);
+            this.numSpectators$.next(0);
+            this.damageRoster$.next(undefined);
+            this.placement$.next(0);
+            this.victory$.next(false);
+            this.playerTabs$.next(undefined);
+        });
+    }
+
+    //#region Player Smart Data
+    /** Used to help error correct the data from Overwolf */
+    private setupPlayerSmartData(): void {
+        //
+    }
+    //#endregion
+
+    //#region Player Tabs
+    private setupPlayerTabs(): void {
+        this.match.started$
             .pipe(
                 takeUntil(this._unsubscribe),
-                filter((matchState) => matchState === MatchState.Active),
+                tap(() => this.playerTabs$.next(undefined)),
+                switchMap(() => this.overwolf.infoUpdates$),
+                filter((infoUpdate) => infoUpdate.feature === "match_info" && !!infoUpdate.info.match_info?.tabs),
+                map((infoUpdate) => infoUpdate.info.match_info?.tabs)
+            )
+            .subscribe((tabs) => {
+                if (!tabs) return;
+                const newTabs: PlayerTabs = {
+                    kills: parseInt(String(tabs.kills)),
+                    assists: parseInt(String(tabs.assists)),
+                    spectators: parseInt(String(tabs.spectators)),
+                    teams: parseInt(String(tabs.teams)),
+                    players: parseInt(String(tabs.players)),
+                    damage: parseInt(String(tabs.damage)),
+                    cash: parseInt(String(tabs.cash)),
+                };
+                this.playerTabs$.next(newTabs);
+            });
+    }
+    //#endregion
+
+    //#region Damage Roster
+    private setupDamageRoster(): void {
+        this.match.started$
+            .pipe(
+                takeUntil(this._unsubscribe),
                 tap(() => (this._damageRoster = undefined)),
                 switchMap(() => this.player.playerName$)
             )
@@ -92,11 +151,16 @@ export class PlayerActivityService implements OnDestroy {
 
     //#region Placement
     // TODO: This value needs to be verified.
+    /**
+     * Uses info from "match_tabs" or MatchRoster.teamsAlive
+     */
     private setupPlacement(): void {
-        this.match.state$
+        const matchRosterAliveTeams = 0;
+        const AliveTeams = 0;
+
+        this.match.started$
             .pipe(
                 takeUntil(this._unsubscribe),
-                filter((matchState) => matchState === MatchState.Active),
                 switchMap(() => this.matchRoster.roster$),
                 filter((matchRoster) => !!matchRoster),
                 map((matchRoster) => matchRoster?.aliveTeams)
@@ -115,10 +179,12 @@ export class PlayerActivityService implements OnDestroy {
             if (newValue !== this.victory$.value) this.victory$.next(newValue);
         };
 
-        this.match.state$
+        this.match.currentState$
             .pipe(
                 takeUntil(this._unsubscribe),
-                tap((matchState) => (matchState === MatchState.Active ? setVictoryFn(false) : null)),
+                tap((matchStateChanged) =>
+                    matchStateChanged.state === MatchState.Active ? setVictoryFn(false) : null
+                ),
                 switchMap(() => this.overwolf.infoUpdates$),
                 filter((infoUpdate) => infoUpdate.feature === "rank"),
                 map((infoUpdate) => infoUpdate.info.match_info),

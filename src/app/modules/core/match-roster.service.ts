@@ -1,6 +1,5 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { KillfeedEvent } from "@common/killfeed-event";
-import { MatchState } from "@common/match";
 import { MatchRoster } from "@common/match-roster";
 import { Player } from "@common/player";
 import { Team } from "@common/team";
@@ -33,7 +32,6 @@ export class MatchRosterService implements OnDestroy {
     private _roster?: MatchRoster;
     private _killfeedList: KillfeedEvent[] = [];
     private _owRawRoster?: Partial<OWMatchInfo>;
-
     private readonly _unsubscribe = new Subject<void>();
 
     constructor(
@@ -48,8 +46,28 @@ export class MatchRosterService implements OnDestroy {
     }
 
     public start(): void {
+        this.setupMatchStateEvents();
         this.setupRoster();
         this.setupKillfeed();
+    }
+
+    private setupMatchStateEvents(): void {
+        // Emit roster, clear killfeedList on match start
+        this.match.started$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+            this._killfeedList = [];
+
+            if (this._owRawRoster) {
+                const newRoster = this.createRoster(this._owRawRoster);
+                this._roster = newRoster;
+                this.roster$.next(newRoster);
+            }
+        });
+
+        // Clear roster when match end
+        this.match.ended$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+            this.roster$.next(undefined);
+            this._owRawRoster = undefined;
+        });
     }
 
     //#region Roster
@@ -65,19 +83,6 @@ export class MatchRosterService implements OnDestroy {
                 map((infoUpdate) => infoUpdate.info.match_info)
             )
             .subscribe((matchInfo) => this.rawRosterUpdate(matchInfo));
-
-        // Clear or emit roster from match state change
-        this.match.state$.pipe(takeUntil(this._unsubscribe)).subscribe((newMatchState) => {
-            if (!this._owRawRoster) return;
-            if (newMatchState === MatchState.Active) {
-                const newRoster = this.createRoster(this._owRawRoster);
-                this._roster = newRoster;
-                this.roster$.next(newRoster);
-            } else if (newMatchState === MatchState.Inactive) {
-                this.roster$.next(undefined);
-                this._owRawRoster = undefined;
-            }
-        });
     }
 
     /**
@@ -188,13 +193,6 @@ export class MatchRosterService implements OnDestroy {
 
     //#region Killfeed
     private setupKillfeed(): void {
-        this.match.state$
-            .pipe(
-                takeUntil(this._unsubscribe),
-                filter((matchState) => matchState === MatchState.Active)
-            )
-            .subscribe(() => (this._killfeedList = []));
-
         this.overwolf.newGameEvent$
             .pipe(
                 takeUntil(this._unsubscribe),

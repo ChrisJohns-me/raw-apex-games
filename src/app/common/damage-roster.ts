@@ -1,5 +1,6 @@
 export interface DamageAction {
     timestamp: Date;
+    victimName: string;
     attackerName?: string;
     hasShield?: boolean;
     isHeadshot?: boolean;
@@ -16,26 +17,30 @@ export interface RosterDamageActions {
 export class DamageRoster {
     public damageActions: RosterDamageActions = {};
 
-    public get activePlayerDamageInflicted(): number {
-        return this.getPlayerDamageInflicted(this.activePlayerName);
+    public get activePlayerDamageInflictedSum(): number {
+        return this.getPlayerDamageInflictedTotal(this.activePlayerName);
     }
-    public get activePlayerKnockdownsInflicted(): number {
-        return this.getPlayerKnockdownsInflicted(this.activePlayerName);
+    public get activePlayerKnockdownsInflictedSum(): number {
+        return this.getPlayerKnockdownsInflictedTotal(this.activePlayerName);
     }
-    /**
-     * Kills that have been confirmed by killfeed + enemy player disconnections.
-     * May not equal proper count, due to enemy players still connected and spectating.
-     * */
-    public get activePlayerEliminationsInflicted(): number {
-        return this.getPlayerEliminationsInflicted(this.activePlayerName);
+    /** Shares same limitations as `alivePlayers` */
+    public get activePlayerEliminationsInflictedSum(): number {
+        return this.getPlayerEliminationsInflictedTotal(this.activePlayerName);
     }
-    public get activePlayerHeadshotsInflicted(): number {
-        return this.getPlayerHeadshotsInflicted(this.activePlayerName);
+    public get activePlayerHeadshotsInflictedSum(): number {
+        return this.getPlayerHeadshotsInflictedTotal(this.activePlayerName);
     }
 
     constructor(public activePlayerName: string = "") {}
 
-    public inflictPlayerDamage(data: {
+    public inflictPlayerDamage({
+        attackerName,
+        victimName,
+        hasShield,
+        isHeadshot,
+        shieldDamage,
+        healthDamage,
+    }: {
         attackerName?: string;
         victimName: string;
         hasShield?: boolean;
@@ -43,14 +48,15 @@ export class DamageRoster {
         shieldDamage?: number;
         healthDamage?: number;
     }): void {
-        if (!this.damageActions[data.victimName]) this.damageActions[data.victimName] = [];
-        this.damageActions[data.victimName].push({
+        if (!this.damageActions[victimName]) this.damageActions[victimName] = [];
+        this.damageActions[victimName].push({
             timestamp: new Date(),
-            attackerName: data.attackerName ?? this.activePlayerName,
-            hasShield: data.hasShield,
-            isHeadshot: data.isHeadshot,
-            shieldDamage: data.shieldDamage,
-            healthDamage: data.healthDamage,
+            attackerName: attackerName ?? this.activePlayerName,
+            victimName: victimName,
+            hasShield: hasShield,
+            isHeadshot: isHeadshot,
+            shieldDamage: shieldDamage,
+            healthDamage: healthDamage,
         });
     }
 
@@ -59,6 +65,7 @@ export class DamageRoster {
         this.damageActions[victimName].push({
             timestamp: new Date(),
             attackerName: attackerName,
+            victimName: victimName,
             isKnocked: true,
         });
     }
@@ -68,27 +75,28 @@ export class DamageRoster {
         this.damageActions[victimName].push({
             timestamp: new Date(),
             attackerName: attackerName,
+            victimName: victimName,
             isEliminated: true,
         });
     }
 
     //#region Player Stats
-    public getPlayerDamageInflicted(playerName: string): number {
+    public getPlayerDamageInflictedTotal(playerName: string): number {
         const callbackFn = (action: DamageAction): number => (action.shieldDamage ?? 0) + (action.healthDamage ?? 0);
         return this.damageActionReduce(playerName, callbackFn);
     }
 
-    public getPlayerKnockdownsInflicted(playerName: string): number {
+    public getPlayerKnockdownsInflictedTotal(playerName: string): number {
         const callbackFn = (action: DamageAction): number => (action.isKnocked ? 1 : 0);
         return this.damageActionReduce(playerName, callbackFn);
     }
 
-    public getPlayerEliminationsInflicted(playerName: string): number {
+    public getPlayerEliminationsInflictedTotal(playerName: string): number {
         const callbackFn = (action: DamageAction): number => (action.isEliminated ? 1 : 0);
         return this.damageActionReduce(playerName, callbackFn);
     }
 
-    public getPlayerHeadshotsInflicted(playerName: string): number {
+    public getPlayerHeadshotsInflictedTotal(playerName: string): number {
         const callbackFn = (action: DamageAction): number => (action.isHeadshot ? 1 : 0);
         return this.damageActionReduce(playerName, callbackFn);
     }
@@ -98,7 +106,7 @@ export class DamageRoster {
      * The return value of the callback function is totaled.
      * @param {string} attackerName Attacking player to use as the filter.
      * @param {Function} callbackFn Callback function that is called, and should return the needed value.
-     * @returns {number} Totaled result
+     * @returns {number} Totaled result.
      */
     private damageActionReduce(attackerName: string, callbackFn: (action: DamageAction) => number): number {
         let value = 0;

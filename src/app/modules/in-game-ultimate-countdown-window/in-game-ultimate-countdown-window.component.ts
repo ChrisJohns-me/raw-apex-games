@@ -12,7 +12,7 @@ import { averageRate } from "src/utilities";
 
 const DEBUG = !environment.production;
 
-const NUM_PROGRESS_HISTORY = 4;
+const NUM_PROGRESS_HISTORY = 10;
 const ULTIMATE_ACCEL_DETECTION = 0.2;
 const UI_COUNTDOWN_REFRESH_RATE = 1000;
 
@@ -29,12 +29,15 @@ interface UltimateProgress {
 })
 export class InGameUltimateCountdownWindowComponent implements OnInit, OnDestroy {
     public isDateValid = isValid;
-    public isDebugShow = DEBUG && false;
+    public isDebugShow = DEBUG && true;
     public primaryTitle = "In Game Ultimate Countdown";
     public secondaryTitle = "";
 
     public showCountdown = false;
     public ultimatePercent = 0;
+    public get isUltimateReady(): boolean {
+        return this.ultimatePercent >= 0.99;
+    }
     /**
      * @returns {Date} time remaining
      * @returns {undefined} if ready date is invalid
@@ -72,28 +75,30 @@ export class InGameUltimateCountdownWindowComponent implements OnInit, OnDestroy
 
     private registerGameEvents(): void {
         // Show or Hide window
-        combineLatest([this.match.state$, this.player.status$])
+        combineLatest([this.match.currentState$, this.player.status$])
             .pipe(takeUntil(this._unsubscribe), distinctUntilChanged())
-            .subscribe(([matchState, playerStatus]) => {
-                if (matchState === MatchState.Active && playerStatus === PlayerStatus.Alive) {
+            .subscribe(([matchStateChanged, playerStatus]) => {
+                if (matchStateChanged.state === MatchState.Active && playerStatus === PlayerStatus.Alive) {
                     this.showCountdown = true;
                 } else {
                     this.showCountdown = false;
                     this.resetPercentHistory();
                 }
                 console.debug(
-                    `Match State is "${matchState}". ${this.showCountdown ? "Showing" : "Hiding"} Ultimate Countdown`
+                    `Match State is "${matchStateChanged.state}". ${
+                        this.showCountdown ? "Showing" : "Hiding"
+                    } Ultimate Countdown`
                 );
             });
 
         // Start Ultimate calculation
-        combineLatest([this.match.state$, this.player.status$])
+        combineLatest([this.match.currentState$, this.player.status$])
             .pipe(
                 takeUntil(this._unsubscribe),
                 distinctUntilChanged(),
                 filter(
-                    ([matchState, playerStatus]) =>
-                        matchState === MatchState.Active && playerStatus === PlayerStatus.Alive
+                    ([matchStateChanged, playerStatus]) =>
+                        matchStateChanged.state === MatchState.Active && playerStatus === PlayerStatus.Alive
                 ),
                 switchMap(() => this.playerLegend.ultimateCooldown$),
                 tap((percent) => this.addPercentHistory((this.ultimatePercent = percent))),
@@ -102,10 +107,9 @@ export class InGameUltimateCountdownWindowComponent implements OnInit, OnDestroy
                     return this.calcReadyDate(percent, this.ultimateProgressHistory, new Date(adjustedNow));
                 }),
                 tap((readyDate) => (this.ultimateReadyDate = readyDate)),
-                switchMap(() => timer(0, UI_COUNTDOWN_REFRESH_RATE)),
-                tap(() => this.cdr.detectChanges())
+                switchMap(() => timer(0, UI_COUNTDOWN_REFRESH_RATE))
             )
-            .subscribe();
+            .subscribe(() => this.cdr.detectChanges());
     }
 
     private resetPercentHistory(): void {

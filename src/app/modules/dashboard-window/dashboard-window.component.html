@@ -7,7 +7,6 @@
     <div class="control-bar">
         <button (click)="onOpenUltimateCountdownClick()">Open Ult Countdown</button>
         <button (click)="onOpenMatchTimerClick()">Open Match Timer</button>
-        <button (click)="onForceRefreshClick()">Force Refresh</button>
         <button (click)="isTrackingEnabled = !isTrackingEnabled">
             {{ isTrackingEnabled ? "🟢 Tracking Is On" : "❌ Tracking Is Off" }}
         </button>
@@ -33,14 +32,10 @@
                 </div>
                 <p class="inference-item">Match</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item">
-                        <a (click)="match.state$.next($any(match.state$.value === 'inactive' ? 'active' : 'inactive'))"
-                            >State</a
-                        >: {{ match.state$ | async }}
-                    </p>
+                    <p class="inference-item">State: {{ (match.currentState$ | async)?.state }}</p>
                     <p class="inference-item">Map: {{ (matchMap.map$ | async)?.friendlyName }}</p>
                     <p class="inference-item">GameMode: {{ (match.gameMode$ | async)?.friendlyName }}</p>
-                    <p class="inference-item">MatchDuration: {{ (match.time$ | async)?.durationMs | date: "mm:ss" }}</p>
+                    <p class="inference-item">MatchDuration: {{ matchDuration | date: "mm:ss" }}</p>
                 </div>
                 <p class="inference-item">Teammates: {{ (matchRoster.teammates$ | async)?.players }}</p>
                 <p class="inference-item">Match Roster</p>
@@ -49,13 +44,13 @@
                         class="inference-item has-tooltip"
                         title="Teams that have not been killed + player disconnections. May not equal proper count, due to players still connected and spectating."
                     >
-                        Teams Alive: {{ (matchRoster.roster$ | async)?.aliveTeams }}
+                        Teams Alive: {{ (matchRoster.roster$ | async)?.aliveTeams?.length }}
                     </p>
                     <p
                         class="inference-item has-tooltip"
                         title="Players that have not been killed + player disconnections. May not equal proper count, due to players still connected and spectating."
                     >
-                        Players Alive: {{ (playerActivity.damageRoster$ | async)?.activePlayerEliminationsInflicted }}
+                        Players Alive: {{ (playerActivity.damageRoster$ | async)?.activePlayerDamageInflictedSum }}
                     </p>
                 </div>
                 <p class="inference-item">Placement: {{ playerActivity.placement$ | async }}</p>
@@ -68,23 +63,40 @@
                     <p class="inference-item">
                         UltimateCooldownPercent: {{ playerLegend.ultimateCooldown$ | async | percent: "0.0-0" }}
                     </p>
+                    <p class="inference-item">Damage(smart): {{ playerActivity.numDamage$ | async }}</p>
+                    <p class="inference-item">Kills(smart): {{ playerActivity.numKills$ | async }}</p>
+                    <p class="inference-item">Assists(smart): {{ playerActivity.numAssists$ | async }}</p>
+                    <p class="inference-item">Spectators(smart): {{ playerActivity.numSpectators$ | async }}</p>
+                </div>
+                <p
+                    class="inference-item has-tooltip"
+                    title="Data comes directly from Overwolf, updated every few seconds"
+                >
+                    Player Tabs
+                </p>
+                <div class="sub-inference-items">
+                    <p class="inference-item">Kills: {{ (playerActivity.playerTabs$ | async)?.kills }}</p>
+                    <p class="inference-item">Assists: {{ (playerActivity.playerTabs$ | async)?.assists }}</p>
+                    <p class="inference-item">Spectators: {{ (playerActivity.playerTabs$ | async)?.spectators }}</p>
+                    <p class="inference-item">Teams: {{ (playerActivity.playerTabs$ | async)?.teams }}</p>
+                    <p class="inference-item">Players: {{ (playerActivity.playerTabs$ | async)?.players }}</p>
                 </div>
                 <p class="inference-item">Damage Roster</p>
                 <div class="sub-inference-items">
                     <p class="inference-item">
-                        Damage: {{ (playerActivity.damageRoster$ | async)?.activePlayerDamageInflicted }}
+                        Damage: {{ (playerActivity.damageRoster$ | async)?.activePlayerDamageInflictedSum }}
                     </p>
                     <p
                         class="inference-item has-tooltip"
                         title="Kills that have been confirmed by killfeed + enemy player disconnections. May not equal proper count, due to enemy players still connected and spectating."
                     >
-                        Eliminations: {{ (playerActivity.damageRoster$ | async)?.activePlayerEliminationsInflicted }}
+                        Eliminations: {{ (playerActivity.damageRoster$ | async)?.activePlayerEliminationsInflictedSum }}
                     </p>
                     <p class="inference-item">
-                        Knockdowns: {{ (playerActivity.damageRoster$ | async)?.activePlayerKnockdownsInflicted }}
+                        Knockdowns: {{ (playerActivity.damageRoster$ | async)?.activePlayerKnockdownsInflictedSum }}
                     </p>
                     <p class="inference-item">
-                        Headshots: {{ (playerActivity.damageRoster$ | async)?.activePlayerHeadshotsInflicted }}
+                        Headshots: {{ (playerActivity.damageRoster$ | async)?.activePlayerHeadshotsInflictedSum }}
                     </p>
                 </div>
                 <p class="inference-item">Player Inventory</p>
@@ -115,17 +127,17 @@
                         </span>
                     </p>
                     <p class="inference-item">
-                        LandingCoordinates:
-                        <span *ngFor="let landingCoord of playerLocation.landingCoordinates$ | async | keyvalue"
-                            >{{ landingCoord.value < Infinity ? landingCoord.value : "-"
-                            }}{{ landingCoord.key !== "z" ? ", " : "" }}
-                        </span>
-                    </p>
-                    <p class="inference-item">
                         StartingCoordinates:
                         <span *ngFor="let startingCoord of playerLocation.startingCoordinates$ | async | keyvalue"
                             >{{ startingCoord.value < Infinity ? startingCoord.value : "-"
                             }}{{ startingCoord.key !== "z" ? ", " : "" }}
+                        </span>
+                    </p>
+                    <p class="inference-item">
+                        LandingCoordinates:
+                        <span *ngFor="let landingCoord of playerLocation.landingCoordinates$ | async | keyvalue"
+                            >{{ landingCoord.value < Infinity ? landingCoord.value : "-"
+                            }}{{ landingCoord.key !== "z" ? ", " : "" }}
                         </span>
                     </p>
                     <p class="inference-item">

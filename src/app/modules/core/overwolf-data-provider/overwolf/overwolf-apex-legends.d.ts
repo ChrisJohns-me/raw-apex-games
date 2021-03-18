@@ -108,6 +108,7 @@ declare namespace overwolf.gep.ApexLegends {
 
     interface MatchInfoTabs {
         kills: number;
+        assists: number;
         spectators: number;
         teams: number;
         players: number;
