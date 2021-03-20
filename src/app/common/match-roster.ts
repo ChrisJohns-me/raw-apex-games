@@ -6,8 +6,7 @@ export class MatchRoster {
         return this._teams;
     }
     /**
-     * Teams that have not been killed + player disconnections.
-     * May not equal proper count, due to players still connected and spectating.
+     * Shares same limitations to `alivePlayers`
      * */
     public get aliveTeams(): Team[] {
         return this._teams.filter((t) => t.status === TeamStatus.Alive);
@@ -17,27 +16,31 @@ export class MatchRoster {
         return this._teams.filter((t) => t.status === TeamStatus.Eliminated);
     }
     /**
-     * Players that have not been killed + player disconnections.
-     * May not equal proper count, due to players still connected and spectating.
-     * */
+     * Accounts for:
+     *  - Players that have not been eliminated.
+     *  - Disconnected/Quit players
+     * Does not account for:
+     *  - Player respawns
+     *  - Eliminated players who are still spectating
+     */
     public get alivePlayers(): Player[] {
-        return ([] as Player[]).concat(...this._teams.map((t) => t.members));
+        return this.players.filter((p) => p.status === PlayerStatus.Alive);
     }
     /** Shares same limitations to and is opposite to `alivePlayers` */
     public get eliminatedPlayers(): Player[] {
-        return ([] as Player[]).concat(...this._teams.map((t) => t.members));
+        return this.players.filter((p) => p.status === PlayerStatus.Eliminated);
     }
     public get players(): Player[] {
         return ([] as Player[]).concat(...this._teams.map((t) => t.members));
     }
 
-    private _teams: Team[] = [];
-
-    constructor(teams: Team[]) {
-        this._teams = teams;
-    }
+    constructor(private _teams: Team[] = []) {}
 
     //#region Player Actions
+    public respawnPlayer(playerName: string): void {
+        this.updateRosterPlayerStatus(playerName, PlayerStatus.Alive);
+    }
+
     public knockdownPlayer(victimName: string): void {
         this.updateRosterPlayerStatus(victimName, PlayerStatus.Knocked);
     }

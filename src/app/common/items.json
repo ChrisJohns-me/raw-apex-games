@@ -16,51 +16,51 @@
             "id": "ammo_light",
             "friendlyName": "Light Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "^126$/"
+            "inGameInventoryIdRegExPattern": "^126$"
         },
         {
             "id": "ammo_energy",
             "friendlyName": "Energy Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "^127$/"
+            "inGameInventoryIdRegExPattern": "^127$"
         },
         {
             "id": "ammo_shotgun",
             "friendlyName": "Shotgun Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "^128$/"
+            "inGameInventoryIdRegExPattern": "^128$"
         },
         {
             "id": "ammo_heavy",
             "friendlyName": "Heavy Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "^129$/"
+            "inGameInventoryIdRegExPattern": "^129$"
         },
         {
             "id": "ammo_sniper",
             "friendlyName": "Sniper Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "^130$/"
+            "inGameInventoryIdRegExPattern": "^130$"
         },
         {
             "id": "ultimate_accelerant",
             "friendlyName": "Ultimate Accelerant",
-            "inGameInventoryIdRegExPattern": "^131$/"
+            "inGameInventoryIdRegExPattern": "^131$"
         },
         {
             "id": "syringe",
             "friendlyName": "Syringe",
-            "inGameInventoryIdRegExPattern": "^134$/"
+            "inGameInventoryIdRegExPattern": "^134$"
         },
         {
             "id": "shield_battery",
             "friendlyName": "Shield Battery",
-            "inGameInventoryIdRegExPattern": "^135$/"
+            "inGameInventoryIdRegExPattern": "^135$"
         },
         {
             "id": "shield_cell",
             "friendlyName": "Shield Cell",
-            "inGameInventoryIdRegExPattern": "^136$/"
+            "inGameInventoryIdRegExPattern": "^136$"
         },
         {
             "id": "med_kit",
@@ -253,21 +253,21 @@
             "friendlyName": "Thermite Grenade",
             "inGameInfoNameRegExPattern": "^Thermite Grenade$",
             "inGameEventNameRegExPattern": "grenade_incendiary",
-            "inGameInventoryIdRegExPattern": "158/"
+            "inGameInventoryIdRegExPattern": "158"
         },
         {
             "id": "grenade_frag",
             "friendlyName": "Frag Grenade",
             "inGameInfoNameRegExPattern": "^Frag Grenade$",
             "inGameEventNameRegExPattern": "grenade_frag",
-            "inGameInventoryIdRegExPattern": "159/"
+            "inGameInventoryIdRegExPattern": "159"
         },
         {
             "id": "grenade_arc_star",
             "friendlyName": "Arc Star",
             "inGameInfoNameRegExPattern": "^Arc Star$",
             "inGameEventNameRegExPattern": "grenade_arc",
-            "inGameInventoryIdRegExPattern": "160/"
+            "inGameInventoryIdRegExPattern": "160"
         }
     ]
 }

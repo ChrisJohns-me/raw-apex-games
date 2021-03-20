@@ -6,7 +6,7 @@ import { BackgroundModule } from "./modules/background/background.module";
 import { CoreModule } from "./modules/core/core.module";
 import { DashboardWindowModule } from "./modules/dashboard-window/dashboard-window.module";
 import { InGameMatchTimerWindowModule } from "./modules/in-game-match-timer-window/in-game-match-timer-window.module";
-import { InGameUltimateCountdownWindowModule } from "./modules/in-game-ultimate-countdown-window/in-game-ultimate-countdown-window.module";
+import { InGameUltTimerWindowModule } from "./modules/in-game-ult-timer-window/in-game-ult-timer-window.module";
 
 @NgModule({
     declarations: [AppComponent],
@@ -17,7 +17,7 @@ import { InGameUltimateCountdownWindowModule } from "./modules/in-game-ultimate-
         DashboardWindowModule,
         HttpClientModule,
         InGameMatchTimerWindowModule,
-        InGameUltimateCountdownWindowModule,
+        InGameUltTimerWindowModule,
     ],
     bootstrap: [AppComponent],
 })

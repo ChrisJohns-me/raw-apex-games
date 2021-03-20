@@ -2,6 +2,7 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { GameProcessService } from "@core/game-process.service";
 import { GameService } from "@core/game.service";
 import { GoogleFormsMatchSummaryTrackerService } from "@core/google-forms-match-summary-tracker.service";
+import { MatchMapService } from "@core/match-map.service";
 import { MatchRosterService } from "@core/match-roster.service";
 import { MatchService } from "@core/match.service";
 import { OverwolfDataProviderService } from "@core/overwolf-data-provider";
@@ -22,6 +23,7 @@ import { SingletonServiceProviderFactory } from "src/app/singleton-service.provi
         GameProcessService,
         GoogleFormsMatchSummaryTrackerService,
         MatchService,
+        MatchMapService,
         MatchRosterService,
         OverwolfDataProviderService,
         OverwolfExposedDataService,
@@ -42,6 +44,7 @@ export class BackgroundService implements OnDestroy {
         private readonly gameProcess: GameProcessService,
         private readonly googleFormsMatchSummaryTracker: GoogleFormsMatchSummaryTrackerService,
         private readonly match: MatchService,
+        private readonly matchMap: MatchMapService,
         private readonly matchRoster: MatchRosterService,
         private readonly overwolfDataProvider: OverwolfDataProviderService,
         private readonly overwolfExposedData: OverwolfExposedDataService,
@@ -66,6 +69,7 @@ export class BackgroundService implements OnDestroy {
         this.gameProcess.start();
         this.googleFormsMatchSummaryTracker.start();
         this.match.start();
+        this.matchMap.start();
         this.matchRoster.start();
         this.overwolfExposedData.start();
         this.player.start();

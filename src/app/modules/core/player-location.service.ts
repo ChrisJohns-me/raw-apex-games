@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { TriggerConditions } from "@common/game-event-triggers";
 import { MapCoordinates } from "@common/game-map";
 import { BehaviorSubject, Subject } from "rxjs";
-import { filter, map, switchMap, takeUntil } from "rxjs/operators";
+import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { MatchService } from "./match.service";
 import { OverwolfDataProviderService, OWInfoUpdates2Event } from "./overwolf-data-provider";
@@ -56,10 +56,6 @@ export class PlayerLocationService implements OnDestroy {
             this.landingCoordinates$.next(undefined);
             this.endingCoordinates$.next(undefined);
         });
-
-        // this.match.ended$.pipe(
-        //     takeUntil(this._unsubscribe),
-        // ).subscribe(() => {});
     }
 
     //#region Coordinates
@@ -113,10 +109,9 @@ export class PlayerLocationService implements OnDestroy {
 
     //#region Starting/Ending Coordinates
     private setupCompletedCoordinates() {
-        this.match.started$
+        this.coordinates$
             .pipe(
                 takeUntil(this._unsubscribe),
-                switchMap(() => this.coordinates$),
                 filter(() => !this.startingCoordinates$.value),
                 filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z))
             )
@@ -136,11 +131,10 @@ export class PlayerLocationService implements OnDestroy {
 
     //#region Landing Coordinates
     private setupLandingCoordinates(): void {
-        this.match.started$
+        this.playerInventory.inUse$
             .pipe(
                 takeUntil(this._unsubscribe),
-                switchMap(() => this.playerInventory.inUse$),
-                filter((inUse) => !!inUse?.isDefault),
+                filter((inUse) => !!inUse),
                 map(() => this.coordinates$.value),
                 filter(() => !this.landingCoordinates$.value),
                 filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z))

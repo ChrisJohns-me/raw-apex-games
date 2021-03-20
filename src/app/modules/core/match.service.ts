@@ -57,8 +57,9 @@ export class MatchService implements OnDestroy {
         };
 
         const triggers = new TriggerConditions<MatchState, [MatchState?, OWInfoUpdates2Event?, OWGameEvent?]>({
+            // active { feature: "team", info: match_info: teammate_0: {name: "MasterKriff", state: "knockedout"} undefined
             [MatchState.Inactive]: (matchState, infoUpdate, gameEvent) => {
-                const notInactive = matchState !== MatchState.Inactive;
+                const notInactive = matchState !== MatchState.Inactive; // true
                 const gameModeChanged =
                     infoUpdate?.feature === "match_info" && !!infoUpdate?.info?.match_info?.game_mode;
                 const infoStateInactive =
@@ -67,7 +68,9 @@ export class MatchService implements OnDestroy {
                     infoUpdate?.feature === "team" &&
                     infoUpdate.info.match_info?.team_info?.team_state === "eliminated";
                 const teamDeleted =
-                    infoUpdate?.feature === "team" && infoUpdate.info.match_info?.team_info?.team_state == null;
+                    infoUpdate?.feature === "team" &&
+                    typeof infoUpdate.info.match_info?.team_info === "object" &&
+                    infoUpdate.info.match_info?.team_info?.team_state == null;
                 const matchEnd = gameEvent?.name === "match_end";
                 return (
                     notInactive && (gameModeChanged || infoStateInactive || teamEliminated || teamDeleted || matchEnd)

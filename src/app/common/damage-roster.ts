@@ -14,16 +14,28 @@ export interface RosterDamageActions {
     [victimName: string]: DamageAction[];
 }
 
+/**
+ * Container for all outgoing damage events and their raw values,
+ *  with a specific player in mind (typically the local player).
+ */
 export class DamageRoster {
     public damageActions: RosterDamageActions = {};
 
+    /**
+     * Damage amount does not take into consideration victim's HP, only the raw inflicted amount.
+     *  eg. A victim's HP at 1 and a damage amount of 20 is still recorded at 20 and not 1; even though the
+     *  damage required to knockdown the victim is 1.
+     * The contained damage amount will then appear to be inflated.
+     */
     public get activePlayerDamageInflictedSum(): number {
         return this.getPlayerDamageInflictedTotal(this.activePlayerName);
     }
     public get activePlayerKnockdownsInflictedSum(): number {
         return this.getPlayerKnockdownsInflictedTotal(this.activePlayerName);
     }
-    /** Shares same limitations as `alivePlayers` */
+    /**
+     * Does not take into consideration of victims still spectating and still connected to the match.
+     */
     public get activePlayerEliminationsInflictedSum(): number {
         return this.getPlayerEliminationsInflictedTotal(this.activePlayerName);
     }
@@ -55,8 +67,8 @@ export class DamageRoster {
             victimName: victimName,
             hasShield: hasShield,
             isHeadshot: isHeadshot,
-            shieldDamage: shieldDamage,
-            healthDamage: healthDamage,
+            shieldDamage: parseInt(String(shieldDamage)),
+            healthDamage: parseInt(String(healthDamage)),
         });
     }
 
@@ -81,22 +93,22 @@ export class DamageRoster {
     }
 
     //#region Player Stats
-    public getPlayerDamageInflictedTotal(playerName: string): number {
+    private getPlayerDamageInflictedTotal(playerName: string): number {
         const callbackFn = (action: DamageAction): number => (action.shieldDamage ?? 0) + (action.healthDamage ?? 0);
         return this.damageActionReduce(playerName, callbackFn);
     }
 
-    public getPlayerKnockdownsInflictedTotal(playerName: string): number {
+    private getPlayerKnockdownsInflictedTotal(playerName: string): number {
         const callbackFn = (action: DamageAction): number => (action.isKnocked ? 1 : 0);
         return this.damageActionReduce(playerName, callbackFn);
     }
 
-    public getPlayerEliminationsInflictedTotal(playerName: string): number {
+    private getPlayerEliminationsInflictedTotal(playerName: string): number {
         const callbackFn = (action: DamageAction): number => (action.isEliminated ? 1 : 0);
         return this.damageActionReduce(playerName, callbackFn);
     }
 
-    public getPlayerHeadshotsInflictedTotal(playerName: string): number {
+    private getPlayerHeadshotsInflictedTotal(playerName: string): number {
         const callbackFn = (action: DamageAction): number => (action.isHeadshot ? 1 : 0);
         return this.damageActionReduce(playerName, callbackFn);
     }
@@ -111,7 +123,11 @@ export class DamageRoster {
     private damageActionReduce(attackerName: string, callbackFn: (action: DamageAction) => number): number {
         let value = 0;
         Object.values(this.damageActions).forEach((victimActions) => {
-            victimActions.filter((v) => v.attackerName === attackerName).forEach((v) => (value += callbackFn(v)));
+            victimActions
+                .filter((v) => v.attackerName === attackerName)
+                .forEach((v) => {
+                    return (value += parseInt(String(callbackFn(v))));
+                });
         });
         return value;
     }

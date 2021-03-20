@@ -114,9 +114,9 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
                             ? matchTime.endDate?.getTime() - matchTime.startDate?.getTime()
                             : undefined;
                     this.unreportedMatchSummary = {
-                        kills: damageRoster?.activePlayerEliminationsInflictedSum,
+                        kills: damageRoster.activePlayerEliminationsInflictedSum,
                         legend: legend,
-                        damage: damageRoster?.activePlayerDamageInflictedSum,
+                        damage: damageRoster.activePlayerDamageInflictedSum,
                         map: gameMap,
                         placement: placement,
                         gameMode: gameMode ?? undefined,

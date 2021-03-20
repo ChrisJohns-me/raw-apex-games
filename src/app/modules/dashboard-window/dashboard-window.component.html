@@ -5,7 +5,7 @@
     [isContentDraggable]="false"
 >
     <div class="control-bar">
-        <button (click)="onOpenUltimateCountdownClick()">Open Ult Countdown</button>
+        <button (click)="onOpenUltTimerClick()">Open Ult Timer</button>
         <button (click)="onOpenMatchTimerClick()">Open Match Timer</button>
         <button (click)="isTrackingEnabled = !isTrackingEnabled">
             {{ isTrackingEnabled ? "🟢 Tracking Is On" : "❌ Tracking Is Off" }}
@@ -21,15 +21,16 @@
                 <p class="inference-item">Game</p>
                 <div class="sub-inference-items">
                     <p class="inference-item">
-                        <a (click)="gameProcess.isInFocus$.next(true)">IsInFocus</a>:
-                        {{ gameProcess.isInFocus$ | async }}
-                    </p>
-                    <p class="inference-item">
                         <a (click)="gameProcess.isRunning$.next(true)">IsRunning</a>:
                         {{ gameProcess.isRunning$ | async }}
                     </p>
+                    <p class="inference-item">
+                        <a (click)="gameProcess.isInFocus$.next(true)">IsInFocus</a>:
+                        {{ gameProcess.isInFocus$ | async }}
+                    </p>
                     <p class="inference-item">GamePhase: {{ game.phase$ | async }}</p>
                 </div>
+
                 <p class="inference-item">Match</p>
                 <div class="sub-inference-items">
                     <p class="inference-item">State: {{ (match.currentState$ | async)?.state }}</p>
@@ -38,54 +39,54 @@
                     <p class="inference-item">MatchDuration: {{ matchDuration | date: "mm:ss" }}</p>
                 </div>
                 <p class="inference-item">Teammates: {{ (matchRoster.teammates$ | async)?.players }}</p>
+
                 <p class="inference-item">Match Roster</p>
                 <div class="sub-inference-items">
                     <p
                         class="inference-item has-tooltip"
-                        title="Teams that have not been killed + player disconnections. May not equal proper count, due to players still connected and spectating."
+                        title="Teams with all players disconnected, and teams that have not been fully eliminated. May not equal proper count, due to players still connected and spectating."
                     >
-                        Teams Alive: {{ (matchRoster.roster$ | async)?.aliveTeams?.length }}
+                        Roster Teams Alive: {{ (matchRoster.roster$ | async)?.aliveTeams?.length }}
                     </p>
                     <p
                         class="inference-item has-tooltip"
-                        title="Players that have not been killed + player disconnections. May not equal proper count, due to players still connected and spectating."
+                        title="Players that have disconnected, and players that have not been eliminated. May not equal proper count, due to players still connected and spectating."
                     >
-                        Players Alive: {{ (playerActivity.damageRoster$ | async)?.activePlayerDamageInflictedSum }}
+                        Roster Players Alive: {{ (matchRoster.roster$ | async)?.alivePlayers?.length }}
                     </p>
+                    <p class="inference-item">Tabs Teams: {{ matchRoster.numTeams$ | async }}</p>
+                    <p class="inference-item">Tabs Players: {{ matchRoster.numPlayers$ | async }}</p>
                 </div>
-                <p class="inference-item">Placement: {{ playerActivity.placement$ | async }}</p>
-                <p class="inference-item">Victory: {{ playerActivity.victory$ | async }}</p>
+
                 <p class="inference-item">Player</p>
                 <div class="sub-inference-items">
                     <p class="inference-item">PlayerName: {{ player.playerName$ | async }}</p>
                     <p class="inference-item">PlayerStatus: {{ player.status$ | async }}</p>
                     <p class="inference-item">Legend: {{ (playerLegend.legend$ | async)?.friendlyName }}</p>
+                    <p class="inference-item">Placement: {{ playerActivity.placement$ | async }}</p>
+                    <p class="inference-item">Victory: {{ playerActivity.victory$ | async }}</p>
                     <p class="inference-item">
-                        UltimateCooldownPercent: {{ playerLegend.ultimateCooldown$ | async | percent: "0.0-0" }}
+                        UltimatePercent: {{ playerLegend.ultimateCooldown$ | async | percent: "0.0-0" }}
                     </p>
-                    <p class="inference-item">Damage(smart): {{ playerActivity.numDamage$ | async }}</p>
-                    <p class="inference-item">Kills(smart): {{ playerActivity.numKills$ | async }}</p>
-                    <p class="inference-item">Assists(smart): {{ playerActivity.numAssists$ | async }}</p>
-                    <p class="inference-item">Spectators(smart): {{ playerActivity.numSpectators$ | async }}</p>
+                    <p class="inference-item">Kills: {{ playerActivity.numKills$ | async }}</p>
+                    <p class="inference-item">Assists: {{ playerActivity.numAssists$ | async }}</p>
+                    <p class="inference-item">Damage: {{ playerActivity.numDamage$ | async }}</p>
+                    <p class="inference-item"><del>Spectators</del>: {{ playerActivity.numSpectators$ | async }}</p>
                 </div>
+
                 <p
                     class="inference-item has-tooltip"
-                    title="Data comes directly from Overwolf, updated every few seconds"
+                    title="Info directly from Overwolf's me.totalDamageDealt data. 
+                Damage amount does not take into consideration victim's HP, only the raw inflicted amount.
+                 eg. A victim's HP at 1 and a damage amount of 20 is still recorded at 20 and not 1; even though the
+                 damage required to knockdown the victim is 1.
+                The contained damage amount will then appear to be inflated."
                 >
-                    Player Tabs
+                    TotalDamageDealt: {{ playerActivity.totalDamageDealt$ | async }}
                 </p>
-                <div class="sub-inference-items">
-                    <p class="inference-item">Kills: {{ (playerActivity.playerTabs$ | async)?.kills }}</p>
-                    <p class="inference-item">Assists: {{ (playerActivity.playerTabs$ | async)?.assists }}</p>
-                    <p class="inference-item">Spectators: {{ (playerActivity.playerTabs$ | async)?.spectators }}</p>
-                    <p class="inference-item">Teams: {{ (playerActivity.playerTabs$ | async)?.teams }}</p>
-                    <p class="inference-item">Players: {{ (playerActivity.playerTabs$ | async)?.players }}</p>
-                </div>
+
                 <p class="inference-item">Damage Roster</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item">
-                        Damage: {{ (playerActivity.damageRoster$ | async)?.activePlayerDamageInflictedSum }}
-                    </p>
                     <p
                         class="inference-item has-tooltip"
                         title="Kills that have been confirmed by killfeed + enemy player disconnections. May not equal proper count, due to enemy players still connected and spectating."
@@ -95,28 +96,52 @@
                     <p class="inference-item">
                         Knockdowns: {{ (playerActivity.damageRoster$ | async)?.activePlayerKnockdownsInflictedSum }}
                     </p>
+                    <p
+                        class="inference-item has-tooltip"
+                        title="Damage amount does not take into consideration victim's HP, only the raw inflicted amount.
+                    eg. A victim's HP at 1 and a damage amount of 20 is still recorded at 20 and not 1; even though the
+                    damage required to knockdown the victim is 1.
+                   The contained damage amount will then appear to be inflated."
+                    >
+                        Damage: {{ (playerActivity.damageRoster$ | async)?.activePlayerDamageInflictedSum }}
+                        <span
+                            class="warn has-tooltip"
+                            *ngIf="
+                                (playerActivity.damageRoster$ | async)?.activePlayerDamageInflictedSum !=
+                                (playerActivity.totalDamageDealt$ | async)
+                            "
+                            title="Typically should match the 'TotalDamageDealt' value"
+                        >
+                            (Mismatched)
+                        </span>
+                    </p>
                     <p class="inference-item">
                         Headshots: {{ (playerActivity.damageRoster$ | async)?.activePlayerHeadshotsInflictedSum }}
                     </p>
                 </div>
+
+                <p class="inference-item">Item In Use: {{ (playerInventory.inUse$ | async)?.friendlyName }}</p>
+                <p class="inference-item">Weapons</p>
+                <div class="sub-inference-items">
+                    <div
+                        class="inference-item"
+                        *ngFor="let weaponItem of playerInventory.weaponSlots$ | async | keyvalue"
+                    >
+                        {{ weaponItem.value?.friendlyName }}
+                    </div>
+                </div>
+
                 <p class="inference-item">Player Inventory</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item">InUse: {{ (playerInventory.inUse$ | async)?.friendlyName }}</p>
-                    <p class="inference-item">
-                        Inventory:
-                        <span *ngFor="let slotItem of playerInventory.inventorySlots$ | async | keyvalue"
-                            ><br />
-                            {{ slotItem.value?.friendlyName }}</span
-                        >
-                    </p>
-                    <p class="inference-item">
-                        Weapons:
-                        <span *ngFor="let weaponItem of playerInventory.weaponSlots$ | async | keyvalue"
-                            ><br />
-                            {{ weaponItem.value?.friendlyName }}</span
-                        >
-                    </p>
+                    <div
+                        class="inference-item"
+                        *ngFor="let slotItem of playerInventory.inventorySlots$ | async | keyvalue"
+                    >
+                        {{ slotItem.value?.friendlyName ? slotItem.value?.friendlyName : slotItem.value?.id }}
+                        {{ slotItem.value?.amount || 0 > 0 ? "[" + slotItem.value?.amount + "]" : "" }}
+                    </div>
                 </div>
+
                 <p class="inference-item">Player Location</p>
                 <div class="sub-inference-items">
                     <p class="inference-item">LocationPhase: {{ playerLocation.locationPhase$ | async }}</p>

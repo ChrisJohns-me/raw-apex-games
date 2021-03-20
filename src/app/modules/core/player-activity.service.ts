@@ -1,11 +1,12 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { DamageRoster } from "@common/damage-roster";
 import { MatchState } from "@common/match";
-import { PlayerTabs } from "@common/player-tabs";
+import { PlayerStatus } from "@common/player";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { parseBoolean } from "src/utilities";
+import { cleanInt } from "src/utilities/number";
 import { MatchRosterService } from "./match-roster.service";
 import { MatchService } from "./match.service";
 import { OverwolfDataProviderService } from "./overwolf-data-provider";
@@ -19,21 +20,25 @@ import { PlayerService } from "./player.service";
 })
 export class PlayerActivityService implements OnDestroy {
     /** */
-    public readonly numDamage$ = new BehaviorSubject<number>(0);
-    /** */
     public readonly numKills$ = new BehaviorSubject<number>(0);
     /** */
     public readonly numAssists$ = new BehaviorSubject<number>(0);
     /** */
+    public readonly numDamage$ = new BehaviorSubject<number>(0);
+    /** @deprecated May not work; Feature is unavailable in game-UI. */
     public readonly numSpectators$ = new BehaviorSubject<number>(0);
 
-    public readonly damageRoster$ = new BehaviorSubject<Optional<DamageRoster>>(undefined);
+    public readonly damageRoster$;
     public readonly placement$ = new BehaviorSubject<number>(0);
     public readonly victory$ = new BehaviorSubject<boolean>(false);
-    /** Info directly from Overwolf's match_info.tabs data */
-    public readonly playerTabs$ = new BehaviorSubject<Optional<PlayerTabs>>(undefined);
+    /**
+     * Damage amount does not take into consideration victim's HP, only the raw inflicted amount.
+     * The contained damage amount will then appear to be inflated.
+     * Info directly from Overwolf's me.damage_dealt data
+     */
+    public readonly totalDamageDealt$ = new BehaviorSubject<number>(0);
 
-    private _damageRoster: Optional<DamageRoster>;
+    private _damageRoster = new DamageRoster();
     private readonly _unsubscribe = new Subject<void>();
 
     constructor(
@@ -41,7 +46,9 @@ export class PlayerActivityService implements OnDestroy {
         private readonly matchRoster: MatchRosterService,
         private readonly overwolf: OverwolfDataProviderService,
         private readonly player: PlayerService
-    ) {}
+    ) {
+        this.damageRoster$ = new BehaviorSubject<DamageRoster>(this._damageRoster);
+    }
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -50,9 +57,9 @@ export class PlayerActivityService implements OnDestroy {
 
     public start(): void {
         this.setupMatchStateEvents();
-        this.setupPlayerSmartData();
-        this.setupPlayerTabs();
-        this.setupDamageRoster();
+        this.setupInfoTabs();
+        this.setupTotalDamageDealt();
+        this.setupDamageRosterPlayerName();
         this.setupDamageEvents();
         this.setupKillfeedEvents();
         this.setupPlacement();
@@ -61,61 +68,58 @@ export class PlayerActivityService implements OnDestroy {
 
     private setupMatchStateEvents(): void {
         this.match.started$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+            this._damageRoster = new DamageRoster(this.player.playerName$.value);
+            this.damageRoster$.next(this._damageRoster);
             this.numDamage$.next(0);
             this.numKills$.next(0);
             this.numAssists$.next(0);
             this.numSpectators$.next(0);
-            this.damageRoster$.next(undefined);
             this.placement$.next(0);
             this.victory$.next(false);
-            this.playerTabs$.next(undefined);
         });
     }
 
-    //#region Player Smart Data
-    /** Used to help error correct the data from Overwolf */
-    private setupPlayerSmartData(): void {
-        //
-    }
-    //#endregion
+    //#region Player In-Game Stats
+    private setupInfoTabs(): void {
+        const setTabsHigherAmountFn = (newAmount: number, subject: BehaviorSubject<number>): void => {
+            newAmount = cleanInt(newAmount);
+            if (newAmount > subject.value) subject.next(newAmount);
+        };
 
-    //#region Player Tabs
-    private setupPlayerTabs(): void {
-        this.match.started$
+        this.overwolf.infoUpdates$
             .pipe(
-                takeUntil(this._unsubscribe),
-                tap(() => this.playerTabs$.next(undefined)),
-                switchMap(() => this.overwolf.infoUpdates$),
                 filter((infoUpdate) => infoUpdate.feature === "match_info" && !!infoUpdate.info.match_info?.tabs),
                 map((infoUpdate) => infoUpdate.info.match_info?.tabs)
             )
             .subscribe((tabs) => {
-                if (!tabs) return;
-                const newTabs: PlayerTabs = {
-                    kills: parseInt(String(tabs.kills)),
-                    assists: parseInt(String(tabs.assists)),
-                    spectators: parseInt(String(tabs.spectators)),
-                    teams: parseInt(String(tabs.teams)),
-                    players: parseInt(String(tabs.players)),
-                    damage: parseInt(String(tabs.damage)),
-                    cash: parseInt(String(tabs.cash)),
-                };
-                this.playerTabs$.next(newTabs);
+                if (!tabs || !Object.keys(tabs).length) return;
+                setTabsHigherAmountFn(tabs.kills, this.numKills$);
+                setTabsHigherAmountFn(tabs.assists, this.numAssists$);
+                setTabsHigherAmountFn(tabs.damage, this.numDamage$);
+                this.numSpectators$.next(cleanInt(tabs.spectators));
             });
+    }
+
+    private setupTotalDamageDealt(): void {
+        this.overwolf.infoUpdates$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                filter((infoUpdate) => infoUpdate.feature === "damage" && !!infoUpdate.info.me?.totalDamageDealt),
+                map((infoUpdate) => parseInt(String(infoUpdate.info.me?.totalDamageDealt)))
+            )
+            .subscribe((totalDamageDealt) => this.totalDamageDealt$.next(totalDamageDealt));
     }
     //#endregion
 
     //#region Damage Roster
-    private setupDamageRoster(): void {
-        this.match.started$
+    private setupDamageRosterPlayerName(): void {
+        this.player.playerName$
             .pipe(
                 takeUntil(this._unsubscribe),
-                tap(() => (this._damageRoster = undefined)),
-                switchMap(() => this.player.playerName$)
+                filter((newPlayerName) => !!newPlayerName)
             )
             .subscribe((newPlayerName) => {
-                if (!this._damageRoster) this._damageRoster = new DamageRoster(newPlayerName);
-                else if (newPlayerName) this._damageRoster.activePlayerName = newPlayerName;
+                this._damageRoster.activePlayerName = newPlayerName;
             });
     }
 
@@ -124,49 +128,54 @@ export class PlayerActivityService implements OnDestroy {
             .pipe(
                 takeUntil(this._unsubscribe),
                 filter((gameEvent) => gameEvent.name === "damage"),
-                map((gameEvent) => gameEvent.data as overwolf.gep.ApexLegends.GameEventDamage)
+                map((gameEvent) => gameEvent.data as overwolf.gep.ApexLegends.GameEventDamage),
+                filter(() => this.player.status$.value !== PlayerStatus.Eliminated)
             )
             .subscribe((damageEvent) => {
-                this._damageRoster?.inflictPlayerDamage({
+                this._damageRoster.inflictPlayerDamage({
                     attackerName: this.player.playerName$.value,
                     victimName: damageEvent.targetName,
                     shieldDamage: damageEvent.armor ? damageEvent.damageAmount : 0,
                     healthDamage: !damageEvent.armor ? damageEvent.damageAmount : 0,
                     hasShield: damageEvent.armor,
                 });
+
+                this.matchRoster.setPlayerHasActivity(damageEvent.targetName);
             });
     }
 
     private setupKillfeedEvents(): void {
-        this.matchRoster.killfeedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe((killfeed) => {
-            if (killfeed.isKnockdown) {
-                this._damageRoster?.knockdownPlayer(killfeed.victimName, killfeed.attackerName);
-            } else if (killfeed.isElimination) {
-                this._damageRoster?.eliminatePlayer(killfeed.victimName, killfeed.attackerName);
-            }
-            this.damageRoster$.next(this._damageRoster);
-        });
+        this.matchRoster.killfeedEvent$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                filter(() => this.player.status$.value !== PlayerStatus.Eliminated)
+            )
+            .subscribe((killfeed) => {
+                if (killfeed.isKnockdown)
+                    this._damageRoster.knockdownPlayer(killfeed.victimName, killfeed.attackerName);
+                else if (killfeed.isElimination)
+                    this._damageRoster.eliminatePlayer(killfeed.victimName, killfeed.attackerName);
+
+                this.damageRoster$.next(this._damageRoster);
+            });
     }
     //#endregion
 
     //#region Placement
     // TODO: This value needs to be verified.
-    /**
-     * Uses info from "match_tabs" or MatchRoster.teamsAlive
-     */
+    // WIP!
+    /** Uses info from "match_tabs" or MatchRoster.teamsAlive */
     private setupPlacement(): void {
         const matchRosterAliveTeams = 0;
         const AliveTeams = 0;
 
-        this.match.started$
+        this.matchRoster.roster$
             .pipe(
                 takeUntil(this._unsubscribe),
-                switchMap(() => this.matchRoster.roster$),
-                filter((matchRoster) => !!matchRoster),
-                map((matchRoster) => matchRoster?.aliveTeams)
+                map((matchRoster) => matchRoster.aliveTeams)
             )
             .subscribe((aliveTeams) => {
-                const numAliveTeams = aliveTeams?.length ?? -Infinity;
+                const numAliveTeams = aliveTeams.length;
                 if (isFinite(numAliveTeams) && numAliveTeams > 0 && numAliveTeams < 999)
                     this.placement$.next(numAliveTeams);
             });
@@ -186,6 +195,7 @@ export class PlayerActivityService implements OnDestroy {
                     matchStateChanged.state === MatchState.Active ? setVictoryFn(false) : null
                 ),
                 switchMap(() => this.overwolf.infoUpdates$),
+                filter(() => this.player.status$.value !== PlayerStatus.Eliminated),
                 filter((infoUpdate) => infoUpdate.feature === "rank"),
                 map((infoUpdate) => infoUpdate.info.match_info),
                 filter((matchInfo) => !!matchInfo && !!Object.keys(matchInfo).includes("victory")),

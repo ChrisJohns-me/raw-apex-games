@@ -1,3 +1,5 @@
+import { wordsToUpperCase } from "src/utilities/string";
+
 export class Legend {
     public id?: string;
     public get friendlyName(): string {
@@ -19,6 +21,7 @@ export class Legend {
         newLegendName = newLegendName.replace(/#character_/g, "");
         newLegendName = newLegendName.replace(/_name/g, "");
         newLegendName = newLegendName.replace(/_/g, " ");
+        newLegendName = wordsToUpperCase(newLegendName);
         return newLegendName ?? "";
     }
 }

@@ -20,7 +20,7 @@ import { delay, filter, takeUntil, tap } from "rxjs/operators";
 import { JSONTryParse } from "src/utilities";
 import { BackgroundService } from "../background/background.service";
 import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
-import { InGameUltimateCountdownWindowService } from "../in-game-ultimate-countdown-window/in-game-ultimate-countdown-window.service";
+import { InGameUltTimerWindowService } from "../in-game-ult-timer-window/in-game-ult-timer-window.service";
 
 @Component({
     selector: "app-dashboard-window",
@@ -57,7 +57,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         private readonly backgroundService: BackgroundService,
         private readonly cdr: ChangeDetectorRef,
         private readonly googleFormsMatchSummaryTracker: GoogleFormsMatchSummaryTrackerService,
-        private readonly inGameUltimateCooldownWindow: InGameUltimateCountdownWindowService,
+        private readonly inGameUltimateCooldownWindow: InGameUltTimerWindowService,
         private readonly matchTimerWindow: InGameMatchTimerWindowService,
         private readonly overwolfDataProvider: OverwolfDataProviderService,
         private readonly overwolfExposedData: OverwolfExposedDataService,
@@ -85,7 +85,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this._unsubscribe.complete();
     }
 
-    public onOpenUltimateCountdownClick(): void {
+    public onOpenUltTimerClick(): void {
         this.inGameUltimateCooldownWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
     }
 

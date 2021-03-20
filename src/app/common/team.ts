@@ -34,7 +34,7 @@ export class Team {
     constructor({ teamId, isFriendly, members }: TeamConstructor) {
         this.teamId = teamId;
         this.isFriendly = isFriendly ?? false;
-        this._members = members && Array.isArray(members) ? members : [];
+        this._members = !!members && Array.isArray(members) ? members : [];
     }
 
     public setTeamStatus(status: TeamStatus): void {

@@ -4,9 +4,7 @@
 
         <app-dashboard-window *ngSwitchCase="'dashboard'"></app-dashboard-window>
         <app-in-game-match-timer-window *ngSwitchCase="'in-game-match-timer'"></app-in-game-match-timer-window>
-        <app-in-game-ultimate-countdown-window
-            *ngSwitchCase="'in-game-ultimate-countdown'"
-        ></app-in-game-ultimate-countdown-window>
+        <app-in-game-ult-timer-window *ngSwitchCase="'in-game-ult-timer'"></app-in-game-ult-timer-window>
 
         <div *ngSwitchDefault>Could not match window with name: {{ winInfo.name }}</div>
     </ng-container>

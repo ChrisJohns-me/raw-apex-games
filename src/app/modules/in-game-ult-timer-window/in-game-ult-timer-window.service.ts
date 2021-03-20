@@ -5,8 +5,8 @@ import { Observable } from "rxjs";
 @Injectable({
     providedIn: "root",
 })
-export class InGameUltimateCountdownWindowService {
-    private readonly uiWindow = new UIWindow(WindowName.InGameUltimateCountdown);
+export class InGameUltTimerWindowService {
+    private readonly uiWindow = new UIWindow(WindowName.InGameUltTimer);
 
     public open(): Observable<void> {
         return this.uiWindow.restore();

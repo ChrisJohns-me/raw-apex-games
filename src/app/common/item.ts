@@ -1,13 +1,5 @@
 import * as ItemListJSONData from "./items.json";
 
-// new Item({ fromId: "empty" }
-// new Item({ fromId: "frag_grenade" }
-// new WeaponItem({ fromId: "eva8_auto" })
-// new InventoryItem({ fromId: "shield_cell" })
-// playerInventory = new PlayerInventory("MasterKriff");
-// playerInventory.setSlot()
-// playerInventory.setWeapons();
-
 type ItemJSON = typeof ItemListJSONData["items"][number];
 type ItemConstructor = {
     fromId?: string;
@@ -84,6 +76,7 @@ export class Item {
 
         if (!foundItem) {
             console.warn(`Unable to find inventory item with name "${searchItemName}"`);
+            this.id = `unknown_${searchItemName}`;
             return;
         }
 

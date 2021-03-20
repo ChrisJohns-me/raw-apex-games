@@ -3,7 +3,7 @@ import { merge, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { DashboardWindowService } from "../dashboard-window/dashboard-window.service";
 import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
-import { InGameUltimateCountdownWindowService } from "../in-game-ultimate-countdown-window/in-game-ultimate-countdown-window.service";
+import { InGameUltTimerWindowService } from "../in-game-ult-timer-window/in-game-ult-timer-window.service";
 import { BackgroundService } from "./background.service";
 
 @Component({
@@ -18,7 +18,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
         private readonly dashboardWindow: DashboardWindowService,
         private readonly backgroundService: BackgroundService,
         private readonly matchTimerWindow: InGameMatchTimerWindowService,
-        private readonly ultimateCountdownWindow: InGameUltimateCountdownWindowService
+        private readonly ultTimerWindow: InGameUltTimerWindowService
     ) {}
 
     public ngOnInit(): void {
@@ -32,7 +32,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     }
 
     private registerUIWindows(): void {
-        merge(this.dashboardWindow.open(), this.matchTimerWindow.open(), this.ultimateCountdownWindow.open())
+        merge(this.dashboardWindow.open(), this.matchTimerWindow.open(), this.ultTimerWindow.open())
             .pipe(takeUntil(this._unsubscribe))
             .subscribe();
     }

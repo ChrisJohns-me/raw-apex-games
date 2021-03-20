@@ -1,5 +1,5 @@
 <app-ui-container [isDesktopWindow]="false" [isContentDraggable]="true">
-    <div class="countdown-container" *ngIf="!isUltimateReady && (showCountdown || isDebugShow)">
+    <div class="timer-container" *ngIf="!isUltimateReady && isVisible">
         <p class="timer-display">
             <ng-container *ngIf="isDateValid(ultimateReadyRemaining)">{{
                 ultimateReadyRemaining | date: "mm:ss"

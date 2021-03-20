@@ -71,7 +71,7 @@
                     "height": 50
                 }
             },
-            "in-game-ultimate-countdown": {
+            "in-game-ult-timer": {
                 "file": "index.html",
                 "in_game_only": false,
                 "resizable": false,

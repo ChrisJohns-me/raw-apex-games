@@ -17,8 +17,8 @@ import { OverwolfDataProviderService, OWInfoUpdates2Event, OWMatchInfoMeInventor
 })
 export class PlayerInventoryService implements OnDestroy {
     public readonly inUse$ = new BehaviorSubject<Optional<Item>>(undefined);
-    public readonly weaponSlots$ = new BehaviorSubject<Optional<InventorySlots<WeaponItem>>>(undefined);
-    public readonly inventorySlots$ = new BehaviorSubject<Optional<InventorySlots>>(undefined);
+    public readonly weaponSlots$ = new BehaviorSubject<InventorySlots<WeaponItem>>({});
+    public readonly inventorySlots$ = new BehaviorSubject<InventorySlots>({});
 
     private inventoryInfoUpdates$: Observable<OWInfoUpdates2Event>;
     private readonly _unsubscribe = new Subject<void>();
@@ -44,9 +44,9 @@ export class PlayerInventoryService implements OnDestroy {
 
     private setupMatchStateEvents(): void {
         this.match.started$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-            this.inventorySlots$.next(undefined);
             this.inUse$.next(undefined);
-            this.weaponSlots$.next(undefined);
+            this.weaponSlots$.next({});
+            this.inventorySlots$.next({});
         });
     }
 
@@ -61,7 +61,7 @@ export class PlayerInventoryService implements OnDestroy {
             const item = new Item({ fromInGameInventoryId: inventoryUpdate.name });
             const amount = parseInt(String(inventoryUpdate.amount));
 
-            const newInventorySlots = { ...this.inventorySlots$ } as InventorySlots;
+            const newInventorySlots = { ...this.inventorySlots$.value } as InventorySlots;
             newInventorySlots[slotId] = { ...item, amount: amount } as InventorySlotItem;
 
             this.inventorySlots$.next(newInventorySlots);
@@ -71,22 +71,33 @@ export class PlayerInventoryService implements OnDestroy {
 
     //#region Item in use
     private setupInUse(): void {
-        this.inventoryInfoUpdates$.pipe(map((infoUpdate) => infoUpdate.info.me?.inUse?.inUse)).subscribe((inUse) => {
-            const newInventoryItem = new Item({ fromInGameInfoName: inUse });
-            this.inUse$.next(newInventoryItem);
-        });
+        this.inventoryInfoUpdates$
+            .pipe(
+                filter((infoUpdate) => typeof infoUpdate.info.me?.inUse?.inUse === "string"),
+                map((infoUpdate) => infoUpdate.info.me?.inUse?.inUse),
+                filter((inUse) => !!inUse)
+            )
+            .subscribe((inUse) => {
+                const newInventoryItem = new Item({ fromInGameInfoName: inUse });
+                this.inUse$.next(newInventoryItem);
+            });
     }
     //#endregion
 
     //#region Weapons
     private setupWeapons(): void {
-        this.inventoryInfoUpdates$.pipe(map((infoUpdate) => infoUpdate.info.me?.weapons)).subscribe((weapons) => {
-            const newWeapons: [WeaponItem, WeaponItem] = [
-                new WeaponItem({ fromInGameInfoName: weapons?.weapon0 }),
-                new WeaponItem({ fromInGameInfoName: weapons?.weapon1 }),
-            ];
-            this.weaponSlots$.next(newWeapons);
-        });
+        this.inventoryInfoUpdates$
+            .pipe(
+                filter((infoUpdate) => typeof infoUpdate.info.me?.weapons === "object"),
+                map((infoUpdate) => infoUpdate.info.me?.weapons)
+            )
+            .subscribe((weapons) => {
+                const newWeapons: [WeaponItem, WeaponItem] = [
+                    new WeaponItem({ fromInGameInfoName: weapons?.weapon0 }),
+                    new WeaponItem({ fromInGameInfoName: weapons?.weapon1 }),
+                ];
+                this.weaponSlots$.next(newWeapons);
+            });
     }
     //#endregion
 }
