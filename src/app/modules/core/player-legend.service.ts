@@ -3,7 +3,7 @@ import { Legend } from "@common/legend";
 import { BehaviorSubject, combineLatest, of, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import { mathClamp } from "src/utilities";
+import { findKeyByKeyRegEx, mathClamp } from "src/utilities";
 import { OverwolfDataProviderService } from "./overwolf-data-provider";
 import { PlayerService } from "./player.service";
 
@@ -33,14 +33,20 @@ export class PlayerLegendService implements OnDestroy {
 
     //#region Legend
     private setupLegend(): void {
+        const playerName$ = this.player.playerName$.pipe(filter((name) => !!name));
+
         this.overwolf.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe),
-                filter((infoUpdate) => infoUpdate.feature === "team" && !!infoUpdate.info.match_info?.legendSelect_0),
+                filter(
+                    (infoUpdate) =>
+                        infoUpdate.feature === "team" &&
+                        !!findKeyByKeyRegEx(infoUpdate.info.match_info, /^legendSelect_/)
+                ),
                 map((infoUpdate) => infoUpdate.info.match_info),
                 filter((m) => !!m?.legendSelect_0 || !!m?.legendSelect_1 || !!m?.legendSelect_2),
                 map((m) => [m?.legendSelect_0 || m?.legendSelect_1 || m?.legendSelect_2]),
-                switchMap((legends) => combineLatest([of(legends), this.player.playerName$])),
+                switchMap((legends) => combineLatest([of(legends), playerName$])),
                 map(([legends, playerName]) => legends.find((legend) => legend?.playerName === playerName))
             )
             .subscribe((legendSelect) => {

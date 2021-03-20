@@ -119,7 +119,7 @@ export class PlayerActivityService implements OnDestroy {
                 filter((newPlayerName) => !!newPlayerName)
             )
             .subscribe((newPlayerName) => {
-                this._damageRoster.activePlayerName = newPlayerName;
+                this._damageRoster.activePlayerName = newPlayerName as string;
             });
     }
 

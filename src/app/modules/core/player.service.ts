@@ -20,7 +20,7 @@ import {
 })
 export class PlayerService implements OnDestroy {
     public readonly status$ = new BehaviorSubject<PlayerStatus>(PlayerStatus.Alive);
-    public readonly playerName$ = new BehaviorSubject<string>("");
+    public readonly playerName$ = new BehaviorSubject<Optional<string>>(undefined);
 
     private readonly _unsubscribe = new Subject<void>();
 
