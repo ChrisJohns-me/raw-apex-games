@@ -65,7 +65,6 @@ export class PlayerActivityService implements OnDestroy {
         this.setupDamageRosterPlayer();
         this.setupDamageEvents();
         this.setupInflictionEvents();
-        this.setupPlacement();
         this.setupVictory();
     }
 
@@ -100,6 +99,7 @@ export class PlayerActivityService implements OnDestroy {
                 setTabsHigherAmountFn(tabs.assists, this.myAssists$);
                 setTabsHigherAmountFn(tabs.damage, this.myDamage$);
                 this.mySpectators$.next(cleanInt(tabs.spectators));
+                this.myPlacement$.next(cleanInt(tabs.teams));
             });
     }
 
@@ -191,27 +191,6 @@ export class PlayerActivityService implements OnDestroy {
                     this.myDamageRoster$.next(this._damageRoster);
                     this.myDamageEvent$.next(damageEvent);
                 }
-            });
-    }
-    //#endregion
-
-    //#region Placement
-    // TODO: This value needs to be verified.
-    // WIP!
-    /** Uses info from "match_tabs" or MatchRoster.teamsAlive */
-    private setupPlacement(): void {
-        const matchRosterAliveTeams = 0;
-        const AliveTeams = 0;
-
-        this.matchRoster.roster$
-            .pipe(
-                takeUntil(this._unsubscribe),
-                map((matchRoster) => matchRoster.aliveTeams)
-            )
-            .subscribe((aliveTeams) => {
-                const numAliveTeams = aliveTeams.length;
-                if (isFinite(numAliveTeams) && numAliveTeams > 0 && numAliveTeams < 999)
-                    this.myPlacement$.next(numAliveTeams);
             });
     }
     //#endregion
