@@ -8,6 +8,26 @@
             "inGameEventNameRegExPattern": "^Melee$"
         },
         {
+            "id": "killfeed_bleedout",
+            "friendlyName": "Bleed Out",
+            "inGameEventNameRegExPattern": "^Bleed Out$"
+        },
+        {
+            "id": "killfeed_finisher",
+            "friendlyName": "Finisher",
+            "inGameEventNameRegExPattern": "^Finisher$"
+        },
+        {
+            "id": "killfeed_sniped",
+            "friendlyName": "Sniped",
+            "inGameEventNameRegExPattern": "^sniper$"
+        },
+        {
+            "id": "killfeed_caustic_gas",
+            "friendlyName": "Caustic Gas",
+            "inGameEventNameRegExPattern": "^Caustic Gas$"
+        },
+        {
             "id": "generic_heal",
             "friendlyName": "Health/Shield",
             "inGameInfoNameRegExPattern": "^Health/Shield$"
@@ -111,19 +131,19 @@
             "id": "g7_scout",
             "friendlyName": "G7 Scout",
             "inGameInfoNameRegExPattern": "^G7 Scout$",
-            "inGameEventNameRegExPattern": "^g7_scout$"
+            "inGameEventNameRegExPattern": "^g7$"
         },
         {
             "id": "havoc",
             "friendlyName": "HAVOC Rifle",
             "inGameInfoNameRegExPattern": "^HAVOC$",
-            "inGameEventNameRegExPattern": "^havoc$"
+            "inGameEventNameRegExPattern": "^energy_ar$"
         },
         {
             "id": "hemlok",
             "friendlyName": "Hemlok Burst",
             "inGameInfoNameRegExPattern": "^Hemlok Burst AR$",
-            "inGameEventNameRegExPattern": "^hemlok$"
+            "inGameEventNameRegExPattern": "^hemlock$"
         },
         {
             "id": "kraber",
@@ -134,8 +154,8 @@
         {
             "id": "l_star",
             "friendlyName": "L-STAR",
-            "inGameInfoNameRegExPattern": "^l_star$",
-            "inGameEventNameRegExPattern": "^l_star$"
+            "inGameEventNameRegExPattern": "^lstar$",
+            "inGameInventoryIdRegExPattern": "L-Star"
         },
         {
             "id": "longbow",
@@ -195,7 +215,7 @@
             "id": "re45",
             "friendlyName": "RE-45",
             "inGameInfoNameRegExPattern": "^RE-45 Auto$",
-            "inGameEventNameRegExPattern": "^re45$"
+            "inGameEventNameRegExPattern": "^r45$"
         },
         {
             "id": "sentinel",
@@ -233,12 +253,12 @@
             "inGameInfoNameRegExPattern": "^mp_ability_void_ring$"
         },
         {
-            "id": "zipline",
+            "id": "pathfinder_zipline",
             "friendlyName": "Zipline Gun",
             "inGameInfoNameRegExPattern": "^Zipline Gun$"
         },
         {
-            "id": "launch_pad",
+            "id": "octane_launch_pad",
             "friendlyName": "Launch Pad",
             "inGameInfoNameRegExPattern": "^Launch Pad$"
         },
@@ -247,6 +267,11 @@
             "friendlyName": "SHIELA",
             "inGameInfoNameRegExPattern": "",
             "inGameEventNameRegExPattern": "^rampart_turret$"
+        },
+        {
+            "id": "bangalore_creeping_barrage",
+            "friendlyName": "Creeping Barrage",
+            "inGameEventNameRegExPattern": "Creeping Barrage"
         },
         {
             "id": "grenade_thermite",
