@@ -1,23 +1,13 @@
+import { cleanInt } from "src/utilities/number";
+import { DamageEvent } from "./damage-event";
 import { Player } from "./player";
-
-export interface DamageAction {
-    timestamp: Date;
-    victim: Player;
-    attacker?: Player;
-    hasShield?: boolean;
-    isHeadshot?: boolean;
-    shieldDamage?: number;
-    healthDamage?: number;
-    isKnocked?: boolean;
-    isEliminated?: boolean;
-}
 
 /**
  * Container for all outgoing damage events and their raw values,
  *  with a specific player in mind (typically the local player).
  */
 export class DamageRoster {
-    public damageActions: DamageAction[] = [];
+    public damageEvents: DamageEvent[] = [];
 
     /** Damage inflicted from the `primaryAttacker` */
     public get damageInflictedSum(): number {
@@ -40,7 +30,7 @@ export class DamageRoster {
 
     constructor(public primaryAttacker: Player = new Player()) {}
 
-    /** @returns {DamageAction} Action that was added to damageActions */
+    /** @returns {DamageEvent} Action that was added to damageEvents */
     public inflictPlayerDamage({
         attacker,
         victim,
@@ -48,42 +38,42 @@ export class DamageRoster {
         isHeadshot,
         shieldDamage,
         healthDamage,
-    }: Omit<DamageAction, "timestamp">): DamageAction {
-        const damageAction: DamageAction = {
+    }: Omit<DamageEvent, "timestamp">): DamageEvent {
+        const damageEvent: DamageEvent = {
             timestamp: new Date(),
             attacker: attacker ?? this.primaryAttacker,
             victim: victim,
             hasShield: hasShield,
             isHeadshot: isHeadshot,
-            shieldDamage: parseInt(String(shieldDamage)),
-            healthDamage: parseInt(String(healthDamage)),
+            shieldDamage: cleanInt(shieldDamage),
+            healthDamage: cleanInt(healthDamage),
         };
-        this.damageActions.push(damageAction);
-        return damageAction;
+        this.damageEvents.push(damageEvent);
+        return damageEvent;
     }
 
-    /** @returns {DamageAction} Action that was added to damageActions */
-    public knockdownPlayer(victim: Player, attacker?: Player): DamageAction {
-        const damageAction: DamageAction = {
+    /** @returns {DamageEvent} Action that was added to damageEvents */
+    public knockdownPlayer(victim: Player, attacker?: Player): DamageEvent {
+        const damageEvent: DamageEvent = {
             timestamp: new Date(),
             attacker: attacker,
             victim: victim,
             isKnocked: true,
         };
-        this.damageActions.push(damageAction);
-        return damageAction;
+        this.damageEvents.push(damageEvent);
+        return damageEvent;
     }
 
-    /** @returns {DamageAction} Action that was added to damageActions */
-    public eliminatePlayer(victim: Player, attacker?: Player): DamageAction {
-        const damageAction: DamageAction = {
+    /** @returns {DamageEvent} Action that was added to damageEvents */
+    public eliminatePlayer(victim: Player, attacker?: Player): DamageEvent {
+        const damageEvent: DamageEvent = {
             timestamp: new Date(),
             attacker: attacker,
             victim: victim,
             isEliminated: true,
         };
-        this.damageActions.push(damageAction);
-        return damageAction;
+        this.damageEvents.push(damageEvent);
+        return damageEvent;
     }
 
     //#region Player Stats
@@ -94,39 +84,39 @@ export class DamageRoster {
      * The contained damage amount will then appear to be inflated.
      */
     public getDamageInflictedSumByPlayer(player: Player): number {
-        const callbackFn = (action: DamageAction): number => (action.shieldDamage ?? 0) + (action.healthDamage ?? 0);
-        return this.damageActionReduce(player, callbackFn);
+        const callbackFn = (event: DamageEvent): number => (event.shieldDamage ?? 0) + (event.healthDamage ?? 0);
+        return this.damageEventReduce(player, callbackFn);
     }
 
     public getKnockdownsInflictedSumByPlayer(player: Player): number {
-        const callbackFn = (action: DamageAction): number => (action.isKnocked ? 1 : 0);
-        return this.damageActionReduce(player, callbackFn);
+        const callbackFn = (event: DamageEvent): number => (event.isKnocked ? 1 : 0);
+        return this.damageEventReduce(player, callbackFn);
     }
 
     /** Does not take into consideration of victims still spectating and still connected to the match. */
     public getEliminationsInflictedSumByPlayer(player: Player): number {
-        const callbackFn = (action: DamageAction): number => (action.isEliminated ? 1 : 0);
-        return this.damageActionReduce(player, callbackFn);
+        const callbackFn = (event: DamageEvent): number => (event.isEliminated ? 1 : 0);
+        return this.damageEventReduce(player, callbackFn);
     }
 
     public getHeadshotsInflictedSumPlayer(player: Player): number {
-        const callbackFn = (action: DamageAction): number => (action.isHeadshot ? 1 : 0);
-        return this.damageActionReduce(player, callbackFn);
+        const callbackFn = (event: DamageEvent): number => (event.isHeadshot ? 1 : 0);
+        return this.damageEventReduce(player, callbackFn);
     }
 
     /**
-     * Calls the specified callback function for all of the `damageActions`.
+     * Calls the specified callback function for all of the `damageEvents`.
      * The return value of the callback function is totaled.
      * @param {string} attacker Attacking player to use as the filter.
      * @param {Function} callbackFn Callback function that is called, and should return the needed value.
      * @returns {number} Totaled result.
      */
-    private damageActionReduce(attacker: Player, callbackFn: (action: DamageAction) => number): number {
+    private damageEventReduce(attacker: Player, callbackFn: (event: DamageEvent) => number): number {
         if (!attacker || !attacker.name) return 0;
-        const value: number = this.damageActions
+        const value: number = this.damageEvents
             .filter((v) => v.attacker === attacker)
-            .reduce((sum, damageAction) => {
-                const internalValue = parseInt(String(callbackFn(damageAction)));
+            .reduce((sum, dmgEvent) => {
+                const internalValue = cleanInt(callbackFn(dmgEvent));
                 return sum + internalValue;
             }, 0);
         return value;

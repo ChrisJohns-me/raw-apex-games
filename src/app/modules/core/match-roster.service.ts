@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { KillfeedEvent } from "@common/killfeed-event";
+import { DamageEvent } from "@common/damage-event";
 import { MatchState } from "@common/match";
 import { MatchRoster } from "@common/match-roster";
 import { Player, PlayerStatus } from "@common/player";
@@ -26,14 +26,13 @@ import { PlayerService } from "./player.service";
 })
 export class MatchRosterService implements OnDestroy {
     public readonly roster$ = new BehaviorSubject<MatchRoster>(new MatchRoster());
-    public readonly killfeedEvent$ = new Subject<KillfeedEvent>();
-    public readonly killfeedEventList$ = new BehaviorSubject<KillfeedEvent[]>([]);
+    public readonly killfeedEvent$ = new Subject<DamageEvent>();
+    public readonly killfeedEventList$ = new BehaviorSubject<DamageEvent[]>([]);
     // TODO:
     public readonly teammates$ = new BehaviorSubject<Optional<MatchRoster>>(undefined);
     public readonly numTeams$ = new BehaviorSubject<number>(0);
     public readonly numPlayers$ = new BehaviorSubject<number>(0);
 
-    private _killfeedList: KillfeedEvent[] = [];
     private _owRawRoster: Partial<OWMatchInfo> = {};
     private readonly _unsubscribe = new Subject<void>();
 
@@ -79,7 +78,7 @@ export class MatchRosterService implements OnDestroy {
         this.match.started$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             this.numPlayers$.next(0);
             this.numTeams$.next(0);
-            this._killfeedList = [];
+            this.killfeedEventList$.next([]);
             // Roster should be ready to be created
             this.roster$.next(this.createRoster(this._owRawRoster));
         });
@@ -207,12 +206,12 @@ export class MatchRosterService implements OnDestroy {
 
         // Generate a kill feed event from last known knockdown
         //  only if an elimination is not found after the knockdown
-        const deletedPlayerKillfeed = [...this._killfeedList]
+        const deletedPlayerKillfeed = [...this.killfeedEventList$.value]
             .filter((e) => e.victim.name === deletedPlayerName)
             .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 
-        const deletedPlayerLastKnockdown = deletedPlayerKillfeed.find((e) => e.isKnockdown);
-        const deletedPlayerLastElimination = deletedPlayerKillfeed.find((e) => e.isElimination);
+        const deletedPlayerLastKnockdown = deletedPlayerKillfeed.find((e) => e.isKnocked);
+        const deletedPlayerLastElimination = deletedPlayerKillfeed.find((e) => e.isEliminated);
 
         if (!deletedPlayerLastKnockdown) return; // Deleted player has no knockdown event
         if (
@@ -226,14 +225,14 @@ export class MatchRosterService implements OnDestroy {
         console.debug(
             `[${this.constructor.name}] Player quit; Auto-generated elimination killfeed event from knockdown for victim: "${deletedPlayerName}"`
         );
-        const newKillfeedEvent: KillfeedEvent = {
+        const newDamageEvent: DamageEvent = {
             ...deletedPlayerLastKnockdown,
             timestamp: new Date(),
-            isElimination: true,
-            isKnockdown: false,
+            isEliminated: true,
+            isKnocked: false,
             weapon: new WeaponItem({ fromInGameEventName: "Bleed Out" }),
         };
-        this.killfeedEvent$.next(newKillfeedEvent);
+        this.killfeedEvent$.next(newDamageEvent);
     }
     //#endregion
 
@@ -250,28 +249,27 @@ export class MatchRosterService implements OnDestroy {
                 const attacker = this.roster$.value.players.find((p) => p.name === killfeed.attackerName);
                 const weapon = new WeaponItem({ fromInGameEventName: killfeed.weaponName });
                 const act = killfeed.action;
-                const isKnockdown = !!(act === "Melee" || act === "Caustic Gas" || act === "knockdown");
-                const isElimination = !!(act === "Bleed Out" || act === "kill" || act === "headshot_kill");
+                const isKnocked = !!(act === "Melee" || act === "Caustic Gas" || act === "knockdown");
+                const isEliminated = !!(act === "Bleed Out" || act === "kill" || act === "headshot_kill");
 
                 if (!victim) return;
                 this.setPlayerHasActivity(victim);
 
-                if (isKnockdown) this.knockdownPlayerOnRoster(victim);
-                else if (isElimination) this.eliminatePlayerOnRoster(victim);
+                if (isKnocked) this.knockdownPlayerOnRoster(victim);
+                else if (isEliminated) this.eliminatePlayerOnRoster(victim);
 
-                const newKillfeedEvent: KillfeedEvent = {
+                const newDamageEvent: DamageEvent = {
                     timestamp: new Date(),
                     victim: victim,
                     attacker: attacker,
-                    isKnockdown,
-                    isElimination,
+                    isKnocked,
+                    isEliminated,
                     weapon,
                 };
 
-                this.killfeedEvent$.next(newKillfeedEvent);
-
-                this._killfeedList.push(newKillfeedEvent);
-                this.killfeedEventList$.next(this._killfeedList);
+                this.killfeedEvent$.next(newDamageEvent);
+                const newKillfeedEventList = [...this.killfeedEventList$.value, newDamageEvent];
+                this.killfeedEventList$.next(newKillfeedEventList);
             });
     }
     //#endregion

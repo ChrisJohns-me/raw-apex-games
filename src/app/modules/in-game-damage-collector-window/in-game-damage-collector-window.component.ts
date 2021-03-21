@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { DamageAction } from "@common/damage-roster";
+import { VictimDamageEvents } from "@common/victim-damage-events";
 import { PlayerActivityService } from "@core/player-activity.service";
-import { Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { BehaviorSubject, Subject } from "rxjs";
 import { InGameDamageCollectorService } from "./in-game-damage-collector.service";
+
+// WIP
 
 @Component({
     selector: "app-in-game-damage-collector-window",
@@ -12,7 +13,9 @@ import { InGameDamageCollectorService } from "./in-game-damage-collector.service
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
-    public damageActions: DamageAction[] = [];
+    public get damageEvents$(): BehaviorSubject<VictimDamageEvents[]> {
+        return this.damageCollector.victimDamageEventsList$;
+    }
 
     private _unsubscribe = new Subject<void>();
 
@@ -22,20 +25,10 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
         private readonly playerActivity: PlayerActivityService
     ) {}
 
-    public ngOnInit(): void {
-        this.setupDamageActionListener();
-        this.damageCollector.myDamageAction$;
-    }
+    public ngOnInit(): void {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
         this._unsubscribe.complete();
-    }
-
-    private setupDamageActionListener(): void {
-        this.damageCollector.myDamageAction$.pipe(takeUntil(this._unsubscribe)).subscribe((damageAction) => {
-            this.damageActions.push(damageAction);
-            this.cdr.detectChanges();
-        });
     }
 }

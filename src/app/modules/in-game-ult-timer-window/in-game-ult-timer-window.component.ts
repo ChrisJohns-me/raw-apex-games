@@ -9,6 +9,7 @@ import { format, isValid } from "date-fns";
 import { combineLatest, Observable, Subject, timer } from "rxjs";
 import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { average, averageRate } from "src/utilities";
+import { cleanInt } from "src/utilities/number";
 
 const NUM_PROGRESS_HISTORY = 100;
 const ABNORMAL_INCREASE_AMOUNT = 0.1; // Ultimate accelerant or charging station
@@ -105,7 +106,7 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
                     `Match: "${this.match.currentState$.value.state}", ` +
                     `Player: "${this.player.me$.value.status}", ` +
                     `Location: "${this.playerLocation.myLocationPhase$.value}", ` +
-                    `Percent: "${parseInt(String(this.ultimatePercent * 100))}%", ` +
+                    `Percent: "${cleanInt(this.ultimatePercent * 100)}%", ` +
                     `Est Remain: "${format(this.ultimateReadyRemaining ?? 0, "mm:ss")}"`
             );
         });

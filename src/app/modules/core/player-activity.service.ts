@@ -1,5 +1,6 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { DamageAction, DamageRoster } from "@common/damage-roster";
+import { DamageEvent } from "@common/damage-event";
+import { DamageRoster } from "@common/damage-roster";
 import { MatchState } from "@common/match";
 import { PlayerStatus } from "@common/player";
 import { BehaviorSubject, Subject } from "rxjs";
@@ -29,7 +30,7 @@ export class PlayerActivityService implements OnDestroy {
     public readonly mySpectators$ = new BehaviorSubject<number>(0);
 
     public readonly myDamageRoster$;
-    public readonly myDamageAction$ = new Subject<DamageAction>();
+    public readonly myDamageEvent$ = new Subject<DamageEvent>();
     public readonly myPlacement$ = new BehaviorSubject<number>(0);
     public readonly victory$ = new BehaviorSubject<boolean>(false);
     /**
@@ -107,7 +108,7 @@ export class PlayerActivityService implements OnDestroy {
             .pipe(
                 takeUntil(this._unsubscribe),
                 filter((infoUpdate) => infoUpdate.feature === "damage" && !!infoUpdate.info.me?.totalDamageDealt),
-                map((infoUpdate) => parseInt(String(infoUpdate.info.me?.totalDamageDealt)))
+                map((infoUpdate) => cleanInt(infoUpdate.info.me?.totalDamageDealt))
             )
             .subscribe((totalDamageDealt) => this.myTotalDamageDealt$.next(totalDamageDealt));
     }
@@ -125,6 +126,7 @@ export class PlayerActivityService implements OnDestroy {
             });
     }
 
+    /** Damage events from the info update feed */
     private setupDamageEvents(): void {
         this.overwolf.newGameEvent$
             .pipe(
@@ -141,18 +143,25 @@ export class PlayerActivityService implements OnDestroy {
                     return;
                 }
 
-                this._damageRoster.inflictPlayerDamage({
+                const newDamageEvent = this._damageRoster.inflictPlayerDamage({
                     attacker: this.player.me$.value,
                     victim: victim,
-                    shieldDamage: damageEvent.armor ? damageEvent.damageAmount : 0,
-                    healthDamage: !damageEvent.armor ? damageEvent.damageAmount : 0,
-                    hasShield: damageEvent.armor,
+                    shieldDamage: parseBoolean(damageEvent.armor) ? damageEvent.damageAmount : 0,
+                    healthDamage: !parseBoolean(damageEvent.armor) ? damageEvent.damageAmount : 0,
+                    isHeadshot: damageEvent.headshot,
+                    hasShield: parseBoolean(damageEvent.armor),
                 });
+
+                if (newDamageEvent) {
+                    this.myDamageEvent$.next(newDamageEvent);
+                    this.myDamageRoster$.next(this._damageRoster);
+                }
 
                 this.matchRoster.setPlayerHasActivity(victim);
             });
     }
 
+    /** Knockdown & Kill events from the game event kill feed */
     private setupInflictionEvents(): void {
         this.overwolf.newGameEvent$
             .pipe(
@@ -172,15 +181,15 @@ export class PlayerActivityService implements OnDestroy {
                     return;
                 }
 
-                let damageAction: Optional<DamageAction>;
+                let damageEvent: Optional<DamageEvent>;
                 if (gameEvent.name === "knockdown")
-                    damageAction = this._damageRoster.knockdownPlayer(victim, this.player.me$.value);
+                    damageEvent = this._damageRoster.knockdownPlayer(victim, this.player.me$.value);
                 else if (gameEvent.name === "kill")
-                    damageAction = this._damageRoster.eliminatePlayer(victim, this.player.me$.value);
+                    damageEvent = this._damageRoster.eliminatePlayer(victim, this.player.me$.value);
 
-                if (damageAction) {
+                if (damageEvent) {
                     this.myDamageRoster$.next(this._damageRoster);
-                    this.myDamageAction$.next(damageAction);
+                    this.myDamageEvent$.next(damageEvent);
                 }
             });
     }

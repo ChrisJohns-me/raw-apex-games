@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { findKeyByKeyRegEx, findValueByKeyRegEx } from "src/utilities";
+import { cleanInt } from "src/utilities/number";
 import { MatchService } from "./match.service";
 import { OverwolfDataProviderService, OWInfoUpdates2Event, OWMatchInfoMeInventory } from "./overwolf-data-provider";
 
@@ -59,7 +60,7 @@ export class PlayerInventoryService implements OnDestroy {
 
             const slotId = parseInt(inventorySlotId.replace("inventory_", ""));
             const item = new Item({ fromInGameInventoryId: inventoryUpdate.name });
-            const amount = parseInt(String(inventoryUpdate.amount));
+            const amount = cleanInt(inventoryUpdate.amount);
 
             const newInventorySlots = { ...this.myInventorySlots$.value } as InventorySlots;
             newInventorySlots[slotId] = { ...item, amount: amount } as InventorySlotItem;

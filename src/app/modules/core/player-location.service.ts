@@ -4,6 +4,7 @@ import { MapCoordinates } from "@common/game-map";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
+import { cleanInt } from "src/utilities/number";
 import { MatchService } from "./match.service";
 import { OverwolfDataProviderService, OWInfoUpdates2Event } from "./overwolf-data-provider";
 import { PlayerInventoryService } from "./player-inventory.service";
@@ -68,9 +69,9 @@ export class PlayerLocationService implements OnDestroy {
             )
             .subscribe((coord) => {
                 const newCoords: MapCoordinates = {
-                    x: parseInt(String(coord?.x)),
-                    y: parseInt(String(coord?.y)),
-                    z: parseInt(String(coord?.z)),
+                    x: cleanInt(coord?.x),
+                    y: cleanInt(coord?.y),
+                    z: cleanInt(coord?.z),
                 };
                 if (!isFinite(newCoords.x) || !isFinite(newCoords.y) || !isFinite(newCoords.z)) return;
                 this.myCoordinates$.next(newCoords);
