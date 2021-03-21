@@ -16,6 +16,7 @@ type PlayerConstructor = {
     teamId?: number;
     platformHardware?: PlatformHardware;
     platformSoftware?: PlatformSoftware;
+    lastActivity?: Date;
 };
 
 export class Player {
@@ -27,6 +28,7 @@ export class Player {
     public teamId?: number;
     public platformHardware?: PlatformHardware;
     public platformSoftware?: PlatformSoftware;
+    public lastActivity? = new Date();
 
     constructor(ctor?: PlayerConstructor) {
         this.name = ctor?.name;
@@ -37,5 +39,6 @@ export class Player {
         this.teamId = ctor?.teamId;
         this.platformHardware = ctor?.platformHardware;
         this.platformSoftware = ctor?.platformSoftware;
+        this.lastActivity = ctor?.lastActivity;
     }
 }

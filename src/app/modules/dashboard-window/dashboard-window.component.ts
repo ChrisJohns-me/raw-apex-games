@@ -155,7 +155,8 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this._unsubscribe),
                 filter((gamePhase) => gamePhase === GamePhase.Lobby),
-                filter(() => this.autoClearLog)
+                filter(() => this.autoClearLog),
+                delay(30000)
             )
             .subscribe(() => this.clearLog());
     }

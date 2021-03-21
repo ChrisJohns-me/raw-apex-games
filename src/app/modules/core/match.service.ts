@@ -54,7 +54,7 @@ export class MatchService implements OnDestroy {
 
         const triggers = new TriggerConditions<MatchState, [MatchState?, OWInfoUpdates2Event?, OWGameEvent?]>({
             [MatchState.Inactive]: (matchState, infoUpdate, gameEvent) => {
-                const notInactive = matchState !== MatchState.Inactive; // true
+                const notInactive = matchState !== MatchState.Inactive;
                 const gameModeChanged =
                     infoUpdate?.feature === "match_info" && !!infoUpdate?.info?.match_info?.game_mode;
                 const infoStateInactive =

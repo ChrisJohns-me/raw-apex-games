@@ -5,6 +5,7 @@ import { MatchRoster } from "@common/match-roster";
 import { Player, PlayerStatus } from "@common/player";
 import { Team } from "@common/team";
 import { WeaponItem } from "@common/weapon-item";
+import { addSeconds } from "date-fns";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
@@ -31,6 +32,7 @@ export class MatchRosterService implements OnDestroy {
     // TODO:
     public readonly teammates$ = new BehaviorSubject<Optional<MatchRoster>>(undefined);
     public readonly numTeams$ = new BehaviorSubject<number>(0);
+    /** 0 if "fair-play" mode is on (<5 players remain) */
     public readonly numPlayers$ = new BehaviorSubject<number>(0);
 
     private _owRawRoster: Partial<OWMatchInfo> = {};
@@ -62,15 +64,20 @@ export class MatchRosterService implements OnDestroy {
      */
     public setPlayerHasActivity(player: Player): void {
         if (!player.name) return;
-        const foundPlayer = this.roster$.value.eliminatedPlayers.find((ep) => ep.name === player.name);
+        const foundPlayer = this.roster$.value.players.find((ep) => ep.name === player.name);
 
-        if (foundPlayer) {
+        if (foundPlayer?.status === PlayerStatus.Eliminated) {
             console.debug(
                 `[${this.constructor.name}] Player "${foundPlayer.name}" possibly respawned. ` +
                     `Player has activity after status was eliminated.`
             );
-            this.roster$.value.respawnPlayer(foundPlayer);
+
+            const newRoster = this.roster$.value;
+            newRoster.respawnPlayer(foundPlayer);
+            this.roster$.next(newRoster);
         }
+
+        if (foundPlayer) foundPlayer.lastActivity = new Date();
     }
 
     private setupMatchStateEvents(): void {
@@ -249,21 +256,27 @@ export class MatchRosterService implements OnDestroy {
                 const attacker = this.roster$.value.players.find((p) => p.name === killfeed.attackerName);
                 const weapon = new WeaponItem({ fromInGameEventName: killfeed.weaponName });
                 const act = killfeed.action;
-                const isKnocked = !!(act === "Melee" || act === "Caustic Gas" || act === "knockdown");
-                const isEliminated = !!(act === "Bleed Out" || act === "kill" || act === "headshot_kill");
+                const isVictimKnocked = !!(act === "Melee" || act === "Caustic Gas" || act === "knockdown");
+                const isVictimEliminated = !!(act === "Bleed Out" || act === "kill" || act === "headshot_kill");
 
                 if (!victim) return;
-                this.setPlayerHasActivity(victim);
 
-                if (isKnocked) this.knockdownPlayerOnRoster(victim);
-                else if (isEliminated) this.eliminatePlayerOnRoster(victim);
+                if (isVictimKnocked) this.knockdownPlayerOnRoster(victim);
+                else if (isVictimEliminated) this.eliminatePlayerOnRoster(victim);
+
+                if (attacker?.lastActivity && new Date() > addSeconds(attacker.lastActivity, 30)) {
+                    this.setPlayerHasActivity(attacker); // Enough time to get a kill, and be respawned
+                }
+                if (victim.lastActivity && new Date() > addSeconds(victim.lastActivity, 90)) {
+                    this.setPlayerHasActivity(victim); // Enough time to bleed out, and be respawned
+                }
 
                 const newDamageEvent: DamageEvent = {
                     timestamp: new Date(),
                     victim: victim,
                     attacker: attacker,
-                    isKnocked,
-                    isEliminated,
+                    isKnocked: isVictimKnocked,
+                    isEliminated: isVictimEliminated,
                     weapon,
                 };
 
