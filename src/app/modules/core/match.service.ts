@@ -1,11 +1,7 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { TriggerConditions } from "@common/game-event-triggers";
-import {
-    GameMode,
-    getFriendlyGameModeName,
-    MatchState,
-    MatchStateChangeEvent as MatchStateChangedEvent,
-} from "@common/match";
+import { GameMode } from "@common/game-mode";
+import { MatchState, MatchStateChangeEvent as MatchStateChangedEvent } from "@common/match";
 import { BehaviorSubject, merge, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
@@ -57,7 +53,6 @@ export class MatchService implements OnDestroy {
         };
 
         const triggers = new TriggerConditions<MatchState, [MatchState?, OWInfoUpdates2Event?, OWGameEvent?]>({
-            // active { feature: "team", info: match_info: teammate_0: {name: "MasterKriff", state: "knockedout"} undefined
             [MatchState.Inactive]: (matchState, infoUpdate, gameEvent) => {
                 const notInactive = matchState !== MatchState.Inactive; // true
                 const gameModeChanged =
@@ -117,10 +112,7 @@ export class MatchService implements OnDestroy {
                 if (isBlacklisted) return;
                 if (gameModeId === this.gameMode$.value.id) return;
 
-                const newGameMode: GameMode = {
-                    id: gameModeId,
-                    friendlyName: getFriendlyGameModeName(gameModeId),
-                };
+                const newGameMode = new GameMode(gameModeId);
                 this.gameMode$.next(newGameMode);
             });
     }

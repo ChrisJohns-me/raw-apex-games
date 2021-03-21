@@ -16,9 +16,9 @@ import { OverwolfDataProviderService, OWInfoUpdates2Event, OWMatchInfoMeInventor
         SingletonServiceProviderFactory("PlayerInventoryService", PlayerInventoryService, deps),
 })
 export class PlayerInventoryService implements OnDestroy {
-    public readonly inUse$ = new BehaviorSubject<Optional<Item>>(undefined);
-    public readonly weaponSlots$ = new BehaviorSubject<InventorySlots<WeaponItem>>({});
-    public readonly inventorySlots$ = new BehaviorSubject<InventorySlots>({});
+    public readonly myInUseItem$ = new BehaviorSubject<Optional<Item>>(undefined);
+    public readonly myWeaponSlots$ = new BehaviorSubject<InventorySlots<WeaponItem>>({});
+    public readonly myInventorySlots$ = new BehaviorSubject<InventorySlots>({});
 
     private inventoryInfoUpdates$: Observable<OWInfoUpdates2Event>;
     private readonly _unsubscribe = new Subject<void>();
@@ -37,21 +37,21 @@ export class PlayerInventoryService implements OnDestroy {
 
     public start(): void {
         this.setupMatchStateEvents();
-        this.setupInventorySlots();
-        this.setupInUse();
-        this.setupWeapons();
+        this.setupMyInventorySlots();
+        this.setupMyInUseItem();
+        this.setupMyWeapons();
     }
 
     private setupMatchStateEvents(): void {
         this.match.started$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-            this.inUse$.next(undefined);
-            this.weaponSlots$.next({});
-            this.inventorySlots$.next({});
+            this.myInUseItem$.next(undefined);
+            this.myWeaponSlots$.next({});
+            this.myInventorySlots$.next({});
         });
     }
 
     //#region Inventory Slots
-    private setupInventorySlots(): void {
+    private setupMyInventorySlots(): void {
         this.inventoryInfoUpdates$.subscribe((infoUpdate) => {
             const inventorySlotId = findKeyByKeyRegEx(infoUpdate.info.me, /^inventory_/);
             const inventoryUpdate = findValueByKeyRegEx<OWMatchInfoMeInventory>(infoUpdate.info.me, /^inventory_/);
@@ -61,16 +61,16 @@ export class PlayerInventoryService implements OnDestroy {
             const item = new Item({ fromInGameInventoryId: inventoryUpdate.name });
             const amount = parseInt(String(inventoryUpdate.amount));
 
-            const newInventorySlots = { ...this.inventorySlots$.value } as InventorySlots;
+            const newInventorySlots = { ...this.myInventorySlots$.value } as InventorySlots;
             newInventorySlots[slotId] = { ...item, amount: amount } as InventorySlotItem;
 
-            this.inventorySlots$.next(newInventorySlots);
+            this.myInventorySlots$.next(newInventorySlots);
         });
     }
     //#endregion
 
     //#region Item in use
-    private setupInUse(): void {
+    private setupMyInUseItem(): void {
         this.inventoryInfoUpdates$
             .pipe(
                 filter((infoUpdate) => typeof infoUpdate.info.me?.inUse?.inUse === "string"),
@@ -79,13 +79,13 @@ export class PlayerInventoryService implements OnDestroy {
             )
             .subscribe((inUse) => {
                 const newInventoryItem = new Item({ fromInGameInfoName: inUse });
-                this.inUse$.next(newInventoryItem);
+                this.myInUseItem$.next(newInventoryItem);
             });
     }
     //#endregion
 
     //#region Weapons
-    private setupWeapons(): void {
+    private setupMyWeapons(): void {
         this.inventoryInfoUpdates$
             .pipe(
                 filter((infoUpdate) => typeof infoUpdate.info.me?.weapons === "object"),
@@ -96,7 +96,7 @@ export class PlayerInventoryService implements OnDestroy {
                     new WeaponItem({ fromInGameInfoName: weapons?.weapon0 }),
                     new WeaponItem({ fromInGameInfoName: weapons?.weapon1 }),
                 ];
-                this.weaponSlots$.next(newWeapons);
+                this.myWeaponSlots$.next(newWeapons);
             });
     }
     //#endregion

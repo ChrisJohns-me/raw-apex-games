@@ -1,4 +1,4 @@
-<app-ui-container [isDesktopWindow]="false" [isContentDraggable]="true">
+<app-ui-container [isDesktopWindow]="false" [isContentDraggable]="true" primaryTitle="In Game Match Timer">
     <div class="timer-container tilt-box" *ngIf="isDateValid(matchDurationDate) && showTimer">
         <p class="timer-display untilt-content">
             <ng-container>{{ matchDurationDate | date: "mm:ss" }}</ng-container>

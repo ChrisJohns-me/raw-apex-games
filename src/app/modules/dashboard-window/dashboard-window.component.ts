@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { GamePhase } from "@common/game";
+import { GamePhase } from "@common/game-phase";
 import { GameProcessService } from "@core/game-process.service";
 import { GameService } from "@core/game.service";
 import { GoogleFormsMatchSummaryTrackerService } from "@core/google-forms-match-summary-tracker.service";
@@ -31,11 +31,7 @@ import { InGameUltTimerWindowService } from "../in-game-ult-timer-window/in-game
 })
 export class DashboardWindowComponent implements OnInit, OnDestroy {
     public Infinity = Infinity;
-    public primaryTitle = "Dashboard";
-    public secondaryTitle = "";
-
     public autoClearLog = false;
-
     public hasRecentlyTrackedMatchSummary = false;
     public get isTrackingEnabled(): boolean {
         return this.googleFormsMatchSummaryTracker.isTrackingEnabled;

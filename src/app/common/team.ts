@@ -4,16 +4,14 @@ export { TeamStatus };
 
 type TeamConstructor = {
     teamId: number;
-    isFriendly?: boolean;
+    isMyTeam?: boolean;
     members?: Player[];
 };
 
 export class Team {
-    public readonly teamId: number;
-    public readonly isFriendly: boolean;
-    public get members(): Player[] {
-        return this._members;
-    }
+    public teamId: number;
+    public isMyTeam: boolean;
+    public members: Player[];
     public get status(): TeamStatus {
         if (this.members.some((m) => m.status === PlayerStatus.Alive)) return PlayerStatus.Alive;
         else if (this.members.every((m) => m.status === PlayerStatus.Eliminated)) return PlayerStatus.Eliminated;
@@ -29,19 +27,13 @@ export class Team {
         return this.members.filter((m) => m.status === PlayerStatus.Eliminated);
     }
 
-    private _members: Player[] = [];
-
-    constructor({ teamId, isFriendly, members }: TeamConstructor) {
-        this.teamId = teamId;
-        this.isFriendly = isFriendly ?? false;
-        this._members = !!members && Array.isArray(members) ? members : [];
+    constructor(ctor: TeamConstructor) {
+        this.teamId = ctor.teamId;
+        this.isMyTeam = ctor.isMyTeam ?? false;
+        this.members = !!ctor.members && Array.isArray(ctor.members) ? ctor.members : [];
     }
 
     public setTeamStatus(status: TeamStatus): void {
-        this.members.forEach((m) => m.setStatus(status));
-    }
-
-    public addMember(member: Player): void {
-        this._members.push(member);
+        this.members.forEach((m) => (m.status = status));
     }
 }

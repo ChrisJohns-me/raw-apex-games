@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { TriggerConditions } from "@common/game-event-triggers";
 import { MatchState } from "@common/match";
-import { PlayerStatus } from "@common/player";
+import { Player, PlayerStatus } from "@common/player";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
@@ -19,12 +19,14 @@ import {
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("PlayerService", PlayerService, deps),
 })
 export class PlayerService implements OnDestroy {
-    public readonly status$ = new BehaviorSubject<PlayerStatus>(PlayerStatus.Alive);
-    public readonly playerName$ = new BehaviorSubject<Optional<string>>(undefined);
+    // public readonly myStatus$ = new BehaviorSubject<PlayerStatus>(PlayerStatus.Alive);
+    public readonly me$: BehaviorSubject<Player>;
 
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {}
+    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {
+        this.me$ = new BehaviorSubject<Player>(new Player({ isMe: true }));
+    }
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -32,15 +34,22 @@ export class PlayerService implements OnDestroy {
     }
 
     public start(): void {
-        this.setupPlayerName();
-        this.setupStatus();
+        this.setupMyName();
+        this.setupMyStatus();
+    }
+
+    public setMe(mePlayer: Player): void {
+        this.me$.next(mePlayer);
     }
 
     // TODO: Get player name from storage
     //#region Player Name
-    private setupPlayerName(): void {
+    private setupMyName(): void {
         const checkNameFn = (name?: string): void => {
-            if (name && name !== this.playerName$.value) this.playerName$.next(name);
+            if (name && name !== this.me$.value.name) {
+                this.me$.value.name = name;
+                this.me$.next(this.me$.value);
+            }
         };
 
         this.overwolf.infoUpdates$
@@ -49,7 +58,7 @@ export class PlayerService implements OnDestroy {
                 filter((infoUpdate) => infoUpdate.feature === "me" && !!infoUpdate.info.me?.name),
                 map((infoUpdate) => infoUpdate.info.me?.name)
             )
-            .subscribe((localPlayerName) => checkNameFn(localPlayerName));
+            .subscribe((myName) => checkNameFn(myName));
 
         this.overwolf.newGameEvent$
             .pipe(
@@ -58,14 +67,17 @@ export class PlayerService implements OnDestroy {
                 filter((gameEvent) => !!(gameEvent.data as OWGameEventKillFeed).local_player_name),
                 map((gameEvent) => (gameEvent.data as OWGameEventKillFeed).local_player_name)
             )
-            .subscribe((localPlayerName) => checkNameFn(localPlayerName));
+            .subscribe((myName) => checkNameFn(myName));
     }
     //#endregion
 
     //#region Player Status
-    private setupStatus(): void {
+    private setupMyStatus(): void {
         const setNewStatusFn = (newStatus?: PlayerStatus): void => {
-            if (newStatus && newStatus !== this.status$.value) this.status$.next(newStatus);
+            if (newStatus && newStatus !== this.me$.value.status) {
+                this.me$.value.status = newStatus;
+                this.me$.next(this.me$.value);
+            }
         };
 
         const triggers = new TriggerConditions<PlayerStatus, [OWInfoUpdates2Event?, OWGameEvent?, MatchState?]>({

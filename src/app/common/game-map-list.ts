@@ -1,7 +1,8 @@
 import { GameMap, GameMapId } from "./game-map";
 
 export const GameMapList: GameMap[] = [
-    new GameMap(GameMapId.KingsCanyon, {
+    new GameMap({
+        id: GameMapId.KingsCanyon,
         layoutId: "MU2_REV1",
         activeDates: [
             {
@@ -10,7 +11,8 @@ export const GameMapList: GameMap[] = [
         ],
         dropshipZStart: 234,
     }),
-    new GameMap(GameMapId.WorldsEdge, {
+    new GameMap({
+        id: GameMapId.WorldsEdge,
         layoutId: "MU1_REV1",
         activeDates: [
             {
@@ -20,7 +22,8 @@ export const GameMapList: GameMap[] = [
         ],
         dropshipZStart: -Infinity, // Unknown
     }),
-    new GameMap(GameMapId.Olympus, {
+    new GameMap({
+        id: GameMapId.Olympus,
         layoutId: "REV1",
         activeDates: [
             {

@@ -1,6 +1,6 @@
 import { GameMap } from "./game-map";
+import { GameMode } from "./game-mode";
 import { Legend } from "./legend";
-import { GameMode } from "./match";
 
 export interface MatchSummary {
     legend?: Legend;

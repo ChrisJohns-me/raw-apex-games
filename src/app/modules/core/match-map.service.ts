@@ -30,11 +30,13 @@ export class MatchMapService implements OnDestroy {
     //#region Map
     /** Less than ideal logic to deduce the map based off of dropship's starting z-position */
     private setupMap(): void {
-        this.playerLocation.startingCoordinates$.pipe(takeUntil(this._unsubscribe)).subscribe((startingCoordinates) => {
-            const gameMap = GameMapList.find((map) => map.dropshipZStart == startingCoordinates?.z);
-            if (!gameMap) return;
-            this.map$.next(gameMap);
-        });
+        this.playerLocation.myStartingCoordinates$
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((startingCoordinates) => {
+                const gameMap = GameMapList.find((map) => map.dropshipZStart == startingCoordinates?.z);
+                if (!gameMap) return;
+                this.map$.next(gameMap);
+            });
     }
     //#endregion
 }

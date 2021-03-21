@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { DamageRoster } from "@common/damage-roster";
+import { DamageAction, DamageRoster } from "@common/damage-roster";
 import { MatchState } from "@common/match";
 import { PlayerStatus } from "@common/player";
 import { BehaviorSubject, Subject } from "rxjs";
@@ -20,23 +20,25 @@ import { PlayerService } from "./player.service";
 })
 export class PlayerActivityService implements OnDestroy {
     /** */
-    public readonly numKills$ = new BehaviorSubject<number>(0);
+    public readonly myKills$ = new BehaviorSubject<number>(0);
     /** */
-    public readonly numAssists$ = new BehaviorSubject<number>(0);
+    public readonly myAssists$ = new BehaviorSubject<number>(0);
     /** */
-    public readonly numDamage$ = new BehaviorSubject<number>(0);
+    public readonly myDamage$ = new BehaviorSubject<number>(0);
     /** @deprecated May not work; Feature is unavailable in game-UI. */
-    public readonly numSpectators$ = new BehaviorSubject<number>(0);
+    public readonly mySpectators$ = new BehaviorSubject<number>(0);
 
-    public readonly damageRoster$;
-    public readonly placement$ = new BehaviorSubject<number>(0);
+    public readonly myDamageRoster$;
+    public readonly myDamageAction$ = new Subject<DamageAction>();
+    public readonly myPlacement$ = new BehaviorSubject<number>(0);
     public readonly victory$ = new BehaviorSubject<boolean>(false);
     /**
      * Damage amount does not take into consideration victim's HP, only the raw inflicted amount.
      * The contained damage amount will then appear to be inflated.
-     * Info directly from Overwolf's me.damage_dealt data
+     * Info directly from Overwolf's me.damage_dealt data.
+     * Hypothetically should equal damageRoster's total damage.
      */
-    public readonly totalDamageDealt$ = new BehaviorSubject<number>(0);
+    public readonly myTotalDamageDealt$ = new BehaviorSubject<number>(0);
 
     private _damageRoster = new DamageRoster();
     private readonly _unsubscribe = new Subject<void>();
@@ -47,7 +49,7 @@ export class PlayerActivityService implements OnDestroy {
         private readonly overwolf: OverwolfDataProviderService,
         private readonly player: PlayerService
     ) {
-        this.damageRoster$ = new BehaviorSubject<DamageRoster>(this._damageRoster);
+        this.myDamageRoster$ = new BehaviorSubject<DamageRoster>(this._damageRoster);
     }
 
     public ngOnDestroy(): void {
@@ -59,22 +61,22 @@ export class PlayerActivityService implements OnDestroy {
         this.setupMatchStateEvents();
         this.setupInfoTabs();
         this.setupTotalDamageDealt();
-        this.setupDamageRosterPlayerName();
+        this.setupDamageRosterPlayer();
         this.setupDamageEvents();
-        this.setupKillfeedEvents();
+        this.setupInflictionEvents();
         this.setupPlacement();
         this.setupVictory();
     }
 
     private setupMatchStateEvents(): void {
         this.match.started$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-            this._damageRoster = new DamageRoster(this.player.playerName$.value);
-            this.damageRoster$.next(this._damageRoster);
-            this.numDamage$.next(0);
-            this.numKills$.next(0);
-            this.numAssists$.next(0);
-            this.numSpectators$.next(0);
-            this.placement$.next(0);
+            this._damageRoster = new DamageRoster(this.player.me$.value);
+            this.myDamageRoster$.next(this._damageRoster);
+            this.myDamage$.next(0);
+            this.myKills$.next(0);
+            this.myAssists$.next(0);
+            this.mySpectators$.next(0);
+            this.myPlacement$.next(0);
             this.victory$.next(false);
         });
     }
@@ -93,10 +95,10 @@ export class PlayerActivityService implements OnDestroy {
             )
             .subscribe((tabs) => {
                 if (!tabs || !Object.keys(tabs).length) return;
-                setTabsHigherAmountFn(tabs.kills, this.numKills$);
-                setTabsHigherAmountFn(tabs.assists, this.numAssists$);
-                setTabsHigherAmountFn(tabs.damage, this.numDamage$);
-                this.numSpectators$.next(cleanInt(tabs.spectators));
+                setTabsHigherAmountFn(tabs.kills, this.myKills$);
+                setTabsHigherAmountFn(tabs.assists, this.myAssists$);
+                setTabsHigherAmountFn(tabs.damage, this.myDamage$);
+                this.mySpectators$.next(cleanInt(tabs.spectators));
             });
     }
 
@@ -107,19 +109,19 @@ export class PlayerActivityService implements OnDestroy {
                 filter((infoUpdate) => infoUpdate.feature === "damage" && !!infoUpdate.info.me?.totalDamageDealt),
                 map((infoUpdate) => parseInt(String(infoUpdate.info.me?.totalDamageDealt)))
             )
-            .subscribe((totalDamageDealt) => this.totalDamageDealt$.next(totalDamageDealt));
+            .subscribe((totalDamageDealt) => this.myTotalDamageDealt$.next(totalDamageDealt));
     }
     //#endregion
 
     //#region Damage Roster
-    private setupDamageRosterPlayerName(): void {
-        this.player.playerName$
+    private setupDamageRosterPlayer(): void {
+        this.player.me$
             .pipe(
                 takeUntil(this._unsubscribe),
-                filter((newPlayerName) => !!newPlayerName)
+                filter((me) => !!me)
             )
-            .subscribe((newPlayerName) => {
-                this._damageRoster.activePlayerName = newPlayerName as string;
+            .subscribe((myself) => {
+                this._damageRoster.primaryAttacker = myself;
             });
     }
 
@@ -129,34 +131,57 @@ export class PlayerActivityService implements OnDestroy {
                 takeUntil(this._unsubscribe),
                 filter((gameEvent) => gameEvent.name === "damage"),
                 map((gameEvent) => gameEvent.data as overwolf.gep.ApexLegends.GameEventDamage),
-                filter(() => this.player.status$.value !== PlayerStatus.Eliminated)
+                filter(() => this.player.me$.value.status !== PlayerStatus.Eliminated)
             )
             .subscribe((damageEvent) => {
+                const matchRoster = this.matchRoster.roster$.value;
+                const victim = matchRoster.players.find((p) => p.name === damageEvent.targetName);
+                if (!victim) {
+                    console.warn(`[${this.constructor.name}] Unable to find "${damageEvent.targetName}" from roster.`);
+                    return;
+                }
+
                 this._damageRoster.inflictPlayerDamage({
-                    attackerName: this.player.playerName$.value,
-                    victimName: damageEvent.targetName,
+                    attacker: this.player.me$.value,
+                    victim: victim,
                     shieldDamage: damageEvent.armor ? damageEvent.damageAmount : 0,
                     healthDamage: !damageEvent.armor ? damageEvent.damageAmount : 0,
                     hasShield: damageEvent.armor,
                 });
 
-                this.matchRoster.setPlayerHasActivity(damageEvent.targetName);
+                this.matchRoster.setPlayerHasActivity(victim);
             });
     }
 
-    private setupKillfeedEvents(): void {
-        this.matchRoster.killfeedEvent$
+    private setupInflictionEvents(): void {
+        this.overwolf.newGameEvent$
             .pipe(
                 takeUntil(this._unsubscribe),
-                filter(() => this.player.status$.value !== PlayerStatus.Eliminated)
+                filter((gameEvent) => gameEvent.name === "knockdown" || gameEvent.name === "kill"),
+                filter(
+                    (gameEvent) =>
+                        !!gameEvent.data && !!(gameEvent.data as overwolf.gep.ApexLegends.GameEventKill).victimName
+                )
             )
-            .subscribe((killfeed) => {
-                if (killfeed.isKnockdown)
-                    this._damageRoster.knockdownPlayer(killfeed.victimName, killfeed.attackerName);
-                else if (killfeed.isElimination)
-                    this._damageRoster.eliminatePlayer(killfeed.victimName, killfeed.attackerName);
+            .subscribe((gameEvent) => {
+                const victimName = (gameEvent.data as overwolf.gep.ApexLegends.GameEventKill).victimName;
+                const matchRoster = this.matchRoster.roster$.value;
+                const victim = matchRoster.players.find((p) => p.name === victimName);
+                if (!victim) {
+                    console.warn(`[${this.constructor.name}] Unable to find "${victimName}" from roster.`);
+                    return;
+                }
 
-                this.damageRoster$.next(this._damageRoster);
+                let damageAction: Optional<DamageAction>;
+                if (gameEvent.name === "knockdown")
+                    damageAction = this._damageRoster.knockdownPlayer(victim, this.player.me$.value);
+                else if (gameEvent.name === "kill")
+                    damageAction = this._damageRoster.eliminatePlayer(victim, this.player.me$.value);
+
+                if (damageAction) {
+                    this.myDamageRoster$.next(this._damageRoster);
+                    this.myDamageAction$.next(damageAction);
+                }
             });
     }
     //#endregion
@@ -177,7 +202,7 @@ export class PlayerActivityService implements OnDestroy {
             .subscribe((aliveTeams) => {
                 const numAliveTeams = aliveTeams.length;
                 if (isFinite(numAliveTeams) && numAliveTeams > 0 && numAliveTeams < 999)
-                    this.placement$.next(numAliveTeams);
+                    this.myPlacement$.next(numAliveTeams);
             });
     }
     //#endregion
@@ -195,14 +220,14 @@ export class PlayerActivityService implements OnDestroy {
                     matchStateChanged.state === MatchState.Active ? setVictoryFn(false) : null
                 ),
                 switchMap(() => this.overwolf.infoUpdates$),
-                filter(() => this.player.status$.value !== PlayerStatus.Eliminated),
+                filter(() => this.player.me$.value.status !== PlayerStatus.Eliminated),
                 filter((infoUpdate) => infoUpdate.feature === "rank"),
                 map((infoUpdate) => infoUpdate.info.match_info),
                 filter((matchInfo) => !!matchInfo && !!Object.keys(matchInfo).includes("victory")),
                 map((matchInfo) => parseBoolean(matchInfo?.victory))
             )
             .subscribe((isVictory) => {
-                this.placement$.next(1);
+                this.myPlacement$.next(1);
                 this.victory$.next(isVictory);
             });
     }

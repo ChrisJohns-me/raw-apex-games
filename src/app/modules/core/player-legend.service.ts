@@ -14,8 +14,8 @@ import { PlayerService } from "./player.service";
         SingletonServiceProviderFactory("PlayerLegendService", PlayerLegendService, deps),
 })
 export class PlayerLegendService implements OnDestroy {
-    public readonly legend$ = new BehaviorSubject<Optional<Legend>>(undefined);
-    public readonly ultimateCooldown$ = new Subject<number>();
+    public readonly myLegend$ = new BehaviorSubject<Optional<Legend>>(undefined);
+    public readonly myUltimateCooldown$ = new Subject<number>();
 
     private readonly _unsubscribe = new Subject<void>();
 
@@ -27,13 +27,16 @@ export class PlayerLegendService implements OnDestroy {
     }
 
     public start(): void {
-        this.setupLegend();
-        this.setupUltimateCooldown();
+        this.setupMyLegend();
+        this.setupMyUltimateCooldown();
     }
 
     //#region Legend
-    private setupLegend(): void {
-        const playerName$ = this.player.playerName$.pipe(filter((name) => !!name));
+    private setupMyLegend(): void {
+        const playerName$ = this.player.me$.pipe(
+            filter((me) => !!me.name),
+            map((me) => me.name)
+        );
 
         this.overwolf.infoUpdates$
             .pipe(
@@ -52,13 +55,13 @@ export class PlayerLegendService implements OnDestroy {
             .subscribe((legendSelect) => {
                 if (!legendSelect) return;
                 const playerLegend = new Legend(legendSelect.legendName);
-                this.legend$.next(playerLegend);
+                this.myLegend$.next(playerLegend);
             });
     }
     //#endregion
 
     //#region Ultimate Cooldown
-    private setupUltimateCooldown(): void {
+    private setupMyUltimateCooldown(): void {
         this.overwolf.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe),
@@ -68,7 +71,7 @@ export class PlayerLegendService implements OnDestroy {
                 map((ultimateCooldown) => (isFinite(ultimateCooldown) ? mathClamp(ultimateCooldown / 100, 0, 1) : 0))
             )
             .subscribe((percent) => {
-                this.ultimateCooldown$.next(percent);
+                this.myUltimateCooldown$.next(percent);
             });
     }
     //#endregion

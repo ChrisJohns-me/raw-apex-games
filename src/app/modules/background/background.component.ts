@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
+import { Title } from "@angular/platform-browser";
+import { APP_NAME } from "@common/app";
 import { merge, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { DashboardWindowService } from "../dashboard-window/dashboard-window.service";
@@ -20,10 +22,12 @@ export class BackgroundComponent implements OnInit, OnDestroy {
         private readonly damageCollectorWindow: InGameDamageCollectorWindowService,
         private readonly dashboardWindow: DashboardWindowService,
         private readonly matchTimerWindow: InGameMatchTimerWindowService,
+        private readonly titleService: Title,
         private readonly ultTimerWindow: InGameUltTimerWindowService
     ) {}
 
     public ngOnInit(): void {
+        this.titleService.setTitle(`${APP_NAME} - Background`);
         this.backgroundService.startBackgroundServices();
         this.registerUIWindows();
     }

@@ -1,5 +1,5 @@
 <app-ui-container
-    [primaryTitle]="primaryTitle"
+    primaryTitle="Dashboard"
     [isDesktopWindow]="true"
     [isTitlebarDraggable]="true"
     [isContentDraggable]="false"
@@ -61,18 +61,18 @@
 
                 <p class="inference-item">Player</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item">PlayerName: {{ player.playerName$ | async }}</p>
-                    <p class="inference-item">PlayerStatus: {{ player.status$ | async }}</p>
-                    <p class="inference-item">Legend: {{ (playerLegend.legend$ | async)?.friendlyName }}</p>
-                    <p class="inference-item">Placement: {{ playerActivity.placement$ | async }}</p>
+                    <p class="inference-item">PlayerName: {{ (player.me$ | async)?.name }}</p>
+                    <p class="inference-item">PlayerStatus: {{ (player.me$ | async)?.status }}</p>
+                    <p class="inference-item">Legend: {{ (playerLegend.myLegend$ | async)?.friendlyName }}</p>
+                    <p class="inference-item">Placement: {{ playerActivity.myPlacement$ | async }}</p>
                     <p class="inference-item">Victory: {{ playerActivity.victory$ | async }}</p>
                     <p class="inference-item">
-                        UltimatePercent: {{ playerLegend.ultimateCooldown$ | async | percent: "0.0-0" }}
+                        UltimatePercent: {{ playerLegend.myUltimateCooldown$ | async | percent: "0.0-0" }}
                     </p>
-                    <p class="inference-item">Kills: {{ playerActivity.numKills$ | async }}</p>
-                    <p class="inference-item">Assists: {{ playerActivity.numAssists$ | async }}</p>
-                    <p class="inference-item">Damage: {{ playerActivity.numDamage$ | async }}</p>
-                    <p class="inference-item"><del>Spectators</del>: {{ playerActivity.numSpectators$ | async }}</p>
+                    <p class="inference-item">Kills: {{ playerActivity.myKills$ | async }}</p>
+                    <p class="inference-item">Assists: {{ playerActivity.myAssists$ | async }}</p>
+                    <p class="inference-item">Damage: {{ playerActivity.myDamage$ | async }}</p>
+                    <p class="inference-item"><del>Spectators</del>: {{ playerActivity.mySpectators$ | async }}</p>
                 </div>
 
                 <p
@@ -83,7 +83,7 @@
                  damage required to knockdown the victim is 1.
                 The contained damage amount will then appear to be inflated."
                 >
-                    TotalDamageDealt: {{ playerActivity.totalDamageDealt$ | async }}
+                    TotalDamageDealt: {{ playerActivity.myTotalDamageDealt$ | async }}
                 </p>
 
                 <p class="inference-item">Damage Roster</p>
@@ -92,10 +92,10 @@
                         class="inference-item has-tooltip"
                         title="Kills that have been confirmed by killfeed + enemy player disconnections. May not equal proper count, due to enemy players still connected and spectating."
                     >
-                        Eliminations: {{ (playerActivity.damageRoster$ | async)?.activePlayerEliminationsInflictedSum }}
+                        Eliminations: {{ (playerActivity.myDamageRoster$ | async)?.eliminationsInflictedSum }}
                     </p>
                     <p class="inference-item">
-                        Knockdowns: {{ (playerActivity.damageRoster$ | async)?.activePlayerKnockdownsInflictedSum }}
+                        Knockdowns: {{ (playerActivity.myDamageRoster$ | async)?.knockdownsInflictedSum }}
                     </p>
                     <p
                         class="inference-item has-tooltip"
@@ -104,12 +104,12 @@
                     damage required to knockdown the victim is 1.
                    The contained damage amount will then appear to be inflated."
                     >
-                        Damage: {{ (playerActivity.damageRoster$ | async)?.activePlayerDamageInflictedSum }}
+                        Damage: {{ (playerActivity.myDamageRoster$ | async)?.damageInflictedSum }}
                         <span
                             class="warn has-tooltip"
                             *ngIf="
-                                (playerActivity.damageRoster$ | async)?.activePlayerDamageInflictedSum !=
-                                (playerActivity.totalDamageDealt$ | async)
+                                (playerActivity.myDamageRoster$ | async)?.damageInflictedSum !=
+                                (playerActivity.myTotalDamageDealt$ | async)
                             "
                             title="Typically should match the 'TotalDamageDealt' value"
                         >
@@ -117,16 +117,16 @@
                         </span>
                     </p>
                     <p class="inference-item">
-                        Headshots: {{ (playerActivity.damageRoster$ | async)?.activePlayerHeadshotsInflictedSum }}
+                        Headshots: {{ (playerActivity.myDamageRoster$ | async)?.headshotsInflictedSum }}
                     </p>
                 </div>
 
-                <p class="inference-item">Item In Use: {{ (playerInventory.inUse$ | async)?.friendlyName }}</p>
+                <p class="inference-item">Item In Use: {{ (playerInventory.myInUseItem$ | async)?.friendlyName }}</p>
                 <p class="inference-item">Weapons</p>
                 <div class="sub-inference-items">
                     <div
                         class="inference-item"
-                        *ngFor="let weaponItem of playerInventory.weaponSlots$ | async | keyvalue"
+                        *ngFor="let weaponItem of playerInventory.myWeaponSlots$ | async | keyvalue"
                     >
                         {{ weaponItem.value?.friendlyName }}
                     </div>
@@ -136,7 +136,7 @@
                 <div class="sub-inference-items">
                     <div
                         class="inference-item"
-                        *ngFor="let slotItem of playerInventory.inventorySlots$ | async | keyvalue"
+                        *ngFor="let slotItem of playerInventory.myInventorySlots$ | async | keyvalue"
                     >
                         {{ slotItem.value?.friendlyName ? slotItem.value?.friendlyName : slotItem.value?.id }}
                         {{ slotItem.value?.amount || 0 > 0 ? "[" + slotItem.value?.amount + "]" : "" }}
@@ -145,30 +145,30 @@
 
                 <p class="inference-item">Player Location</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item">LocationPhase: {{ playerLocation.locationPhase$ | async }}</p>
+                    <p class="inference-item">LocationPhase: {{ playerLocation.myLocationPhase$ | async }}</p>
                     <p class="inference-item">
                         Coordinates:
-                        <span *ngFor="let coord of playerLocation.coordinates$ | async | keyvalue"
+                        <span *ngFor="let coord of playerLocation.myCoordinates$ | async | keyvalue"
                             >{{ coord.value < Infinity ? coord.value : "-" }}{{ coord.key !== "z" ? ", " : "" }}
                         </span>
                     </p>
                     <p class="inference-item">
                         StartingCoordinates:
-                        <span *ngFor="let startingCoord of playerLocation.startingCoordinates$ | async | keyvalue"
+                        <span *ngFor="let startingCoord of playerLocation.myStartingCoordinates$ | async | keyvalue"
                             >{{ startingCoord.value < Infinity ? startingCoord.value : "-"
                             }}{{ startingCoord.key !== "z" ? ", " : "" }}
                         </span>
                     </p>
                     <p class="inference-item">
                         LandingCoordinates:
-                        <span *ngFor="let landingCoord of playerLocation.landingCoordinates$ | async | keyvalue"
+                        <span *ngFor="let landingCoord of playerLocation.myLandingCoordinates$ | async | keyvalue"
                             >{{ landingCoord.value < Infinity ? landingCoord.value : "-"
                             }}{{ landingCoord.key !== "z" ? ", " : "" }}
                         </span>
                     </p>
                     <p class="inference-item">
                         EndingCoordinates:
-                        <span *ngFor="let endingCoord of playerLocation.endingCoordinates$ | async | keyvalue"
+                        <span *ngFor="let endingCoord of playerLocation.myEndingCoordinates$ | async | keyvalue"
                             >{{ endingCoord.value < Infinity ? endingCoord.value : "-"
                             }}{{ endingCoord.key !== "z" ? ", " : "" }}
                         </span>

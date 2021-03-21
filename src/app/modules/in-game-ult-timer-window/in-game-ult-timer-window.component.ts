@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { MatchState, MatchStateChangeEvent } from "@common/match";
-import { PlayerStatus } from "@common/player";
+import { Player, PlayerStatus } from "@common/player";
 import { MatchService } from "@core/match.service";
 import { PlayerLegendService } from "@core/player-legend.service";
 import { LocationPhase, PlayerLocationService } from "@core/player-location.service";
@@ -28,8 +28,6 @@ interface UltimateProgress {
 })
 export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
     public isDateValid = isValid;
-    public primaryTitle = "In Game Ultimate Timer";
-    public secondaryTitle = "";
     public isVisible = false; // based on match state + player status
     public ultimatePercent = 0;
     public get isUltimateReady(): boolean {
@@ -59,7 +57,7 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
     }
     private ultimateProgressHistory: UltimateProgress[] = [];
     private ultimateReadyDate?: Date;
-    private readonly visibleStates$: Observable<[MatchStateChangeEvent, PlayerStatus, Optional<LocationPhase>]>;
+    private readonly visibleStates$: Observable<[MatchStateChangeEvent, Player, Optional<LocationPhase>]>;
     private _unsubscribe = new Subject<void>();
 
     constructor(
@@ -71,8 +69,8 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
     ) {
         this.visibleStates$ = combineLatest([
             this.match.currentState$,
-            this.player.status$,
-            this.playerLocation.locationPhase$,
+            this.player.me$,
+            this.playerLocation.myLocationPhase$,
         ]).pipe(takeUntil(this._unsubscribe), distinctUntilChanged());
     }
 
@@ -95,18 +93,18 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
     }
 
     private setupVisibleStates(): void {
-        this.visibleStates$.subscribe(([matchStateChanged, playerStatus, locationPhase]) => {
+        this.visibleStates$.subscribe(([matchStateChanged, myself, locationPhase]) => {
             this.isVisible =
                 matchStateChanged.state === MatchState.Active &&
-                playerStatus === PlayerStatus.Alive &&
+                myself.status === PlayerStatus.Alive &&
                 locationPhase === LocationPhase.HasLanded;
 
             console.debug(
                 `Ult-timer [${this.isVisible ? "Showable" : "NotShowable"}] ` +
                     `[${this.isVisible ? "Visible" : "Hidden"}]. ` +
                     `Match: "${this.match.currentState$.value.state}", ` +
-                    `Player: "${this.player.status$.value}", ` +
-                    `Location: "${this.playerLocation.locationPhase$.value}", ` +
+                    `Player: "${this.player.me$.value.status}", ` +
+                    `Location: "${this.playerLocation.myLocationPhase$.value}", ` +
                     `Percent: "${parseInt(String(this.ultimatePercent * 100))}%", ` +
                     `Est Remain: "${format(this.ultimateReadyRemaining ?? 0, "mm:ss")}"`
             );
@@ -117,10 +115,10 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
         this.visibleStates$
             .pipe(
                 filter(
-                    ([matchStateChanged, playerStatus]) =>
-                        matchStateChanged.state === MatchState.Active && playerStatus === PlayerStatus.Alive
+                    ([matchStateChanged, myself]) =>
+                        matchStateChanged.state === MatchState.Active && myself.status === PlayerStatus.Alive
                 ),
-                switchMap(() => this.playerLegend.ultimateCooldown$),
+                switchMap(() => this.playerLegend.myUltimateCooldown$),
                 tap((percent) => this.addPercentHistory((this.ultimatePercent = percent))),
                 filter(() => this.ultimateProgressHistory.length >= 2),
                 map((percent) => this.calcReadyDate(percent, new Date())),

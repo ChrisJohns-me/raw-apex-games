@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { Title } from "@angular/platform-browser";
+import { APP_NAME } from "@common/app";
 import { UIWindow } from "@core/_refactor/ui-window";
 import { Observable } from "rxjs";
 import { map, shareReplay, switchMap } from "rxjs/operators";
@@ -13,11 +15,15 @@ export class UIContainerComponent {
     @Input() public isDesktopWindow = true;
     @Input() public isTitlebarDraggable = true;
     @Input() public isContentDraggable = true;
-    @Input() public primaryTitle = "";
+    @Input() public set primaryTitle(value: string) {
+        this.titleService.setTitle(`${APP_NAME} - ${value}`);
+    }
     @Input() public secondaryTitle = "";
 
     private readonly uiWindow = new UIWindow();
     private obtained$?: Observable<boolean>;
+
+    constructor(private readonly titleService: Title) {}
 
     public ngOnInit(): void {
         this.obtained$ = this.uiWindow.assureObtained().pipe(

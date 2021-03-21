@@ -18,39 +18,38 @@ export enum GameMapId {
     Olympus = "olympus",
 }
 
+type GameMapConstructor = {
+    id: string;
+    layoutId?: string;
+    activeDates?: ActiveDates;
+    dropshipZStart?: MapCoordinates["z"];
+};
+
 export class GameMap {
-    public id?: GameMapId;
+    public id: string;
     public layoutId?: string; // Useful to reference map image
     public activeDates?: ActiveDates;
     public dropshipZStart?: MapCoordinates["z"]; // Useful to cross-reference with starting location
-
+    /**
+     * @param keyName "kings_canyon"
+     * @returns "Kings Canyon"
+     */
     public get friendlyName(): string {
-        return this.id ? this.getFriendlyName(this.id) : "";
+        if (!this.id) return "";
+        let newMapName = this.id.toLowerCase();
+        newMapName = newMapName.replace(/_/g, " ");
+        newMapName = wordsToUpperCase(newMapName);
+        return newMapName ?? "";
     }
 
     public get isActive(): boolean {
         return !!this.activeDates?.some((date) => date.to == null && date.from < new Date());
     }
 
-    constructor(
-        id: GameMapId,
-        init?: { layoutId?: string; activeDates?: ActiveDates; dropshipZStart?: MapCoordinates["z"] }
-    ) {
-        this.id = id;
-        this.layoutId = init?.layoutId;
-        this.activeDates = init?.activeDates;
-        this.dropshipZStart = init?.dropshipZStart;
-    }
-
-    /**
-     * @param keyName "kings_canyon"
-     * @returns "Kings Canyon"
-     */
-    private getFriendlyName(mapId: GameMapId | string): string {
-        if (!mapId) return "";
-        let newMapName = mapId.toLowerCase();
-        newMapName = newMapName.replace(/_/g, " ");
-        newMapName = wordsToUpperCase(newMapName);
-        return newMapName ?? "";
+    constructor(ctor: GameMapConstructor) {
+        this.id = ctor.id;
+        this.layoutId = ctor.layoutId;
+        this.activeDates = ctor.activeDates;
+        this.dropshipZStart = ctor.dropshipZStart;
     }
 }

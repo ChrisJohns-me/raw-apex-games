@@ -97,7 +97,7 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "show_in_taskbar": false,
+                "show_in_taskbar": true,
                 "mute": true,
                 "popup_blocker": true,
                 "size": {

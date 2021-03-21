@@ -92,11 +92,11 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
                 takeUntil(this._unsubscribe),
                 switchMap(() =>
                     combineLatest([
-                        this.playerLegend.legend$,
+                        this.playerLegend.myLegend$,
                         this.matchMap.map$,
                         this.match.gameMode$,
-                        this.playerActivity.placement$,
-                        this.playerActivity.damageRoster$,
+                        this.playerActivity.myPlacement$,
+                        this.playerActivity.myDamageRoster$,
                         this.match.currentState$,
                     ])
                 ),
@@ -114,9 +114,9 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
                             ? matchTime.endDate?.getTime() - matchTime.startDate?.getTime()
                             : undefined;
                     this.unreportedMatchSummary = {
-                        kills: damageRoster.activePlayerEliminationsInflictedSum,
+                        kills: damageRoster.eliminationsInflictedSum,
                         legend: legend,
-                        damage: damageRoster.activePlayerDamageInflictedSum,
+                        damage: damageRoster.damageInflictedSum,
                         map: gameMap,
                         placement: placement,
                         gameMode: gameMode ?? undefined,

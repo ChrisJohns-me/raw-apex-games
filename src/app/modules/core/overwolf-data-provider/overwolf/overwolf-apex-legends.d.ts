@@ -29,12 +29,16 @@ declare namespace overwolf.gep.ApexLegends {
         victimName: string;
     }
 
+    interface GameEventKill {
+        victimName: string;
+    }
+
     interface EventData {
         damage: GameEventDamage;
         death: string;
         healed_from_ko: string;
         kill_feed: GameEventKillFeed;
-        kill: string;
+        kill: GameEventKill;
         knockdown: string;
         knocked_out: GameEventKnockdown;
         match_end: string;
@@ -318,7 +322,8 @@ declare namespace overwolf.gep.ApexLegends {
             | ""
             | overwolf.gep.ApexLegends.GameEventKillFeed
             | overwolf.gep.ApexLegends.GameEventDamage
-            | overwolf.gep.ApexLegends.GameEventKnockdown;
+            | overwolf.gep.ApexLegends.GameEventKnockdown
+            | overwolf.gep.ApexLegends.GameEventKill;
     }
     interface NewGameEvents {
         events: GameEvent[];

@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { GamePhase } from "@common/game";
 import { TriggerConditions } from "@common/game-event-triggers";
+import { GamePhase } from "@common/game-phase";
 import { MatchState } from "@common/match";
 import { BehaviorSubject, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
