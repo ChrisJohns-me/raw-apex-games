@@ -11,7 +11,7 @@ import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rx
 import { average, averageRate } from "src/utilities";
 import { cleanInt } from "src/utilities/number";
 
-const NUM_PROGRESS_HISTORY = 100;
+const NUM_PROGRESS_HISTORY = 10;
 const ABNORMAL_INCREASE_AMOUNT = 0.1; // Ultimate accelerant or charging station
 const UI_REFRESH_RATE = 1000;
 
