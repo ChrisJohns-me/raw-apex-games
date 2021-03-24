@@ -1,12 +1,11 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { MatchState } from "@common/match/match";
-import { PlayerStatus } from "@common/player";
+import { MatchState } from "@common/match/match-state";
+import { PlayerState } from "@common/player-state";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import { parseBoolean } from "src/utilities";
+import { isEmpty, parseBoolean } from "src/utilities";
 import { cleanInt } from "src/utilities/number";
-import { MatchRosterService } from "./match-roster.service";
 import { MatchService } from "./match.service";
 import { OverwolfDataProviderService } from "./overwolf-data-provider";
 import { PlayerService } from "./player.service";
@@ -16,22 +15,22 @@ import { PlayerService } from "./player.service";
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, MatchRosterService, OverwolfDataProviderService, PlayerService],
-    useFactory: (...deps: unknown[]) =>
-        SingletonServiceProviderFactory("MatchPlayerStatsService", MatchPlayerStatsService, deps),
+    deps: [MatchService, OverwolfDataProviderService, PlayerService],
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerStatsService", MatchPlayerStatsService, deps),
 })
 export class MatchPlayerStatsService implements OnDestroy {
-    /** */
+    /** Data from Overwolf's "tabs". Reset on match start. */
     public readonly myEliminations = new BehaviorSubject<number>(0);
-    /** */
+    /** Data from Overwolf's "tabs". Reset on match start. */
     public readonly myAssists$ = new BehaviorSubject<number>(0);
-    /** */
+    /** Data from Overwolf's "tabs". Reset on match start. */
     public readonly myDamage$ = new BehaviorSubject<number>(0);
+    /** Data from Overwolf's "tabs". Reset on match start. */
+    public readonly myPlacement$ = new BehaviorSubject<number>(0);
+    /** Data from Overwolf's "tabs". Reset on match start. */
+    public readonly victory$ = new BehaviorSubject<boolean>(false);
     /** @deprecated May not work; Feature is unavailable in game-UI. */
     public readonly mySpectators$ = new BehaviorSubject<number>(0);
-
-    public readonly myPlacement$ = new BehaviorSubject<number>(0);
-    public readonly victory$ = new BehaviorSubject<boolean>(false);
     /**
      * Damage amount does not take into consideration victim's HP, only the raw inflicted amount.
      * The contained damage amount will then appear to be inflated.
@@ -39,12 +38,10 @@ export class MatchPlayerStatsService implements OnDestroy {
      */
     public readonly myTotalDamageDealt$ = new BehaviorSubject<number>(0);
 
-    // private _damageRoster = new DamageRoster();
     private readonly _unsubscribe = new Subject<void>();
 
     constructor(
         private readonly match: MatchService,
-        private readonly matchRoster: MatchRosterService,
         private readonly overwolf: OverwolfDataProviderService,
         private readonly player: PlayerService
     ) {}
@@ -73,9 +70,9 @@ export class MatchPlayerStatsService implements OnDestroy {
     }
 
     private setupInfoTabs(): void {
-        const setTabsHigherAmountFn = (newAmount: number, subject: BehaviorSubject<number>): void => {
+        const setAmountFn = (newAmount: number, subject: BehaviorSubject<number>): void => {
             newAmount = cleanInt(newAmount);
-            if (newAmount > subject.value) subject.next(newAmount);
+            subject.next(newAmount);
         };
 
         this.overwolf.infoUpdates$
@@ -84,12 +81,12 @@ export class MatchPlayerStatsService implements OnDestroy {
                 map((infoUpdate) => infoUpdate.info.match_info?.tabs)
             )
             .subscribe((tabs) => {
-                if (!tabs || !Object.keys(tabs).length) return;
-                setTabsHigherAmountFn(tabs.kills, this.myEliminations);
-                setTabsHigherAmountFn(tabs.assists, this.myAssists$);
-                setTabsHigherAmountFn(tabs.damage, this.myDamage$);
-                this.mySpectators$.next(cleanInt(tabs.spectators));
+                if (!tabs || isEmpty(tabs)) return;
+                setAmountFn(tabs.kills, this.myEliminations);
+                setAmountFn(tabs.assists, this.myAssists$);
+                setAmountFn(tabs.damage, this.myDamage$);
                 this.myPlacement$.next(cleanInt(tabs.teams));
+                this.mySpectators$.next(cleanInt(tabs.spectators));
             });
     }
 
@@ -111,11 +108,9 @@ export class MatchPlayerStatsService implements OnDestroy {
         this.match.currentState$
             .pipe(
                 takeUntil(this._unsubscribe),
-                tap((matchStateChanged) =>
-                    matchStateChanged.state === MatchState.Active ? setVictoryFn(false) : null
-                ),
+                tap((matchStateChanged) => (matchStateChanged.state === MatchState.Active ? setVictoryFn(false) : null)),
                 switchMap(() => this.overwolf.infoUpdates$),
-                filter(() => this.player.me$.value.status !== PlayerStatus.Eliminated),
+                filter(() => this.player.myState$.value !== PlayerState.Eliminated),
                 filter((infoUpdate) => infoUpdate.feature === "rank"),
                 map((infoUpdate) => infoUpdate.info.match_info),
                 filter((matchInfo) => !!matchInfo && !!Object.keys(matchInfo).includes("victory")),

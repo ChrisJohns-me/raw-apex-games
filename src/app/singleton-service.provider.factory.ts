@@ -13,11 +13,7 @@ declare interface Window {
  * @param referenceKey Key to add to the Overwolf window references array.
  * @param service Angular Service.
  */
-export const SingletonServiceProviderFactory = (
-    referenceKey: string,
-    service: Provider,
-    deps: any[] = []
-): Singleton => {
+export const SingletonServiceProviderFactory = (referenceKey: string, service: Provider, deps: any[] = []): Singleton => {
     const logPrefix = `[SingletonServiceProvider] "${referenceKey}"`;
     const owWindow = (UIWindow.getMainWindow() as unknown) as Window;
 
@@ -51,7 +47,6 @@ declare interface Window {
  */
 function addInstanceListing(name: string): void {
     const owWindow = (UIWindow.getMainWindow() as unknown) as Window;
-    if (!owWindow[listingReferenceKey] || !Array.isArray(owWindow[listingReferenceKey]))
-        owWindow[listingReferenceKey] = [];
+    if (!owWindow[listingReferenceKey] || !Array.isArray(owWindow[listingReferenceKey])) owWindow[listingReferenceKey] = [];
     owWindow[listingReferenceKey].push({ referenceName: name, createdDate: new Date() });
 }

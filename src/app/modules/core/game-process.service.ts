@@ -5,6 +5,9 @@ import { SingletonServiceProviderFactory } from "src/app/singleton-service.provi
 import { OverwolfDataProviderService } from "./overwolf-data-provider";
 import { OWCONFIG } from "./overwolf-data-provider/overwolf/overwolf-config";
 
+/**
+ * @classdesc Provides general information about the game process
+ */
 @Injectable({
     providedIn: "root",
     deps: [OverwolfDataProviderService],

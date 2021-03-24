@@ -1,17 +1,13 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { TriggerConditions } from "@common/game-event-triggers";
-import { MatchState } from "@common/match";
-import { Player, PlayerStatus } from "@common/player";
+import { MatchState } from "@common/match/match-state";
+import { PlayerState } from "@common/player-state";
+import { TriggerConditions } from "@common/trigger-conditions";
+import { isPlayerNameEqual } from "@common/utilities/player";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { MatchService } from "./match.service";
-import {
-    OverwolfDataProviderService,
-    OWGameEvent,
-    OWGameEventKillFeed,
-    OWInfoUpdates2Event,
-} from "./overwolf-data-provider";
+import { OverwolfDataProviderService, OWGameEvent, OWGameEventKillFeed, OWInfoUpdates2Event } from "./overwolf-data-provider";
 
 @Injectable({
     providedIn: "root",
@@ -19,14 +15,18 @@ import {
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("PlayerService", PlayerService, deps),
 })
 export class PlayerService implements OnDestroy {
-    // public readonly myStatus$ = new BehaviorSubject<PlayerStatus>(PlayerStatus.Alive);
-    public readonly me$: BehaviorSubject<Player>;
+    /** Data gathered from Overwolf's "me" data. If empty during a match, attempts to infer from killfeed. */
+    public readonly myName$ = new BehaviorSubject<Optional<string>>(undefined);
+    /** Reset on match start */
+    public readonly myState$ = new BehaviorSubject<Optional<PlayerState>>(undefined);
+    /** Immediately check if local player is alive */
+    public get isAlive(): boolean {
+        return this.myState$.value === PlayerState.Alive;
+    }
 
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {
-        this.me$ = new BehaviorSubject<Player>(new Player({ isMe: true }));
-    }
+    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -34,22 +34,24 @@ export class PlayerService implements OnDestroy {
     }
 
     public start(): void {
+        this.setupMatchReset();
         this.setupMyName();
-        this.setupMyStatus();
+        this.setupMyState();
     }
 
-    public setMe(mePlayer: Player): void {
-        this.me$.next(mePlayer);
+    /**
+     * Reset state on match start
+     */
+    private setupMatchReset(): void {
+        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+            this.myState$.next(PlayerState.Alive);
+        });
     }
 
     // TODO: Get player name from storage
-    //#region Player Name
     private setupMyName(): void {
-        const checkNameFn = (name?: string): void => {
-            if (name && name !== this.me$.value.name) {
-                this.me$.value.name = name;
-                this.me$.next(this.me$.value);
-            }
+        const setNameFn = (name?: string): void => {
+            if (!isPlayerNameEqual(name, this.myName$.value)) this.myName$.next(name);
         };
 
         this.overwolf.infoUpdates$
@@ -58,7 +60,7 @@ export class PlayerService implements OnDestroy {
                 filter((infoUpdate) => infoUpdate.feature === "me" && !!infoUpdate.info.me?.name),
                 map((infoUpdate) => infoUpdate.info.me?.name)
             )
-            .subscribe((myName) => checkNameFn(myName));
+            .subscribe((myName) => setNameFn(myName));
 
         this.overwolf.newGameEvent$
             .pipe(
@@ -67,46 +69,40 @@ export class PlayerService implements OnDestroy {
                 filter((gameEvent) => !!(gameEvent.data as OWGameEventKillFeed).local_player_name),
                 map((gameEvent) => (gameEvent.data as OWGameEventKillFeed).local_player_name)
             )
-            .subscribe((myName) => checkNameFn(myName));
+            .subscribe((myName) => setNameFn(myName));
     }
-    //#endregion
 
-    //#region Player Status
-    private setupMyStatus(): void {
-        const setNewStatusFn = (newStatus?: PlayerStatus): void => {
-            if (newStatus && newStatus !== this.me$.value.status) {
-                this.me$.value.status = newStatus;
-                this.me$.next(this.me$.value);
-            }
+    private setupMyState(): void {
+        const setNewStateFn = (newState?: PlayerState): void => {
+            if (newState && newState !== this.myState$.value) this.myState$.next(newState);
         };
 
-        const triggers = new TriggerConditions<PlayerStatus, [OWInfoUpdates2Event?, OWGameEvent?, MatchState?]>({
-            [PlayerStatus.Alive]: (infoUpdate, gameEvent, matchState) =>
+        const triggers = new TriggerConditions<PlayerState, [OWInfoUpdates2Event?, OWGameEvent?, MatchState?]>({
+            [PlayerState.Alive]: (infoUpdate, gameEvent, matchState) =>
                 matchState === MatchState.Active ||
                 gameEvent?.name === "healed_from_ko" ||
                 gameEvent?.name === "respawn" ||
                 gameEvent?.name === "match_start",
-            [PlayerStatus.Knocked]: (infoUpdate, gameEvent) =>
+            [PlayerState.Knocked]: (infoUpdate, gameEvent) =>
                 (infoUpdate?.feature === "inventory" && infoUpdate.info.me?.inUse?.inUse === "Knockdown Shield") ||
                 gameEvent?.name === "knocked_out",
-            [PlayerStatus.Eliminated]: (infoUpdate, gameEvent, matchState) =>
+            [PlayerState.Eliminated]: (infoUpdate, gameEvent, matchState) =>
                 matchState === MatchState.Inactive || gameEvent?.name === "death" || gameEvent?.name === "match_end",
         });
 
         this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe)).subscribe((infoUpdate) => {
-            const newStatus = triggers.triggeredFirstKey(infoUpdate, undefined, undefined);
-            setNewStatusFn(newStatus);
+            const newState = triggers.triggeredFirstKey(infoUpdate, undefined, undefined);
+            setNewStateFn(newState);
         });
 
         this.overwolf.newGameEvent$.pipe(takeUntil(this._unsubscribe)).subscribe((gameEvent) => {
-            const newStatus = triggers.triggeredFirstKey(undefined, gameEvent, undefined);
-            setNewStatusFn(newStatus);
+            const newState = triggers.triggeredFirstKey(undefined, gameEvent, undefined);
+            setNewStateFn(newState);
         });
 
         this.match.currentState$.pipe(takeUntil(this._unsubscribe)).subscribe((matchStateChanged) => {
-            const newStatus = triggers.triggeredFirstKey(undefined, undefined, matchStateChanged.state);
-            setNewStatusFn(newStatus);
+            const newState = triggers.triggeredFirstKey(undefined, undefined, matchStateChanged.state);
+            setNewStateFn(newState);
         });
     }
-    //#endregion
 }

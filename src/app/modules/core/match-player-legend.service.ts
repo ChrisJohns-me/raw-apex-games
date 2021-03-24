@@ -1,17 +1,17 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { Legend } from "@common/legend";
+import { isPlayerNameEqual } from "@common/utilities/player";
 import { BehaviorSubject, combineLatest, of, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import { findKeyByKeyRegEx, mathClamp } from "src/utilities";
+import { findKeyByKeyRegEx, isEmpty, mathClamp } from "src/utilities";
 import { OverwolfDataProviderService } from "./overwolf-data-provider";
 import { PlayerService } from "./player.service";
 
 @Injectable({
     providedIn: "root",
     deps: [OverwolfDataProviderService, PlayerService],
-    useFactory: (...deps: unknown[]) =>
-        SingletonServiceProviderFactory("MatchPlayerLegendService", MatchPlayerLegendService, deps),
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerLegendService", MatchPlayerLegendService, deps),
 })
 export class MatchPlayerLegendService implements OnDestroy {
     public readonly myLegend$ = new BehaviorSubject<Optional<Legend>>(undefined);
@@ -33,28 +33,21 @@ export class MatchPlayerLegendService implements OnDestroy {
 
     //#region Legend
     private setupMyLegend(): void {
-        const playerName$ = this.player.me$.pipe(
-            filter((me) => !!me.name),
-            map((me) => me.name)
-        );
+        const playerName$ = this.player.myName$.pipe(filter((myName) => !isEmpty(myName)));
 
         this.overwolf.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe),
-                filter(
-                    (infoUpdate) =>
-                        infoUpdate.feature === "team" &&
-                        !!findKeyByKeyRegEx(infoUpdate.info.match_info, /^legendSelect_/)
-                ),
+                filter((infoUpdate) => infoUpdate.feature === "team" && !!findKeyByKeyRegEx(infoUpdate.info.match_info, /^legendSelect_/)),
                 map((infoUpdate) => infoUpdate.info.match_info),
                 filter((m) => !!m?.legendSelect_0 || !!m?.legendSelect_1 || !!m?.legendSelect_2),
-                map((m) => [m?.legendSelect_0 || m?.legendSelect_1 || m?.legendSelect_2]),
+                map((m) => [m?.legendSelect_0, m?.legendSelect_1, m?.legendSelect_2]),
                 switchMap((legends) => combineLatest([of(legends), playerName$])),
-                map(([legends, playerName]) => legends.find((legend) => legend?.playerName === playerName))
+                map(([legends, playerName]) => legends.find((legend) => isPlayerNameEqual(legend?.playerName, playerName))),
+                filter((legendSelect) => !isEmpty(legendSelect))
             )
             .subscribe((legendSelect) => {
-                if (!legendSelect) return;
-                const playerLegend = new Legend(legendSelect.legendName);
+                const playerLegend = new Legend(legendSelect!.legendName);
                 this.myLegend$.next(playerLegend);
             });
     }

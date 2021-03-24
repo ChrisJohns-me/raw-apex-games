@@ -4,21 +4,18 @@ import { GameProcessService } from "@core/game-process.service";
 import { GameService } from "@core/game.service";
 import { GoogleFormsMatchSummaryTrackerService } from "@core/google-forms-match-summary-tracker.service";
 import { MatchMapService } from "@core/match-map.service";
+import { MatchPlayerInventoryService } from "@core/match-player-inventory.service";
+import { MatchPlayerLegendService } from "@core/match-player-legend.service";
+import { MatchPlayerLocationService } from "@core/match-player-location.service";
+import { MatchPlayerStatsService } from "@core/match-player-stats.service";
 import { MatchRosterService } from "@core/match-roster.service";
 import { MatchService } from "@core/match.service";
-import { OverwolfDataProviderService } from "@core/overwolf-data-provider";
 import { OverwolfExposedDataService } from "@core/overwolf-exposed-data.service";
-import { PlayerActivityService } from "@core/player-activity.service";
-import { PlayerInventoryService } from "@core/player-inventory.service";
-import { PlayerLegendService } from "@core/player-legend.service";
-import { PlayerLocationService } from "@core/player-location.service";
 import { PlayerService } from "@core/player.service";
-import { TeammateService } from "@core/teammate.service";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
 import { merge, Subject } from "rxjs";
 import { delay, filter, takeUntil, tap } from "rxjs/operators";
 import { JSONTryParse } from "src/utilities";
-import { BackgroundService } from "../background/background.service";
 import { InGameDamageCollectorWindowService } from "../in-game-damage-collector-window/in-game-damage-collector-window.service";
 import { InGameMatchTimerWindowService } from "../in-game-match-timer-window/in-game-match-timer-window.service";
 import { InGameUltTimerWindowService } from "../in-game-ult-timer-window/in-game-ult-timer-window.service";
@@ -51,25 +48,22 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     private _unsubscribe = new Subject<void>();
 
     constructor(
-        private readonly backgroundService: BackgroundService,
         private readonly cdr: ChangeDetectorRef,
         private readonly damageCollectorWindow: InGameDamageCollectorWindowService,
         private readonly googleFormsMatchSummaryTracker: GoogleFormsMatchSummaryTrackerService,
         private readonly inGameUltTimerWindow: InGameUltTimerWindowService,
         private readonly matchTimerWindow: InGameMatchTimerWindowService,
-        private readonly overwolfDataProvider: OverwolfDataProviderService,
         private readonly overwolfExposedData: OverwolfExposedDataService,
         public readonly game: GameService,
         public readonly gameProcess: GameProcessService,
         public readonly match: MatchService,
         public readonly matchMap: MatchMapService,
+        public readonly matchPlayerStats: MatchPlayerStatsService,
+        public readonly matchPlayerInventory: MatchPlayerInventoryService,
+        public readonly matchPlayerLegend: MatchPlayerLegendService,
+        public readonly matchPlayerLocation: MatchPlayerLocationService,
         public readonly matchRoster: MatchRosterService,
-        public readonly player: PlayerService,
-        public readonly playerActivity: PlayerActivityService,
-        public readonly playerInventory: PlayerInventoryService,
-        public readonly playerLegend: PlayerLegendService,
-        public readonly playerLocation: PlayerLocationService,
-        public readonly teammate: TeammateService
+        public readonly player: PlayerService
     ) {}
 
     public ngOnInit(): void {

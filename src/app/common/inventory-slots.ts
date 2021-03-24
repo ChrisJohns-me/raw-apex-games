@@ -1,6 +1,8 @@
-import { Item } from "./item";
+import { Item } from "./items/item";
 
-export type InventorySlotItem<T = Item> = T & { amount?: number };
-export interface InventorySlots<T = InventorySlotItem> {
-    [slotId: number]: Optional<T>;
+export interface InventorySlots<T = Item> {
+    [slotId: number]: Optional<{
+        item: T;
+        amount?: number;
+    }>;
 }

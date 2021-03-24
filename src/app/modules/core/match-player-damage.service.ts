@@ -1,14 +1,15 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { MatchDamageEvent } from "@common/match/match-damage-event";
 import { MatchRosterPlayer } from "@common/match/match-roster-player";
-import { PlayerStatus } from "@common/player";
-import { Observable, of, Subject } from "rxjs";
-import { filter, map, takeUntil, timeout } from "rxjs/operators";
+import { PlayerState } from "@common/player-state";
+import { isPlayerNameEqual } from "@common/utilities/player";
+import { Subject } from "rxjs";
+import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
+import { cleanInt, isEmpty, parseBoolean } from "src/utilities";
 import { MatchActivityService } from "./match-activity.service";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
 import { MatchRosterService } from "./match-roster.service";
-import { MatchService } from "./match.service";
 import { OverwolfDataProviderService } from "./overwolf-data-provider";
 import { PlayerService } from "./player.service";
 
@@ -17,9 +18,8 @@ import { PlayerService } from "./player.service";
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, MatchActivityService, MatchRosterService, OverwolfDataProviderService, PlayerService],
-    useFactory: (...deps: unknown[]) =>
-        SingletonServiceProviderFactory("MatchPlayerDamageService", MatchPlayerDamageService, deps),
+    deps: [MatchActivityService, MatchPlayerInventoryService, MatchRosterService, OverwolfDataProviderService, PlayerService],
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerDamageService", MatchPlayerDamageService, deps),
 })
 export class MatchPlayerDamageService implements OnDestroy {
     /** Eliminations/knockdown event stream for the local user */
@@ -30,7 +30,6 @@ export class MatchPlayerDamageService implements OnDestroy {
     private readonly _unsubscribe = new Subject<void>();
 
     constructor(
-        private readonly match: MatchService,
         private readonly matchActivity: MatchActivityService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
         private readonly matchRoster: MatchRosterService,
@@ -44,27 +43,8 @@ export class MatchPlayerDamageService implements OnDestroy {
     }
 
     public start(): void {
-        this.setupMatchReset();
         this.setupMyKillfeedEvents();
         this.setupMyDamageEvents();
-    }
-
-    // Possible usage in a UI Alert, showing basic damage done (on the latest victim) in x seconds (above screen)
-    // Possible usage in Damage Collector.
-
-    /**
-     * Creates a stream
-     * External inflictions made to the victim are ignored.
-     */
-    public getDamageAccumDuration$(accumDurationMs: number): Observable<MatchDamageEvent> {
-        of().pipe(timeout);
-    }
-
-    /**
-     * Reset on Match Start
-     */
-    private setupMatchReset(): void {
-        // this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe();
     }
 
     /**
@@ -74,7 +54,9 @@ export class MatchPlayerDamageService implements OnDestroy {
         this.matchActivity.killfeedEvent$
             .pipe(
                 takeUntil(this._unsubscribe),
-                filter((killfeedEvent) => killfeedEvent.attacker === this.player.me$.value.name)
+                filter((killfeedEvent) => !isEmpty(killfeedEvent.victim.name)),
+                filter((killfeedEvent) => isPlayerNameEqual(killfeedEvent.attacker?.name, this.player.myName$.value)),
+                filter((killfeedEvent) => !isPlayerNameEqual(killfeedEvent.victim.name, this.player.myName$.value))
             )
             .subscribe((killfeedEvent) => this.myKillfeedEvent$.next(killfeedEvent));
     }
@@ -88,14 +70,14 @@ export class MatchPlayerDamageService implements OnDestroy {
                 takeUntil(this._unsubscribe),
                 filter((gameEvent) => gameEvent.name === "damage"),
                 map((gameEvent) => gameEvent.data as overwolf.gep.ApexLegends.GameEventDamage),
-                filter(() => this.player.me$.value.status !== PlayerStatus.Eliminated)
+                filter(() => this.player.myState$.value !== PlayerState.Eliminated)
             )
             .subscribe((rawDamageEvent) => {
                 if (!rawDamageEvent || !rawDamageEvent.targetName) return;
-                if (!this.player.me$.value.name) return;
+                if (!this.player.myName$.value) return;
                 const matchRoster = this.matchRoster.matchRoster$.value;
-                let rosterVictim = matchRoster.findPlayer(rawDamageEvent.targetName);
-                const rosterMe = matchRoster.findPlayer(this.player.me$.value.name);
+                const rosterMe = matchRoster.allPlayers.find((p) => isPlayerNameEqual(p.name, this.player.myName$.value));
+                let rosterVictim = matchRoster.allPlayers.find((p) => isPlayerNameEqual(p.name, rawDamageEvent.targetName));
 
                 if (!rosterVictim) {
                     console.warn(
@@ -107,8 +89,8 @@ export class MatchPlayerDamageService implements OnDestroy {
                 }
                 if (!rosterMe) {
                     console.error(
-                        `Could not add damage event; local player ("${this.player.me$.value.name}") couldn't be found on match roster.`,
-                        this.player.me$.value,
+                        `Could not add damage event; local player ("${this.player.myName$.value}") couldn't be found on match roster.`,
+                        this.player.myName$.value,
                         matchRoster
                     );
                 }
@@ -118,10 +100,10 @@ export class MatchPlayerDamageService implements OnDestroy {
                     timestamp: new Date(),
                     victim: rosterVictim as MatchRosterPlayer,
                     attacker: rosterMe,
-                    hasShield: rawDamageEvent.armor,
-                    isHeadshot: rawDamageEvent.headshot,
-                    shieldDamage: rawDamageEvent.armor ? rawDamageEvent.damageAmount : 0,
-                    healthDamage: !rawDamageEvent.armor ? rawDamageEvent.damageAmount : 0,
+                    hasShield: parseBoolean(rawDamageEvent.armor),
+                    isHeadshot: parseBoolean(rawDamageEvent.headshot),
+                    shieldDamage: rawDamageEvent.armor ? cleanInt(rawDamageEvent.damageAmount) : 0,
+                    healthDamage: !rawDamageEvent.armor ? cleanInt(rawDamageEvent.damageAmount) : 0,
                     weapon: primaryWeapon,
                 };
                 this.myDamageEvent$.next(newDamageEvent);

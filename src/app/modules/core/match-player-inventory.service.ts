@@ -16,8 +16,7 @@ import { OverwolfDataProviderService, OWInfoUpdates2Event, OWMatchInfoMeInventor
 @Injectable({
     providedIn: "root",
     deps: [MatchService, OverwolfDataProviderService],
-    useFactory: (...deps: unknown[]) =>
-        SingletonServiceProviderFactory("MatchPlayerInventoryService", MatchPlayerInventoryService, deps),
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerInventoryService", MatchPlayerInventoryService, deps),
 })
 export class MatchPlayerInventoryService implements OnDestroy {
     /** Local player's current weapon, throwable, inventory, ultimate, etc. item in use */
@@ -115,9 +114,7 @@ export class MatchPlayerInventoryService implements OnDestroy {
                 if (!newSlotId) return;
                 const infoSlotValue: string = (weapons as any)[infoSlotName];
 
-                const slotUpdate = infoSlotValue
-                    ? { item: new WeaponItem({ fromInGameInfoName: infoSlotValue }) }
-                    : undefined;
+                const slotUpdate = infoSlotValue ? { item: new WeaponItem({ fromInGameInfoName: infoSlotValue }) } : undefined;
 
                 const newWeaponSlotItems: InventorySlots<Item> = {
                     ...this.myInventorySlots$.value,

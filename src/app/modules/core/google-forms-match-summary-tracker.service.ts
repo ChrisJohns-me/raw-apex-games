@@ -1,27 +1,27 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
-import { MatchSummary } from "@common/match-summary";
+import { Legend } from "@common/legend";
+import { MatchGameMode } from "@common/match/match-game-mode";
+import { MatchMap } from "@common/match/match-map";
+import { MatchStateChangedEvent } from "@common/match/match-state";
+import { MatchSummary } from "@common/match/match-summary";
 import { combineLatest, Observable, of, ReplaySubject, Subject } from "rxjs";
 import { catchError, delay, filter, map, retryWhen, switchMap, take, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { Config } from "src/config";
 import { MatchMapService } from "./match-map.service";
+import { MatchPlayerLegendService } from "./match-player-legend.service";
+import { MatchPlayerStatsService } from "./match-player-stats.service";
 import { MatchService } from "./match.service";
-import { PlayerActivityService } from "./player-activity.service";
-import { PlayerLegendService } from "./player-legend.service";
 
 const RETRY_DELAY = 10000;
 const MAX_RETRIES = 3;
 
 @Injectable({
     providedIn: "root",
-    deps: [HttpClient, MatchService, MatchMapService, PlayerActivityService, PlayerLegendService],
+    deps: [HttpClient, MatchService, MatchMapService, MatchPlayerLegendService, MatchPlayerStatsService],
     useFactory: (...deps: unknown[]) =>
-        SingletonServiceProviderFactory(
-            "GoogleFormsMatchSummaryTrackerService",
-            GoogleFormsMatchSummaryTrackerService,
-            deps
-        ),
+        SingletonServiceProviderFactory("GoogleFormsMatchSummaryTrackerService", GoogleFormsMatchSummaryTrackerService, deps),
 })
 export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
     public lastMatchSummary = new ReplaySubject<MatchSummary>(1);
@@ -38,8 +38,8 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
         private readonly httpClient: HttpClient,
         private readonly match: MatchService,
         private readonly matchMap: MatchMapService,
-        private readonly playerActivity: PlayerActivityService,
-        private readonly playerLegend: PlayerLegendService
+        private readonly matchPlayerLegend: MatchPlayerLegendService,
+        private readonly matchPlayerStats: MatchPlayerStatsService
     ) {}
 
     public ngOnDestroy(): void {
@@ -55,9 +55,7 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
         this._isTrackingEnabled = enabled;
     }
 
-    public reportMatchSummaryToGoogleForms(
-        matchSummary: MatchSummary
-    ): Observable<{ success: boolean; error?: unknown }> {
+    public reportMatchSummaryToGoogleForms(matchSummary: MatchSummary): Observable<{ success: boolean; error?: unknown }> {
         const url = Config.googleFormUrl;
 
         const params = {
@@ -66,7 +64,7 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
             "entry.606820101": matchSummary.gameMode?.friendlyName ?? "",
             "entry.2001849655": String(matchSummary.placement ?? ""),
             "entry.1889749617": String(matchSummary.damage ?? ""),
-            "entry.1895879894": String(matchSummary.kills ?? ""),
+            "entry.1895879894": String(matchSummary.eliminations ?? ""),
         };
 
         return this.httpClient
@@ -87,16 +85,17 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
         let isTracking = false;
         let isReportTriggered = false;
 
-        this.match.ended$
+        this.match.endedEvent$
             .pipe(
                 takeUntil(this._unsubscribe),
                 switchMap(() =>
-                    combineLatest([
-                        this.playerLegend.myLegend$,
+                    combineLatest<[Legend, MatchMap, MatchGameMode, number, number, number, MatchStateChangedEvent]>([
+                        this.matchPlayerLegend.myLegend$,
                         this.matchMap.map$,
                         this.match.gameMode$,
-                        this.playerActivity.myPlacement$,
-                        this.playerActivity.myDamageRoster$,
+                        this.matchPlayerStats.myPlacement$,
+                        this.matchPlayerStats.myEliminations,
+                        this.matchPlayerStats.myDamage$,
                         this.match.currentState$,
                     ])
                 ),
@@ -108,15 +107,15 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
                     }
                     return isTrackingEnabled;
                 }),
-                tap(([legend, gameMap, gameMode, placement, damageRoster, matchTime]) => {
+                tap(([legend, gameMap, gameMode, placement, eliminations, damage, matchState]) => {
                     const matchDurationMs =
-                        !!matchTime.endDate && !!matchTime.startDate
-                            ? matchTime.endDate?.getTime() - matchTime.startDate?.getTime()
+                        !!matchState.endDate && !!matchState.startDate
+                            ? matchState.endDate?.getTime() - matchState.startDate?.getTime()
                             : undefined;
                     this.unreportedMatchSummary = {
-                        kills: damageRoster.eliminationsInflictedSum,
+                        eliminations: eliminations,
                         legend: legend,
-                        damage: damageRoster.damageInflictedSum,
+                        damage: damage,
                         map: gameMap,
                         placement: placement,
                         gameMode: gameMode ?? undefined,

@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { TriggerConditions } from "@common/game-event-triggers";
 import { GamePhase } from "@common/game-phase";
-import { MatchState } from "@common/match";
+import { MatchState } from "@common/match/match-state";
+import { TriggerConditions } from "@common/trigger-conditions";
 import { BehaviorSubject, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
@@ -9,6 +9,9 @@ import { findValueByKeyRegEx } from "src/utilities";
 import { MatchService } from "./match.service";
 import { OverwolfDataProviderService, OWInfoUpdates2Event } from "./overwolf-data-provider";
 
+/**
+ * @classdesc Provides general information about the game and it's meta state
+ */
 @Injectable({
     providedIn: "root",
     deps: [MatchService, OverwolfDataProviderService],
@@ -30,7 +33,6 @@ export class GameService implements OnDestroy {
         this.setupPhase();
     }
 
-    //#region Game Phase
     private setupPhase(): void {
         const setNewPhaseFn = (newPhase?: GamePhase): void => {
             if (newPhase && newPhase !== this.phase$.value) this.phase$.next(newPhase);
@@ -53,5 +55,4 @@ export class GameService implements OnDestroy {
             setNewPhaseFn(newPhase);
         });
     }
-    //#endregion
 }

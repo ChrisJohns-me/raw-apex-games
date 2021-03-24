@@ -1,12 +1,12 @@
 <app-ui-container [isDesktopWindow]="false" [isContentDraggable]="true" primaryTitle="In Game Damage Collector">
     <div class="damage-collector-container">
-        <div *ngFor="let damageEvent of damageEvents$ | async; index as i">
-            victim.name: {{ damageEvent.name }}<br />
-            shieldDamage: {{ damageEvent.shieldDamageSum }}<br />
-            healthDamage: {{ damageEvent.healthDamageSum }}<br />
-            totalDamage: {{ damageEvent.damageSum }}<br />
-            isKnocked: {{ damageEvent.isKnocked }}<br />
-            isEliminated: {{ damageEvent.isEliminated }}<br /><br />
+        <div *ngFor="let damageEvent of damageCollector.damageEventList$ | async; index as i">
+            victim.name: {{ damageEvent.victim.name }}<br />
+            shieldDamage: {{ damageEvent.shieldDamage }}<br />
+            healthDamage: {{ damageEvent.healthDamage }}<br />
+            totalDamage: {{ (damageEvent.shieldDamage || 0) + (damageEvent.healthDamage || 0) }}<br />
+            isKnocked: {{ damageEvent.isKnockdown }}<br />
+            isEliminated: {{ damageEvent.isElimination }}<br /><br />
         </div>
     </div>
 </app-ui-container>

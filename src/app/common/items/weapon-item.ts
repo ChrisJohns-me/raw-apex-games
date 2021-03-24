@@ -34,6 +34,7 @@ type WeaponItemConstructor = {
     fromInGameEventName?: string;
     fromInGameInfoName?: string;
 };
+
 // TODO: Load statistics from JSON
 export class WeaponItem extends Item {
     public ammoType?: WeaponAmmo;

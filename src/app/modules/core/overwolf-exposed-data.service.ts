@@ -1,12 +1,7 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, Subject } from "rxjs";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import {
-    OverwolfDataProviderService,
-    OWGameEvent,
-    OWInfoUpdates2Event,
-    OWRunningGameInfo,
-} from "./overwolf-data-provider";
+import { OverwolfDataProviderService, OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./overwolf-data-provider";
 
 /**
  * Avoid directly using this service, or the OverwolfDataProviderService
@@ -14,8 +9,7 @@ import {
 @Injectable({
     providedIn: "root",
     deps: [OverwolfDataProviderService],
-    useFactory: (...deps: unknown[]) =>
-        SingletonServiceProviderFactory("OverwolfExposedDataService", OverwolfExposedDataService, deps),
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("OverwolfExposedDataService", OverwolfExposedDataService, deps),
 })
 export class OverwolfExposedDataService implements OnDestroy {
     public get rawGameInfo$(): BehaviorSubject<Optional<OWRunningGameInfo>> {

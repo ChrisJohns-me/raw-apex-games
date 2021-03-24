@@ -1,8 +1,7 @@
 /**
  * Uppercases each word in a string.
  * @param {string} input
- * @returns
- * @example underscoreToUppercaseSpacing("test input") = "Test Input"
+ * @example "test input" == "Test Input"
  */
 export function wordsToUpperCase(input: string): string {
     return input

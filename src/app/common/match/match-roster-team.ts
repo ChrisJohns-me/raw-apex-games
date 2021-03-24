@@ -1,9 +1,9 @@
-import { PlayerStatus as TeamStatus } from "../player";
+import { PlayerState as TeamState } from "../player-state";
 import { MatchRosterPlayer } from "./match-roster-player";
 
-export { TeamStatus };
+export { TeamState };
 
-export interface MatchRosterTeam {
+export interface MatchRosterTeam<T extends MatchRosterPlayer> {
     teamId: number;
-    members: MatchRosterPlayer[];
+    members: T[];
 }

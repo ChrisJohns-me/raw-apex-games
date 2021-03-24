@@ -1,14 +1,9 @@
-<app-ui-container
-    primaryTitle="Dashboard"
-    [isDesktopWindow]="true"
-    [isTitlebarDraggable]="true"
-    [isContentDraggable]="false"
->
+<app-ui-container primaryTitle="Dashboard" [isDesktopWindow]="true" [isTitlebarDraggable]="true" [isContentDraggable]="false">
     <div class="control-bar">
         <button (click)="onOpenUltTimerClick()">Open Ult Timer</button>
         <button (click)="onOpenMatchTimerClick()">Open Match Timer</button>
         <button (click)="onOpenDamageCollectorClick()">Open Damage Collector</button>
-        <button (click)="isTrackingEnabled = !isTrackingEnabled">
+        <button (click)="isTrackingEnabled = !isTrackingEnabled" disabled>
             {{ isTrackingEnabled ? "🟢 Tracking Is On" : "❌ Tracking Is Off" }}
         </button>
 
@@ -39,40 +34,31 @@
                     <p class="inference-item">GameMode: {{ (match.gameMode$ | async)?.friendlyName }}</p>
                     <p class="inference-item">MatchDuration: {{ matchDuration | date: "mm:ss" }}</p>
                 </div>
-                <p class="inference-item">Teammates: {{ (matchRoster.teammates$ | async)?.players }}</p>
+                <p class="inference-item">Teammates</p>
+                <div class="sub-inference-items">
+                    <p class="inference-item" *ngFor="let teammate of (matchRoster.teammateRoster$ | async)?.allPlayers">
+                        {{ teammate.name }} [{{ teammate.legend.friendlyName }}]
+                    </p>
+                </div>
 
                 <p class="inference-item">Match Roster</p>
                 <div class="sub-inference-items">
-                    <p
-                        class="inference-item has-tooltip"
-                        title="Teams with all players disconnected, and teams that have not been fully eliminated. May not equal proper count, due to players still connected and spectating."
-                    >
-                        Roster Teams Alive: {{ (matchRoster.roster$ | async)?.aliveTeams?.length }}
-                    </p>
-                    <p
-                        class="inference-item has-tooltip"
-                        title="Players that have disconnected, and players that have not been eliminated. May not equal proper count, due to players still connected and spectating."
-                    >
-                        Roster Players Alive: {{ (matchRoster.roster$ | async)?.alivePlayers?.length }}
-                    </p>
                     <p class="inference-item">Tabs Teams: {{ matchRoster.numTeams$ | async }}</p>
                     <p class="inference-item">Tabs Players: {{ matchRoster.numPlayers$ | async }}</p>
                 </div>
 
                 <p class="inference-item">Player</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item">PlayerName: {{ (player.me$ | async)?.name }}</p>
-                    <p class="inference-item">PlayerStatus: {{ (player.me$ | async)?.status }}</p>
-                    <p class="inference-item">Legend: {{ (playerLegend.myLegend$ | async)?.friendlyName }}</p>
-                    <p class="inference-item">Placement: {{ playerActivity.myPlacement$ | async }}</p>
-                    <p class="inference-item">Victory: {{ playerActivity.victory$ | async }}</p>
-                    <p class="inference-item">
-                        UltimatePercent: {{ playerLegend.myUltimateCooldown$ | async | percent: "0.0-0" }}
-                    </p>
-                    <p class="inference-item">Kills: {{ playerActivity.myKills$ | async }}</p>
-                    <p class="inference-item">Assists: {{ playerActivity.myAssists$ | async }}</p>
-                    <p class="inference-item">Damage: {{ playerActivity.myDamage$ | async }}</p>
-                    <p class="inference-item"><del>Spectators</del>: {{ playerActivity.mySpectators$ | async }}</p>
+                    <p class="inference-item">PlayerName: {{ player.myName$ | async }}</p>
+                    <p class="inference-item">PlayerStatus: {{ player.myState$ | async }}</p>
+                    <p class="inference-item">Legend: {{ (matchPlayerLegend.myLegend$ | async)?.friendlyName }}</p>
+                    <p class="inference-item">Placement: {{ matchPlayerStats.myPlacement$ | async }}</p>
+                    <p class="inference-item">Victory: {{ matchPlayerStats.victory$ | async }}</p>
+                    <p class="inference-item">UltimatePercent: {{ matchPlayerLegend.myUltimateCooldown$ | async | percent: "0.0-0" }}</p>
+                    <p class="inference-item">Kills: {{ matchPlayerStats.myEliminations | async }}</p>
+                    <p class="inference-item">Assists: {{ matchPlayerStats.myAssists$ | async }}</p>
+                    <p class="inference-item">Damage: {{ matchPlayerStats.myDamage$ | async }}</p>
+                    <p class="inference-item"><del>Spectators</del>: {{ matchPlayerStats.mySpectators$ | async }}</p>
                 </div>
 
                 <p
@@ -83,94 +69,50 @@
                  damage required to knockdown the victim is 1.
                 The contained damage amount will then appear to be inflated."
                 >
-                    TotalDamageDealt: {{ playerActivity.myTotalDamageDealt$ | async }}
+                    TotalDamageDealt: {{ matchPlayerStats.myTotalDamageDealt$ | async }}
                 </p>
 
-                <p class="inference-item">Damage Roster</p>
-                <div class="sub-inference-items">
-                    <p
-                        class="inference-item has-tooltip"
-                        title="Kills that have been confirmed by killfeed + enemy player disconnections. May not equal proper count, due to enemy players still connected and spectating."
-                    >
-                        Eliminations: {{ (playerActivity.myDamageRoster$ | async)?.eliminationsInflictedSum }}
-                    </p>
-                    <p class="inference-item">
-                        Knockdowns: {{ (playerActivity.myDamageRoster$ | async)?.knockdownsInflictedSum }}
-                    </p>
-                    <p
-                        class="inference-item has-tooltip"
-                        title="Damage amount does not take into consideration victim's HP, only the raw inflicted amount.
-                    eg. A victim's HP at 1 and a damage amount of 20 is still recorded at 20 and not 1; even though the
-                    damage required to knockdown the victim is 1.
-                   The contained damage amount will then appear to be inflated."
-                    >
-                        Damage: {{ (playerActivity.myDamageRoster$ | async)?.damageInflictedSum }}
-                        <span
-                            class="warn has-tooltip"
-                            *ngIf="
-                                (playerActivity.myDamageRoster$ | async)?.damageInflictedSum !=
-                                (playerActivity.myTotalDamageDealt$ | async)
-                            "
-                            title="Typically should match the 'TotalDamageDealt' value"
-                        >
-                            (Mismatched)
-                        </span>
-                    </p>
-                    <p class="inference-item">
-                        Headshots: {{ (playerActivity.myDamageRoster$ | async)?.headshotsInflictedSum }}
-                    </p>
-                </div>
-
-                <p class="inference-item">Item In Use: {{ (playerInventory.myInUseItem$ | async)?.friendlyName }}</p>
+                <p class="inference-item">Item In Use: {{ (matchPlayerInventory.myInUseItem$ | async)?.friendlyName }}</p>
                 <p class="inference-item">Weapons</p>
                 <div class="sub-inference-items">
-                    <div
-                        class="inference-item"
-                        *ngFor="let weaponItem of playerInventory.myWeaponSlots$ | async | keyvalue"
-                    >
-                        {{ weaponItem.value?.friendlyName }}
+                    <div class="inference-item" *ngFor="let weaponItem of matchPlayerInventory.myWeaponSlots$ | async | keyvalue">
+                        {{ weaponItem.value?.item?.friendlyName }}
                     </div>
                 </div>
 
                 <p class="inference-item">Player Inventory</p>
                 <div class="sub-inference-items">
-                    <div
-                        class="inference-item"
-                        *ngFor="let slotItem of playerInventory.myInventorySlots$ | async | keyvalue"
-                    >
-                        {{ slotItem.value?.friendlyName ? slotItem.value?.friendlyName : slotItem.value?.id }}
+                    <div class="inference-item" *ngFor="let slotItem of matchPlayerInventory.myInventorySlots$ | async | keyvalue">
+                        {{ slotItem.value?.item?.friendlyName ? slotItem.value?.item?.friendlyName : slotItem.value?.item?.id }}
                         {{ slotItem.value?.amount || 0 > 0 ? "[" + slotItem.value?.amount + "]" : "" }}
                     </div>
                 </div>
 
                 <p class="inference-item">Player Location</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item">LocationPhase: {{ playerLocation.myLocationPhase$ | async }}</p>
+                    <p class="inference-item">LocationPhase: {{ matchPlayerLocation.myLocationPhase$ | async }}</p>
                     <p class="inference-item">
                         Coordinates:
-                        <span *ngFor="let coord of playerLocation.myCoordinates$ | async | keyvalue"
+                        <span *ngFor="let coord of matchPlayerLocation.myCoordinates$ | async | keyvalue"
                             >{{ coord.value < Infinity ? coord.value : "-" }}{{ coord.key !== "z" ? ", " : "" }}
                         </span>
                     </p>
                     <p class="inference-item">
                         StartingCoordinates:
-                        <span *ngFor="let startingCoord of playerLocation.myStartingCoordinates$ | async | keyvalue"
-                            >{{ startingCoord.value < Infinity ? startingCoord.value : "-"
-                            }}{{ startingCoord.key !== "z" ? ", " : "" }}
+                        <span *ngFor="let startingCoord of matchPlayerLocation.myStartingCoordinates$ | async | keyvalue"
+                            >{{ startingCoord.value < Infinity ? startingCoord.value : "-" }}{{ startingCoord.key !== "z" ? ", " : "" }}
                         </span>
                     </p>
                     <p class="inference-item">
                         LandingCoordinates:
-                        <span *ngFor="let landingCoord of playerLocation.myLandingCoordinates$ | async | keyvalue"
-                            >{{ landingCoord.value < Infinity ? landingCoord.value : "-"
-                            }}{{ landingCoord.key !== "z" ? ", " : "" }}
+                        <span *ngFor="let landingCoord of matchPlayerLocation.myLandingCoordinates$ | async | keyvalue"
+                            >{{ landingCoord.value < Infinity ? landingCoord.value : "-" }}{{ landingCoord.key !== "z" ? ", " : "" }}
                         </span>
                     </p>
                     <p class="inference-item">
                         EndingCoordinates:
-                        <span *ngFor="let endingCoord of playerLocation.myEndingCoordinates$ | async | keyvalue"
-                            >{{ endingCoord.value < Infinity ? endingCoord.value : "-"
-                            }}{{ endingCoord.key !== "z" ? ", " : "" }}
+                        <span *ngFor="let endingCoord of matchPlayerLocation.myEndingCoordinates$ | async | keyvalue"
+                            >{{ endingCoord.value < Infinity ? endingCoord.value : "-" }}{{ endingCoord.key !== "z" ? ", " : "" }}
                         </span>
                     </p>
                 </div>

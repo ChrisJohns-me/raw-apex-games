@@ -22,7 +22,6 @@ import { GameInfoDelegate } from "./overwolf/games/game-info-delegate";
 import { OWCONFIG } from "./overwolf/overwolf-config";
 
 /**
- * @class OverwolfDataProviderService
  * @classdesc Data directly from the Overwolf API.
  *            Data JSON parsed, but same structure to what Overwolf API provides.
  * @todo When `isFocused` == true, should the Delegate Event Hooks be re-registered?
@@ -31,8 +30,7 @@ import { OWCONFIG } from "./overwolf/overwolf-config";
 @Injectable({
     providedIn: "root",
     deps: [],
-    useFactory: (...deps: unknown[]) =>
-        SingletonServiceProviderFactory("OverwolfDataProviderService", OverwolfDataProviderService, deps),
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("OverwolfDataProviderService", OverwolfDataProviderService, deps),
 })
 export class OverwolfDataProviderService implements OnDestroy {
     //#region Delegate Outputs
@@ -183,10 +181,7 @@ export class OverwolfDataProviderService implements OnDestroy {
             retryWhen((errors) =>
                 errors.pipe(
                     mergeMap((error, count) => {
-                        if (
-                            error !== "Provider did not set features yet." &&
-                            count >= OWCONFIG.REQUIRED_FEATURES_RETRY_COUNT
-                        ) {
+                        if (error !== "Provider did not set features yet." && count >= OWCONFIG.REQUIRED_FEATURES_RETRY_COUNT) {
                             return throwError(error);
                         }
                         return of(error).pipe(delay(OWCONFIG.REQUIRED_FEATURES_RETRY_DELAY));

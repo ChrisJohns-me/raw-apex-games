@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { WeaponItem } from "@common/items/weapon-item";
 import { MatchDamageEvent } from "@common/match/match-damage-event";
+import { isPlayerNameEqual } from "@common/utilities/player";
 import { differenceInMilliseconds } from "date-fns";
 import { BehaviorSubject, Subject } from "rxjs";
 import { delay, filter, map, takeUntil } from "rxjs/operators";
@@ -10,6 +11,7 @@ import { MatchService } from "./match.service";
 import { OverwolfDataProviderService, OWGameEventKillFeed } from "./overwolf-data-provider";
 import { PlayerService } from "./player.service";
 
+// TODO: Test:
 const KILLFEED_SECONDARY_DELAY = 1000; // Should be larger than `KILLFEED_UNIQUE_TIMEFRAME`
 const KILLFEED_UNIQUE_TIMEFRAME = 3000; // Prevents duplicates from Primary & Secondary source within this timeframe
 
@@ -19,8 +21,7 @@ const KILLFEED_UNIQUE_TIMEFRAME = 3000; // Prevents duplicates from Primary & Se
 @Injectable({
     providedIn: "root",
     deps: [MatchService, MatchRosterService, OverwolfDataProviderService, PlayerService],
-    useFactory: (...deps: unknown[]) =>
-        SingletonServiceProviderFactory("MatchActivityService", MatchActivityService, deps),
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchActivityService", MatchActivityService, deps),
 })
 export class MatchActivityService implements OnDestroy {
     public readonly killfeedEvent$ = new Subject<MatchDamageEvent>();
@@ -67,16 +68,13 @@ export class MatchActivityService implements OnDestroy {
                 map((gameEvent) => gameEvent.data as OWGameEventKillFeed)
             )
             .subscribe((killfeed) => {
-                const victim = this.matchRoster.matchRoster$.value.findPlayer(killfeed.victimName);
-                const attacker = this.matchRoster.matchRoster$.value.findPlayer(killfeed.attackerName);
+                const allRosterPlayers = this.matchRoster.matchRoster$.value.allPlayers;
+                const victim = allRosterPlayers.find((p) => isPlayerNameEqual(p.name, killfeed.victimName));
+                const attacker = allRosterPlayers.find((p) => isPlayerNameEqual(p.name, killfeed.attackerName));
                 const weapon = new WeaponItem({ fromInGameEventName: killfeed.weaponName });
                 const action = killfeed.action;
                 const isVictimKnocked = !!(action === "Melee" || action === "Caustic Gas" || action === "knockdown");
-                const isVictimEliminated = !!(
-                    action === "Bleed Out" ||
-                    action === "kill" ||
-                    action === "headshot_kill"
-                );
+                const isVictimEliminated = !!(action === "Bleed Out" || action === "kill" || action === "headshot_kill");
                 if (!victim) return;
 
                 const newMatchDamageEvent: MatchDamageEvent = {
@@ -111,10 +109,11 @@ export class MatchActivityService implements OnDestroy {
                 delay(KILLFEED_SECONDARY_DELAY)
             )
             .subscribe((gameEvent) => {
-                if (!this.player.me$.value.name) return;
+                if (!this.player.myName$.value) return;
                 const actionData = gameEvent.data as KillOrKnockdownData;
-                const victim = this.matchRoster.matchRoster$.value.findPlayer(actionData.victimName);
-                const attacker = this.matchRoster.matchRoster$.value.findPlayer(this.player.me$.value.name);
+                const allRosterPlayers = this.matchRoster.matchRoster$.value.allPlayers;
+                const victim = allRosterPlayers.find((p) => isPlayerNameEqual(p.name, actionData.victimName));
+                const attacker = allRosterPlayers.find((p) => isPlayerNameEqual(p.name, this.player.myName$.value));
                 const weapon = new WeaponItem({});
                 const isVictimKnocked = gameEvent.name === "knockdown";
                 const isVictimEliminated = gameEvent.name === "kill";
@@ -144,13 +143,13 @@ export class MatchActivityService implements OnDestroy {
      */
     private addUniqueKillfeedEvent(damageEvent: MatchDamageEvent): boolean {
         const foundEvent = this.killfeedEventHistory$.value.find((kf) => {
-            const sameVictim = kf.victim === damageEvent.victim;
-            const sameAttacker = kf.attacker === damageEvent.attacker;
-            const sameKnockdown = kf.isKnockdown === damageEvent.isKnockdown;
-            const sameElimination = kf.isElimination === damageEvent.isElimination;
-            const nullHeadshot = kf.isHeadshot == null && damageEvent.isHeadshot == null;
-            const nullShieldDamage = kf.shieldDamage == null && damageEvent.shieldDamage == null;
-            const nullHealthDamage = kf.healthDamage == null && damageEvent.healthDamage == null;
+            const sameVictim: boolean = isPlayerNameEqual(kf.victim.name, damageEvent.victim.name);
+            const sameAttacker: boolean = isPlayerNameEqual(kf.attacker?.name, damageEvent.attacker?.name);
+            const sameKnockdown: boolean = kf.isKnockdown === damageEvent.isKnockdown;
+            const sameElimination: boolean = kf.isElimination === damageEvent.isElimination;
+            const nullHeadshot: boolean = kf.isHeadshot == null && damageEvent.isHeadshot == null;
+            const nullShieldDamage: boolean = kf.shieldDamage == null && damageEvent.shieldDamage == null;
+            const nullHealthDamage: boolean = kf.healthDamage == null && damageEvent.healthDamage == null;
             return (
                 !!kf.attacker &&
                 !!kf.victim &&
@@ -164,9 +163,7 @@ export class MatchActivityService implements OnDestroy {
             );
         });
 
-        const timestampMsDiff = foundEvent
-            ? differenceInMilliseconds(foundEvent.timestamp, damageEvent.timestamp)
-            : Infinity;
+        const timestampMsDiff = foundEvent ? differenceInMilliseconds(foundEvent.timestamp, damageEvent.timestamp) : Infinity;
         const hasSimilarDates = KILLFEED_UNIQUE_TIMEFRAME > Math.abs(timestampMsDiff);
 
         if (foundEvent && hasSimilarDates) {

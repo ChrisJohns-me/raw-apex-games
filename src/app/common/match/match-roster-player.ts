@@ -2,8 +2,8 @@ import { PlatformHardware, PlatformSoftware } from "@common/platform";
 
 export interface MatchRosterPlayer {
     name: string;
-    rosterKey: string;
-    teamId: number;
-    platformHardware: PlatformHardware;
-    platformSoftware: PlatformSoftware;
+    teamId?: number;
+    rosterKey?: string;
+    platformHardware?: PlatformHardware;
+    platformSoftware?: PlatformSoftware;
 }

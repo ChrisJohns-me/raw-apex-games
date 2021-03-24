@@ -1,22 +1,26 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { GameMap } from "@common/game-map";
-import { GameMapList } from "@common/game-map-list";
+import { MatchMap } from "@common/match/match-map";
+import { MatchMapList } from "@common/match/match-map-list";
 import { BehaviorSubject, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import { PlayerLocationService } from "./player-location.service";
+import { MatchPlayerLocationService } from "./match-player-location.service";
 
 @Injectable({
     providedIn: "root",
-    deps: [PlayerLocationService],
+    deps: [MatchPlayerLocationService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchMapService", MatchMapService, deps),
 })
 export class MatchMapService implements OnDestroy {
-    public readonly map$ = new BehaviorSubject<GameMap>(GameMapList[0]);
+    /**
+     * Emits Match's Map at the beginning of a match.
+     * Inferred by the player's starting Z location.
+     */
+    public readonly map$ = new BehaviorSubject<Optional<MatchMap>>(undefined);
 
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor(private readonly playerLocation: PlayerLocationService) {}
+    constructor(private readonly matchPlayerLocation: MatchPlayerLocationService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -27,16 +31,16 @@ export class MatchMapService implements OnDestroy {
         this.setupMap();
     }
 
-    //#region Map
-    /** Less than ideal logic to deduce the map based off of dropship's starting z-position */
+    /**
+     * Less than ideal logic to deduce the map based off of dropship's starting z-position
+     */
     private setupMap(): void {
-        this.playerLocation.myStartingCoordinates$
-            .pipe(takeUntil(this._unsubscribe))
-            .subscribe((startingCoordinates) => {
-                const gameMap = GameMapList.find((map) => map.dropshipZStart == startingCoordinates?.z);
-                if (!gameMap) return;
-                this.map$.next(gameMap);
-            });
+        this.matchPlayerLocation.myStartingCoordinates$.pipe(takeUntil(this._unsubscribe)).subscribe((startingCoordinates) => {
+            const gameMap = MatchMapList.find((map) => map.dropshipZStart == startingCoordinates?.z);
+            if (!gameMap)
+                console.warn(`Unable to map the dropship's starting z-position to any known maps. (z: ${startingCoordinates?.z})`);
+
+            this.map$.next(gameMap);
+        });
     }
-    //#endregion
 }

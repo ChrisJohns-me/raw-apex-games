@@ -1,48 +1,55 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { DamageEvent } from "@common/damage-event";
-import { MatchState } from "@common/match";
-import { MatchRoster } from "@common/match-roster";
-import { Player, PlayerStatus } from "@common/player";
-import { Team } from "@common/team";
-import { WeaponItem } from "@common/weapon-item";
-import { addSeconds } from "date-fns";
+import { Legend } from "@common/legend";
+import { MatchRoster } from "@common/match/match-roster";
+import { MatchRosterPlayer } from "@common/match/match-roster-player";
+import { MatchRosterTeammate } from "@common/match/match-roster-teammate";
+import { isPlayerNameEqual } from "@common/utilities/player";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import { findValueByKeyRegEx } from "src/utilities";
+import { findKeyByKeyRegEx, findValueByKeyRegEx, isEmpty } from "src/utilities";
 import { cleanInt } from "src/utilities/number";
 import { MatchService } from "./match.service";
-import {
-    OverwolfDataProviderService,
-    OWGameEventKillFeed,
-    OWMatchInfo,
-    OWMatchInfoRoster,
-} from "./overwolf-data-provider";
-import { PlayerService } from "./player.service";
+import { OverwolfDataProviderService, OWMatchInfoRoster } from "./overwolf-data-provider";
 
+/**
+ * @classdesc Provides a list, counts, and information about players in the match.
+ */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, OverwolfDataProviderService, PlayerService],
+    deps: [MatchService, OverwolfDataProviderService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchRosterService", MatchRosterService, deps),
 })
 export class MatchRosterService implements OnDestroy {
-    public readonly roster$ = new BehaviorSubject<MatchRoster>(new MatchRoster());
-    public readonly killfeedEvent$ = new Subject<DamageEvent>();
-    public readonly killfeedEventList$ = new BehaviorSubject<DamageEvent[]>([]);
-    // TODO:
-    public readonly teammates$ = new BehaviorSubject<Optional<MatchRoster>>(undefined);
+    /**
+     * Provides list of players in the current match.
+     * Emits only at the beginning of the match, or upon subscription.
+     * @returns {MatchRoster}
+     */
+    public readonly matchRoster$ = new BehaviorSubject<MatchRoster>(new MatchRoster());
+    /**
+     * Provides list of teammates in the current match.
+     * Emits on each legend selection, at beginning of the match, or upon subscription.
+     * @returns {MatchRoster<MatchRosterTeammate>}
+     */
+    public readonly teammateRoster$ = new BehaviorSubject<MatchRoster<MatchRosterTeammate>>(new MatchRoster<MatchRosterTeammate>());
+
+    /**
+     * From Overwolf's "tabs" data
+     * @returns {number} teams alive in the current match.
+     */
     public readonly numTeams$ = new BehaviorSubject<number>(0);
-    /** 0 if "fair-play" mode is on (<5 players remain) */
+    /**
+     * From Overwolf's "tabs" data
+     * @returns {number} players alive in the current match; 0 if "fair-play" mode is on (<5 players remain).
+     */
     public readonly numPlayers$ = new BehaviorSubject<number>(0);
 
-    private _owRawRoster: Partial<OWMatchInfo> = {};
+    private stagedMatchRoster = new MatchRoster();
+    private stagedTeammateRoster = new MatchRoster<MatchRosterTeammate>();
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor(
-        private readonly match: MatchService,
-        private readonly overwolf: OverwolfDataProviderService,
-        private readonly player: PlayerService
-    ) {}
+    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -50,249 +57,115 @@ export class MatchRosterService implements OnDestroy {
     }
 
     public start(): void {
-        this.setupMatchStateEvents();
-        this.setupInfoTabs();
-        this.setupRoster();
-        this.setupKillfeed();
+        this.setupMatchStart();
+        this.setupMatchReset();
+        this.setupCounts();
+        this.setupMatchRoster();
+        this.setupTeammateRoster();
     }
 
     /**
-     * Makes sure that the player's status is Alive (since there's activity been detected); checks for if the player has been previously eliminated.
-     *  - Should be used against killfeed events, where `player` is the attacker;
-     *  - Or used against inflicted damage events, where `player` is the victim.
-     * ...which would indicate that the player has respawned, knocked/eliminated another player, or has been damaged by local player.
+     * Resets states and emits rosters
      */
-    public setPlayerHasActivity(player: Player): void {
-        if (!player.name) return;
-        const foundPlayer = this.roster$.value.players.find((ep) => ep.name === player.name);
-
-        if (foundPlayer?.status === PlayerStatus.Eliminated) {
-            console.debug(
-                `[${this.constructor.name}] Player "${foundPlayer.name}" possibly respawned. ` +
-                    `Player has activity after status was eliminated.`
-            );
-
-            const newRoster = this.roster$.value;
-            newRoster.respawnPlayer(foundPlayer);
-            this.roster$.next(newRoster);
-        }
-
-        if (foundPlayer) foundPlayer.lastActivity = new Date();
-    }
-
-    private setupMatchStateEvents(): void {
-        // Reset state on match start
-        this.match.started$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+    private setupMatchStart(): void {
+        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             this.numPlayers$.next(0);
             this.numTeams$.next(0);
-            this.killfeedEventList$.next([]);
-            // Roster should be ready to be created
-            this.roster$.next(this.createRoster(this._owRawRoster));
-        });
+            // Rosters should be ready to be emitted
+            if (this.stagedMatchRoster.allPlayers.length) this.matchRoster$.next(this.stagedMatchRoster);
+            else console.error(`Could not emit roster; staged match roster was empty!`);
 
-        // Clear Overwolf roster only
-        this.match.ended$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-            this._owRawRoster = {};
+            if (this.stagedTeammateRoster.allPlayers.length) this.teammateRoster$.next(this.stagedTeammateRoster);
+            else console.error(`Could not emit team roster; staged team roster was empty!`);
+
+            this.resetStagedRosters();
         });
     }
 
-    private setupInfoTabs(): void {
-        this.overwolf.infoUpdates$
-            .pipe(
-                filter((infoUpdate) => infoUpdate.feature === "match_info" && !!infoUpdate.info.match_info?.tabs),
-                map((infoUpdate) => infoUpdate.info.match_info?.tabs)
-            )
-            .subscribe((tabs) => {
-                if (!tabs || !Object.keys(tabs).length) return;
-                this.numTeams$.next(cleanInt(tabs.teams));
-                this.numPlayers$.next(cleanInt(tabs.players));
-            });
+    /**
+     * Resets state on match start
+     */
+    private setupMatchReset(): void {
+        this.match.endedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+            this.resetStagedRosters();
+        });
     }
 
-    //#region Roster
-    private setupRoster(): void {
-        // Get all Overwolf roster items
+    /**
+     * Update teams/players counters
+     */
+    private setupCounts(): void {
         this.overwolf.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe),
+                filter((infoUpdate) => infoUpdate.feature === "match_info" && !!infoUpdate.info.match_info?.tabs),
+                map((infoUpdate) => infoUpdate.info.match_info?.tabs),
+                filter((tabs) => !isEmpty(tabs))
+            )
+            .subscribe((tabs) => {
+                const numTeams = cleanInt(tabs!.teams);
+                const numPlayers = cleanInt(tabs!.players);
+
+                if (numTeams >= 0) this.numTeams$.next(numTeams);
+                if (numPlayers >= 0) this.numPlayers$.next(numPlayers);
+            });
+    }
+
+    /**
+     * Listens to the roster info prior to a match,
+     *  pushes all roster items into a staging variable.
+     * Does not update the roster after the match starts.
+     */
+    private setupMatchRoster(): void {
+        this.overwolf.infoUpdates$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                // Should only receive roster additions prior to the match start
+                filter(() => !this.match.isActive),
                 filter((infoUpdate) => infoUpdate.feature === "roster"),
-                filter(
-                    (infoUpdate) => !!findValueByKeyRegEx<OWMatchInfoRoster>(infoUpdate.info.match_info, /^roster_/)
-                ),
                 map((infoUpdate) => infoUpdate.info.match_info)
             )
             .subscribe((matchInfo) => {
-                this.rawRosterUpdate(matchInfo);
-            });
-    }
+                const rosterKey = findKeyByKeyRegEx(matchInfo, /^roster_/);
+                if (!rosterKey) return;
+                const rosterItem: OWMatchInfoRoster = (matchInfo as any)[rosterKey];
+                if (!rosterItem) return;
 
-    /**
-     * Occurs when there's a any update to the roster
-     * @param {OWMatchInfo} matchInfo Incoming Overwolf match info
-     */
-    private rawRosterUpdate(matchInfo?: OWMatchInfo): void {
-        if (!matchInfo) return;
-        const rosterKey = Object.keys(matchInfo)[0];
-        const rosterItem: OWMatchInfoRoster = (matchInfo as any)[rosterKey];
-        const isDeletingRosterItem = typeof matchInfo === "object" && String(rosterItem) == "null";
-        const player = this.roster$.value.players.find((p) => !!rosterItem?.name && p.name === rosterItem?.name);
-
-        if (rosterItem?.state === "dead") {
-            if (player) this.eliminatePlayerOnRoster(player);
-        } else if (rosterItem?.state === "knockedout") {
-            if (player) this.knockdownPlayerOnRoster(player);
-        } else if (isDeletingRosterItem) {
-            if (this.match.currentState$.value.state === MatchState.Active) {
-                // Roster item was deleted during the match, indicating that the player has quit the game
-                this.rosterPlayerQuit(Object.keys(matchInfo)[0]);
-            }
-        }
-
-        // Perform the action to Add / Remove roster item from roster list
-        if (isDeletingRosterItem) {
-            if (Object.keys(this._owRawRoster).length) delete (this._owRawRoster as any)[rosterKey];
-        } else {
-            this._owRawRoster = { ...this._owRawRoster, ...matchInfo };
-        }
-        this.roster$.next(this.roster$.value);
-    }
-
-    private createRoster(owRawRoster: Optional<Partial<OWMatchInfo>>): MatchRoster {
-        if (!owRawRoster || typeof owRawRoster !== "object") return new MatchRoster();
-        const teams: Team[] = [];
-
-        for (const [rosterId, owRostPlayer] of Object.entries(owRawRoster) as [[string, OWMatchInfoRoster]]) {
-            const me = this.player.me$.value;
-            if (!/^roster/.test(rosterId)) continue;
-            if (!owRostPlayer || isNaN(owRostPlayer.team_id)) continue;
-            const newPlayer = new Player({
-                name: owRostPlayer.name,
-                rosterId: rosterId,
-                isMe: owRostPlayer.name === me.name,
-                teamId: owRostPlayer.team_id,
-                status: PlayerStatus.Alive,
-                platformHardware: owRostPlayer.platform_hw,
-                platformSoftware: owRostPlayer.platform_sw,
-            });
-
-            if (me.name && owRostPlayer.name === me.name) this.player.setMe(newPlayer);
-
-            const foundTeam = teams.find((t) => t.teamId === owRostPlayer.team_id);
-            if (!foundTeam) {
-                const newTeam = new Team({
-                    teamId: owRostPlayer.team_id,
-                    isMyTeam: owRostPlayer.isTeammate,
-                    members: [newPlayer],
-                });
-                teams.push(newTeam);
-            } else {
-                foundTeam.members.push(newPlayer);
-            }
-        }
-
-        return new MatchRoster(teams);
-    }
-
-    /**
-     * Takes roster deletion events.
-     * Ensures player is eliminated from the roster.
-     * Generates an elimination killfeed event (if it does not already exist) from the last knockdown killfeed event.
-     * @param rosterId Roster key from "match_info", ie. "roster_0"
-     */
-    private rosterPlayerQuit(rosterId: string): void {
-        const owDeletedRosterPlayer: Optional<OWMatchInfoRoster> =
-            Object.keys(this._owRawRoster).length && typeof (this._owRawRoster as AnyObject)[rosterId] === "object"
-                ? (this._owRawRoster as AnyObject)[rosterId]
-                : undefined;
-        const deletedPlayerName = owDeletedRosterPlayer?.name;
-        const deletedPlayerRoster =
-            deletedPlayerName && this.roster$.value.players.find((p) => p.name === deletedPlayerName);
-        if (!deletedPlayerName) return;
-
-        if (deletedPlayerRoster) this.eliminatePlayerOnRoster(deletedPlayerRoster);
-
-        // Generate a kill feed event from last known knockdown
-        //  only if an elimination is not found after the knockdown
-        const deletedPlayerKillfeed = [...this.killfeedEventList$.value]
-            .filter((e) => e.victim.name === deletedPlayerName)
-            .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-
-        const deletedPlayerLastKnockdown = deletedPlayerKillfeed.find((e) => e.isKnocked);
-        const deletedPlayerLastElimination = deletedPlayerKillfeed.find((e) => e.isEliminated);
-
-        if (!deletedPlayerLastKnockdown) return; // Deleted player has no knockdown event
-        if (
-            deletedPlayerLastElimination &&
-            deletedPlayerLastKnockdown.timestamp.getTime() < deletedPlayerLastElimination.timestamp.getTime()
-        ) {
-            // Deleted player's elimination killfeed event has already been recorded
-            return;
-        }
-
-        console.debug(
-            `[${this.constructor.name}] Player quit; Auto-generated elimination killfeed event from knockdown for victim: "${deletedPlayerName}"`
-        );
-        const newDamageEvent: DamageEvent = {
-            ...deletedPlayerLastKnockdown,
-            timestamp: new Date(),
-            isEliminated: true,
-            isKnocked: false,
-            weapon: new WeaponItem({ fromInGameEventName: "Bleed Out" }),
-        };
-        this.killfeedEvent$.next(newDamageEvent);
-    }
-    //#endregion
-
-    //#region Killfeed
-    private setupKillfeed(): void {
-        this.overwolf.newGameEvent$
-            .pipe(
-                takeUntil(this._unsubscribe),
-                filter((gameEvent) => gameEvent.name === "kill_feed"),
-                map((gameEvent) => gameEvent.data as OWGameEventKillFeed)
-            )
-            .subscribe((killfeed) => {
-                const victim = this.roster$.value.players.find((p) => p.name === killfeed.victimName);
-                const attacker = this.roster$.value.players.find((p) => p.name === killfeed.attackerName);
-                const weapon = new WeaponItem({ fromInGameEventName: killfeed.weaponName });
-                const act = killfeed.action;
-                const isVictimKnocked = !!(act === "Melee" || act === "Caustic Gas" || act === "knockdown");
-                const isVictimEliminated = !!(act === "Bleed Out" || act === "kill" || act === "headshot_kill");
-
-                if (!victim) return;
-
-                if (isVictimKnocked) this.knockdownPlayerOnRoster(victim);
-                else if (isVictimEliminated) this.eliminatePlayerOnRoster(victim);
-
-                if (attacker?.lastActivity && new Date() > addSeconds(attacker.lastActivity, 30)) {
-                    this.setPlayerHasActivity(attacker); // Enough time to get a kill, and be respawned
-                }
-                if (victim.lastActivity && new Date() > addSeconds(victim.lastActivity, 90)) {
-                    this.setPlayerHasActivity(victim); // Enough time to bleed out, and be respawned
-                }
-
-                const newDamageEvent: DamageEvent = {
-                    timestamp: new Date(),
-                    victim: victim,
-                    attacker: attacker,
-                    isKnocked: isVictimKnocked,
-                    isEliminated: isVictimEliminated,
-                    weapon,
+                const newRosterPlayer: MatchRosterPlayer = {
+                    name: rosterItem.name,
+                    rosterKey: rosterKey,
+                    teamId: rosterItem.team_id,
+                    platformHardware: rosterItem.platform_hw,
+                    platformSoftware: rosterItem.platform_sw,
                 };
 
-                this.killfeedEvent$.next(newDamageEvent);
-                const newKillfeedEventList = [...this.killfeedEventList$.value, newDamageEvent];
-                this.killfeedEventList$.next(newKillfeedEventList);
+                this.stagedMatchRoster.addPlayer(newRosterPlayer);
             });
     }
-    //#endregion
-    private eliminatePlayerOnRoster(victim: Player): void {
-        this.roster$.value.eliminatePlayer(victim);
-        this.roster$.next(this.roster$.value);
+
+    private setupTeammateRoster(): void {
+        this.overwolf.infoUpdates$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                filter((infoUpdate) => infoUpdate.feature === "team"),
+                map((infoUpdate) => infoUpdate.info.match_info),
+                map((m) => findValueByKeyRegEx(m, /^legendSelect_/) as overwolf.gep.ApexLegends.MatchInfoLegendSelect),
+                filter((legendSelect) => !isEmpty(legendSelect))
+            )
+            .subscribe((legendSelect) => {
+                const rosterPlayer = this.stagedMatchRoster.allPlayers.find((p) => isPlayerNameEqual(p.name, legendSelect.playerName));
+                const newTeammateLegend = new Legend(legendSelect.legendName);
+                let newRosterTeammate: MatchRosterTeammate;
+
+                if (rosterPlayer) newRosterTeammate = { ...rosterPlayer, legend: newTeammateLegend };
+                else newRosterTeammate = { name: legendSelect.playerName, legend: newTeammateLegend };
+
+                this.stagedTeammateRoster.addPlayer(newRosterTeammate);
+            });
     }
 
-    private knockdownPlayerOnRoster(victim: Player): void {
-        this.roster$.value.knockdownPlayer(victim);
-        this.roster$.next(this.roster$.value);
+    private resetStagedRosters(): void {
+        this.stagedMatchRoster = new MatchRoster();
+        this.stagedTeammateRoster = new MatchRoster<MatchRosterTeammate>();
     }
 }

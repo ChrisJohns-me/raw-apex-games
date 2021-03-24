@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { MatchState } from "@common/match";
+import { MatchState } from "@common/match/match-state";
 import { MatchService } from "@core/match.service";
 import { isValid } from "date-fns";
 import { Subject, timer } from "rxjs";
@@ -7,6 +7,7 @@ import { delay, filter, switchMap, takeUntil, tap } from "rxjs/operators";
 
 const SHOW_TIMER_TIMEOUT = 15000;
 const UI_TIMER_REFRESH_RATE = 1000;
+
 @Component({
     selector: "app-in-game-match-timer-window",
     templateUrl: "./in-game-match-timer-window.component.html",
@@ -57,7 +58,7 @@ export class InGameMatchTimerWindowComponent implements OnInit, OnDestroy {
             )
             .subscribe(() => this.cdr.detectChanges());
 
-        this.match.ended$
+        this.match.endedEvent$
             .pipe(
                 takeUntil(this._unsubscribe),
                 delay(SHOW_TIMER_TIMEOUT),

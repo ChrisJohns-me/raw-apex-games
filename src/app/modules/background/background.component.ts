@@ -38,12 +38,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     }
 
     private registerUIWindows(): void {
-        merge(
-            this.dashboardWindow.open(),
-            this.damageCollectorWindow.open(),
-            this.matchTimerWindow.open(),
-            this.ultTimerWindow.open()
-        )
+        merge(this.dashboardWindow.open(), this.damageCollectorWindow.open(), this.matchTimerWindow.open(), this.ultTimerWindow.open())
             .pipe(takeUntil(this._unsubscribe))
             .subscribe();
     }

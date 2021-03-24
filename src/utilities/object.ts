@@ -17,7 +17,7 @@ export function findValueByKeyRegEx<V extends ObjectPropertyTypes<T>, T extends 
     regEx: RegExp
 ): Optional<V> {
     if (!obj) return undefined;
-    const key = Object.keys(obj).find((key) => regEx.test(key));
+    const key = findKeyByKeyRegEx(obj, regEx);
     const value = !!key && Object.prototype.hasOwnProperty.call(obj, key) ? obj[key] : undefined;
     return value;
 }
