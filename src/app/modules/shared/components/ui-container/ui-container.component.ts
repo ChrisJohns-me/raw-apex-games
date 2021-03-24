@@ -17,10 +17,15 @@ export class UIContainerComponent {
     @Input() public isContentDraggable = true;
     @Input() public set primaryTitle(value: string) {
         this.titleService.setTitle(`${APP_NAME} - ${value}`);
+        this._primaryTitle = value;
+    }
+    public get primaryTitle(): string {
+        return this._primaryTitle;
     }
     @Input() public secondaryTitle = "";
 
     private readonly uiWindow = new UIWindow();
+    private _primaryTitle = "";
     private obtained$?: Observable<boolean>;
 
     constructor(private readonly titleService: Title) {}

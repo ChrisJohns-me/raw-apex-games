@@ -1,8 +1,14 @@
 <app-ui-container primaryTitle="Dashboard" [isDesktopWindow]="true" [isTitlebarDraggable]="true" [isContentDraggable]="false">
     <div class="control-bar">
-        <button (click)="onOpenUltTimerClick()">Open Ult Timer</button>
-        <button (click)="onOpenMatchTimerClick()">Open Match Timer</button>
-        <button (click)="onOpenDamageCollectorClick()">Open Damage Collector</button>
+        <button (click)="ultTimerWindowEnabled = !ultTimerWindowEnabled">
+            Ult Timer [{{ ultTimerWindowEnabled ? "enabled" : "disabled" }}]
+        </button>
+        <button (click)="matchTimerWindowEnabled = !matchTimerWindowEnabled">
+            Match Timer [{{ matchTimerWindowEnabled ? "enabled" : "disabled" }}]
+        </button>
+        <button (click)="damageCollectorWindowEnabled = !damageCollectorWindowEnabled">
+            Damage Collector [{{ damageCollectorWindowEnabled ? "enabled" : "disabled" }}]
+        </button>
         <button (click)="isTrackingEnabled = !isTrackingEnabled" disabled>
             {{ isTrackingEnabled ? "🟢 Tracking Is On" : "❌ Tracking Is Off" }}
         </button>
@@ -16,49 +22,88 @@
             <div>
                 <p class="inference-item">Game</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item">
-                        <a (click)="gameProcess.isRunning$.next(true)">IsRunning</a>:
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        <a (click)="gameProcess.isRunning$.next(!gameProcess.isRunning$.value)">IsRunning</a>:
                         {{ gameProcess.isRunning$ | async }}
                     </p>
-                    <p class="inference-item">
-                        <a (click)="gameProcess.isInFocus$.next(true)">IsInFocus</a>:
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        <a (click)="gameProcess.isInFocus$.next(!gameProcess.isInFocus$)">IsInFocus</a>:
                         {{ gameProcess.isInFocus$ | async }}
                     </p>
-                    <p class="inference-item">GamePhase: {{ game.phase$ | async }}</p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        GamePhase: {{ game.phase$ | async }}
+                    </p>
                 </div>
 
                 <p class="inference-item">Match</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item">State: {{ (match.state$ | async)?.state }}</p>
-                    <p class="inference-item">Map: {{ (matchMap.map$ | async)?.friendlyName }}</p>
-                    <p class="inference-item">GameMode: {{ (match.gameMode$ | async)?.friendlyName }}</p>
-                    <p class="inference-item">MatchDuration: {{ matchDuration | date: "mm:ss" }}</p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        State: {{ (match.state$ | async)?.state }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        Map: {{ (matchMap.map$ | async)?.friendlyName }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        GameMode: {{ (match.gameMode$ | async)?.friendlyName }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        MatchDuration: {{ matchDuration | date: "mm:ss" }}
+                    </p>
                 </div>
                 <p class="inference-item">Teammates</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item" *ngFor="let teammate of (matchRoster.teammateRoster$ | async)?.allPlayers">
+                    <p
+                        class="inference-item"
+                        appHighlightOnChange
+                        [highlightColor]="changedHighlightColor"
+                        *ngFor="let teammate of (matchRoster.teammateRoster$ | async)?.allPlayers"
+                    >
                         {{ teammate.name }} [{{ teammate.legend?.friendlyName }}]
                     </p>
                 </div>
 
                 <p class="inference-item">Match Roster</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item">Tabs Teams: {{ matchRoster.numTeams$ | async }}</p>
-                    <p class="inference-item">Tabs Players: {{ matchRoster.numPlayers$ | async }}</p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        Tabs Teams: {{ matchRoster.numTeams$ | async }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        Tabs Players: {{ matchRoster.numPlayers$ | async }}
+                    </p>
                 </div>
 
                 <p class="inference-item">Player</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item">PlayerName: {{ player.myName$ | async }}</p>
-                    <p class="inference-item">PlayerStatus: {{ matchPlayer.myState$ | async }}</p>
-                    <p class="inference-item">Legend: {{ (matchPlayerLegend.myLegend$ | async)?.friendlyName }}</p>
-                    <p class="inference-item">Placement: {{ matchPlayerStats.myPlacement$ | async }}</p>
-                    <p class="inference-item">Victory: {{ matchPlayerStats.victory$ | async }}</p>
-                    <p class="inference-item">UltimatePercent: {{ matchPlayerLegend.myUltimateCooldown$ | async | percent: "0.0-0" }}</p>
-                    <p class="inference-item">Kills: {{ matchPlayerStats.myEliminations | async }}</p>
-                    <p class="inference-item">Assists: {{ matchPlayerStats.myAssists$ | async }}</p>
-                    <p class="inference-item">Damage: {{ matchPlayerStats.myDamage$ | async }}</p>
-                    <p class="inference-item"><del>Spectators</del>: {{ matchPlayerStats.mySpectators$ | async }}</p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        PlayerName: {{ player.myName$ | async }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        PlayerStatus: {{ matchPlayer.myState$ | async }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        Legend: {{ (matchPlayerLegend.myLegend$ | async)?.friendlyName }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        Placement: {{ matchPlayerStats.myPlacement$ | async }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        Victory: {{ matchPlayerStats.victory$ | async }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        UltimatePercent: {{ matchPlayerLegend.myUltimateCooldown$ | async | percent: "0.0-0" }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        Kills: {{ matchPlayerStats.myEliminations | async }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        Assists: {{ matchPlayerStats.myAssists$ | async }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        Damage: {{ matchPlayerStats.myDamage$ | async }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        <del>Spectators</del>: {{ matchPlayerStats.mySpectators$ | async }}
+                    </p>
                 </div>
 
                 <p
@@ -72,17 +117,29 @@
                     TotalDamageDealt: {{ matchPlayerStats.myTotalDamageDealt$ | async }}
                 </p>
 
-                <p class="inference-item">Item In Use: {{ (matchPlayerInventory.myInUseItem$ | async)?.friendlyName }}</p>
+                <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    Item In Use: {{ (matchPlayerInventory.myInUseItem$ | async)?.friendlyName }}
+                </p>
                 <p class="inference-item">Weapons</p>
                 <div class="sub-inference-items">
-                    <div class="inference-item" *ngFor="let weaponItem of matchPlayerInventory.myWeaponSlots$ | async | keyvalue">
+                    <div
+                        class="inference-item"
+                        appHighlightOnChange
+                        [highlightColor]="changedHighlightColor"
+                        *ngFor="let weaponItem of matchPlayerInventory.myWeaponSlots$ | async | keyvalue"
+                    >
                         {{ weaponItem.value?.item?.friendlyName }}
                     </div>
                 </div>
 
                 <p class="inference-item">Player Inventory</p>
                 <div class="sub-inference-items">
-                    <div class="inference-item" *ngFor="let slotItem of matchPlayerInventory.myInventorySlots$ | async | keyvalue">
+                    <div
+                        class="inference-item"
+                        appHighlightOnChange
+                        [highlightColor]="changedHighlightColor"
+                        *ngFor="let slotItem of matchPlayerInventory.myInventorySlots$ | async | keyvalue"
+                    >
                         {{ slotItem.value?.item?.friendlyName ? slotItem.value?.item?.friendlyName : slotItem.value?.item?.id }}
                         {{ slotItem.value?.amount || 0 > 0 ? "[" + slotItem.value?.amount + "]" : "" }}
                     </div>
@@ -90,26 +147,28 @@
 
                 <p class="inference-item">Player Location</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item">LocationPhase: {{ matchPlayerLocation.myLocationPhase$ | async }}</p>
-                    <p class="inference-item">
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                        LocationPhase: {{ matchPlayerLocation.myLocationPhase$ | async }}
+                    </p>
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
                         Coordinates:
                         <span *ngFor="let coord of matchPlayerLocation.myCoordinates$ | async | keyvalue"
                             >{{ coord.value < Infinity ? coord.value : "-" }}{{ coord.key !== "z" ? ", " : "" }}
                         </span>
                     </p>
-                    <p class="inference-item">
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
                         StartingCoordinates:
                         <span *ngFor="let startingCoord of matchPlayerLocation.myStartingCoordinates$ | async | keyvalue"
                             >{{ startingCoord.value < Infinity ? startingCoord.value : "-" }}{{ startingCoord.key !== "z" ? ", " : "" }}
                         </span>
                     </p>
-                    <p class="inference-item">
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
                         LandingCoordinates:
                         <span *ngFor="let landingCoord of matchPlayerLocation.myLandingCoordinates$ | async | keyvalue"
                             >{{ landingCoord.value < Infinity ? landingCoord.value : "-" }}{{ landingCoord.key !== "z" ? ", " : "" }}
                         </span>
                     </p>
-                    <p class="inference-item">
+                    <p class="inference-item" appHighlightOnChange [highlightColor]="changedHighlightColor">
                         EndingCoordinates:
                         <span *ngFor="let endingCoord of matchPlayerLocation.myEndingCoordinates$ | async | keyvalue"
                             >{{ endingCoord.value < Infinity ? endingCoord.value : "-" }}{{ endingCoord.key !== "z" ? ", " : "" }}

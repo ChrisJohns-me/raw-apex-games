@@ -30,7 +30,7 @@ h2 {
 
 .has-tooltip {
     cursor: help;
-    
+
     &::after {
         display: inline-block;
         content: "?";
@@ -81,5 +81,19 @@ h2 {
     }
     to {
         opacity: 0%;
+    }
+}
+
+.flash-on-change {
+    animation: normal 1s ease orange-flash;
+}
+
+@keyframes orange-flash {
+    from {
+        background-color: orangered;
+    }
+
+    to {
+        background-color: transparent;
     }
 }

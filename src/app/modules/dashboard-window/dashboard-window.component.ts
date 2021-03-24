@@ -29,7 +29,30 @@ import { InGameUltTimerWindowService } from "../in-game-ult-timer-window/in-game
 })
 export class DashboardWindowComponent implements OnInit, OnDestroy {
     public Infinity = Infinity;
+    public get ultTimerWindowEnabled(): boolean {
+        return this._ultTimerWindowEnabled;
+    }
+    public set ultTimerWindowEnabled(value: boolean) {
+        this._ultTimerWindowEnabled = value;
+        this.inGameUltTimerWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe)).subscribe();
+    }
+    public get matchTimerWindowEnabled(): boolean {
+        return this._matchTimerWindowEnabled;
+    }
+    public set matchTimerWindowEnabled(value: boolean) {
+        this._matchTimerWindowEnabled = value;
+        this.matchTimerWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe)).subscribe();
+    }
+    public get damageCollectorWindowEnabled(): boolean {
+        return this._damageCollectorWindowEnabled;
+    }
+    public set damageCollectorWindowEnabled(value: boolean) {
+        this._damageCollectorWindowEnabled = value;
+        this.damageCollectorWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe)).subscribe();
+    }
+
     public autoClearLog = false;
+    public changedHighlightColor = "#ffc9c9";
     public hasRecentlyTrackedMatchSummary = false;
     public get isTrackingEnabled(): boolean {
         return this.googleFormsMatchSummaryTracker.isTrackingEnabled;
@@ -45,7 +68,9 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
 
     public gameLog = "";
     private gameLogStartTime?: Date;
-
+    private _ultTimerWindowEnabled = false;
+    private _matchTimerWindowEnabled = false;
+    private _damageCollectorWindowEnabled = false;
     private _unsubscribe = new Subject<void>();
 
     constructor(
@@ -69,26 +94,19 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
     ) {}
 
     public ngOnInit(): void {
-        this.registerAutoClearLogs();
-        this.registerGameEvents();
-        this.registerBackgroundEvents();
+        this.setupAutoClearLogs();
+        this.setupGameEvents();
+        this.setupBackgroundEvents();
+
+        // Default window values
+        this.ultTimerWindowEnabled = true;
+        this.matchTimerWindowEnabled = true;
+        this.damageCollectorWindowEnabled = false;
     }
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
         this._unsubscribe.complete();
-    }
-
-    public onOpenUltTimerClick(): void {
-        this.inGameUltTimerWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
-    }
-
-    public onOpenMatchTimerClick(): void {
-        this.matchTimerWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
-    }
-
-    public onOpenDamageCollectorClick(): void {
-        this.damageCollectorWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
     }
 
     public onInjectLogClick(): void {
@@ -98,7 +116,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
             command: any;
         }
         let speed = 1;
-        const inputInject = prompt(`Inject ${name} Log`, "");
+        const inputInject = prompt(`Inject Log`, "");
         const inputInjectArr = inputInject?.trim().split("\n");
 
         if (!inputInjectArr || !Array.isArray(inputInjectArr) || !inputInjectArr.length) {
@@ -146,7 +164,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this.gameLog = "";
     }
 
-    private registerAutoClearLogs(): void {
+    private setupAutoClearLogs(): void {
         this.game.phase$
             .pipe(
                 takeUntil(this._unsubscribe),
@@ -157,7 +175,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
             .subscribe(() => this.clearLog());
     }
 
-    private registerGameEvents(): void {
+    private setupGameEvents(): void {
         merge(
             this.overwolfExposedData.rawInfoUpdates$.pipe(tap((event) => this.addLogItem(event) + this.gameLog)),
             this.overwolfExposedData.rawNewGameEvent$.pipe(tap((event) => this.addLogItem(event) + this.gameLog))
@@ -174,7 +192,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this.gameLog = `[${timestamp}] ${eventStr}\n` + this.gameLog;
     }
 
-    private registerBackgroundEvents(): void {
+    private setupBackgroundEvents(): void {
         const showReportedDuration = 120 * 1000;
 
         const hasTrackedFn = (value: boolean): void => {
