@@ -42,7 +42,7 @@ export class MatchActivityService implements OnDestroy {
     }
 
     public start(): void {
-        this.setupMatchReset();
+        this.setupOnMatchStart();
         this.setupKillfeed();
         this.setupKillsAndKnockdowns();
     }
@@ -50,7 +50,7 @@ export class MatchActivityService implements OnDestroy {
     /**
      * Reset state on match start
      */
-    private setupMatchReset(): void {
+    private setupOnMatchStart(): void {
         this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             this.killfeedEventHistory$.next([]);
         });

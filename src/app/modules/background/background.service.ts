@@ -2,6 +2,7 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { GameProcessService } from "@core/game-process.service";
 import { GameService } from "@core/game.service";
 import { GoogleFormsMatchSummaryTrackerService } from "@core/google-forms-match-summary-tracker.service";
+import { MatchLegendSelectService } from "@core/match-legend-select.service";
 import { MatchMapService } from "@core/match-map.service";
 import { MatchPlayerInventoryService } from "@core/match-player-inventory.service";
 import { MatchPlayerLegendService } from "@core/match-player-legend.service";
@@ -23,6 +24,7 @@ import { SingletonServiceProviderFactory } from "src/app/singleton-service.provi
         GameProcessService,
         GoogleFormsMatchSummaryTrackerService,
         MatchService,
+        MatchLegendSelectService,
         MatchMapService,
         MatchPlayerService,
         MatchPlayerInventoryService,
@@ -44,6 +46,7 @@ export class BackgroundService implements OnDestroy {
         private readonly gameProcess: GameProcessService,
         private readonly googleFormsMatchSummaryTracker: GoogleFormsMatchSummaryTrackerService,
         private readonly match: MatchService,
+        private readonly matchLegendSelect: MatchLegendSelectService,
         private readonly matchMap: MatchMapService,
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
@@ -69,12 +72,13 @@ export class BackgroundService implements OnDestroy {
         this.gameProcess.start();
         this.googleFormsMatchSummaryTracker.start();
         this.match.start();
+        this.matchLegendSelect.start();
         this.matchMap.start();
         this.matchPlayer.start();
-        this.matchPlayerStats.start();
         this.matchPlayerInventory.start();
         this.matchPlayerLegend.start();
         this.matchPlayerLocation.start();
+        this.matchPlayerStats.start();
         this.matchRoster.start();
         this.overwolfExposedData.start();
         this.player.start();

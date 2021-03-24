@@ -49,10 +49,10 @@ export class InGameMatchTimerWindowComponent implements OnInit, OnDestroy {
     }
 
     private setupShowHideEvents(): void {
-        this.match.currentState$
+        this.match.state$
             .pipe(
                 takeUntil(this._unsubscribe),
-                filter((matchStateChanged) => matchStateChanged.state === MatchState.Active),
+                filter((stateChanged) => stateChanged.state === MatchState.Active),
                 tap(() => (this.showTimer = true)),
                 switchMap(() => timer(0, UI_TIMER_REFRESH_RATE))
             )
@@ -68,12 +68,12 @@ export class InGameMatchTimerWindowComponent implements OnInit, OnDestroy {
     }
 
     private setupMatchDates(): void {
-        this.match.currentState$
+        this.match.state$
             .pipe(
                 takeUntil(this._unsubscribe),
-                tap((matchStateChanged) => {
-                    this.matchStartDate = matchStateChanged.startDate;
-                    this.matchEndDate = matchStateChanged.endDate;
+                tap((stateChanged) => {
+                    this.matchStartDate = stateChanged.startDate;
+                    this.matchEndDate = stateChanged.endDate;
                 })
             )
             .subscribe(() => this.cdr.detectChanges());

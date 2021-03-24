@@ -38,8 +38,8 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this.googleFormsMatchSummaryTracker.setTrackingEnabled(value);
     }
     public get matchDuration(): Date {
-        const startDate = this.match.currentState$.value.startDate ?? new Date();
-        const endDate = this.match.currentState$.value.endDate ?? new Date();
+        const startDate = this.match.state$.value.startDate ?? new Date();
+        const endDate = this.match.state$.value.endDate ?? new Date();
         return new Date(endDate.getTime() - startDate.getTime());
     }
 

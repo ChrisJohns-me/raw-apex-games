@@ -16,7 +16,7 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
     constructor(private readonly match: MatchService, public readonly damageCollector: InGameDamageCollectorService) {}
 
     public ngOnInit(): void {
-        this.setupMatchReset();
+        this.setupOnMatchEnd();
     }
 
     public ngOnDestroy(): void {
@@ -27,7 +27,7 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
     /**
      * Reset state on match end
      */
-    private setupMatchReset(): void {
+    private setupOnMatchEnd(): void {
         this.match.endedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             this.damageCollector.clearDamageEventList();
         });

@@ -31,14 +31,14 @@ export class MatchPlayerService implements OnDestroy {
     }
 
     public start(): void {
-        this.setupMatchReset();
+        this.setupOnMatchStart();
         this.setupMyState();
     }
 
     /**
      * Reset state on match start
      */
-    private setupMatchReset(): void {
+    private setupOnMatchStart(): void {
         this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             this.myState$.next(PlayerState.Alive);
         });
@@ -72,8 +72,8 @@ export class MatchPlayerService implements OnDestroy {
             setNewStateFn(newState);
         });
 
-        this.match.currentState$.pipe(takeUntil(this._unsubscribe)).subscribe((matchStateChanged) => {
-            const newState = triggers.triggeredFirstKey(undefined, undefined, matchStateChanged.state);
+        this.match.state$.pipe(takeUntil(this._unsubscribe)).subscribe((stateChanged) => {
+            const newState = triggers.triggeredFirstKey(undefined, undefined, stateChanged.state);
             setNewStateFn(newState);
         });
     }

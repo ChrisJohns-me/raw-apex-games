@@ -29,7 +29,7 @@
 
                 <p class="inference-item">Match</p>
                 <div class="sub-inference-items">
-                    <p class="inference-item">State: {{ (match.currentState$ | async)?.state }}</p>
+                    <p class="inference-item">State: {{ (match.state$ | async)?.state }}</p>
                     <p class="inference-item">Map: {{ (matchMap.map$ | async)?.friendlyName }}</p>
                     <p class="inference-item">GameMode: {{ (match.gameMode$ | async)?.friendlyName }}</p>
                     <p class="inference-item">MatchDuration: {{ matchDuration | date: "mm:ss" }}</p>
@@ -37,7 +37,7 @@
                 <p class="inference-item">Teammates</p>
                 <div class="sub-inference-items">
                     <p class="inference-item" *ngFor="let teammate of (matchRoster.teammateRoster$ | async)?.allPlayers">
-                        {{ teammate.name }} [{{ teammate.legend.friendlyName }}]
+                        {{ teammate.name }} [{{ teammate.legend?.friendlyName }}]
                     </p>
                 </div>
 

@@ -69,15 +69,14 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
         private readonly matchPlayerLegend: MatchPlayerLegendService,
         private readonly matchPlayerLocation: MatchPlayerLocationService
     ) {
-        this.visibleStates$ = combineLatest([
-            this.match.currentState$,
-            this.matchPlayer.myState$,
-            this.matchPlayerLocation.myLocationPhase$,
-        ]).pipe(takeUntil(this._unsubscribe), distinctUntilChanged());
+        this.visibleStates$ = combineLatest([this.match.state$, this.matchPlayer.myState$, this.matchPlayerLocation.myLocationPhase$]).pipe(
+            takeUntil(this._unsubscribe),
+            distinctUntilChanged()
+        );
     }
 
     public ngOnInit(): void {
-        this.setupMatchReset();
+        this.setupOnMatchStart();
         this.setupVisibleStates();
         this.setupUltimateCalculation();
     }
@@ -87,7 +86,7 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
         this._unsubscribe.complete();
     }
 
-    private setupMatchReset(): void {
+    private setupOnMatchStart(): void {
         this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             console.debug(`Ult-timer reset`);
             this.ultimateProgressHistory = [{ percent: 0, increment: 0.05, timestamp: new Date() }];
@@ -95,16 +94,14 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
     }
 
     private setupVisibleStates(): void {
-        this.visibleStates$.subscribe(([matchStateChanged, myState, locationPhase]) => {
+        this.visibleStates$.subscribe(([stateChanged, myState, locationPhase]) => {
             this.isVisible =
-                matchStateChanged.state === MatchState.Active &&
-                myState === PlayerState.Alive &&
-                locationPhase === MatchLocationPhase.HasLanded;
+                stateChanged.state === MatchState.Active && myState === PlayerState.Alive && locationPhase === MatchLocationPhase.HasLanded;
 
             console.debug(
                 `Ult-timer [${this.isVisible ? "Showable" : "NotShowable"}] ` +
                     `[${this.isVisible ? "Visible" : "Hidden"}]. ` +
-                    `Match: "${this.match.currentState$.value.state}", ` +
+                    `Match: "${this.match.state$.value.state}", ` +
                     `Player: "${this.matchPlayer.myState$}", ` +
                     `Location: "${this.matchPlayerLocation.myLocationPhase$.value}", ` +
                     `Percent: "${cleanInt(this.ultimatePercent * 100)}%", ` +
@@ -116,7 +113,7 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
     private setupUltimateCalculation(): void {
         this.visibleStates$
             .pipe(
-                filter(([matchStateChanged, myState]) => matchStateChanged.state === MatchState.Active && myState === PlayerState.Alive),
+                filter(([stateChanged, myState]) => stateChanged.state === MatchState.Active && myState === PlayerState.Alive),
                 switchMap(() => this.matchPlayerLegend.myUltimateCooldown$),
                 tap((percent) => this.addPercentHistory((this.ultimatePercent = percent))),
                 filter(() => this.ultimateProgressHistory.length >= 2),

@@ -42,7 +42,7 @@ export class MatchPlayerInventoryService implements OnDestroy {
     }
 
     public start(): void {
-        this.setupMatchReset();
+        this.setupOnMatchStart();
         this.setupMyInventorySlots();
         this.setupMyInUseItem();
         this.setupMyWeapons();
@@ -51,7 +51,7 @@ export class MatchPlayerInventoryService implements OnDestroy {
     /**
      * Reset states on match start
      */
-    private setupMatchReset(): void {
+    private setupOnMatchStart(): void {
         this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             this.myInUseItem$.next(undefined);
             this.myWeaponSlots$.next({});

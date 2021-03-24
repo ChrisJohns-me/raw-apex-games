@@ -21,12 +21,12 @@ export class MatchService implements OnDestroy {
     /** Emits changed state only when match has ended */
     public readonly endedEvent$ = new Subject<MatchStateChangedEvent>();
     /** Emits changed states; when match starts or ends, or upon subscription */
-    public readonly currentState$ = new BehaviorSubject<MatchStateChangedEvent>({ state: MatchState.Inactive });
+    public readonly state$ = new BehaviorSubject<MatchStateChangedEvent>({ state: MatchState.Inactive });
     /** Emits when game mode is selected from within the lobby */
     public readonly gameMode$ = new BehaviorSubject<MatchGameMode>({ id: "", friendlyName: "" });
     /** Immediately see if the match is active */
     public get isActive(): boolean {
-        return this.currentState$.value.state === MatchState.Active;
+        return this.state$.value.state === MatchState.Active;
     }
 
     private currentStartDate?: Date;
@@ -48,12 +48,12 @@ export class MatchService implements OnDestroy {
     private setupStartEndEvents(): void {
         merge(this.startedEvent$, this.endedEvent$)
             .pipe(takeUntil(this._unsubscribe))
-            .subscribe((newState) => this.currentState$.next(newState));
+            .subscribe((newState) => this.state$.next(newState));
     }
 
     private setupStateEvents(): void {
         const newStateChangeFn = (newState?: MatchState): void => {
-            if (!newState || newState === this.currentState$.value.state) return;
+            if (!newState || newState === this.state$.value.state) return;
             if (newState === MatchState.Active) {
                 this.currentStartDate = new Date();
                 this.startedEvent$.next({ state: newState, startDate: this.currentStartDate });
@@ -86,12 +86,12 @@ export class MatchService implements OnDestroy {
         });
 
         this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe)).subscribe((infoUpdate) => {
-            const newState = triggers.triggeredFirstKey(this.currentState$.value.state, infoUpdate, undefined);
+            const newState = triggers.triggeredFirstKey(this.state$.value.state, infoUpdate, undefined);
             newStateChangeFn(newState);
         });
 
         this.overwolf.newGameEvent$.pipe(takeUntil(this._unsubscribe)).subscribe((gameEvent) => {
-            const newState = triggers.triggeredFirstKey(this.currentState$.value.state, undefined, gameEvent);
+            const newState = triggers.triggeredFirstKey(this.state$.value.state, undefined, gameEvent);
             newStateChangeFn(newState);
         });
     }

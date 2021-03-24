@@ -39,7 +39,7 @@ export class DamageTimelyAggregator {
 
         const distinctFlush$ = this.mergedDamageEventObs$.pipe(debounceTime(this.expireAggregateMs * 2));
         const distinctVictimDamageEvent$ = this.mergedDamageEventObs$.pipe(
-            distinct((dmgEvent) => getPlayerNameClubParts(dmgEvent.victim.name)[1], distinctFlush$),
+            distinct((dmgEvent) => getPlayerNameClubParts(dmgEvent.victim.name).playerName, distinctFlush$),
             mergeMap((dmgEvent) => this.createVictimDamageStream$(dmgEvent))
         );
 

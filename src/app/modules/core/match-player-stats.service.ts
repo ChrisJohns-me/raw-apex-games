@@ -105,10 +105,10 @@ export class MatchPlayerStatsService implements OnDestroy {
             if (newValue !== this.victory$.value) this.victory$.next(newValue);
         };
 
-        this.match.currentState$
+        this.match.state$
             .pipe(
                 takeUntil(this._unsubscribe),
-                tap((matchStateChanged) => (matchStateChanged.state === MatchState.Active ? setVictoryFn(false) : null)),
+                tap((stateChanged) => (stateChanged.state === MatchState.Active ? setVictoryFn(false) : null)),
                 switchMap(() => this.overwolf.infoUpdates$),
                 filter(() => this.matchPlayer.myState$.value !== PlayerState.Eliminated),
                 filter((infoUpdate) => infoUpdate.feature === "rank"),

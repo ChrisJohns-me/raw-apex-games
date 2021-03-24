@@ -1,25 +1,34 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { Legend } from "@common/legend";
-import { isPlayerNameEqual } from "@common/utilities/player";
 import { BehaviorSubject, combineLatest, of, Subject } from "rxjs";
-import { filter, map, switchMap, takeUntil } from "rxjs/operators";
+import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import { findKeyByKeyRegEx, isEmpty, mathClamp } from "src/utilities";
+import { mathClamp } from "src/utilities";
+import { MatchLegendSelectService } from "./match-legend-select.service";
+import { MatchService } from "./match.service";
 import { OverwolfDataProviderService } from "./overwolf-data-provider";
 import { PlayerService } from "./player.service";
 
 @Injectable({
     providedIn: "root",
-    deps: [OverwolfDataProviderService, PlayerService],
+    deps: [MatchService, MatchLegendSelectService, OverwolfDataProviderService, PlayerService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerLegendService", MatchPlayerLegendService, deps),
 })
 export class MatchPlayerLegendService implements OnDestroy {
     public readonly myLegend$ = new BehaviorSubject<Optional<Legend>>(undefined);
     public readonly myUltimateCooldown$ = new Subject<number>();
 
+    private stagingLegends: {
+        playerName: string;
+        legend: Legend;
+    }[] = [];
     private readonly _unsubscribe = new Subject<void>();
-
-    constructor(private readonly overwolf: OverwolfDataProviderService, private readonly player: PlayerService) {}
+    constructor(
+        private readonly match: MatchService,
+        private readonly matchLegendSelect: MatchLegendSelectService,
+        private readonly overwolf: OverwolfDataProviderService,
+        private readonly player: PlayerService
+    ) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -27,33 +36,37 @@ export class MatchPlayerLegendService implements OnDestroy {
     }
 
     public start(): void {
+        this.setupOnMatchEnd();
         this.setupMyLegend();
         this.setupMyUltimateCooldown();
     }
 
-    //#region Legend
-    private setupMyLegend(): void {
-        const playerName$ = this.player.myName$.pipe(filter((myName) => !isEmpty(myName)));
+    private setupOnMatchEnd(): void {
+        this.match.endedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+            this.stagingLegends = [];
+        });
+    }
 
-        this.overwolf.infoUpdates$
+    private setupMyLegend(): void {
+        this.matchLegendSelect.legendSelected$
             .pipe(
                 takeUntil(this._unsubscribe),
-                filter((infoUpdate) => infoUpdate.feature === "team" && !!findKeyByKeyRegEx(infoUpdate.info.match_info, /^legendSelect_/)),
-                map((infoUpdate) => infoUpdate.info.match_info),
-                filter((m) => !!m?.legendSelect_0 || !!m?.legendSelect_1 || !!m?.legendSelect_2),
-                map((m) => [m?.legendSelect_0, m?.legendSelect_1, m?.legendSelect_2]),
-                switchMap((legends) => combineLatest([of(legends), playerName$])),
-                map(([legends, playerName]) => legends.find((legend) => isPlayerNameEqual(legend?.playerName, playerName))),
-                filter((legendSelect) => !isEmpty(legendSelect))
+                filter((selection) => !!selection.legend),
+                tap((selection) => {
+                    this.stagingLegends = this.stagingLegends.filter((sl) => sl.playerName !== selection.playerName);
+                    this.stagingLegends.push(selection);
+                }),
+                map(() => this.stagingLegends),
+                switchMap((stageList) => combineLatest([of(stageList), this.player.myName$])),
+                map(([stageList, myName]) => stageList.find((ls) => ls.playerName === myName)),
+                filter((myLegendSelected) => !!myLegendSelected),
+                distinctUntilChanged()
             )
-            .subscribe((legendSelect) => {
-                const playerLegend = new Legend(legendSelect!.legendName);
-                this.myLegend$.next(playerLegend);
+            .subscribe((myLegendSelected) => {
+                this.myLegend$.next(myLegendSelected!.legend);
             });
     }
-    //#endregion
 
-    //#region Ultimate Cooldown
     private setupMyUltimateCooldown(): void {
         this.overwolf.infoUpdates$
             .pipe(
@@ -67,5 +80,4 @@ export class MatchPlayerLegendService implements OnDestroy {
                 this.myUltimateCooldown$.next(percent);
             });
     }
-    //#endregion
 }

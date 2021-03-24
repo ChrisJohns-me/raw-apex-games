@@ -50,8 +50,8 @@ export class GameService implements OnDestroy {
             setNewPhaseFn(newPhase);
         });
 
-        this.match.currentState$.pipe(takeUntil(this._unsubscribe)).subscribe((matchStateChanged) => {
-            const newPhase = triggers.triggeredFirstKey(undefined, matchStateChanged.state);
+        this.match.state$.pipe(takeUntil(this._unsubscribe)).subscribe((stateChanged) => {
+            const newPhase = triggers.triggeredFirstKey(undefined, stateChanged.state);
             setNewPhaseFn(newPhase);
         });
     }

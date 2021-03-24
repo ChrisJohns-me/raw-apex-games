@@ -11,7 +11,10 @@ import { OverwolfDataProviderService, OWGameEventKillFeed } from "./overwolf-dat
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("PlayerService", PlayerService, deps),
 })
 export class PlayerService implements OnDestroy {
-    /** Data gathered from Overwolf's "me" data. If empty during a match, attempts to infer from killfeed. */
+    /**
+     * Data gathered from Overwolf's "me" data or if empty during a match, attempts to infer from killfeed.
+     * Distinct until changed.
+     */
     public readonly myName$ = new BehaviorSubject<Optional<string>>(undefined);
 
     private readonly _unsubscribe = new Subject<void>();

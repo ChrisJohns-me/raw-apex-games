@@ -96,7 +96,7 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
                         this.matchPlayerStats.myPlacement$,
                         this.matchPlayerStats.myEliminations,
                         this.matchPlayerStats.myDamage$,
-                        this.match.currentState$,
+                        this.match.state$,
                     ])
                 ),
                 filter(() => {

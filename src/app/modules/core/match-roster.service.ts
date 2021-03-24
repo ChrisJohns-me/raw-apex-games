@@ -1,23 +1,23 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { Legend } from "@common/legend";
 import { MatchRoster } from "@common/match/match-roster";
 import { MatchRosterPlayer } from "@common/match/match-roster-player";
 import { MatchRosterTeammate } from "@common/match/match-roster-teammate";
 import { isPlayerNameEqual } from "@common/utilities/player";
-import { BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { findKeyByKeyRegEx, findValueByKeyRegEx, isEmpty } from "src/utilities";
 import { cleanInt } from "src/utilities/number";
+import { MatchLegendSelectService } from "./match-legend-select.service";
 import { MatchService } from "./match.service";
-import { OverwolfDataProviderService, OWMatchInfoRoster } from "./overwolf-data-provider";
+import { OverwolfDataProviderService, OWMatchInfoRoster, OWMatchInfoTeammate } from "./overwolf-data-provider";
 
 /**
  * @classdesc Provides a list, counts, and information about players in the match.
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, OverwolfDataProviderService],
+    deps: [MatchService, MatchLegendSelectService, OverwolfDataProviderService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchRosterService", MatchRosterService, deps),
 })
 export class MatchRosterService implements OnDestroy {
@@ -45,11 +45,28 @@ export class MatchRosterService implements OnDestroy {
      */
     public readonly numPlayers$ = new BehaviorSubject<number>(0);
 
+    private readonly rosterUpdate$: Observable<[rosterKey: string, rosterItem: Optional<OWMatchInfoRoster>]>;
+
     private stagedMatchRoster = new MatchRoster();
     private stagedTeammateRoster = new MatchRoster<MatchRosterTeammate>();
     private readonly _unsubscribe = new Subject<void>();
 
-    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {}
+    constructor(
+        private readonly match: MatchService,
+        private readonly matchLegendSelect: MatchLegendSelectService,
+        private readonly overwolf: OverwolfDataProviderService
+    ) {
+        this.rosterUpdate$ = this.overwolf.infoUpdates$.pipe(
+            takeUntil(this._unsubscribe),
+            filter((infoUpdate) => infoUpdate.feature === "roster"),
+            map((infoUpdate) => infoUpdate.info.match_info),
+            map((matchInfo): [string, Optional<OWMatchInfoRoster>] => [
+                findKeyByKeyRegEx(matchInfo, /^roster_/) as string,
+                findValueByKeyRegEx<OWMatchInfoRoster>(matchInfo, /^roster_/),
+            ]),
+            filter(([rosterKey]) => !isEmpty(rosterKey))
+        );
+    }
 
     public ngOnDestroy(): void {
         this._unsubscribe.next();
@@ -57,17 +74,19 @@ export class MatchRosterService implements OnDestroy {
     }
 
     public start(): void {
-        this.setupMatchStart();
-        this.setupMatchReset();
+        this.setupOnMatchStart();
+        this.setupOnMatchEnd();
         this.setupCounts();
         this.setupMatchRoster();
-        this.setupTeammateRoster();
+        this.setupTeammateRosterPrimary();
+        this.setupTeammateRosterSecondary();
+        this.setupTeammateLegends();
     }
 
     /**
      * Resets states and emits rosters
      */
-    private setupMatchStart(): void {
+    private setupOnMatchStart(): void {
         this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             this.numPlayers$.next(0);
             this.numTeams$.next(0);
@@ -85,7 +104,7 @@ export class MatchRosterService implements OnDestroy {
     /**
      * Resets state on match start
      */
-    private setupMatchReset(): void {
+    private setupOnMatchEnd(): void {
         this.match.endedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             this.resetStagedRosters();
         });
@@ -114,23 +133,16 @@ export class MatchRosterService implements OnDestroy {
     /**
      * Listens to the roster info prior to a match,
      *  pushes all roster items into a staging variable.
-     * Does not update the roster after the match starts.
      */
     private setupMatchRoster(): void {
-        this.overwolf.infoUpdates$
+        this.rosterUpdate$
             .pipe(
-                takeUntil(this._unsubscribe),
                 // Should only receive roster additions prior to the match start
                 filter(() => !this.match.isActive),
-                filter((infoUpdate) => infoUpdate.feature === "roster"),
-                map((infoUpdate) => infoUpdate.info.match_info)
+                filter(([, rosterItem]) => !isEmpty(rosterItem))
             )
-            .subscribe((matchInfo) => {
-                const rosterKey = findKeyByKeyRegEx(matchInfo, /^roster_/);
-                if (!rosterKey) return;
-                const rosterItem: OWMatchInfoRoster = (matchInfo as any)[rosterKey];
-                if (!rosterItem) return;
-
+            .subscribe(([rosterKey, rosterItem]) => {
+                rosterItem = rosterItem!;
                 const newRosterPlayer: MatchRosterPlayer = {
                     name: rosterItem.name,
                     rosterKey: rosterKey,
@@ -143,25 +155,81 @@ export class MatchRosterService implements OnDestroy {
             });
     }
 
-    private setupTeammateRoster(): void {
+    /**
+     * Listens to "feature":"roster" info prior to a match,
+     *  pushes all roster items into a staging variable.
+     */
+    private setupTeammateRosterPrimary(): void {
+        this.rosterUpdate$
+            .pipe(
+                // Should only receive roster additions prior to the match start
+                filter(() => !this.match.isActive),
+                filter(([, rosterItem]) => !isEmpty(rosterItem) && !!rosterItem?.isTeammate)
+            )
+            .subscribe(([rosterKey, rosterItem]) => {
+                rosterItem = rosterItem!;
+
+                const newRosterTeammate: MatchRosterTeammate = {
+                    name: rosterItem.name,
+                    rosterKey: rosterKey,
+                    teamId: rosterItem.team_id,
+                    platformHardware: rosterItem.platform_hw,
+                    platformSoftware: rosterItem.platform_sw,
+                    legend: undefined,
+                };
+
+                this.addTeammate(newRosterTeammate);
+            });
+    }
+
+    /**
+     * Listens to "feature":"team" info prior to a match,
+     *  pushes all roster items into a staging variable.
+     * Mostly only useful for getting teammate's name, if primary source fails.
+     */
+    private setupTeammateRosterSecondary(): void {
         this.overwolf.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe),
                 filter((infoUpdate) => infoUpdate.feature === "team"),
                 map((infoUpdate) => infoUpdate.info.match_info),
-                map((m) => findValueByKeyRegEx(m, /^legendSelect_/) as overwolf.gep.ApexLegends.MatchInfoLegendSelect),
-                filter((legendSelect) => !isEmpty(legendSelect))
+                map((m) => findValueByKeyRegEx<OWMatchInfoTeammate>(m, /^teammate_/)),
+                filter((teammate) => !isEmpty(teammate))
             )
-            .subscribe((legendSelect) => {
-                const rosterPlayer = this.stagedMatchRoster.allPlayers.find((p) => isPlayerNameEqual(p.name, legendSelect.playerName));
-                const newTeammateLegend = new Legend(legendSelect.legendName);
-                let newRosterTeammate: MatchRosterTeammate;
-
-                if (rosterPlayer) newRosterTeammate = { ...rosterPlayer, legend: newTeammateLegend };
-                else newRosterTeammate = { name: legendSelect.playerName, legend: newTeammateLegend };
-
-                this.stagedTeammateRoster.addPlayer(newRosterTeammate);
+            .subscribe((teammate) => {
+                teammate = teammate!;
+                const newRosterTeammate: MatchRosterTeammate = { name: teammate.name };
+                this.addTeammate(newRosterTeammate);
             });
+    }
+
+    private setupTeammateLegends(): void {
+        this.matchLegendSelect.legendSelected$.pipe(takeUntil(this._unsubscribe)).subscribe((legendSelect) => {
+            const rosterPlayer = this.stagedMatchRoster.allPlayers.find((p) => isPlayerNameEqual(p.name, legendSelect!.playerName));
+            let newRosterTeammate: MatchRosterTeammate;
+
+            if (rosterPlayer) newRosterTeammate = { ...rosterPlayer, legend: legendSelect.legend };
+            else newRosterTeammate = { name: legendSelect!.playerName, legend: legendSelect.legend };
+
+            this.stagedTeammateRoster.addPlayer(newRosterTeammate);
+        });
+    }
+
+    private addTeammate(teammate: MatchRosterTeammate): void {
+        const existingTeammate = this.teammateRoster$.value.allPlayers.find((p) => isPlayerNameEqual(p.name, teammate.name));
+        let mergedTeammate: MatchRosterTeammate = teammate;
+        if (existingTeammate) {
+            mergedTeammate = {
+                name: teammate.name,
+                legend: teammate.legend ?? existingTeammate.legend,
+                platformHardware: teammate.platformHardware ?? existingTeammate.platformHardware,
+                platformSoftware: teammate.platformSoftware ?? existingTeammate.platformSoftware,
+                rosterKey: teammate.rosterKey ?? existingTeammate.rosterKey,
+                teamId: teammate.platformSoftware ?? existingTeammate.teamId,
+            };
+        }
+
+        this.stagedTeammateRoster.addPlayer(mergedTeammate);
     }
 
     private resetStagedRosters(): void {

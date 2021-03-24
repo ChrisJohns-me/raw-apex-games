@@ -2,7 +2,7 @@
  * @description Uses .find() with RegExp.
  * @example findKeyByRegEx({ key_99: "foo" }, /^key_/) = key_99
  */
-export function findKeyByKeyRegEx<T extends AnyObject = AnyObject>(obj: Optional<T>, regEx: RegExp): Optional<string> {
+export function findKeyByKeyRegEx(obj: Optional<AnyObject>, regEx: RegExp): Optional<string> {
     if (!obj) return undefined;
     const key = Object.keys(obj).find((key) => regEx.test(key));
     return key;
