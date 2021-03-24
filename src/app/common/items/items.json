@@ -232,7 +232,7 @@
         {
             "id": "vk47_flatline",
             "friendlyName": "VK47 Flatline",
-            "inGameInfoNameRegExPattern": "^vk47_flatline$",
+            "inGameInfoNameRegExPattern": "^VK-47 Flatline$",
             "inGameEventNameRegExPattern": "^flatline$"
         },
         {

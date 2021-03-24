@@ -9,14 +9,13 @@ import { cleanInt } from "src/utilities/number";
 import { MatchPlayerService } from "./match-player.service";
 import { MatchService } from "./match.service";
 import { OverwolfDataProviderService } from "./overwolf-data-provider";
-import { PlayerService } from "./player.service";
 
 /**
  * @classdesc Provides damage/knockdown/kill, etc. count updates
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, OverwolfDataProviderService, PlayerService],
+    deps: [MatchService, OverwolfDataProviderService, MatchPlayerService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerStatsService", MatchPlayerStatsService, deps),
 })
 export class MatchPlayerStatsService implements OnDestroy {

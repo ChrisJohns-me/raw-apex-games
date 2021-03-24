@@ -73,6 +73,7 @@ export class Item {
         if (!foundItem) {
             console.warn(`Unable to find inventory item with name "${searchItemName}"`);
             this.id = `unknown_${searchItemName}`;
+            this.friendlyName = `unknown_${searchItemName}`;
             return;
         }
 
