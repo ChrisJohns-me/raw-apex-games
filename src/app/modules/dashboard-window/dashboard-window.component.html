@@ -50,7 +50,7 @@
                 <p class="inference-item">Player</p>
                 <div class="sub-inference-items">
                     <p class="inference-item">PlayerName: {{ player.myName$ | async }}</p>
-                    <p class="inference-item">PlayerStatus: {{ player.myState$ | async }}</p>
+                    <p class="inference-item">PlayerStatus: {{ matchPlayer.myState$ | async }}</p>
                     <p class="inference-item">Legend: {{ (matchPlayerLegend.myLegend$ | async)?.friendlyName }}</p>
                     <p class="inference-item">Placement: {{ matchPlayerStats.myPlacement$ | async }}</p>
                     <p class="inference-item">Victory: {{ matchPlayerStats.victory$ | async }}</p>

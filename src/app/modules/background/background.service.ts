@@ -7,6 +7,7 @@ import { MatchPlayerInventoryService } from "@core/match-player-inventory.servic
 import { MatchPlayerLegendService } from "@core/match-player-legend.service";
 import { MatchPlayerLocationService } from "@core/match-player-location.service";
 import { MatchPlayerStatsService } from "@core/match-player-stats.service";
+import { MatchPlayerService } from "@core/match-player.service";
 import { MatchRosterService } from "@core/match-roster.service";
 import { MatchService } from "@core/match.service";
 import { OverwolfDataProviderService } from "@core/overwolf-data-provider";
@@ -23,6 +24,7 @@ import { SingletonServiceProviderFactory } from "src/app/singleton-service.provi
         GoogleFormsMatchSummaryTrackerService,
         MatchService,
         MatchMapService,
+        MatchPlayerService,
         MatchPlayerStatsService,
         MatchPlayerInventoryService,
         MatchPlayerLegendService,
@@ -43,6 +45,7 @@ export class BackgroundService implements OnDestroy {
         private readonly googleFormsMatchSummaryTracker: GoogleFormsMatchSummaryTrackerService,
         private readonly match: MatchService,
         private readonly matchMap: MatchMapService,
+        private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
         private readonly matchPlayerLegend: MatchPlayerLegendService,
         private readonly matchPlayerLocation: MatchPlayerLocationService,
@@ -67,6 +70,7 @@ export class BackgroundService implements OnDestroy {
         this.googleFormsMatchSummaryTracker.start();
         this.match.start();
         this.matchMap.start();
+        this.matchPlayer.start();
         this.matchPlayerStats.start();
         this.matchPlayerInventory.start();
         this.matchPlayerLegend.start();

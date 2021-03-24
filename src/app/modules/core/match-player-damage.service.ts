@@ -9,6 +9,7 @@ import { SingletonServiceProviderFactory } from "src/app/singleton-service.provi
 import { cleanInt, isEmpty, parseBoolean } from "src/utilities";
 import { MatchActivityService } from "./match-activity.service";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
+import { MatchPlayerService } from "./match-player.service";
 import { MatchRosterService } from "./match-roster.service";
 import { OverwolfDataProviderService } from "./overwolf-data-provider";
 import { PlayerService } from "./player.service";
@@ -18,7 +19,14 @@ import { PlayerService } from "./player.service";
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchActivityService, MatchPlayerInventoryService, MatchRosterService, OverwolfDataProviderService, PlayerService],
+    deps: [
+        MatchActivityService,
+        MatchPlayerService,
+        MatchPlayerInventoryService,
+        MatchRosterService,
+        OverwolfDataProviderService,
+        PlayerService,
+    ],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerDamageService", MatchPlayerDamageService, deps),
 })
 export class MatchPlayerDamageService implements OnDestroy {
@@ -31,6 +39,7 @@ export class MatchPlayerDamageService implements OnDestroy {
 
     constructor(
         private readonly matchActivity: MatchActivityService,
+        private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
         private readonly matchRoster: MatchRosterService,
         private readonly overwolf: OverwolfDataProviderService,
@@ -70,7 +79,7 @@ export class MatchPlayerDamageService implements OnDestroy {
                 takeUntil(this._unsubscribe),
                 filter((gameEvent) => gameEvent.name === "damage"),
                 map((gameEvent) => gameEvent.data as overwolf.gep.ApexLegends.GameEventDamage),
-                filter(() => this.player.myState$.value !== PlayerState.Eliminated)
+                filter(() => this.matchPlayer.myState$.value !== PlayerState.Eliminated)
             )
             .subscribe((rawDamageEvent) => {
                 if (!rawDamageEvent || !rawDamageEvent.targetName) return;

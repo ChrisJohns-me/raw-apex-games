@@ -6,6 +6,7 @@ import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { isEmpty, parseBoolean } from "src/utilities";
 import { cleanInt } from "src/utilities/number";
+import { MatchPlayerService } from "./match-player.service";
 import { MatchService } from "./match.service";
 import { OverwolfDataProviderService } from "./overwolf-data-provider";
 import { PlayerService } from "./player.service";
@@ -43,7 +44,7 @@ export class MatchPlayerStatsService implements OnDestroy {
     constructor(
         private readonly match: MatchService,
         private readonly overwolf: OverwolfDataProviderService,
-        private readonly player: PlayerService
+        private readonly matchPlayer: MatchPlayerService
     ) {}
 
     public ngOnDestroy(): void {
@@ -110,7 +111,7 @@ export class MatchPlayerStatsService implements OnDestroy {
                 takeUntil(this._unsubscribe),
                 tap((matchStateChanged) => (matchStateChanged.state === MatchState.Active ? setVictoryFn(false) : null)),
                 switchMap(() => this.overwolf.infoUpdates$),
-                filter(() => this.player.myState$.value !== PlayerState.Eliminated),
+                filter(() => this.matchPlayer.myState$.value !== PlayerState.Eliminated),
                 filter((infoUpdate) => infoUpdate.feature === "rank"),
                 map((infoUpdate) => infoUpdate.info.match_info),
                 filter((matchInfo) => !!matchInfo && !!Object.keys(matchInfo).includes("victory")),

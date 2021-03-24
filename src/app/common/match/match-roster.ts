@@ -13,8 +13,10 @@ export class MatchRoster<T extends MatchRosterPlayer = MatchRosterPlayer> {
      */
     public addPlayer(newPlayer: T): void {
         const alreadyExistingPlayer = this.allPlayers.find((p) => isPlayerNameEqual(p.name, newPlayer.name));
-        if (alreadyExistingPlayer)
-            return void console.error(`"${newPlayer.name}" already exists in the match roster, skipping.`, newPlayer, this.teams);
+        if (alreadyExistingPlayer) {
+            console.warn(`"${newPlayer.name}" already exists in the roster, overwriting.`, newPlayer, this.teams);
+            this.removePlayerName(newPlayer.name);
+        }
 
         const foundTeam = this.teams.find((t) => !!t.teamId && t.teamId === newPlayer.teamId);
         if (foundTeam) foundTeam.members.push(newPlayer);
@@ -25,5 +27,25 @@ export class MatchRoster<T extends MatchRosterPlayer = MatchRosterPlayer> {
             };
             this.teams.push(newTeam);
         }
+        this.removeEmptyTeams();
+    }
+
+    public removePlayerName(playerName: string): void {
+        const foundPlayer = this.allPlayers.find((p) => isPlayerNameEqual(p.name, playerName));
+        if (!foundPlayer)
+            return void console.debug(`Attempted to remove "${playerName}" from roster, but was not found.`, playerName, this.teams);
+
+        this.teams = this.teams.map((team) => {
+            return { ...team, members: team.members.filter((p) => !isPlayerNameEqual(p.name, playerName)) };
+        });
+        this.removeEmptyTeams();
+    }
+
+    public removeTeam(teamId: MatchRosterTeam["teamId"]): void {
+        this.teams = this.teams.filter((team) => team.teamId === teamId);
+    }
+
+    private removeEmptyTeams(): void {
+        this.teams = this.teams.filter((team) => team.members && team.members.length);
     }
 }

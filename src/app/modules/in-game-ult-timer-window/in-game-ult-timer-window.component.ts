@@ -4,8 +4,8 @@ import { MatchState, MatchStateChangedEvent } from "@common/match/match-state";
 import { PlayerState } from "@common/player-state";
 import { MatchPlayerLegendService } from "@core/match-player-legend.service";
 import { MatchPlayerLocationService } from "@core/match-player-location.service";
+import { MatchPlayerService } from "@core/match-player.service";
 import { MatchService } from "@core/match.service";
-import { PlayerService } from "@core/player.service";
 import { format, isValid } from "date-fns";
 import { combineLatest, Observable, Subject, timer } from "rxjs";
 import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
@@ -65,13 +65,13 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly match: MatchService,
+        private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerLegend: MatchPlayerLegendService,
-        private readonly matchPlayerLocation: MatchPlayerLocationService,
-        private readonly player: PlayerService
+        private readonly matchPlayerLocation: MatchPlayerLocationService
     ) {
         this.visibleStates$ = combineLatest([
             this.match.currentState$,
-            this.player.myState$,
+            this.matchPlayer.myState$,
             this.matchPlayerLocation.myLocationPhase$,
         ]).pipe(takeUntil(this._unsubscribe), distinctUntilChanged());
     }
@@ -105,7 +105,7 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
                 `Ult-timer [${this.isVisible ? "Showable" : "NotShowable"}] ` +
                     `[${this.isVisible ? "Visible" : "Hidden"}]. ` +
                     `Match: "${this.match.currentState$.value.state}", ` +
-                    `Player: "${this.player.myState$}", ` +
+                    `Player: "${this.matchPlayer.myState$}", ` +
                     `Location: "${this.matchPlayerLocation.myLocationPhase$.value}", ` +
                     `Percent: "${cleanInt(this.ultimatePercent * 100)}%", ` +
                     `Est Remain: "${format(this.ultimateReadyRemaining ?? 0, "mm:ss")}"`

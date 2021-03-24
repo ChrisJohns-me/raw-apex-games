@@ -3,7 +3,7 @@ import { MatchRosterPlayer } from "./match-roster-player";
 
 export { TeamState };
 
-export interface MatchRosterTeam<T extends MatchRosterPlayer> {
+export interface MatchRosterTeam<T extends MatchRosterPlayer = MatchRosterPlayer> {
     teamId: number;
     members: T[];
 }
