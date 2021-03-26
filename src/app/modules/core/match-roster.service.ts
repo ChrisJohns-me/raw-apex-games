@@ -139,16 +139,15 @@ export class MatchRosterService implements OnDestroy {
             .pipe(
                 // Should only receive roster additions prior to the match start
                 filter(() => !this.match.isActive),
-                filter(([, rosterItem]) => !isEmpty(rosterItem))
+                filter(([, rosterItem]) => !isEmpty(rosterItem?.name) && !isEmpty(rosterItem?.team_id))
             )
             .subscribe(([rosterKey, rosterItem]) => {
-                rosterItem = rosterItem!;
                 const newRosterPlayer: MatchRosterPlayer = {
-                    name: rosterItem.name,
+                    name: rosterItem!.name,
                     rosterKey: rosterKey,
-                    teamId: rosterItem.team_id,
-                    platformHardware: rosterItem.platform_hw,
-                    platformSoftware: rosterItem.platform_sw,
+                    teamId: rosterItem!.team_id,
+                    platformHardware: rosterItem?.platform_hw,
+                    platformSoftware: rosterItem?.platform_sw,
                 };
 
                 this.stagedMatchRoster.addPlayer(newRosterPlayer);
@@ -194,11 +193,10 @@ export class MatchRosterService implements OnDestroy {
                 filter((infoUpdate) => infoUpdate.feature === "team"),
                 map((infoUpdate) => infoUpdate.info.match_info),
                 map((m) => findValueByKeyRegEx<OWMatchInfoTeammate>(m, /^teammate_/)),
-                filter((teammate) => !isEmpty(teammate))
+                filter((teammate) => !isEmpty(teammate?.name))
             )
             .subscribe((teammate) => {
-                teammate = teammate!;
-                const newRosterTeammate: MatchRosterTeammate = { name: teammate.name };
+                const newRosterTeammate: MatchRosterTeammate = { name: teammate!.name };
                 this.addTeammate(newRosterTeammate);
             });
     }

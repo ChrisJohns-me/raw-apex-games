@@ -12,7 +12,7 @@ import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rx
 import { average, averageRate } from "src/utilities";
 import { cleanInt } from "src/utilities/number";
 
-const NUM_PROGRESS_HISTORY = 10;
+const NUM_PROGRESS_HISTORY = 20;
 const ABNORMAL_INCREASE_AMOUNT = 0.1; // Ultimate accelerant or charging station
 const UI_REFRESH_RATE = 1000;
 
@@ -150,7 +150,9 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
         const approxTotalReadyTimeMs = this.avgUpdateRateMs / this.avgIncrement; // Estimated total time for 100% ultimate
         const approxTimeRemainingMs = percentRemaining * approxTotalReadyTimeMs;
         console.debug(
-            `Ultimate time: ` + `~"${approxTotalReadyTimeMs / 1000}sec" total, ` + `~"${approxTimeRemainingMs / 1000}sec" remaining`
+            `Ultimate time: ` +
+                `~"${Math.round(approxTotalReadyTimeMs / 1000)}sec" total, ` +
+                `~"${Math.round(approxTimeRemainingMs / 1000)}sec" remaining`
         );
 
         const rawEstReadyDate = new Date(date.getTime() + approxTimeRemainingMs);
