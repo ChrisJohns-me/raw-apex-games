@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { BehaviorSubject, from, Observable, of, Subject, throwError } from "rxjs";
+import { BehaviorSubject, from, interval, merge, Observable, of, Subject, throwError } from "rxjs";
 import {
     catchError,
     delay,
@@ -90,9 +90,19 @@ export class OverwolfDataProviderService implements OnDestroy {
     };
     //#endregion
 
+    private isRunning$ = new BehaviorSubject<boolean>(false);
     private readonly _unsubscribe = new Subject<void>();
 
-    // constructor() {}
+    constructor() {
+        this.gameMonitorGameInfoDelegate.gameInfo$
+            .pipe(
+                takeUntil(this._unsubscribe),
+                map((gameInfo) => gameInfo?.isRunning ?? false),
+                distinctUntilChanged(),
+                share()
+            )
+            .subscribe((isRunning) => this.isRunning$.next(isRunning));
+    }
 
     public ngOnDestroy(): void {
         this.unregisterDelegateEventHooks();
@@ -103,36 +113,38 @@ export class OverwolfDataProviderService implements OnDestroy {
 
     public start(): void {
         this.registerGameMonitorEventHooks();
+        this.setupRunningCheck();
+        this.setupNotRunningCheck();
+    }
 
-        const notRunningFn = () => {
-            this.unregisterDelegateEventHooks();
-            console.warn(`[${this.constructor.name}] Overwolf Data Provider Service is not running.`);
-        };
-
-        const isRunning$ = this.gameMonitorGameInfoDelegate.gameInfo$.pipe(
-            takeUntil(this._unsubscribe),
-            map((gameInfo) => gameInfo?.isRunning ?? false),
-            distinctUntilChanged(),
-            share()
+    private setupRunningCheck(): void {
+        const isRunningHealthcheck$ = interval(OWCONFIG.HEALTHCHECK_TIME).pipe(
+            tap(() =>
+                console.debug(
+                    `[${this.constructor.name}] (Is Running HealthCheck)\n` +
+                        `Game Running: ${this.isRunning$.value}\n` +
+                        `Features Registered: ${this.areFeaturesRegistered}`
+                )
+            )
         );
 
-        isRunning$
+        merge(isRunningHealthcheck$, this.isRunning$)
             .pipe(
                 filter((isRunning) => !!isRunning),
                 switchMap(() => this.registerRequiredFeatures())
             )
             .subscribe((areFeaturesRegistered) => {
                 if (!areFeaturesRegistered) {
-                    notRunningFn();
+                    this.notRunning();
                     return;
                 }
                 this.registerDelegateEventHooks();
                 console.debug(`[${this.constructor.name}] Overwolf Data Provider Service is ready.`);
             });
+    }
 
-        isRunning$.pipe(filter((isRunning) => !isRunning)).subscribe(() => {
-            notRunningFn();
-        });
+    private setupNotRunningCheck(): void {
+        this.isRunning$.pipe(filter((isRunning) => !isRunning)).subscribe(() => this.notRunning());
     }
 
     //#region Game Monitor hooks
@@ -160,14 +172,12 @@ export class OverwolfDataProviderService implements OnDestroy {
     /**
      * Register required event features
      * @returns true and Completes the observable stream if successful.
-     * @todo Handle "Not in a game." error
      */
     private registerRequiredFeatures(): Observable<boolean> {
-        console.debug(`[${this.constructor.name}] Requesting Overwolf features:`, OWCONFIG.REQUIRED_FEATURES);
-
         if (this.areFeaturesRegistered) return of(true);
         if (this.isFeatureRegistrationInProgress) return of(false);
         this.isFeatureRegistrationInProgress = true;
+        console.debug(`[${this.constructor.name}] Requesting Overwolf features:`, OWCONFIG.REQUIRED_FEATURES);
 
         const promise = new Promise<string[]>((resolve, reject) => {
             overwolf.games.events.setRequiredFeatures(OWCONFIG.REQUIRED_FEATURES, (result?) => {
@@ -181,10 +191,14 @@ export class OverwolfDataProviderService implements OnDestroy {
             retryWhen((errors) =>
                 errors.pipe(
                     mergeMap((error, count) => {
-                        if (error !== "Provider did not set features yet." && count >= OWCONFIG.REQUIRED_FEATURES_RETRY_COUNT) {
+                        console.warn(
+                            `[${this.constructor.name}] Request for Overwolf features failed. Retrying...(#${count + 1})\n` +
+                                `Error: ${error?.message ?? JSON.stringify(error)}`
+                        );
+                        if (count >= OWCONFIG.REQUIRED_FEATURES_RETRY_COUNT) {
                             return throwError(error);
                         }
-                        return of(error).pipe(delay(OWCONFIG.REQUIRED_FEATURES_RETRY_DELAY));
+                        return of(error).pipe(delay((count + 1) * OWCONFIG.REQUIRED_FEATURES_RETRY_DELAY_MULTIPLIER));
                     })
                 )
             ),
@@ -193,11 +207,16 @@ export class OverwolfDataProviderService implements OnDestroy {
             tap(() => (this.isFeatureRegistrationInProgress = false)),
             catchError((error) => {
                 console.error(
-                    `Could not set required features: ${JSON.stringify(OWCONFIG.REQUIRED_FEATURES)}, ` +
+                    `[${this.constructor.name}] Could not set Overwolf features: ${JSON.stringify(OWCONFIG.REQUIRED_FEATURES)}, ` +
                         `error: ${error?.message ?? JSON.stringify(error)}`
                 );
                 return of(false);
             })
         );
+    }
+
+    private notRunning() {
+        this.unregisterDelegateEventHooks();
+        console.warn(`[${this.constructor.name}] Overwolf Data Provider Service is not running.`);
     }
 }

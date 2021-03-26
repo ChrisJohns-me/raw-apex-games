@@ -1,6 +1,6 @@
 export const OWCONFIG = {
-    REQUIRED_FEATURES_RETRY_COUNT: 10,
-    REQUIRED_FEATURES_RETRY_DELAY: 1000 * 3,
+    REQUIRED_FEATURES_RETRY_COUNT: 5,
+    REQUIRED_FEATURES_RETRY_DELAY_MULTIPLIER: 5000,
     REQUIRED_FEATURES: [
         "death",
         "kill",
@@ -19,5 +19,6 @@ export const OWCONFIG = {
         "damage",
         "inventory",
     ],
+    HEALTHCHECK_TIME: 60 * 1000,
     APEXLEGENDSCLASSID: 21566,
 };
