@@ -187,7 +187,7 @@ describe("InGameUltTimerWindowComponent", () => {
         discardPeriodicTasks();
     }));
 
-    fit("should calculate time remaining with variance (approximately wihin 10 seconds)", fakeAsync(() => {
+    it("should calculate time remaining with variance (approximately wihin 10 seconds)", fakeAsync(() => {
         // Arrange
         jasmine.clock().mockDate(new Date("2020-01-01T00:00:00"));
         matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
