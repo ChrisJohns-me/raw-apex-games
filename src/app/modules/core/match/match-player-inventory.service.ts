@@ -2,13 +2,13 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { InventorySlots } from "@common/inventory-slots";
 import { Item } from "@common/items/item";
 import { WeaponItem } from "@common/items/weapon-item";
+import { OverwolfDataProviderService, OWInfoUpdates2Event, OWMatchInfoMeInventory } from "@core/overwolf-data-provider";
 import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { findKeyByKeyRegEx } from "src/utilities";
 import { cleanInt } from "src/utilities/number";
 import { MatchService } from "./match.service";
-import { OverwolfDataProviderService, OWInfoUpdates2Event, OWMatchInfoMeInventory } from "./overwolf-data-provider";
 
 /**
  * @classdesc Provides general inventory, weapon, and in-use information about the local player.

@@ -1,13 +1,13 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { Legend } from "@common/legend";
+import { OverwolfDataProviderService } from "@core/overwolf-data-provider";
+import { PlayerService } from "@core/player.service";
 import { BehaviorSubject, combineLatest, of, Subject } from "rxjs";
 import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { mathClamp } from "src/utilities";
 import { MatchLegendSelectService } from "./match-legend-select.service";
 import { MatchService } from "./match.service";
-import { OverwolfDataProviderService } from "./overwolf-data-provider";
-import { PlayerService } from "./player.service";
 
 @Injectable({
     providedIn: "root",

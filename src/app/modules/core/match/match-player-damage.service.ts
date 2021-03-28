@@ -3,6 +3,8 @@ import { MatchDamageEvent } from "@common/match/match-damage-event";
 import { MatchRosterPlayer } from "@common/match/match-roster-player";
 import { PlayerState } from "@common/player-state";
 import { isPlayerNameEqual } from "@common/utilities/player";
+import { OverwolfDataProviderService } from "@core/overwolf-data-provider";
+import { PlayerService } from "@core/player.service";
 import { Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
@@ -11,8 +13,6 @@ import { MatchActivityService } from "./match-activity.service";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
 import { MatchPlayerService } from "./match-player.service";
 import { MatchRosterService } from "./match-roster.service";
-import { OverwolfDataProviderService } from "./overwolf-data-provider";
-import { PlayerService } from "./player.service";
 
 /**
  * @classdesc Provides local player damage/knockdown/kill events, and damage calculation

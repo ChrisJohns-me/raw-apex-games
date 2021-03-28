@@ -16,6 +16,7 @@ declare interface Window {
 export const SingletonServiceProviderFactory = (referenceKey: string, service: Provider, deps: any[] = []): Singleton => {
     const logPrefix = `[SingletonServiceProvider] "${referenceKey}"`;
     const owWindow = (UIWindow.getMainWindow() as unknown) as Window;
+    validateNumDependencies(service, deps, referenceKey);
 
     if (!owWindow[REFERENCES_KEY]) owWindow[REFERENCES_KEY] = {};
     if (!owWindow[REFERENCES_KEY][referenceKey]) {
@@ -33,6 +34,22 @@ export const SingletonServiceProviderFactory = (referenceKey: string, service: P
     const singletonService = owWindow[REFERENCES_KEY][referenceKey];
     return singletonService;
 };
+
+function validateNumDependencies(service: Provider, deps: any[], referenceKey?: string): void {
+    const numDepsExpected = (service as new (...args: unknown[]) => unknown).length;
+    const numDeps = deps.length;
+
+    if (numDeps !== numDepsExpected) {
+        const serviceStr = service.toString();
+        const serviceName = serviceStr.substring(serviceStr.indexOf("class") + "class".length, serviceStr.indexOf("{")).trim();
+        const errMsg =
+            `["${referenceKey || "[empty referenceKey]"}": ${serviceName}] ` +
+            `Dependency Injection failed; expected ${numDepsExpected} dependencies to be provided, ` +
+            `got ${numDeps}`;
+
+        throw new Error(errMsg);
+    }
+}
 
 // =====
 // TODO: Delete; Used for debugging.

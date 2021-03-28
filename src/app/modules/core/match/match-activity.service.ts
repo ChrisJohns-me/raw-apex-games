@@ -2,14 +2,14 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { WeaponItem } from "@common/items/weapon-item";
 import { MatchDamageEvent } from "@common/match/match-damage-event";
 import { isPlayerNameEqual } from "@common/utilities/player";
+import { OverwolfDataProviderService, OWGameEventKillFeed } from "@core/overwolf-data-provider";
 import { differenceInMilliseconds } from "date-fns";
 import { BehaviorSubject, Subject } from "rxjs";
 import { delay, filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
+import { PlayerService } from "../player.service";
 import { MatchRosterService } from "./match-roster.service";
 import { MatchService } from "./match.service";
-import { OverwolfDataProviderService, OWGameEventKillFeed } from "./overwolf-data-provider";
-import { PlayerService } from "./player.service";
 
 // TODO: Test:
 const KILLFEED_SECONDARY_DELAY = 1000; // Should be larger than `KILLFEED_UNIQUE_TIMEFRAME`

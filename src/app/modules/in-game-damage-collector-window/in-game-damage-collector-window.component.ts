@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
-import { MatchService } from "@core/match.service";
+import { MatchService } from "@core/match/match.service";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { InGameDamageCollectorService } from "./in-game-damage-collector.service";

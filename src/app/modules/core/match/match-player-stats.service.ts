@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { MatchState } from "@common/match/match-state";
 import { PlayerState } from "@common/player-state";
+import { OverwolfDataProviderService } from "@core/overwolf-data-provider";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
@@ -8,7 +9,6 @@ import { isEmpty, parseBoolean } from "src/utilities";
 import { cleanInt } from "src/utilities/number";
 import { MatchPlayerService } from "./match-player.service";
 import { MatchService } from "./match.service";
-import { OverwolfDataProviderService } from "./overwolf-data-provider";
 
 /**
  * @classdesc Provides damage/knockdown/kill, etc. count updates

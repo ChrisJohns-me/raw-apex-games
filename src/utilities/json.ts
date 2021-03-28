@@ -1,11 +1,11 @@
 import { parseBoolean } from "./boolean";
 
-export function JSONTryParse<T = AnyObject>(text?: string): Optional<T> {
+export function JSONTryParse<T = AnyObject>(text?: string, onError?: (err?: any) => void): Optional<T> {
     if (!text || !text.length) return undefined;
     try {
         return JSON.parse(text) as T;
     } catch (error) {
-        console.error(error);
+        if (typeof onError === "function") onError(error);
         return undefined;
     }
 }

@@ -1,12 +1,12 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { Legend } from "@common/legend";
 import { MatchState } from "@common/match/match-state";
+import { OverwolfDataProviderService, OWMatchInfo, OWMatchInfoLegendSelect } from "@core/overwolf-data-provider";
 import { Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { findValueByKeyRegEx, isEmpty } from "src/utilities";
 import { MatchService } from "./match.service";
-import { OverwolfDataProviderService, OWMatchInfo, OWMatchInfoLegendSelect } from "./overwolf-data-provider";
 
 /**
  * @classdesc Provides events when a teammate selects a legend; only when match is inactive

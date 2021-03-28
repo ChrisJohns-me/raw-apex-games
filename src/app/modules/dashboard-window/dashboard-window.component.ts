@@ -3,14 +3,14 @@ import { GamePhase } from "@common/game-phase";
 import { GameProcessService } from "@core/game-process.service";
 import { GameService } from "@core/game.service";
 import { GoogleFormsMatchSummaryTrackerService } from "@core/google-forms-match-summary-tracker.service";
-import { MatchMapService } from "@core/match-map.service";
-import { MatchPlayerInventoryService } from "@core/match-player-inventory.service";
-import { MatchPlayerLegendService } from "@core/match-player-legend.service";
-import { MatchPlayerLocationService } from "@core/match-player-location.service";
-import { MatchPlayerStatsService } from "@core/match-player-stats.service";
-import { MatchPlayerService } from "@core/match-player.service";
-import { MatchRosterService } from "@core/match-roster.service";
-import { MatchService } from "@core/match.service";
+import { MatchMapService } from "@core/match/match-map.service";
+import { MatchPlayerInventoryService } from "@core/match/match-player-inventory.service";
+import { MatchPlayerLegendService } from "@core/match/match-player-legend.service";
+import { MatchPlayerLocationService } from "@core/match/match-player-location.service";
+import { MatchPlayerStatsService } from "@core/match/match-player-stats.service";
+import { MatchPlayerService } from "@core/match/match-player.service";
+import { MatchRosterService } from "@core/match/match-roster.service";
+import { MatchService } from "@core/match/match.service";
 import { OverwolfExposedDataService } from "@core/overwolf-exposed-data.service";
 import { PlayerService } from "@core/player.service";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
@@ -102,6 +102,7 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         this.ultTimerWindowEnabled = true;
         this.matchTimerWindowEnabled = true;
         this.damageCollectorWindowEnabled = false;
+        this.damageCollectorWindowEnabled = true;
     }
 
     public ngOnDestroy(): void {
@@ -145,6 +146,14 @@ export class DashboardWindowComponent implements OnInit, OnDestroy {
         // Sort by date
         commands.sort((cmdA, cmdB) => cmdA.timestamp.getTime() - cmdB.timestamp.getTime());
         const firstTimestamp = commands[0].timestamp;
+        const timestampDiff = Math.abs(differenceInMilliseconds(commands[commands.length - 1].timestamp, firstTimestamp));
+        const warnInMins = 30;
+        if (timestampDiff > warnInMins * 60 * 1000) {
+            // Alert if there's a large gap
+            if (!confirm(`Data has a time gap of ${format(timestampDiff, "dd 'days' hh 'hours' mm 'mins")} Continue?`)) {
+                return;
+            }
+        }
 
         // Run the commands
         commands.forEach((cmd) => {

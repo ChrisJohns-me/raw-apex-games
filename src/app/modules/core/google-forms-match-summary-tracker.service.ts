@@ -9,10 +9,10 @@ import { combineLatest, Observable, of, ReplaySubject, Subject } from "rxjs";
 import { catchError, delay, filter, map, retryWhen, switchMap, take, takeUntil, tap } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { Config } from "src/config";
-import { MatchMapService } from "./match-map.service";
-import { MatchPlayerLegendService } from "./match-player-legend.service";
-import { MatchPlayerStatsService } from "./match-player-stats.service";
-import { MatchService } from "./match.service";
+import { MatchMapService } from "./match/match-map.service";
+import { MatchPlayerLegendService } from "./match/match-player-legend.service";
+import { MatchPlayerStatsService } from "./match/match-player-stats.service";
+import { MatchService } from "./match/match.service";
 
 const RETRY_DELAY = 10000;
 const MAX_RETRIES = 3;

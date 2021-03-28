@@ -1,18 +1,19 @@
+import { formatPercent } from "@angular/common";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { MatchLocationPhase } from "@common/match/match-location";
 import { MatchState, MatchStateChangedEvent } from "@common/match/match-state";
 import { PlayerState } from "@common/player-state";
-import { MatchPlayerLegendService } from "@core/match-player-legend.service";
-import { MatchPlayerLocationService } from "@core/match-player-location.service";
-import { MatchPlayerService } from "@core/match-player.service";
-import { MatchService } from "@core/match.service";
-import { format, isValid } from "date-fns";
+import { MatchPlayerLegendService } from "@core/match/match-player-legend.service";
+import { MatchPlayerLocationService } from "@core/match/match-player-location.service";
+import { MatchPlayerService } from "@core/match/match-player.service";
+import { MatchService } from "@core/match/match.service";
+import { formatDistanceToNowStrict, isValid } from "date-fns";
+import format from "date-fns/format";
 import { combineLatest, Observable, Subject, timer } from "rxjs";
 import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { average, averageRate } from "src/utilities";
-import { cleanInt } from "src/utilities/number";
 
-const NUM_PROGRESS_HISTORY = 20;
+const NUM_PROGRESS_HISTORY = 10;
 const ABNORMAL_INCREASE_AMOUNT = 0.1; // Ultimate accelerant or charging station
 const UI_REFRESH_RATE = 1000;
 
@@ -37,10 +38,10 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
     }
     /**
      * @returns {Date} time remaining
-     * @returns {undefined} if ready date is invalid
+     * @returns empty Date if ready date is invalid
      */
-    public get ultimateReadyRemaining(): Optional<Date> {
-        if (!isValid(this.ultimateReadyDate)) return new Date(0);
+    public get ultimateReadyRemaining(): Date {
+        if (!this.ultimateReadyDate || !isValid(this.ultimateReadyDate)) return new Date(0);
         const readyDate = this.ultimateReadyDate as Date;
         const now = new Date();
         const remaining = new Date(readyDate.getTime() - now.getTime());
@@ -88,7 +89,7 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
 
     private setupOnMatchStart(): void {
         this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-            console.debug(`Ult-timer reset`);
+            console.debug(`[${this.constructor.name}] Ult-timer reset`);
             this.ultimateProgressHistory = [{ percent: 0, increment: 0.05, timestamp: new Date() }];
         });
     }
@@ -99,13 +100,11 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
                 stateChanged.state === MatchState.Active && myState === PlayerState.Alive && locationPhase === MatchLocationPhase.HasLanded;
 
             console.debug(
-                `Ult-timer [${this.isVisible ? "Showable" : "NotShowable"}] ` +
+                `[${this.constructor.name}] [${this.isVisible ? "Showable" : "NotShowable"}] ` +
                     `[${this.isVisible ? "Visible" : "Hidden"}]. ` +
                     `Match: "${this.match.state$.value.state}", ` +
-                    `Player: "${this.matchPlayer.myState$}", ` +
-                    `Location: "${this.matchPlayerLocation.myLocationPhase$.value}", ` +
-                    `Percent: "${cleanInt(this.ultimatePercent * 100)}%", ` +
-                    `Est Remain: "${format(this.ultimateReadyRemaining ?? 0, "mm:ss")}"`
+                    `Player: "${this.matchPlayer.myState$.value}", ` +
+                    `Location: "${this.matchPlayerLocation.myLocationPhase$.value}"`
             );
         });
     }
@@ -134,12 +133,17 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
         if (increment == 0) {
             return;
         } else if (increment > ABNORMAL_INCREASE_AMOUNT) {
-            console.log(`Abnormal ultimate increment detected of "${parseFloat(String(increment))}"; omitting from averages.`);
+            console.log(
+                `[${this.constructor.name}] Abnormal ultimate increment detected of "${formatPercent(
+                    increment,
+                    "en-US"
+                )}"; omitting from averages.`
+            );
         } else if (increment > 0) {
-            console.debug(`Ultimate percent increment of "${parseFloat(String(increment))}"`);
+            console.debug(`[${this.constructor.name}] Ultimate percent increment of "${formatPercent(increment, "en-US")}"`);
             this.ultimateProgressHistory.push({ percent: newPercent, increment, timestamp: new Date() });
         } else if (increment <= -0.9) {
-            console.debug(`Ultimate likely used`);
+            console.debug(`[${this.constructor.name}] Ultimate likely used`);
             this.ultimateProgressHistory.push({ percent: newPercent, increment: lastIncrement, timestamp: new Date() });
         }
         this.ultimateProgressHistory = this.ultimateProgressHistory.slice(-NUM_PROGRESS_HISTORY);
@@ -149,13 +153,18 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
         const percentRemaining = 1 - percent;
         const approxTotalReadyTimeMs = this.avgUpdateRateMs / this.avgIncrement; // Estimated total time for 100% ultimate
         const approxTimeRemainingMs = percentRemaining * approxTotalReadyTimeMs;
+        const rawEstReadyDate = new Date(date.getTime() + approxTimeRemainingMs);
+
         console.debug(
-            `Ultimate time: ` +
-                `~"${Math.round(approxTotalReadyTimeMs / 1000)}sec" total, ` +
-                `~"${Math.round(approxTimeRemainingMs / 1000)}sec" remaining`
+            `[${this.constructor.name}] [Calculation] ` +
+                `Total ~"${formatDistanceToNowStrict(new Date().getTime() + approxTotalReadyTimeMs, { unit: "second" })}", ` +
+                `Remaining ~"${formatDistanceToNowStrict(new Date().getTime() + approxTimeRemainingMs, { unit: "second" })}", ` +
+                `Ready ~"${format(rawEstReadyDate, "yyyy:mm:dd kk:mm:ss")}", ` +
+                `History: ${this.ultimateProgressHistory.length}, ` +
+                `Increment: ${formatPercent(this.avgIncrement, "en-US")}, ` +
+                `Rate: ${this.avgUpdateRateMs / 1000}sec`
         );
 
-        const rawEstReadyDate = new Date(date.getTime() + approxTimeRemainingMs);
         return rawEstReadyDate;
     }
 }

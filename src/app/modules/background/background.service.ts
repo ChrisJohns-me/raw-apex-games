@@ -2,15 +2,17 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { GameProcessService } from "@core/game-process.service";
 import { GameService } from "@core/game.service";
 import { GoogleFormsMatchSummaryTrackerService } from "@core/google-forms-match-summary-tracker.service";
-import { MatchLegendSelectService } from "@core/match-legend-select.service";
-import { MatchMapService } from "@core/match-map.service";
-import { MatchPlayerInventoryService } from "@core/match-player-inventory.service";
-import { MatchPlayerLegendService } from "@core/match-player-legend.service";
-import { MatchPlayerLocationService } from "@core/match-player-location.service";
-import { MatchPlayerStatsService } from "@core/match-player-stats.service";
-import { MatchPlayerService } from "@core/match-player.service";
-import { MatchRosterService } from "@core/match-roster.service";
-import { MatchService } from "@core/match.service";
+import { MatchActivityService } from "@core/match/match-activity.service";
+import { MatchLegendSelectService } from "@core/match/match-legend-select.service";
+import { MatchMapService } from "@core/match/match-map.service";
+import { MatchPlayerDamageService } from "@core/match/match-player-damage.service";
+import { MatchPlayerInventoryService } from "@core/match/match-player-inventory.service";
+import { MatchPlayerLegendService } from "@core/match/match-player-legend.service";
+import { MatchPlayerLocationService } from "@core/match/match-player-location.service";
+import { MatchPlayerStatsService } from "@core/match/match-player-stats.service";
+import { MatchPlayerService } from "@core/match/match-player.service";
+import { MatchRosterService } from "@core/match/match-roster.service";
+import { MatchService } from "@core/match/match.service";
 import { OverwolfDataProviderService } from "@core/overwolf-data-provider";
 import { OverwolfExposedDataService } from "@core/overwolf-exposed-data.service";
 import { PlayerService } from "@core/player.service";
@@ -24,9 +26,11 @@ import { SingletonServiceProviderFactory } from "src/app/singleton-service.provi
         GameProcessService,
         GoogleFormsMatchSummaryTrackerService,
         MatchService,
+        MatchActivityService,
         MatchLegendSelectService,
         MatchMapService,
         MatchPlayerService,
+        MatchPlayerDamageService,
         MatchPlayerInventoryService,
         MatchPlayerLegendService,
         MatchPlayerLocationService,
@@ -46,9 +50,11 @@ export class BackgroundService implements OnDestroy {
         private readonly gameProcess: GameProcessService,
         private readonly googleFormsMatchSummaryTracker: GoogleFormsMatchSummaryTrackerService,
         private readonly match: MatchService,
+        private readonly matchActivity: MatchActivityService,
         private readonly matchLegendSelect: MatchLegendSelectService,
         private readonly matchMap: MatchMapService,
         private readonly matchPlayer: MatchPlayerService,
+        private readonly matchPlayerDamage: MatchPlayerDamageService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
         private readonly matchPlayerLegend: MatchPlayerLegendService,
         private readonly matchPlayerLocation: MatchPlayerLocationService,
@@ -72,9 +78,11 @@ export class BackgroundService implements OnDestroy {
         this.gameProcess.start();
         this.googleFormsMatchSummaryTracker.start();
         this.match.start();
+        this.matchActivity.start();
         this.matchLegendSelect.start();
         this.matchMap.start();
         this.matchPlayer.start();
+        this.matchPlayerDamage.start();
         this.matchPlayerInventory.start();
         this.matchPlayerLegend.start();
         this.matchPlayerLocation.start();

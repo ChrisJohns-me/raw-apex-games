@@ -2,10 +2,10 @@ import { Injectable, OnDestroy } from "@angular/core";
 import { MatchGameMode } from "@common/match/match-game-mode";
 import { MatchState, MatchStateChangedEvent } from "@common/match/match-state";
 import { TriggerConditions } from "@common/trigger-conditions";
+import { OverwolfDataProviderService, OWGameEvent, OWInfoUpdates2Event } from "@core/overwolf-data-provider";
 import { BehaviorSubject, merge, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import { OverwolfDataProviderService, OWGameEvent, OWInfoUpdates2Event } from "./overwolf-data-provider";
 
 /**
  * @classdesc Provides basic and general details about the match

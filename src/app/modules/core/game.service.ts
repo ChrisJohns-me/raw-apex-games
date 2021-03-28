@@ -6,7 +6,7 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { findValueByKeyRegEx } from "src/utilities";
-import { MatchService } from "./match.service";
+import { MatchService } from "./match/match.service";
 import { OverwolfDataProviderService, OWInfoUpdates2Event } from "./overwolf-data-provider";
 
 /**

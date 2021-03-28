@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { MatchDamageEvent } from "@common/match/match-damage-event";
 import { DamageTimelyAggregator } from "@common/utilities/damage-timely-aggregator";
 import { isPlayerNameEqual } from "@common/utilities/player";
-import { MatchPlayerDamageService } from "@core/match-player-damage.service";
+import { MatchPlayerDamageService } from "@core/match/match-player-damage.service";
 import { Observable, Observer } from "rxjs";
 
 const ACCUM_EXPIRE = 5000;
@@ -16,6 +16,7 @@ export class InGameDamageCollectorService {
         const aggregatorSubscription = this.damageAggregator
             .getDamageAggregate$([this.matchPlayerDamage.myDamageEvent$, this.matchPlayerDamage.myKillfeedEvent$])
             .subscribe((inflictionEvent) => {
+                console.debug(`[${this.constructor.name}] DamageEvent received:`, inflictionEvent);
                 this.damageEventListValue = [
                     ...this.damageEventListValue.filter((e) => !isPlayerNameEqual(e.victim.name, inflictionEvent.victim.name)),
                     inflictionEvent,

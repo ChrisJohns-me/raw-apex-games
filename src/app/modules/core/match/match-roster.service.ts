@@ -3,6 +3,7 @@ import { MatchRoster } from "@common/match/match-roster";
 import { MatchRosterPlayer } from "@common/match/match-roster-player";
 import { MatchRosterTeammate } from "@common/match/match-roster-teammate";
 import { isPlayerNameEqual } from "@common/utilities/player";
+import { OverwolfDataProviderService, OWMatchInfoRoster, OWMatchInfoTeammate } from "@core/overwolf-data-provider";
 import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
@@ -10,7 +11,6 @@ import { findKeyByKeyRegEx, findValueByKeyRegEx, isEmpty } from "src/utilities";
 import { cleanInt } from "src/utilities/number";
 import { MatchLegendSelectService } from "./match-legend-select.service";
 import { MatchService } from "./match.service";
-import { OverwolfDataProviderService, OWMatchInfoRoster, OWMatchInfoTeammate } from "./overwolf-data-provider";
 
 /**
  * @classdesc Provides a list, counts, and information about players in the match.
