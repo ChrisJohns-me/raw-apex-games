@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { WeaponItem } from "@common/items/weapon-item";
-import { MatchDamageEvent } from "@common/match/match-damage-event";
+import { MatchInflictionEvent } from "@common/match/match-infliction-event";
 import { isPlayerNameEqual } from "@common/utilities/player";
 import { OverwolfDataProviderService, OWGameEventKillFeed } from "@core/overwolf-data-provider";
 import { differenceInMilliseconds } from "date-fns";
@@ -24,8 +24,8 @@ const KILLFEED_UNIQUE_TIMEFRAME = 3000; // Prevents duplicates from Primary & Se
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchActivityService", MatchActivityService, deps),
 })
 export class MatchActivityService implements OnDestroy {
-    public readonly killfeedEvent$ = new Subject<MatchDamageEvent>();
-    public readonly killfeedEventHistory$ = new BehaviorSubject<MatchDamageEvent[]>([]);
+    public readonly killfeedEvent$ = new Subject<MatchInflictionEvent>();
+    public readonly killfeedEventHistory$ = new BehaviorSubject<MatchInflictionEvent[]>([]);
 
     private readonly _unsubscribe = new Subject<void>();
 
@@ -77,7 +77,7 @@ export class MatchActivityService implements OnDestroy {
                 const isVictimEliminated = !!(action === "Bleed Out" || action === "kill" || action === "headshot_kill");
                 if (!victim) return;
 
-                const newMatchDamageEvent: MatchDamageEvent = {
+                const newKillfeedEvent: MatchInflictionEvent = {
                     timestamp: new Date(),
                     victim: victim,
                     attacker: attacker,
@@ -86,7 +86,7 @@ export class MatchActivityService implements OnDestroy {
                     weapon,
                 };
 
-                this.addUniqueKillfeedEvent(newMatchDamageEvent);
+                this.addUniqueKillfeedEvent(newKillfeedEvent);
             });
     }
 
@@ -119,7 +119,7 @@ export class MatchActivityService implements OnDestroy {
                 const isVictimEliminated = gameEvent.name === "kill";
                 if (!victim) return;
 
-                const newMatchDamageEvent: MatchDamageEvent = {
+                const newMatchInflictionEvent: MatchInflictionEvent = {
                     timestamp: new Date(),
                     victim: victim,
                     attacker: attacker,
@@ -127,11 +127,11 @@ export class MatchActivityService implements OnDestroy {
                     isElimination: isVictimEliminated,
                     weapon,
                 };
-                if (this.addUniqueKillfeedEvent(newMatchDamageEvent)) {
+                if (this.addUniqueKillfeedEvent(newMatchInflictionEvent)) {
                     console.warn(
                         `"${gameEvent.name}" killfeed action was not emitted by primary source (name: kill_feed);` +
                             ` but was found in secondary source (name: ${gameEvent.name}).`,
-                        newMatchDamageEvent
+                        newMatchInflictionEvent
                     );
                 }
             });
@@ -141,15 +141,15 @@ export class MatchActivityService implements OnDestroy {
      * Adds unique killfeed events to the history, and emits a killfeed event.
      * @returns {boolean} true if the item is unique.
      */
-    private addUniqueKillfeedEvent(damageEvent: MatchDamageEvent): boolean {
+    private addUniqueKillfeedEvent(killfeedEvent: MatchInflictionEvent): boolean {
         const foundEvent = this.killfeedEventHistory$.value.find((kf) => {
-            const sameVictim: boolean = isPlayerNameEqual(kf.victim.name, damageEvent.victim.name);
-            const sameAttacker: boolean = isPlayerNameEqual(kf.attacker?.name, damageEvent.attacker?.name);
-            const sameKnockdown: boolean = kf.isKnockdown === damageEvent.isKnockdown;
-            const sameElimination: boolean = kf.isElimination === damageEvent.isElimination;
-            const nullHeadshot: boolean = kf.isHeadshot == null && damageEvent.isHeadshot == null;
-            const nullShieldDamage: boolean = kf.shieldDamage == null && damageEvent.shieldDamage == null;
-            const nullHealthDamage: boolean = kf.healthDamage == null && damageEvent.healthDamage == null;
+            const sameVictim: boolean = isPlayerNameEqual(kf.victim.name, killfeedEvent.victim.name);
+            const sameAttacker: boolean = isPlayerNameEqual(kf.attacker?.name, killfeedEvent.attacker?.name);
+            const sameKnockdown: boolean = kf.isKnockdown === killfeedEvent.isKnockdown;
+            const sameElimination: boolean = kf.isElimination === killfeedEvent.isElimination;
+            const nullHeadshot: boolean = kf.isHeadshot == null && killfeedEvent.isHeadshot == null;
+            const nullShieldDamage: boolean = kf.shieldDamage == null && killfeedEvent.shieldDamage == null;
+            const nullHealthDamage: boolean = kf.healthDamage == null && killfeedEvent.healthDamage == null;
             return (
                 !!kf.attacker &&
                 !!kf.victim &&
@@ -163,7 +163,7 @@ export class MatchActivityService implements OnDestroy {
             );
         });
 
-        const timestampMsDiff = foundEvent ? differenceInMilliseconds(foundEvent.timestamp, damageEvent.timestamp) : Infinity;
+        const timestampMsDiff = foundEvent ? differenceInMilliseconds(foundEvent.timestamp, killfeedEvent.timestamp) : Infinity;
         const hasSimilarDates = KILLFEED_UNIQUE_TIMEFRAME > Math.abs(timestampMsDiff);
 
         if (foundEvent && hasSimilarDates) {
@@ -172,8 +172,8 @@ export class MatchActivityService implements OnDestroy {
         }
 
         // Primary source has not fired this killfeed event
-        this.killfeedEvent$.next(damageEvent);
-        const newkillfeedEventHistory = [...this.killfeedEventHistory$.value, damageEvent];
+        this.killfeedEvent$.next(killfeedEvent);
+        const newkillfeedEventHistory = [...this.killfeedEventHistory$.value, killfeedEvent];
         this.killfeedEventHistory$.next(newkillfeedEventHistory);
         return true;
     }

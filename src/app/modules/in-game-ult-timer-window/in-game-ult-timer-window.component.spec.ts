@@ -75,72 +75,90 @@ describe("InGameUltTimerWindowComponent", () => {
     }));
 
     it("should show when player has landed", fakeAsync(() => {
+        // Arrange / Act
         matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
         matchService.startedEvent$.next(matchService.state$.value);
         matchPlayerService.myState$.next(PlayerState.Alive);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
         const actual = sut.isVisible;
+        // Assert
         expect(actual).toBeTrue();
     }));
 
     it("should hide when player is knocked", fakeAsync(() => {
+        // Arrange
         matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
         matchService.startedEvent$.next(matchService.state$.value);
-        matchPlayerService.myState$.next(PlayerState.Knocked);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
+        // Act
+        matchPlayerService.myState$.next(PlayerState.Knocked);
+
         const actual = sut.isVisible;
+        // Assert
         expect(actual).toBeFalse();
     }));
 
     it("should hide when player is eliminated", fakeAsync(() => {
+        // Arrange
         matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
         matchService.startedEvent$.next(matchService.state$.value);
-        matchPlayerService.myState$.next(PlayerState.Eliminated);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
+        // Act
+        matchPlayerService.myState$.next(PlayerState.Eliminated);
+
         const actual = sut.isVisible;
+        // Assert
         expect(actual).toBeFalse();
     }));
 
     it("should hide when match is inactive", fakeAsync(() => {
+        // Arrange
         matchService.state$.next({ state: MatchState.Inactive, startDate: new Date() });
         matchService.startedEvent$.next(matchService.state$.value);
         matchPlayerService.myState$.next(PlayerState.Alive);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
+        // Act
         matchService.state$.next({ state: MatchState.Inactive, startDate: new Date(), endDate: new Date() });
         matchService.endedEvent$.next(matchService.state$.value);
 
         const actual = sut.isVisible;
         expect(actual).toBeFalse();
+        // Assert
         discardPeriodicTasks();
     }));
 
     it("should have a property that returns true when the ultimate is ready", fakeAsync(() => {
+        // Arrange
         jasmine.clock().mockDate(new Date("2020-01-01T00:00:00"));
         matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
         matchService.startedEvent$.next(matchService.state$.value);
         matchPlayerService.myState$.next(PlayerState.Alive);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
+        // Act
         of(...percentsArr)
             .pipe(tap(() => tick(10000)))
             .subscribe(matchPlayerLegendService.myUltimateCooldown$);
 
         const actual = sut.isUltimateReady;
         expect(actual).toBeTrue();
+        // Assert
         discardPeriodicTasks();
     }));
 
     it("should have a property that returns false when the ultimate is NOT ready", fakeAsync(() => {
+        // Arrange
         jasmine.clock().mockDate(new Date("2020-01-01T00:00:00"));
         matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
         matchService.startedEvent$.next(matchService.state$.value);
         matchPlayerService.myState$.next(PlayerState.Alive);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
+        // Act
         of(...percentsArr)
             .pipe(
                 mapTo(0.5),
@@ -150,6 +168,7 @@ describe("InGameUltTimerWindowComponent", () => {
             .subscribe(matchPlayerLegendService.myUltimateCooldown$);
 
         const actual = sut.isUltimateReady;
+        // Assert
         expect(actual).toBeFalse();
         discardPeriodicTasks();
     }));

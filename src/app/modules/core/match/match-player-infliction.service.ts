@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { MatchDamageEvent } from "@common/match/match-damage-event";
+import { MatchInflictionEvent } from "@common/match/match-infliction-event";
 import { MatchRosterPlayer } from "@common/match/match-roster-player";
 import { PlayerState } from "@common/player-state";
 import { isPlayerNameEqual } from "@common/utilities/player";
@@ -27,13 +27,13 @@ import { MatchRosterService } from "./match-roster.service";
         OverwolfDataProviderService,
         PlayerService,
     ],
-    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerDamageService", MatchPlayerDamageService, deps),
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerInflictionService", MatchPlayerInflictionService, deps),
 })
-export class MatchPlayerDamageService implements OnDestroy {
+export class MatchPlayerInflictionService implements OnDestroy {
     /** Eliminations/knockdown event stream for the local user */
-    public readonly myKillfeedEvent$ = new Subject<MatchDamageEvent>();
+    public readonly myKillfeedEvent$ = new Subject<MatchInflictionEvent>();
     /** Damage event stream for the local user */
-    public readonly myDamageEvent$ = new Subject<MatchDamageEvent>();
+    public readonly myDamageEvent$ = new Subject<MatchInflictionEvent>();
 
     private readonly _unsubscribe = new Subject<void>();
 
@@ -105,7 +105,7 @@ export class MatchPlayerDamageService implements OnDestroy {
                 }
                 const primaryWeapon = this.matchPlayerInventory.myWeaponSlots$.value[0]?.item;
 
-                const newDamageEvent: MatchDamageEvent = {
+                const newDamageEvent: MatchInflictionEvent = {
                     timestamp: new Date(),
                     victim: rosterVictim as MatchRosterPlayer,
                     attacker: rosterMe,

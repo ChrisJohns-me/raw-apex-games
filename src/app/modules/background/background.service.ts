@@ -5,7 +5,7 @@ import { GoogleFormsMatchSummaryTrackerService } from "@core/google-forms-match-
 import { MatchActivityService } from "@core/match/match-activity.service";
 import { MatchLegendSelectService } from "@core/match/match-legend-select.service";
 import { MatchMapService } from "@core/match/match-map.service";
-import { MatchPlayerDamageService } from "@core/match/match-player-damage.service";
+import { MatchPlayerInflictionService } from "@core/match/match-player-infliction.service";
 import { MatchPlayerInventoryService } from "@core/match/match-player-inventory.service";
 import { MatchPlayerLegendService } from "@core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "@core/match/match-player-location.service";
@@ -30,7 +30,7 @@ import { SingletonServiceProviderFactory } from "src/app/singleton-service.provi
         MatchLegendSelectService,
         MatchMapService,
         MatchPlayerService,
-        MatchPlayerDamageService,
+        MatchPlayerInflictionService,
         MatchPlayerInventoryService,
         MatchPlayerLegendService,
         MatchPlayerLocationService,
@@ -54,7 +54,7 @@ export class BackgroundService implements OnDestroy {
         private readonly matchLegendSelect: MatchLegendSelectService,
         private readonly matchMap: MatchMapService,
         private readonly matchPlayer: MatchPlayerService,
-        private readonly matchPlayerDamage: MatchPlayerDamageService,
+        private readonly matchPlayerInfliction: MatchPlayerInflictionService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
         private readonly matchPlayerLegend: MatchPlayerLegendService,
         private readonly matchPlayerLocation: MatchPlayerLocationService,
@@ -82,7 +82,7 @@ export class BackgroundService implements OnDestroy {
         this.matchLegendSelect.start();
         this.matchMap.start();
         this.matchPlayer.start();
-        this.matchPlayerDamage.start();
+        this.matchPlayerInfliction.start();
         this.matchPlayerInventory.start();
         this.matchPlayerLegend.start();
         this.matchPlayerLocation.start();

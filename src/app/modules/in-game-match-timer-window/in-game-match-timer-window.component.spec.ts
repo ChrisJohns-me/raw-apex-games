@@ -49,20 +49,24 @@ describe("InGameMatchTimerWindowComponent", () => {
     });
 
     it("should show when match is active", fakeAsync(() => {
+        // Arrange
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date("2020-01-01T00:00:00"),
             state: MatchState.Active,
         };
 
+        // Act
         matchService.startedEvent$.next(startEvent);
         matchService.state$.next(startEvent);
 
         const actual = sut.showTimer;
+        // Assert
         expect(actual).toBeTrue();
         discardPeriodicTasks();
     }));
 
     it("should hide when match is inactive", fakeAsync(() => {
+        // Arrange
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date("2020-01-01T00:00:00"),
             state: MatchState.Active,
@@ -73,6 +77,7 @@ describe("InGameMatchTimerWindowComponent", () => {
             state: MatchState.Inactive,
         };
 
+        // Act
         matchService.startedEvent$.next(startEvent);
         matchService.state$.next(startEvent);
 
@@ -81,11 +86,13 @@ describe("InGameMatchTimerWindowComponent", () => {
         tick(60 * 1000); // There may be a delay between match end and hiding the timer
 
         const actual = sut.showTimer;
+        // Assert
         expect(actual).toBeFalse();
         discardPeriodicTasks();
     }));
 
     it("should update the correct match duration", fakeAsync(() => {
+        // Arrange
         const startDate = new Date("2020-01-01T00:00:00");
         jasmine.clock().mockDate(startDate);
         const startEvent: MatchStateChangedEvent = {
@@ -96,11 +103,13 @@ describe("InGameMatchTimerWindowComponent", () => {
         matchService.startedEvent$.next(startEvent);
         matchService.state$.next(startEvent);
 
+        // Act
         for (let i = 0; i < midDates.length; i++) {
             const prev = midDates[i - 1] ?? 0;
             const curr = midDates[i];
             const diff = curr - prev;
             tick(diff);
+            // Assert
             expect(sut.matchDurationDate.getTime()).toBeCloseTo(curr, -3);
         }
 
@@ -108,6 +117,7 @@ describe("InGameMatchTimerWindowComponent", () => {
     }));
 
     it("should show the correct end match duration", fakeAsync(() => {
+        // Arrange
         const expectedDuration = 10 * 60 * 1000;
         const startDate = new Date("2020-01-01T00:00:00");
         const endDate = addMilliseconds(startDate, expectedDuration);
@@ -120,6 +130,8 @@ describe("InGameMatchTimerWindowComponent", () => {
             endDate: endDate,
             state: MatchState.Inactive,
         };
+
+        // Act
         matchService.startedEvent$.next(startEvent);
         matchService.state$.next(startEvent);
         tick(expectedDuration);
@@ -127,6 +139,7 @@ describe("InGameMatchTimerWindowComponent", () => {
         matchService.endedEvent$.next(endEvent);
         matchService.state$.next(endEvent);
 
+        // Assert
         expect(sut.matchDurationDate.getTime()).toBeCloseTo(endDate.getTime() - startDate.getTime(), 0);
         discardPeriodicTasks();
     }));

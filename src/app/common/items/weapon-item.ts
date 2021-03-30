@@ -1,3 +1,4 @@
+import { isEmpty } from "src/utilities";
 import { Item } from "./item";
 // import * as WeaponJSONData from "./weapon-list.json";
 // TODO: Load weapon statistics from json
@@ -47,6 +48,9 @@ export class WeaponItem extends Item {
      * @param {string} fromInGameInfoName Create weapon from Overwolf's `"feature": "inventory"` event naming.
      */
     constructor({ fromId, fromInGameEventName, fromInGameInfoName }: WeaponItemConstructor) {
+        if (isEmpty(fromId) && isEmpty(fromInGameEventName) && isEmpty(fromInGameInfoName)) {
+            fromId = "empty_handed";
+        }
         super({ fromId, fromInGameEventName, fromInGameInfoName });
     }
 }
