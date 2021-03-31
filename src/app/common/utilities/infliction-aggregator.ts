@@ -34,22 +34,27 @@ export class InflictionAggregator {
             map((inflEvent) => this.convertToAggregateInflictionEvent(inflEvent)),
             map((inflEvent) => ({ ...inflEvent, latestTimestamp: new Date() } as MatchInflictionEventAccum)),
             filter((inflEvent) => !isEmpty(inflEvent.victim?.name)),
+            share()
+        );
+
+        return merge(this.createAggregateEventObs$(inflictionEventObs$), this.createResetEventObs$(inflictionEventObs$));
+    }
+
+    public clearAccumulations(): void {
+        this.accumulations = [];
+        this.distinctFlush$.next();
+    }
+
+    private createAggregateEventObs$(inflictionEventObs: Observable<MatchInflictionEventAccum>): Observable<MatchInflictionEventAccum> {
+        return inflictionEventObs.pipe(
             map((inflEvent) => {
                 const foundVictim = this.findVictimAccumulation(inflEvent.victim?.name);
                 const victimTimedOut = new Date() >= addMilliseconds(foundVictim?.latestTimestamp ?? 0, this._expireAggregateMs);
                 const accumInflEvent =
                     !foundVictim || victimTimedOut ? this.handleNewVictimInfl(inflEvent) : this.handleExistingVictimInfl(inflEvent);
                 return accumInflEvent;
-            }),
-            share()
+            })
         );
-
-        return merge(inflictionEventObs$, this.createResetEventObs$(inflictionEventObs$));
-    }
-
-    public clearAccumulations(): void {
-        this.accumulations = [];
-        this.distinctFlush$.next();
     }
 
     private createResetEventObs$(inflictionEventObs: Observable<MatchInflictionEventAccum>): Observable<MatchInflictionEventAccum> {

@@ -1,4 +1,8 @@
+import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { MatchLocationPhase } from "@common/match/match-location";
+import { MatchState, MatchStateChangedEvent } from "@common/match/match-state";
+import { PlayerState } from "@common/player-state";
 import { MatchPlayerInflictionService } from "@core/match/match-player-infliction.service";
 import { MatchPlayerLocationService } from "@core/match/match-player-location.service";
 import { MatchPlayerService } from "@core/match/match-player.service";
@@ -30,6 +34,7 @@ describe("InGameDamageCollectorWindowComponent", () => {
         await TestBed.configureTestingModule({
             declarations: [InGameDamageCollectorWindowComponent, MockUIContainerComponent],
             providers: [
+                { provide: ChangeDetectorRef, useValue: {} },
                 { provide: MatchPlayerInflictionService, useClass: MockMatchPlayerInflictionService },
                 { provide: MatchPlayerLocationService, useClass: MockMatchPlayerLocationService },
                 { provide: MatchPlayerService, useClass: MockMatchPlayerService },
@@ -41,6 +46,9 @@ describe("InGameDamageCollectorWindowComponent", () => {
     });
 
     beforeEach(() => {
+        jasmine.clock().uninstall();
+        jasmine.clock().install();
+        jasmine.clock().mockDate(new Date(0));
         scheduler = new TestScheduler((actual, expected) => {
             expect(actual).toEqual(expected);
         });
@@ -64,341 +72,254 @@ describe("InGameDamageCollectorWindowComponent", () => {
         expect(sut).toBeDefined();
     });
 
-    // it("shows on match start and landed", () => {
-    //     // Arrange
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
+    it("shows on match start and landed", () => {
+        // Arrange
+        const startEvent: MatchStateChangedEvent = {
+            startDate: new Date(),
+            state: MatchState.Active,
+        };
 
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     let actual = sut.isVisible;
-    //     expect(actual).toBeFalse();
+        // Act
+        matchService.startedEvent$.next(startEvent);
+        matchService.state$.next(startEvent);
+        matchPlayerService.myState$.next(PlayerState.Alive);
+        let actual = sut.isVisible;
+        expect(actual).toBeFalse();
 
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
-    //     actual = sut.isVisible;
-    //     // Assert
+        matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+        actual = sut.isVisible;
 
-    //     expect(actual).toBeTrue();
-    // });
+        // Assert
+        expect(actual).toBeTrue();
+    });
 
-    // it("hides when player is knocked", () => {
-    //     // Arrange
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
+    it("hides when player is knocked", () => {
+        // Arrange
+        const startEvent: MatchStateChangedEvent = {
+            startDate: new Date(),
+            state: MatchState.Active,
+        };
 
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+        // Act
+        matchService.startedEvent$.next(startEvent);
+        matchService.state$.next(startEvent);
+        matchPlayerService.myState$.next(PlayerState.Alive);
+        matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
-    //     matchPlayerService.myState$.next(PlayerState.Knocked);
+        matchPlayerService.myState$.next(PlayerState.Knocked);
 
-    //     // Assert
-    //     const actual = sut.isVisible;
-    //     expect(actual).toBeFalse();
-    // });
+        // Assert
+        const actual = sut.isVisible;
+        expect(actual).toBeFalse();
+    });
 
-    // it("hides when player is eliminated", () => {
-    //     // Arrange
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
+    it("hides when player is eliminated", () => {
+        // Arrange
+        const startEvent: MatchStateChangedEvent = {
+            startDate: new Date(),
+            state: MatchState.Active,
+        };
 
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+        // Act
+        matchService.startedEvent$.next(startEvent);
+        matchService.state$.next(startEvent);
+        matchPlayerService.myState$.next(PlayerState.Alive);
+        matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
-    //     matchPlayerService.myState$.next(PlayerState.Eliminated);
+        matchPlayerService.myState$.next(PlayerState.Eliminated);
 
-    //     // Assert
-    //     const actual = sut.isVisible;
-    //     expect(actual).toBeFalse();
-    // });
+        // Assert
+        const actual = sut.isVisible;
+        expect(actual).toBeFalse();
+    });
 
-    // it("hides on match end", () => {
-    //     // Arrange
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
-    //     const endEvent: MatchStateChangedEvent = {
-    //         startDate: startEvent.startDate,
-    //         endDate: new Date("2020-01-01T00:10:00"),
-    //         state: MatchState.Inactive,
-    //     };
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+    it("hides on match end", () => {
+        // Arrange
+        const startEvent: MatchStateChangedEvent = {
+            startDate: new Date(),
+            state: MatchState.Active,
+        };
+        const endEvent: MatchStateChangedEvent = {
+            startDate: startEvent.startDate,
+            endDate: new Date(),
+            state: MatchState.Inactive,
+        };
+        matchService.startedEvent$.next(startEvent);
+        matchService.state$.next(startEvent);
+        matchPlayerService.myState$.next(PlayerState.Alive);
+        matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
-    //     // Act
-    //     matchService.endedEvent$.next(endEvent);
-    //     matchService.state$.next(endEvent);
+        // Act
+        matchService.endedEvent$.next(endEvent);
+        matchService.state$.next(endEvent);
 
-    //     // Assert
-    //     const actual = sut.isVisible;
-    //     expect(actual).toBeFalse();
-    // });
+        // Assert
+        const actual = sut.isVisible;
+        expect(actual).toBeFalse();
+    });
 
     // it("shows an enemy after a damage event", () => {
-    //     // Arrange
-    //     let subscribeCalled = false;
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
-    //     jasmine.clock().mockDate(startEvent.startDate);
+    //     scheduler.run(({ hot, expectObservable }) => {
+    //         // Arrange
+    //         const startEvent: MatchStateChangedEvent = {
+    //             startDate: new Date(),
+    //             state: MatchState.Active,
+    //         };
+    //         matchService.startedEvent$.next(startEvent);
+    //         matchService.state$.next(startEvent);
+    //         matchPlayerService.myState$.next(PlayerState.Alive);
+    //         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
-    //     sut.enemyBadgeList$.pipe(take(1)).subscribe((enemyBadgeList) => {
+    //         // Act
+    //         const actualValue: MatchInflictionEvent = {
+    //             timestamp: new Date(),
+    //             victim: { name: "Victim1" },
+    //             attacker: { name: "Me" },
+    //             hasShield: true,
+    //             isHeadshot: false,
+    //             shieldDamage: 100,
+    //             healthDamage: 0,
+    //             isKnockdown: false,
+    //             isElimination: false,
+    //             weapon: new WeaponItem({}),
+    //         };
+    //         hot("a|", { a: actualValue }).subscribe(matchPlayerInflictionService.myDamageEvent$);
+
+    //         const expectedInflictionAccum: MatchInflictionEventAccum = {
+    //             victim: { name: "Victim1" },
+    //             shieldDamageSum: 100,
+    //             healthDamageSum: 0,
+    //             hasShield: true,
+    //             isKnocked: false,
+    //             isEliminated: false,
+    //             latestAttacker: { name: "Me" },
+    //             latestTimestamp: new Date(),
+    //         };
+    //         const expectedValue: EnemyBadge[] = [
+    //             {
+    //                 isTeammate: false,
+    //                 rosterPlayer: expectedInflictionAccum.victim!,
+    //                 latestInflictionAccum: expectedInflictionAccum,
+    //             },
+    //         ];
+
     //         // Assert
-    //         expect(enemyBadgeList.length).toBe(1);
-    //         subscribeCalled = true;
+    //         const actual = of(sut.enemyBadgeList);
+    //         expectObservable(actual).toBe("a", { a: expectedValue });
     //     });
-
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
-
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent();
-    //     expect(subscribeCalled).toBeTrue();
     // });
 
     // it("shows an enemy after a knockdown event", () => {
-    //     // Arrange
-    //     let subscribeCalled = false;
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
-    //     jasmine.clock().mockDate(startEvent.startDate);
+    //     scheduler.run(({ hot, expectObservable }) => {
+    //         // Arrange
+    //         const startEvent: MatchStateChangedEvent = {
+    //             startDate: new Date(),
+    //             state: MatchState.Active,
+    //         };
+    //         matchService.startedEvent$.next(startEvent);
+    //         matchService.state$.next(startEvent);
+    //         matchPlayerService.myState$.next(PlayerState.Alive);
+    //         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
-    //     sut.enemyBadgeList$.pipe(take(1)).subscribe((enemyBadgeList) => {
+    //         // Act
+    //         const actualValue: MatchInflictionEvent = {
+    //             timestamp: new Date(),
+    //             victim: { name: "Victim1" },
+    //             attacker: { name: "Me" },
+    //             hasShield: false,
+    //             isHeadshot: false,
+    //             shieldDamage: 0,
+    //             healthDamage: 100,
+    //             isKnockdown: true,
+    //             isElimination: false,
+    //             weapon: new WeaponItem({}),
+    //         };
+    //         hot("a", { a: actualValue }).subscribe(matchPlayerInflictionService.myDamageEvent$);
+
+    //         const expectedInflictionAccum: MatchInflictionEventAccum = {
+    //             victim: { name: "Victim1" },
+    //             shieldDamageSum: 0,
+    //             healthDamageSum: 100,
+    //             hasShield: false,
+    //             isKnocked: true,
+    //             isEliminated: false,
+    //             latestAttacker: { name: "Me" },
+    //             latestTimestamp: new Date(),
+    //         };
+    //         const expectedValue: EnemyBadge[] = [
+    //             {
+    //                 isTeammate: false,
+    //                 rosterPlayer: expectedInflictionAccum.victim!,
+    //                 latestInflictionAccum: expectedInflictionAccum,
+    //             },
+    //         ];
+
     //         // Assert
-    //         expect(enemyBadgeList.length).toBe(1);
-    //         subscribeCalled = true;
+    //         const actual = of(sut.enemyBadgeList);
+    //         expectObservable(actual).toBe("a", { a: expectedValue });
     //     });
-
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
-
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockKillfeedEvent({
-    //         isKnockdown: true,
-    //     });
-    //     expect(subscribeCalled).toBeTrue();
     // });
 
+    // TODO:
     // it("shows an enemy after an elimination event", () => {
-    //     // Arrange
-    //     let subscribeCalled = false;
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
-    //     jasmine.clock().mockDate(startEvent.startDate);
+    //     scheduler.run(({ hot, cold, expectObservable, flush }) => {
+    //         // Arrange
+    //         const startEvent: MatchStateChangedEvent = {
+    //             startDate: new Date(),
+    //             state: MatchState.Active,
+    //         };
+    //         matchService.startedEvent$.next(startEvent);
+    //         matchService.state$.next(startEvent);
+    //         matchPlayerService.myState$.next(PlayerState.Alive);
+    //         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
-    //     sut.enemyBadgeList$.pipe(take(1)).subscribe((enemyBadgeList) => {
+    //         // Act
+    //         const actualMarble = "a 4999ms --|";
+    //         const expectMarble = "a 4999ms -b|";
+
+    //         const actualValue: MatchInflictionEvent = {
+    //             timestamp: new Date(),
+    //             victim: { name: "Victim1" },
+    //             attacker: { name: "Me" },
+    //             hasShield: false,
+    //             isHeadshot: false,
+    //             shieldDamage: 0,
+    //             healthDamage: 100,
+    //             isKnockdown: true,
+    //             isElimination: true,
+    //             weapon: new WeaponItem({}),
+    //         };
+    //         of(actualValue).subscribe(matchPlayerInflictionService.myDamageEvent$);
+    //         // flush();
+    //         console.log(sut.enemyBadgeList);
+    //         const actual = cold(actualMarble, { a: sut.enemyBadgeList });
+
+    //         const expectedInflictionAccum: MatchInflictionEventAccum = {
+    //             victim: { name: "Victim1" },
+    //             shieldDamageSum: 0,
+    //             healthDamageSum: 100,
+    //             hasShield: false,
+    //             isKnocked: true,
+    //             isEliminated: true,
+    //             latestAttacker: { name: "Me" },
+    //             latestTimestamp: new Date(),
+    //         };
+    //         const expectedValue: EnemyBadge[] = [
+    //             {
+    //                 isTeammate: false,
+    //                 rosterPlayer: expectedInflictionAccum.victim!,
+    //                 latestInflictionAccum: expectedInflictionAccum,
+    //             },
+    //         ];
+
+    //         const expectedResetValue: EnemyBadge[] = [];
+
     //         // Assert
-    //         expect(enemyBadgeList.length).toBe(1);
-    //         subscribeCalled = true;
+    //         expectObservable(actual).toBe(expectMarble, { a: expectedValue, b: expectedResetValue });
     //     });
-
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
-
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockKillfeedEvent({
-    //         isElimination: true,
-    //     });
-    //     expect(subscribeCalled).toBeTrue();
     // });
 
-    // it("shows correct shield damage sum after many damage events", fakeAsync(() => {
-    //     // Arrange
-    //     let subscribeCalled = false;
-    //     const victim = { name: "ShieldDamage" };
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
-    //     jasmine.clock().mockDate(startEvent.startDate);
-
-    //     sut.enemyBadgeList$.pipe(skip(2), take(1)).subscribe((enemyBadgeList) => {
-    //         // Assert
-    //         const expectedShieldDamage = 6;
-    //         const victimBadge = enemyBadgeList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim.name));
-
-    //         expect(victimBadge?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
-    //         subscribeCalled = true;
-    //     });
-
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
-
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 1, hasShield: true });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 2, hasShield: true });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 3, hasShield: true });
-    //     tick(1000);
-
-    //     discardPeriodicTasks();
-    //     expect(subscribeCalled).toBeTrue();
-    // }));
-
-    // it("shows correct health damage sum after many damage events", fakeAsync(() => {
-    //     // Arrange
-    //     let subscribeCalled = false;
-    //     const victim = { name: "HealthDamage" };
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
-    //     jasmine.clock().mockDate(startEvent.startDate);
-
-    //     sut.enemyBadgeList$.pipe(skip(2), take(1)).subscribe((enemyBadgeList) => {
-    //         // Assert
-    //         const expectedHealthDamage = 15;
-    //         const victimBadge = enemyBadgeList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim.name));
-    //         expect(victimBadge?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
-    //         subscribeCalled = true;
-    //     });
-
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
-
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 4 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 5 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 6 });
-    //     tick(1000);
-
-    //     discardPeriodicTasks();
-    //     expect(subscribeCalled).toBeTrue();
-    // }));
-
-    // it("shows correct health AND shield damage sum after many damage events to one enemy", fakeAsync(() => {
-    //     // Arrange
-    //     let subscribeCalled = false;
-    //     const victim = { name: "ShieldANDHealthDamage" };
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
-    //     jasmine.clock().mockDate(startEvent.startDate);
-
-    //     sut.enemyBadgeList$.pipe(skip(5), take(1)).subscribe((enemyBadgeList) => {
-    //         // Assert
-    //         const expectedShieldDamage = 24;
-    //         const expectedHealthDamage = 33;
-    //         const victimBadge = enemyBadgeList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim.name));
-    //         expect(victimBadge?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
-    //         expect(victimBadge?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
-    //         subscribeCalled = true;
-    //     });
-
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
-
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 7 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 8 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 9 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 10 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 11 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 12 });
-    //     tick(1000);
-
-    //     discardPeriodicTasks();
-    //     expect(subscribeCalled).toBeTrue();
-    // }));
-
-    // it("shows correct health AND shield damage sum after many damage events to many enemies", fakeAsync(() => {
-    //     // Arrange
-    //     let subscribeCalled = false;
-    //     const victim1 = { name: "ShieldANDHealthDamage1" };
-    //     const victim2 = { name: "ShieldANDHealthDamage2" };
-    //     const victim3 = { name: "ShieldANDHealthDamage3" };
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
-    //     jasmine.clock().mockDate(startEvent.startDate);
-
-    //     sut.enemyBadgeList$.pipe(skip(5), take(1)).subscribe((enemyBadgeList) => {
-    //         // Assert
-    //         const expectedShieldDamage1 = 12;
-    //         const expectedHealthDamage1 = 21;
-    //         const victimBadge1 = enemyBadgeList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim1.name));
-    //         expect(victimBadge1?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage1);
-    //         expect(victimBadge1?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage1);
-    //         const expectedShieldDamage2 = 45;
-    //         const expectedHealthDamage2 = 54;
-    //         const victimBadge2 = enemyBadgeList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim2.name));
-    //         expect(victimBadge2?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage2);
-    //         expect(victimBadge2?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage2);
-    //         const expectedShieldDamage3 = 78;
-    //         const expectedHealthDamage3 = 87;
-    //         const victimBadge3 = enemyBadgeList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim3.name));
-    //         expect(victimBadge3?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage3);
-    //         expect(victimBadge3?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage3);
-    //         subscribeCalled = true;
-    //     });
-
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
-
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim1, shieldDamage: 12 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim2, shieldDamage: 45 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim3, shieldDamage: 78 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim1, healthDamage: 21 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim2, healthDamage: 54 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim3, healthDamage: 87 });
-    //     tick(1000);
-
-    //     discardPeriodicTasks();
-    //     expect(subscribeCalled).toBeTrue();
-    // }));
-
-    // it("resets damage aggregate sum to one enemy after a timeout period", fakeAsync(() => {
+    // it("resets/hides damage aggregate sum to one enemy after a timeout period", fakeAsync(() => {
     //     // Arrange
     //     let subscribeCalled = false;
     //     const victim = { name: "ShieldANDHealthDamage" };
@@ -442,7 +363,7 @@ describe("InGameDamageCollectorWindowComponent", () => {
     //     expect(subscribeCalled).toBeTrue();
     // }));
 
-    // it("resets damage aggregate sum to many enemies after a timeout period", fakeAsync(() => {
+    // it("resets/hides damage aggregate sum to many enemies after a timeout period", fakeAsync(() => {
     //     // Arrange
     //     let subscribeCalled = false;
     //     const victim1 = { name: "ShieldANDHealthDamage1" };
@@ -496,154 +417,7 @@ describe("InGameDamageCollectorWindowComponent", () => {
     //     expect(subscribeCalled).toBeTrue();
     // }));
 
-    // // TODO: There may be an error in 'damage-timely-aggregator.ts', sending more updates the second time around.
-    // fit("resets damage aggregate sum to one enemy after a timeout period, and re-aggregates damage again", fakeAsync(() => {
-    //     // Arrange
-    //     let subscribeCalled = false;
-    //     const victim = { name: "ShieldANDHealthDamage" };
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
-    //     jasmine.clock().mockDate(startEvent.startDate);
-
-    //     let count = 0;
-    //     // sut.enemyBadgeList$.pipe(skip(13), take(1)).subscribe((enemyBadgeList) => {
-    //     sut.enemyBadgeList$.pipe().subscribe((enemyBadgeList) => {
-    //         count++;
-    //         console.log(count);
-    //         console.log(enemyBadgeList);
-    //         // Assert
-    //         const expectedShieldDamage = 78;
-    //         const expectedHealthDamage = 87;
-    //         const victimBadge = enemyBadgeList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim.name));
-    //         expect(victimBadge?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
-    //         expect(victimBadge?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
-    //         subscribeCalled = true;
-    //     });
-
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
-
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 19 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 20 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 21 }); // 60
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 22 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 23 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 24 }); // 69
-    //     tick(1000);
-    //     tick(10000); // 0, 0
-
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 25 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 26 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 27 }); // 78
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 28 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 29 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 30 }); // 87
-    //     tick(1000);
-
-    //     discardPeriodicTasks();
-    //     expect(subscribeCalled).toBeTrue();
-    // }));
-
-    // it("resets damage aggregate sum to many enemies after a timeout period, and re-aggregates damage again", fakeAsync(() => {
-    //     // Arrange
-    //     let subscribeCalled = false;
-    //     const victim = { name: "ShieldANDHealthDamage" };
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
-    //     jasmine.clock().mockDate(startEvent.startDate);
-
-    //     let count = 0;
-    //     sut.enemyBadgeList$.pipe().subscribe((enemyBadgeList) => {
-    //         count++;
-    //         console.log(count);
-    //         console.log(enemyBadgeList);
-    //         // Assert
-    //         const expectedShieldDamage = 78;
-    //         const expectedHealthDamage = 87;
-    //         const victimBadge = enemyBadgeList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim.name));
-    //         expect(victimBadge?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
-    //         expect(victimBadge?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
-    //         subscribeCalled = true;
-    //     });
-
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
-
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 19 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 20 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 21 }); // 60
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 22 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 23 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 24 }); // 69
-    //     tick(10000);
-
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 25 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 26 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, shieldDamage: 27 }); // 78
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 28 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 29 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim, healthDamage: 30 }); // 87
-    //     tick(1000);
-
-    //     discardPeriodicTasks();
-    //     expect(subscribeCalled).toBeTrue();
-    // }));
-
-    // it("shows enemy teammates after a damage event", () => {
-    //     // Arrange
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //     };
-    //     jasmine.clock().mockDate(startEvent.startDate);
-
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
-
-    //     // Assert
-    //     let damageEventList = sut.enemyBadgeList$.value;
-    //     expect(damageEventList.length).toBe(0);
-
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent();
-    //     // Assert
-    //     damageEventList = sut.enemyBadgeList$.value;
-    //     expect(damageEventList.length).toBe(1);
-    // });
-
-    // it("shows many enemies after a damage event", () => {});
+    // it("shows enemy teammates after a damage event", () => {});
 
     // it("shows the teammates of a damaged enemy", () => {});
 });

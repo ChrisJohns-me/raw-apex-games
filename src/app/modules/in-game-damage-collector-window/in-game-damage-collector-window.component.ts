@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { MatchInflictionEventAccum } from "@common/match/match-infliction-event";
 import { MatchLocationPhase } from "@common/match/match-location";
 import { MatchRosterPlayer } from "@common/match/match-roster-player";
@@ -17,9 +17,9 @@ import { combineLatest, merge, Subject } from "rxjs";
 import { distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
 import { isEmpty } from "src/utilities";
 
-const ACCUM_EXPIRE = 5000;
+const ACCUM_EXPIRE = 20000;
 
-interface EnemyBadge {
+export interface EnemyBadge {
     isTeammate: boolean;
     rosterPlayer: MatchRosterPlayer;
     latestInflictionAccum?: MatchInflictionEventAccum;
@@ -33,8 +33,8 @@ interface EnemyBadge {
 })
 export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
     public isVisible = false;
-    public enemyBadgeList$ = new Subject<EnemyBadge[]>();
 
+    public enemyBadgeList: EnemyBadge[] = [];
     private inflictionEventList: MatchInflictionEventAccum[] = [];
     private readonly inflictionAggregator = new InflictionAggregator({
         expireAggregateMs: ACCUM_EXPIRE,
@@ -43,6 +43,7 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
     private _unsubscribe = new Subject<void>();
 
     constructor(
+        private readonly cdr: ChangeDetectorRef,
         private readonly match: MatchService,
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInfliction: MatchPlayerInflictionService,
@@ -78,12 +79,14 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
             )
             .subscribe(() => {
                 this.isVisible = true;
+                this.cdr.detectChanges();
             });
 
         merge(this.match.endedEvent$, nonAliveEvents$)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(() => {
                 this.isVisible = false;
+                this.cdr.detectChanges();
             });
     }
 
@@ -93,7 +96,8 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
     private setupOnMatchEnd(): void {
         this.match.endedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
             this.inflictionEventList = [];
-            this.enemyBadgeList$.next([]);
+            this.enemyBadgeList = [];
+            this.cdr.detectChanges();
         });
     }
 
@@ -114,17 +118,19 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
     private updateEnemyBadgeList(): void {
         const matchRoster = this.matchRoster.matchRoster$.value;
         const inflictionList = this.inflictionEventList;
-        const enemyBadgeList: EnemyBadge[] = inflictionList
-            .filter((damage) => !isEmpty(damage.victim?.name))
-            .map((damage) => ({
-                isTeammate: false,
-                rosterPlayer: damage.victim!,
-                latestDamageAggregate: damage,
-            }));
+        const newEnemyBadgeList: EnemyBadge[] = inflictionList
+            .filter((infliction) => !isEmpty(infliction.victim?.name))
+            .map((infliction) => {
+                return {
+                    isTeammate: false,
+                    rosterPlayer: infliction.victim!,
+                    latestInflictionAccum: infliction,
+                } as EnemyBadge;
+            });
 
         // Add teammates
         inflictionList.forEach((damage) => {
-            const badgeListTeammate = enemyBadgeList.find((badge) => isPlayerNameEqual(badge.rosterPlayer.name, damage.victim?.name));
+            const badgeListTeammate = newEnemyBadgeList.find((badge) => isPlayerNameEqual(badge.rosterPlayer.name, damage.victim?.name));
             if (badgeListTeammate) return;
 
             const victimTeam: Optional<MatchRosterTeam> = matchRoster.teams.find((t) => t.teamId === damage.victim?.teamId);
@@ -132,12 +138,13 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
             if (!victimTeammates) return;
 
             victimTeammates.forEach((teammate) =>
-                enemyBadgeList.push({
+                newEnemyBadgeList.push({
                     isTeammate: true,
                     rosterPlayer: teammate,
                 })
             );
         });
-        this.enemyBadgeList$.next(enemyBadgeList);
+        this.enemyBadgeList = newEnemyBadgeList;
+        this.cdr.detectChanges();
     }
 }
