@@ -7,8 +7,7 @@ import { MatchPlayerLegendService } from "@core/match/match-player-legend.servic
 import { MatchPlayerLocationService } from "@core/match/match-player-location.service";
 import { MatchPlayerService } from "@core/match/match-player.service";
 import { MatchService } from "@core/match/match.service";
-import { formatDistanceToNowStrict, isValid } from "date-fns";
-import format from "date-fns/format";
+import { format, formatDistanceToNowStrict, isValid } from "date-fns";
 import { combineLatest, Observable, Subject, timer } from "rxjs";
 import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { average, averageRate } from "src/utilities";

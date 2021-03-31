@@ -2,7 +2,7 @@
     <ng-container [ngSwitch]="winInfo.name">
         <app-background *ngSwitchCase="'background'"></app-background>
 
-        <app-dashboard-window *ngSwitchCase="'dashboard'"></app-dashboard-window>
+        <app-development-tools-window *ngSwitchCase="'development-tools'"></app-development-tools-window>
         <app-in-game-match-timer-window *ngSwitchCase="'in-game-match-timer'"></app-in-game-match-timer-window>
         <app-in-game-ult-timer-window *ngSwitchCase="'in-game-ult-timer'"></app-in-game-ult-timer-window>
         <app-in-game-damage-collector-window *ngSwitchCase="'in-game-damage-collector'"></app-in-game-damage-collector-window>

@@ -34,7 +34,7 @@
                 "file": "index.html",
                 "is_background_page": true
             },
-            "dashboard": {
+            "development-tools": {
                 "file": "index.html",
                 "desktop_only": true,
                 "native_window": true,

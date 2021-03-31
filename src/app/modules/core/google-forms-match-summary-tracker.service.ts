@@ -14,6 +14,26 @@ import { MatchPlayerLegendService } from "./match/match-player-legend.service";
 import { MatchPlayerStatsService } from "./match/match-player-stats.service";
 import { MatchService } from "./match/match.service";
 
+// TODO: used like this;
+// private setupBackgroundEvents(): void {
+//     const showReportedDuration = 120 * 1000;
+
+//     const hasTrackedFn = (value: boolean): void => {
+//         this.hasRecentlyTrackedMatchSummary = value;
+//         this.cdr.detectChanges();
+//     };
+
+//     this.googleFormsMatchSummaryTracker.lastMatchSummary
+//         .pipe(
+//             takeUntil(this._unsubscribe),
+//             filter((matchSummary) => !!matchSummary && !!matchSummary.legend && (matchSummary.placement ?? 0) > 0),
+//             tap(() => hasTrackedFn(true)),
+//             delay(showReportedDuration),
+//             tap(() => hasTrackedFn(false))
+//         )
+//         .subscribe();
+// }
+
 const RETRY_DELAY = 10000;
 const MAX_RETRIES = 3;
 

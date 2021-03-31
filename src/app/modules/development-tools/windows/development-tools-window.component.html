@@ -1,0 +1,94 @@
+<app-ui-container
+    primaryTitle="Development"
+    [injectBootstrapCSS]="true"
+    [isDesktopWindow]="true"
+    [isTitlebarDraggable]="true"
+    [isContentDraggable]="false"
+>
+    <div class="container-fluid mt-1">
+        <div class="row">
+            <div class="col">
+                <div class="form-check form-switch form-check-inline">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="ultTimerSwitch"
+                        [checked]="ultTimerWindowEnabled"
+                        (change)="ultTimerWindowEnabled = !ultTimerWindowEnabled"
+                    />
+                    <label class="form-check-label" for="ultTimerSwitch">Ultimate Timer</label>
+                </div>
+                <div class="form-check form-switch form-check-inline">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="matchTimerSwitch"
+                        [checked]="matchTimerWindowEnabled"
+                        (change)="matchTimerWindowEnabled = !matchTimerWindowEnabled"
+                    />
+                    <label class="form-check-label" for="matchTimerSwitch">Match Timer</label>
+                </div>
+                <div class="form-check form-switch form-check-inline">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        id="damageCollectorSwitch"
+                        [checked]="damageCollectorWindowEnabled"
+                        (change)="damageCollectorWindowEnabled = !damageCollectorWindowEnabled"
+                    />
+                    <label class="form-check-label" for="damageCollectorSwitch">Damage Collector</label>
+                </div>
+                <!-- <button class="btn btn-primary" (click)="isTrackingEnabled = !isTrackingEnabled" disabled>
+                    {{ isTrackingEnabled ? "🟢 Tracking Is On" : "❌ Tracking Is Off" }}
+                </button> -->
+            </div>
+
+            <div class="col-1">
+                <!-- <span class="control-bar-right pulse" *ngIf="hasRecentlyTrackedMatchSummary">✔️ Last Match Tracked</span> -->
+            </div>
+        </div>
+    </div>
+
+    <section class="container-fluid">
+        <div class="row flex-nowrap">
+            <section class="col-2 col-side-pane-min-width">
+                <app-game-data-pane></app-game-data-pane>
+            </section>
+            <section class="col col-main-pane">
+                <ul class="nav nav-tabs mt-4">
+                    <li class="nav-item">
+                        <button
+                            class="nav-link"
+                            [ngClass]="{ active: selectedMainTab == 'simulate' }"
+                            data-bs-toggle="tab"
+                            data-bs-target="#simulate"
+                            type="button"
+                        >
+                            Simulate
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button
+                            class="nav-link"
+                            [ngClass]="{ active: selectedMainTab == 'logs' }"
+                            data-bs-toggle="tab"
+                            data-bs-target="#logs"
+                            type="button"
+                        >
+                            Game Logs
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade" [ngClass]="{ 'show active': selectedMainTab == 'simulate' }" id="simulate">
+                        <app-game-simulator></app-game-simulator>
+                    </div>
+                    <div class="tab-pane fade" [ngClass]="{ 'show active': selectedMainTab == 'logs' }" id="logs">
+                        <app-game-events-log [infoUpdates]="infoUpdates$" [newGameEvent]="newGameEvent$"></app-game-events-log>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </section>
+</app-ui-container>

@@ -1,0 +1,225 @@
+<h5>Game Data</h5>
+<section class="accordion">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#gameAccordion">Game</button>
+        </h2>
+        <div id="gameAccordion" class="accordion-collapse collapse show">
+            <div class="accordion-body">
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6"><a (click)="gameProcess.isRunning$.next(!gameProcess.isRunning$.value)">IsRunning</a></div>
+                    <div class="col-6 text-end">{{ gameProcess.isRunning$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6"><a (click)="gameProcess.isInFocus$.next(!gameProcess.isInFocus$)">IsInFocus</a></div>
+                    <div class="col-6 text-end">{{ gameProcess.isInFocus$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">GamePhase</div>
+                    <div class="col-6 text-end">{{ game.phase$ | async }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#matchAccordion">Match</button>
+        </h2>
+        <div id="matchAccordion" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">State</div>
+                    <div class="col-6 text-end">{{ (match.state$ | async)?.state }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Map</div>
+                    <div class="col-6 text-end">{{ (matchMap.map$ | async)?.friendlyName }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">GameMode</div>
+                    <div class="col-6 text-end">{{ (match.gameMode$ | async)?.friendlyName }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">MatchDuration</div>
+                    <div class="col-6 text-end">{{ matchDuration | date: "mm:ss" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#teammatesAccordion">Teammates</button>
+        </h2>
+        <div id="teammatesAccordion" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <div
+                    class="row"
+                    *ngFor="let teammate of (matchRoster.teammateRoster$ | async)?.allPlayers"
+                    appHighlightOnChange
+                    [highlightColor]="changedHighlightColor"
+                >
+                    <div class="col-6">{{ teammate.name }}</div>
+                    <div class="col-6 text-end">[{{ teammate.legend?.friendlyName }}]</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#matchRosterAccordion">
+                Match Roster
+            </button>
+        </h2>
+        <div id="matchRosterAccordion" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Tabs Teams</div>
+                    <div class="col-6 text-end">{{ matchRoster.numTeams$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Tabs Players</div>
+                    <div class="col-6 text-end">{{ matchRoster.numPlayers$ | async }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#playerAccordion">Player</button>
+        </h2>
+        <div id="playerAccordion" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">PlayerName</div>
+                    <div class="col-6 text-end">{{ player.myName$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">PlayerStatus</div>
+                    <div class="col-6 text-end">{{ matchPlayer.myState$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Legend</div>
+                    <div class="col-6 text-end">{{ (matchPlayerLegend.myLegend$ | async)?.friendlyName }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Placement</div>
+                    <div class="col-6 text-end">{{ matchPlayerStats.myPlacement$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Victory</div>
+                    <div class="col-6 text-end">{{ matchPlayerStats.victory$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">UltimatePercent</div>
+                    <div class="col-6 text-end">{{ matchPlayerLegend.myUltimateCooldown$ | async | percent: "0.0-0" }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Kills</div>
+                    <div class="col-6 text-end">{{ matchPlayer.myState$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Assists</div>
+                    <div class="col-6 text-end">{{ matchPlayerStats.myAssists$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Damage</div>
+                    <div class="col-6 text-end">{{ matchPlayerStats.myDamage$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6"><del>Spectators</del></div>
+                    <div class="col-6 text-end">{{ matchPlayerStats.mySpectators$ | async }}</div>
+                </div>
+                <div
+                    class="row"
+                    appHighlightOnChange
+                    [highlightColor]="changedHighlightColor"
+                    title="Info directly from Overwolf's me.totalDamageDealt data. 
+                Damage amount does not take into consideration victim's HP, only the raw inflicted amount.
+                 eg. A victim's HP at 1 and a damage amount of 20 is still recorded at 20 and not 1; even though the
+                 damage required to knockdown the victim is 1.
+                The contained damage amount will then appear to be inflated."
+                >
+                    <div class="col-6">TotalDamageDealt</div>
+                    <div class="col-6 text-end">{{ matchPlayerStats.myTotalDamageDealt$ | async }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#playerLocationAccordion">
+                Player Location
+            </button>
+        </h2>
+        <div id="playerLocationAccordion" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">LocationPhase</div>
+                    <div class="col-6 text-end">{{ matchPlayerLocation.myLocationPhase$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Coordinates</div>
+                    <div class="col-6 text-end">
+                        <span *ngFor="let coord of matchPlayerLocation.myCoordinates$ | async | keyvalue"
+                            >{{ coord.value < Infinity ? coord.value : "-" }}{{ coord.key !== "z" ? ", " : "" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Starting</div>
+                    <div class="col-6 text-end">
+                        <span *ngFor="let startingCoord of matchPlayerLocation.myStartingCoordinates$ | async | keyvalue"
+                            >{{ startingCoord.value < Infinity ? startingCoord.value : "-" }}{{ startingCoord.key !== "z" ? ", " : "" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Landing</div>
+                    <div class="col-6 text-end">
+                        <span *ngFor="let landingCoord of matchPlayerLocation.myLandingCoordinates$ | async | keyvalue"
+                            >{{ landingCoord.value < Infinity ? landingCoord.value : "-" }}{{ landingCoord.key !== "z" ? ", " : "" }}
+                        </span>
+                    </div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Ending</div>
+                    <div class="col-6 text-end">
+                        <span *ngFor="let endingCoord of matchPlayerLocation.myEndingCoordinates$ | async | keyvalue"
+                            >{{ endingCoord.value < Infinity ? endingCoord.value : "-" }}{{ endingCoord.key !== "z" ? ", " : "" }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#inventoryAccordion">Inventory</button>
+        </h2>
+        <div id="inventoryAccordion" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Item In Use</div>
+                    <div class="col-6 text-end">{{ (matchPlayerInventory.myInUseItem$ | async)?.friendlyName }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Weapons</div>
+                    <div class="col-6 text-end">
+                        <div *ngFor="let weaponItem of matchPlayerInventory.myWeaponSlots$ | async | keyvalue">
+                            {{ weaponItem.value?.item?.friendlyName }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-12">Inventory</div>
+                    <div class="col-12 text-end">
+                        <div *ngFor="let slotItem of matchPlayerInventory.myInventorySlots$ | async | keyvalue">
+                            {{ slotItem.value?.item?.friendlyName ? slotItem.value?.item?.friendlyName : slotItem.value?.item?.id }}
+                            {{ slotItem.value?.amount || 0 > 0 ? "[" + slotItem.value?.amount + "]" : "" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

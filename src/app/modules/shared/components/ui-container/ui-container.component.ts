@@ -15,6 +15,7 @@ export class UIContainerComponent {
     @Input() public isDesktopWindow = true;
     @Input() public isTitlebarDraggable = true;
     @Input() public isContentDraggable = true;
+    @Input() public injectBootstrapCSS = false;
     @Input() public set primaryTitle(value: string) {
         this.titleService.setTitle(`${APP_NAME} - ${value}`);
         this._primaryTitle = value;

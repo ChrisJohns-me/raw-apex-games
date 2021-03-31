@@ -1,8 +1,8 @@
-<section
-    class="titlebar"
-    *ngIf="isDesktopWindow"
-    (mousedown)="onTitlebarMouseDown($event)"
->
+<ng-container *ngIf="injectBootstrapCSS">
+    <app-bootstrap-css-injector></app-bootstrap-css-injector>
+</ng-container>
+
+<section class="titlebar" *ngIf="isDesktopWindow" (mousedown)="onTitlebarMouseDown($event)">
     <div class="titlebar-icon"></div>
 
     <div class="titlebar-primary-title">
@@ -14,20 +14,10 @@
     </div>
 
     <div class="titlebar-controls">
-        <button
-            class="control-button"
-            type="button"
-            (click)="onCloseButtonClick()"
-        >
-            &times;
-        </button>
+        <button class="control-button" type="button" (click)="onCloseButtonClick()">&times;</button>
     </div>
 </section>
 
-<section
-    class="body"
-    [ngClass]="{ 'desktop-window': isDesktopWindow }"
-    (mousedown)="onContentMouseDown($event)"
->
+<section class="body" [ngClass]="{ 'desktop-window': isDesktopWindow }" (mousedown)="onContentMouseDown($event)">
     <ng-content></ng-content>
 </section>

@@ -1,0 +1,37 @@
+@import "window-styles";
+$side-pane-min-width: 300px;
+
+.col-side-pane-min-width {
+    min-width: $side-pane-min-width;
+}
+
+.col-main-pane {
+    max-width: calc(100vw - #{$side-pane-min-width});
+}
+
+.pulse {
+    animation: pulse 750ms alternate infinite;
+}
+
+@keyframes pulse {
+    from {
+        opacity: 100%;
+    }
+    to {
+        opacity: 0%;
+    }
+}
+
+.flash-on-change {
+    animation: normal 1s ease orange-flash;
+}
+
+@keyframes orange-flash {
+    from {
+        background-color: orangered;
+    }
+
+    to {
+        background-color: transparent;
+    }
+}

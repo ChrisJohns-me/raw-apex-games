@@ -3,7 +3,7 @@ import { Title } from "@angular/platform-browser";
 import { APP_NAME } from "@common/app";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { DashboardWindowService } from "../dashboard-window/dashboard-window.service";
+import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
 import { BackgroundService } from "./background.service";
 
 @Component({
@@ -16,7 +16,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
 
     constructor(
         private readonly backgroundService: BackgroundService,
-        private readonly dashboardWindow: DashboardWindowService,
+        private readonly developmentToolsWindow: DevelopmentToolsWindowService,
         private readonly titleService: Title
     ) {}
 
@@ -32,6 +32,6 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     }
 
     private registerUIWindows(): void {
-        this.dashboardWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
+        this.developmentToolsWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
     }
 }

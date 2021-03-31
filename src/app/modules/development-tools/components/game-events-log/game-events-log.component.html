@@ -1,0 +1,40 @@
+<div class="row my-3">
+    <div class="col text-end">
+        <div class="form-check form-switch form-check-inline">
+            <input
+                class="form-check-input"
+                type="checkbox"
+                id="autoScrollSwitch"
+                [checked]="autoScroll"
+                (change)="autoScroll = !autoScroll"
+            />
+            <label class="form-check-label" for="autoScrollSwitch">Auto Scroll</label>
+        </div>
+        <div class="form-check form-switch form-check-inline">
+            <input
+                class="form-check-input"
+                type="checkbox"
+                id="autoTrimLogSwitch"
+                [checked]="autoTrimLog"
+                (change)="autoTrimLog = !autoTrimLog"
+            />
+            <label class="form-check-label" for="autoTrimLogSwitch">Auto Trim</label>
+        </div>
+
+        <button class="btn btn-warning" type="button" (click)="clearLog()">Clear</button>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col">
+        <div class="log-container">
+            <div class="log-area bg-light border p-2" id="gameLog" #gameLog>
+                <ng-container *ngFor="let logItem of gameLogArr">
+                    <span>[{{ logItem.timestamp | date: "yyyy-MM-dd hh:mm:ss.SSS aa" }}]&nbsp;</span>
+                    <span>{{ logItem.data }}</span>
+                    <br />
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>

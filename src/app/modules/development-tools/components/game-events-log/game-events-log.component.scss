@@ -1,0 +1,16 @@
+$top-distance: 195px;
+
+.log-container {
+    overflow: hidden;
+}
+
+.log-area {
+    font-size: 0.875rem;
+    line-height: 0.875rem;
+    height: calc(100vh - #{$top-distance});
+    cursor: text;
+    font-family: monospace;
+    user-select: text;
+    overflow: scroll;
+    white-space: nowrap;
+}
