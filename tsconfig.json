@@ -28,14 +28,14 @@
       "manifest.json": [
         "src/overwolf/manifest.json"
       ],
-      "@common/*": [
-        "src/app/common/*"
+      "@shared/*": [
+        "src/app/shared/*"
       ],
       "@core/*": [
         "src/app/modules/core/*"
       ],
-      "@utilities/*": [
-        "src/app/utilities/*"
+      "@app/*": [
+        "src/app/*"
       ]
     }
   },

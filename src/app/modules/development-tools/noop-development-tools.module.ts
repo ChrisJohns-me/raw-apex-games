@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, NgModule } from "@angular/core";
-import { SharedModule } from "../shared/shared.module";
+import { SharedModule } from "@shared/shared.module";
 
 /**
  * The purpose of this module is to replace the

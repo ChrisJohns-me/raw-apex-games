@@ -1,14 +1,14 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { MatchRoster } from "@common/match/match-roster";
-import { MatchRosterPlayer } from "@common/match/match-roster-player";
-import { MatchRosterTeammate } from "@common/match/match-roster-teammate";
-import { isPlayerNameEqual } from "@common/utilities/player";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory";
 import { OverwolfDataProviderService, OWMatchInfoRoster, OWMatchInfoTeammate } from "@core/overwolf-data-provider";
+import { MatchRoster } from "@shared/models/match/match-roster";
+import { MatchRosterPlayer } from "@shared/models/match/match-roster-player";
+import { MatchRosterTeammate } from "@shared/models/match/match-roster-teammate";
+import { isPlayerNameEqual } from "@shared/models/utilities/player";
+import { findKeyByKeyRegEx, findValueByKeyRegEx, isEmpty } from "@shared/utilities";
+import { cleanInt } from "@shared/utilities/number";
 import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
-import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import { findKeyByKeyRegEx, findValueByKeyRegEx, isEmpty } from "src/utilities";
-import { cleanInt } from "src/utilities/number";
 import { MatchLegendSelectService } from "./match-legend-select.service";
 import { MatchService } from "./match.service";
 

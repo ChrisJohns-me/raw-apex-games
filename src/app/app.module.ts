@@ -7,9 +7,9 @@ import { BackgroundModule } from "./modules/background/background.module";
 import { CoreModule } from "./modules/core/core.module";
 import { DevelopmentToolsModule } from "./modules/development-tools/development-tools.module";
 import { NoopDevelopmentToolsModule } from "./modules/development-tools/noop-development-tools.module";
-import { InGameDamageCollectorWindowModule } from "./modules/in-game-damage-collector-window/in-game-damage-collector-window.module";
-import { InGameMatchTimerWindowModule } from "./modules/in-game-match-timer-window/in-game-match-timer-window.module";
-import { InGameUltTimerWindowModule } from "./modules/in-game-ult-timer-window/in-game-ult-timer-window.module";
+import { DamageCollectorWindowModule } from "./modules/in-game/damage-collector/damage-collector.module";
+import { MatchTimerWindowModule } from "./modules/in-game/match-timer/match-timer.module";
+import { UltTimerWindowModule } from "./modules/in-game/ult-timer/ult-timer.module";
 
 @NgModule({
     declarations: [AppComponent],
@@ -19,9 +19,9 @@ import { InGameUltTimerWindowModule } from "./modules/in-game-ult-timer-window/i
         CoreModule,
         environment.allowDevTools ? DevelopmentToolsModule : NoopDevelopmentToolsModule,
         HttpClientModule,
-        InGameDamageCollectorWindowModule,
-        InGameMatchTimerWindowModule,
-        InGameUltTimerWindowModule,
+        DamageCollectorWindowModule,
+        MatchTimerWindowModule,
+        UltTimerWindowModule,
     ],
     bootstrap: [AppComponent],
 })

@@ -1,10 +1,10 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { MatchMap } from "@common/match/match-map";
-import { MatchMapList } from "@common/match/match-map-list";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory";
+import { MatchMap } from "@shared/models/match/match-map";
+import { MatchMapList } from "@shared/models/match/match-map-list";
+import { isEmpty } from "@shared/utilities";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
-import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import { isEmpty } from "src/utilities";
 import { MatchPlayerLocationService } from "./match-player-location.service";
 import { MatchService } from "./match.service";
 

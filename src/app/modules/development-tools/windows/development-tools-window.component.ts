@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
+import { DamageCollectorWindowService } from "@app/modules/in-game/damage-collector/windows/damage-collector-window.service";
+import { MatchTimerWindowService } from "@app/modules/in-game/match-timer/windows/match-timer-window.service";
+import { UltTimerWindowService } from "@app/modules/in-game/ult-timer/windows/ult-timer-window.service";
 import { OWGameEvent, OWInfoUpdates2Event } from "@core/overwolf-data-provider";
 import { OverwolfExposedDataService } from "@core/overwolf-exposed-data.service";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { InGameDamageCollectorWindowService } from "../../in-game-damage-collector-window/in-game-damage-collector-window.service";
-import { InGameMatchTimerWindowService } from "../../in-game-match-timer-window/in-game-match-timer-window.service";
-import { InGameUltTimerWindowService } from "../../in-game-ult-timer-window/in-game-ult-timer-window.service";
 
 type MainTab = "simulate" | "logs";
 
@@ -50,9 +50,9 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     private _unsubscribe$ = new Subject<void>();
 
     constructor(
-        private readonly damageCollectorWindow: InGameDamageCollectorWindowService,
-        private readonly inGameUltTimerWindow: InGameUltTimerWindowService,
-        private readonly matchTimerWindow: InGameMatchTimerWindowService,
+        private readonly damageCollectorWindow: DamageCollectorWindowService,
+        private readonly inGameUltTimerWindow: UltTimerWindowService,
+        private readonly matchTimerWindow: MatchTimerWindowService,
         private readonly overwolfExposedData: OverwolfExposedDataService
     ) {
         this.infoUpdates$ = this.overwolfExposedData.rawInfoUpdates$;

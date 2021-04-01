@@ -1,8 +1,4 @@
 import { Component } from "@angular/core";
-import { GamePhase } from "@common/game-phase";
-import { MatchLocationPhase } from "@common/match/match-location";
-import { MatchState } from "@common/match/match-state";
-import { PlayerState } from "@common/player-state";
 import { GameProcessService } from "@core/game-process.service";
 import { GameService } from "@core/game.service";
 import { MatchMapService } from "@core/match/match-map.service";
@@ -14,6 +10,10 @@ import { MatchPlayerService } from "@core/match/match-player.service";
 import { MatchRosterService } from "@core/match/match-roster.service";
 import { MatchService } from "@core/match/match.service";
 import { PlayerService } from "@core/player.service";
+import { GamePhase } from "@shared/models/game-phase";
+import { MatchLocationPhase } from "@shared/models/match/match-location";
+import { MatchState } from "@shared/models/match/match-state";
+import { PlayerState } from "@shared/models/player-state";
 
 @Component({
     selector: "app-game-data-pane",

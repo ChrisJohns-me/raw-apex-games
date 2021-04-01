@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from "@angular/core";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory";
 import { BehaviorSubject, Subject } from "rxjs";
-import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { OverwolfDataProviderService, OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./overwolf-data-provider";
 
 /**

@@ -1,4 +1,5 @@
 import { Injectable, OnDestroy } from "@angular/core";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory";
 import { BehaviorSubject, from, interval, merge, Observable, of, Subject, throwError } from "rxjs";
 import {
     catchError,
@@ -13,7 +14,6 @@ import {
     takeUntil,
     tap,
 } from "rxjs/operators";
-import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { OverwolfEventHookHandler } from "./overwolf-hook-handler";
 import { OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./overwolf-types";
 import { InfoUpdatesDelegate } from "./overwolf/games/events/info-updates-delegate";

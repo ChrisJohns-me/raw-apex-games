@@ -1,6 +1,6 @@
+import { OWGameEvent } from "@core/overwolf-data-provider";
+import { isEmpty, recursiveJSONParse } from "@shared/utilities";
 import { Subject } from "rxjs";
-import { isEmpty, recursiveJSONParse } from "src/utilities";
-import { OWGameEvent } from "../../../overwolf-types";
 
 export class NewGameEventDelegate {
     public readonly newGameEvent$ = new Subject<OWGameEvent>();

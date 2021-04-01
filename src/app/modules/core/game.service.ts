@@ -1,11 +1,11 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { GamePhase } from "@common/game-phase";
-import { MatchState } from "@common/match/match-state";
-import { TriggerConditions } from "@common/trigger-conditions";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory";
+import { GamePhase } from "@shared/models/game-phase";
+import { MatchState } from "@shared/models/match/match-state";
+import { TriggerConditions } from "@shared/models/utilities/trigger-conditions";
+import { findValueByKeyRegEx, isEmpty } from "@shared/utilities";
 import { BehaviorSubject, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import { findValueByKeyRegEx, isEmpty } from "src/utilities";
 import { MatchService } from "./match/match.service";
 import { OverwolfDataProviderService, OWInfoUpdates2Event } from "./overwolf-data-provider";
 

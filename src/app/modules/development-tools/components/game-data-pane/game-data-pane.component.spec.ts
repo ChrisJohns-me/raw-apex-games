@@ -9,18 +9,18 @@ import { MatchPlayerStatsService } from "@core/match/match-player-stats.service"
 import { MatchPlayerService } from "@core/match/match-player.service";
 import { MatchRosterService } from "@core/match/match-roster.service";
 import { MatchService } from "@core/match/match.service";
+import { MockGameProcessService } from "@core/mocks/services/mock-game-process.service";
+import { MockGameService } from "@core/mocks/services/mock-game.service";
+import { MockMatchMapService } from "@core/mocks/services/mock-match-map.service";
+import { MockMatchPlayerInventoryService } from "@core/mocks/services/mock-match-player-inventory.service";
+import { MockMatchPlayerLegendService } from "@core/mocks/services/mock-match-player-legend.service";
+import { MockMatchPlayerLocationService } from "@core/mocks/services/mock-match-player-location.service";
+import { MockMatchPlayerStatsService } from "@core/mocks/services/mock-match-player-stats.service";
+import { MockMatchPlayerService } from "@core/mocks/services/mock-match-player.service";
+import { MockMatchRosterService } from "@core/mocks/services/mock-match-roster.service";
+import { MockMatchService } from "@core/mocks/services/mock-match.service";
+import { MockPlayerService } from "@core/mocks/services/mock-player.service";
 import { PlayerService } from "@core/player.service";
-import { MockGameProcessService } from "src/app/mocks/mock-game-process.service";
-import { MockGameService } from "src/app/mocks/mock-game.service";
-import { MockMatchMapService } from "src/app/mocks/mock-match-map.service";
-import { MockMatchPlayerInventoryService } from "src/app/mocks/mock-match-player-inventory.service";
-import { MockMatchPlayerLegendService } from "src/app/mocks/mock-match-player-legend.service";
-import { MockMatchPlayerLocationService } from "src/app/mocks/mock-match-player-location.service";
-import { MockMatchPlayerStatsService } from "src/app/mocks/mock-match-player-stats.service";
-import { MockMatchPlayerService } from "src/app/mocks/mock-match-player.service";
-import { MockMatchRosterService } from "src/app/mocks/mock-match-roster.service";
-import { MockMatchService } from "src/app/mocks/mock-match.service";
-import { MockPlayerService } from "src/app/mocks/mock-player.service";
 import { GameDataPaneComponent } from "./game-data-pane.component";
 
 describe("GameDataPaneComponent", () => {

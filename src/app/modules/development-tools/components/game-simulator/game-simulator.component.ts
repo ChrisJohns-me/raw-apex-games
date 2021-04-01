@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
-import { MatchRosterPlayer } from "@common/match/match-roster-player";
 import { MatchRosterService } from "@core/match/match-roster.service";
 import { OverwolfExposedDataService } from "@core/overwolf-exposed-data.service";
 import { PlayerService } from "@core/player.service";
+import { MatchRosterPlayer } from "@shared/models/match/match-roster-player";
+import { JSONTryParse } from "@shared/utilities";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
 import { Subject } from "rxjs";
-import { JSONTryParse } from "src/utilities";
 import { resetToInGame } from "./simulations/reset-to-in-game";
 import { resetToLobby } from "./simulations/reset-to-lobby";
 

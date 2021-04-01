@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { OWGameEvent, OWInfoUpdates2Event } from "@core/overwolf-data-provider";
+import { cleanInt } from "@shared/utilities";
 import { merge, Observable, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { cleanInt } from "src/utilities";
 
 interface GameLog {
     timestamp: Date;

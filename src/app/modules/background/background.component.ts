@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
-import { APP_NAME } from "@common/app";
+import { APP_NAME } from "@shared/models/app";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";

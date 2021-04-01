@@ -1,12 +1,12 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { MatchLocationPhase } from "@common/match/match-location";
-import { MatchMapCoordinates } from "@common/match/match-map-coordinates";
-import { TriggerConditions } from "@common/trigger-conditions";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory";
 import { OverwolfDataProviderService, OWInfoUpdates2Event } from "@core/overwolf-data-provider";
+import { MatchLocationPhase } from "@shared/models/match/match-location";
+import { MatchMapCoordinates } from "@shared/models/match/match-map-coordinates";
+import { TriggerConditions } from "@shared/models/utilities/trigger-conditions";
+import { cleanInt } from "@shared/utilities/number";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
-import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import { cleanInt } from "src/utilities/number";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
 import { MatchService } from "./match.service";
 

@@ -1,6 +1,6 @@
+import { OWInfoUpdates2Event } from "@core/overwolf-data-provider";
+import { recursiveJSONParse } from "@shared/utilities";
 import { Subject } from "rxjs";
-import { recursiveJSONParse } from "src/utilities";
-import { OWInfoUpdates2Event } from "../../../overwolf-types";
 
 export class InfoUpdatesDelegate {
     public readonly infoUpdates$ = new Subject<OWInfoUpdates2Event>();

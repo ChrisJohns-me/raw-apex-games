@@ -1,12 +1,12 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { MatchState } from "@common/match/match-state";
-import { PlayerState } from "@common/player-state";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory";
 import { OverwolfDataProviderService } from "@core/overwolf-data-provider";
+import { MatchState } from "@shared/models/match/match-state";
+import { PlayerState } from "@shared/models/player-state";
+import { isEmpty, parseBoolean } from "@shared/utilities";
+import { cleanInt } from "@shared/utilities/number";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
-import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
-import { isEmpty, parseBoolean } from "src/utilities";
-import { cleanInt } from "src/utilities/number";
 import { MatchPlayerService } from "./match-player.service";
 import { MatchService } from "./match.service";
 

@@ -1,12 +1,12 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { WeaponItem } from "@common/items/weapon-item";
-import { MatchInflictionEvent } from "@common/match/match-infliction-event";
-import { isPlayerNameEqual } from "@common/utilities/player";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory";
 import { OverwolfDataProviderService, OWGameEventKillFeed } from "@core/overwolf-data-provider";
+import { WeaponItem } from "@shared/models/items/weapon-item";
+import { MatchInflictionEvent } from "@shared/models/match/match-infliction-event";
+import { isPlayerNameEqual } from "@shared/models/utilities/player";
 import { differenceInMilliseconds } from "date-fns";
 import { BehaviorSubject, Subject } from "rxjs";
 import { delay, filter, map, takeUntil } from "rxjs/operators";
-import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { PlayerService } from "../player.service";
 import { MatchRosterService } from "./match-roster.service";
 import { MatchService } from "./match.service";

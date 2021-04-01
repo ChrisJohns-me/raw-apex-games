@@ -1,8 +1,8 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { isPlayerNameEqual } from "@common/utilities/player";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory";
+import { isPlayerNameEqual } from "@shared/models/utilities/player";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
-import { SingletonServiceProviderFactory } from "src/app/singleton-service.provider.factory";
 import { OverwolfDataProviderService, OWGameEventKillFeed } from "./overwolf-data-provider";
 
 @Injectable({
