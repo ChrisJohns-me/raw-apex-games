@@ -40,7 +40,7 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
         expireAggregateMs: ACCUM_EXPIRE,
         emitOnExpire: true,
     });
-    private _unsubscribe = new Subject<void>();
+    private _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
@@ -59,8 +59,8 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     private setupVisibleStates(): void {
@@ -68,7 +68,7 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
 
         combineLatest([this.match.state$, this.matchPlayer.myState$, this.matchPlayerLocation.myLocationPhase$])
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter(
                     ([matchState, myState, locationPhase]) =>
                         matchState.state === MatchState.Active &&
@@ -83,7 +83,7 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
             });
 
         merge(this.match.endedEvent$, nonAliveEvents$)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this._unsubscribe$))
             .subscribe(() => {
                 this.isVisible = false;
                 this.cdr.detectChanges();
@@ -94,7 +94,7 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
      * Reset state on match end
      */
     private setupOnMatchEnd(): void {
-        this.match.endedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+        this.match.endedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
             this.inflictionEventList = [];
             this.enemyBadgeList = [];
             this.cdr.detectChanges();
@@ -104,7 +104,7 @@ export class InGameDamageCollectorWindowComponent implements OnInit, OnDestroy {
     private setupDamageEventList(): void {
         this.inflictionAggregator
             .getInflictionAggregate$([this.matchPlayerInfliction.myDamageEvent$, this.matchPlayerInfliction.myKillfeedEvent$])
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this._unsubscribe$))
             .subscribe((inflictionEvent) => {
                 console.debug(`[${this.constructor.name}] InflictionEvent received:`, inflictionEvent);
                 this.inflictionEventList = [

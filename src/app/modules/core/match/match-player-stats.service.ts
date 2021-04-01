@@ -20,7 +20,7 @@ import { MatchService } from "./match.service";
 })
 export class MatchPlayerStatsService implements OnDestroy {
     /** Data from Overwolf's "tabs". Reset on match start. */
-    public readonly myEliminations = new BehaviorSubject<number>(0);
+    public readonly myEliminations$ = new BehaviorSubject<number>(0);
     /** Data from Overwolf's "tabs". Reset on match start. */
     public readonly myAssists$ = new BehaviorSubject<number>(0);
     /** Data from Overwolf's "tabs". Reset on match start. */
@@ -38,7 +38,7 @@ export class MatchPlayerStatsService implements OnDestroy {
      */
     public readonly myTotalDamageDealt$ = new BehaviorSubject<number>(0);
 
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly match: MatchService,
@@ -47,8 +47,8 @@ export class MatchPlayerStatsService implements OnDestroy {
     ) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {
@@ -59,9 +59,9 @@ export class MatchPlayerStatsService implements OnDestroy {
     }
 
     private setupMatchStateEvents(): void {
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
             this.myDamage$.next(0);
-            this.myEliminations.next(0);
+            this.myEliminations$.next(0);
             this.myAssists$.next(0);
             this.mySpectators$.next(0);
             this.myPlacement$.next(0);
@@ -82,7 +82,7 @@ export class MatchPlayerStatsService implements OnDestroy {
             )
             .subscribe((tabs) => {
                 if (!tabs || isEmpty(tabs)) return;
-                setAmountFn(tabs.kills, this.myEliminations);
+                setAmountFn(tabs.kills, this.myEliminations$);
                 setAmountFn(tabs.assists, this.myAssists$);
                 setAmountFn(tabs.damage, this.myDamage$);
                 this.myPlacement$.next(cleanInt(tabs.teams));
@@ -93,7 +93,7 @@ export class MatchPlayerStatsService implements OnDestroy {
     private setupTotalDamageDealt(): void {
         this.overwolf.infoUpdates$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "damage" && !!infoUpdate.info.me?.totalDamageDealt),
                 map((infoUpdate) => cleanInt(infoUpdate.info.me?.totalDamageDealt))
             )
@@ -107,13 +107,14 @@ export class MatchPlayerStatsService implements OnDestroy {
 
         this.match.state$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 tap((stateChanged) => (stateChanged.state === MatchState.Active ? setVictoryFn(false) : null)),
                 switchMap(() => this.overwolf.infoUpdates$),
                 filter(() => this.matchPlayer.myState$.value !== PlayerState.Eliminated),
                 filter((infoUpdate) => infoUpdate.feature === "rank"),
                 map((infoUpdate) => infoUpdate.info.match_info),
                 filter((matchInfo) => !!matchInfo && !!Object.keys(matchInfo).includes("victory")),
+                filter((matchInfo) => !isEmpty(matchInfo?.victory)),
                 map((matchInfo) => parseBoolean(matchInfo?.victory))
             )
             .subscribe((isVictory) => {

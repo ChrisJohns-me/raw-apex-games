@@ -24,21 +24,21 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     }
     public set ultTimerWindowEnabled(value: boolean) {
         this._ultTimerWindowEnabled = value;
-        this.inGameUltTimerWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe)).subscribe();
+        this.inGameUltTimerWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe$)).subscribe();
     }
     public get matchTimerWindowEnabled(): boolean {
         return this._matchTimerWindowEnabled;
     }
     public set matchTimerWindowEnabled(value: boolean) {
         this._matchTimerWindowEnabled = value;
-        this.matchTimerWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe)).subscribe();
+        this.matchTimerWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe$)).subscribe();
     }
     public get damageCollectorWindowEnabled(): boolean {
         return this._damageCollectorWindowEnabled;
     }
     public set damageCollectorWindowEnabled(value: boolean) {
         this._damageCollectorWindowEnabled = value;
-        this.damageCollectorWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe)).subscribe();
+        this.damageCollectorWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe$)).subscribe();
     }
 
     public infoUpdates$: Subject<OWInfoUpdates2Event>;
@@ -47,7 +47,7 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     private _ultTimerWindowEnabled = false;
     private _matchTimerWindowEnabled = false;
     private _damageCollectorWindowEnabled = false;
-    private _unsubscribe = new Subject<void>();
+    private _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly damageCollectorWindow: InGameDamageCollectorWindowService,
@@ -67,7 +67,7 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 }

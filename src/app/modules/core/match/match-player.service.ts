@@ -21,13 +21,13 @@ export class MatchPlayerService implements OnDestroy {
         return this.myState$.value === PlayerState.Alive;
     }
 
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {
@@ -39,7 +39,7 @@ export class MatchPlayerService implements OnDestroy {
      * Reset state on match start
      */
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
             this.myState$.next(PlayerState.Alive);
         });
     }
@@ -62,17 +62,17 @@ export class MatchPlayerService implements OnDestroy {
                 matchState === MatchState.Inactive || gameEvent?.name === "death" || gameEvent?.name === "match_end",
         });
 
-        this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe)).subscribe((infoUpdate) => {
+        this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
             const newState = triggers.triggeredFirstKey(infoUpdate, undefined, undefined);
             setNewStateFn(newState);
         });
 
-        this.overwolf.newGameEvent$.pipe(takeUntil(this._unsubscribe)).subscribe((gameEvent) => {
+        this.overwolf.newGameEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe((gameEvent) => {
             const newState = triggers.triggeredFirstKey(undefined, gameEvent, undefined);
             setNewStateFn(newState);
         });
 
-        this.match.state$.pipe(takeUntil(this._unsubscribe)).subscribe((stateChanged) => {
+        this.match.state$.pipe(takeUntil(this._unsubscribe$)).subscribe((stateChanged) => {
             const newState = triggers.triggeredFirstKey(undefined, undefined, stateChanged.state);
             setNewStateFn(newState);
         });

@@ -17,12 +17,12 @@ export class PlayerService implements OnDestroy {
      */
     public readonly myName$ = new BehaviorSubject<Optional<string>>(undefined);
 
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
     constructor(private readonly overwolf: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {
@@ -37,7 +37,7 @@ export class PlayerService implements OnDestroy {
 
         this.overwolf.infoUpdates$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "me" && !!infoUpdate.info.me?.name),
                 map((infoUpdate) => infoUpdate.info.me?.name)
             )
@@ -45,7 +45,7 @@ export class PlayerService implements OnDestroy {
 
         this.overwolf.newGameEvent$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter((gameEvent) => gameEvent.name === "kill_feed"),
                 filter((gameEvent) => !!(gameEvent.data as OWGameEventKillFeed).local_player_name),
                 map((gameEvent) => (gameEvent.data as OWGameEventKillFeed).local_player_name)

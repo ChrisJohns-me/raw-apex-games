@@ -60,7 +60,7 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
     private ultimateProgressHistory: UltimateProgress[] = [];
     private ultimateReadyDate?: Date;
     private readonly visibleStates$: Observable<[MatchStateChangedEvent, Optional<PlayerState>, Optional<MatchLocationPhase>]>;
-    private _unsubscribe = new Subject<void>();
+    private _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
@@ -70,7 +70,7 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
         private readonly matchPlayerLocation: MatchPlayerLocationService
     ) {
         this.visibleStates$ = combineLatest([this.match.state$, this.matchPlayer.myState$, this.matchPlayerLocation.myLocationPhase$]).pipe(
-            takeUntil(this._unsubscribe),
+            takeUntil(this._unsubscribe$),
             distinctUntilChanged()
         );
     }
@@ -82,12 +82,12 @@ export class InGameUltTimerWindowComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
             console.debug(`[${this.constructor.name}] Ult-timer reset`);
             this.ultimateProgressHistory = [{ percent: 0, increment: 0.05, timestamp: new Date() }];
         });

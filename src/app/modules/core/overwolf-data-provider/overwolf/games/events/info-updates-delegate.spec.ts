@@ -6,7 +6,7 @@ describe("InfoUpdatesDelegate", () => {
     let sut: InfoUpdatesDelegate;
 
     // InfoUpdates are required to at least contain the "info" and "feature" properties
-    fit("filters data not conforming to expected structure", () => {
+    it("filters data not conforming to expected structure", () => {
         // Arrange
         let called = 0;
         sut = new InfoUpdatesDelegate();

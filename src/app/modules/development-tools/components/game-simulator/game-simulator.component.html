@@ -1,3 +1,88 @@
-<div class="mt-3">
-    <button class="btn btn-secondary" type="button" (click)="onCustomInjectClick()">Inject Game Events</button>
+<div class="row py-4">
+    <div class="col">
+        <button class="btn btn-warning" type="button" (click)="onCustomInjectClick()">Inject Custom Game Events</button>
+    </div>
+    <div class="col text-end">
+        <button class="btn btn-primary mx-2" type="button" (click)="onResetToInGameClick()">Reset to In-Game</button>
+        <button class="btn btn-secondary mx-2" type="button" (click)="onResetToLobbyClick()">Reset to Lobby</button>
+    </div>
+</div>
+
+<form [formGroup]="rosterActionsForm">
+    <fieldset [disabled]="!(matchRoster.matchRoster$ | async)?.allPlayers?.length">
+        <div class="row border m-3 ms-0 pt-2 pb-4">
+            <div class="col-12">
+                <h3>Roster Actions</h3>
+            </div>
+            <div class="col-lg-3 col-md-6 col-12">
+                <span>Selected:</span> <span>{{ rosterPlayerSelected?.name }}</span>
+                <select class="form-select" formControlName="playerSelected">
+                    <option *ngFor="let player of matchRoster.matchRoster$.value.allPlayers" [ngValue]="player">
+                        {{ player.name }}
+                    </option>
+                </select>
+            </div>
+            <div class="w-100 m-2"></div>
+            <div class="col-6">
+                <h6>Kill Feed</h6>
+                <button
+                    class="btn btn-outline-warning"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onKillfeedKnockeddownClick(rosterPlayerSelected)"
+                >
+                    Knocked Down
+                </button>
+                <button
+                    class="btn btn-outline-danger"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onKillfeedEliminatedClick(rosterPlayerSelected)"
+                >
+                    Eliminated
+                </button>
+            </div>
+            <div class="col-6">
+                <h6>Inflictions</h6>
+                <button
+                    class="btn btn-outline-dark"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onInflictDamageClick(rosterPlayerSelected)"
+                >
+                    Damage
+                </button>
+                <button
+                    class="btn btn-outline-warning"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onInflictKnockClick(rosterPlayerSelected)"
+                >
+                    Knock
+                </button>
+                <button
+                    class="btn btn-outline-danger"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onInflictEliminateClick(rosterPlayerSelected)"
+                >
+                    Eliminate
+                </button>
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+<div class="row">
+    <div class="col">
+        <h6>Last Simulated Event</h6>
+        <div class="log-container">
+            <div class="log-area bg-light border p-2" id="gameLog" #gameLog>
+                <ng-container *ngIf="latestCommand">
+                    <span>[{{ latestCommand.timestamp | date: "yyyy-MM-dd hh:mm:ss.SSS aa" }}]&nbsp;</span>
+                    <span>{{ latestCommand.command | json }}</span>
+                </ng-container>
+            </div>
+        </div>
+    </div>
 </div>

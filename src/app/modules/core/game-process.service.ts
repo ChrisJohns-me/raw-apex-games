@@ -17,13 +17,13 @@ export class GameProcessService implements OnDestroy {
     public readonly isRunning$ = new BehaviorSubject<boolean>(false);
     public readonly isInFocus$ = new BehaviorSubject<boolean>(false);
 
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(private readonly overwolf: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {
@@ -33,7 +33,7 @@ export class GameProcessService implements OnDestroy {
     private setupGameInfoUpdated(): void {
         this.overwolf.gameInfo$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter((gameInfo) => gameInfo?.classId === OWCONFIG.APEXLEGENDSCLASSID)
             )
             .subscribe((gameInfo) => {

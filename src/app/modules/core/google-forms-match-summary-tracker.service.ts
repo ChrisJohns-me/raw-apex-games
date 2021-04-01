@@ -25,7 +25,7 @@ import { MatchService } from "./match/match.service";
 
 //     this.googleFormsMatchSummaryTracker.lastMatchSummary
 //         .pipe(
-//             takeUntil(this._unsubscribe),
+//             takeUntil(this._unsubscribe$),
 //             filter((matchSummary) => !!matchSummary && !!matchSummary.legend && (matchSummary.placement ?? 0) > 0),
 //             tap(() => hasTrackedFn(true)),
 //             delay(showReportedDuration),
@@ -52,7 +52,7 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
     private unreportedMatchSummary?: MatchSummary;
     private _isTrackingEnabled = false;
 
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly httpClient: HttpClient,
@@ -63,8 +63,8 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
     ) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {
@@ -90,7 +90,7 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
         return this.httpClient
             .get(url, { params, observe: "response", responseType: "text" })
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 map((response) => ({
                     success: response.ok,
                     error: !response.ok ? response.statusText : undefined,
@@ -107,14 +107,14 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
 
         this.match.endedEvent$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 switchMap(() =>
                     combineLatest<[Legend, MatchMap, MatchGameMode, number, number, number, MatchStateChangedEvent]>([
                         this.matchPlayerLegend.myLegend$,
                         this.matchMap.map$,
                         this.match.gameMode$,
                         this.matchPlayerStats.myPlacement$,
-                        this.matchPlayerStats.myEliminations,
+                        this.matchPlayerStats.myEliminations$,
                         this.matchPlayerStats.myDamage$,
                         this.match.state$,
                     ])

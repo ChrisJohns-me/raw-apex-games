@@ -1,5 +1,6 @@
 <h5>Game Data</h5>
 <section class="accordion">
+    <!-- #region Game -->
     <div class="accordion-item">
         <h2 class="accordion-header">
             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#gameAccordion">Game</button>
@@ -7,28 +8,33 @@
         <div id="gameAccordion" class="accordion-collapse collapse show">
             <div class="accordion-body">
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-6"><a (click)="gameProcess.isRunning$.next(!gameProcess.isRunning$.value)">IsRunning</a></div>
+                    <div class="col-6"><a class="link-primary" (click)="onChangeGameProcessIsRunningClick()">IsRunning</a></div>
                     <div class="col-6 text-end">{{ gameProcess.isRunning$ | async }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-6"><a (click)="gameProcess.isInFocus$.next(!gameProcess.isInFocus$)">IsInFocus</a></div>
+                    <div class="col-6"><a class="link-primary" (click)="onChangeGameProcessIsInFocusClick()">IsInFocus</a></div>
                     <div class="col-6 text-end">{{ gameProcess.isInFocus$ | async }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-6">GamePhase</div>
+                    <div class="col-6">
+                        <a class="link-primary" (click)="onChangeGamePhaseClick()">GamePhase</a>
+                    </div>
                     <div class="col-6 text-end">{{ game.phase$ | async }}</div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- #endregion -->
+
+    <!-- #region Match -->
     <div class="accordion-item">
         <h2 class="accordion-header">
             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#matchAccordion">Match</button>
         </h2>
-        <div id="matchAccordion" class="accordion-collapse collapse">
+        <div id="matchAccordion" class="accordion-collapse collapse show">
             <div class="accordion-body">
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-6">State</div>
+                    <div class="col-6"><a class="link-primary" (click)="onChangeMatchStateClick()">State</a></div>
                     <div class="col-6 text-end">{{ (match.state$ | async)?.state }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
@@ -46,55 +52,21 @@
             </div>
         </div>
     </div>
-    <div class="accordion-item">
-        <h2 class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#teammatesAccordion">Teammates</button>
-        </h2>
-        <div id="teammatesAccordion" class="accordion-collapse collapse">
-            <div class="accordion-body">
-                <div
-                    class="row"
-                    *ngFor="let teammate of (matchRoster.teammateRoster$ | async)?.allPlayers"
-                    appHighlightOnChange
-                    [highlightColor]="changedHighlightColor"
-                >
-                    <div class="col-6">{{ teammate.name }}</div>
-                    <div class="col-6 text-end">[{{ teammate.legend?.friendlyName }}]</div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="accordion-item">
-        <h2 class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#matchRosterAccordion">
-                Match Roster
-            </button>
-        </h2>
-        <div id="matchRosterAccordion" class="accordion-collapse collapse">
-            <div class="accordion-body">
-                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-6">Tabs Teams</div>
-                    <div class="col-6 text-end">{{ matchRoster.numTeams$ | async }}</div>
-                </div>
-                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-6">Tabs Players</div>
-                    <div class="col-6 text-end">{{ matchRoster.numPlayers$ | async }}</div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- #endregion -->
+
+    <!-- #region Player -->
     <div class="accordion-item">
         <h2 class="accordion-header">
             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#playerAccordion">Player</button>
         </h2>
-        <div id="playerAccordion" class="accordion-collapse collapse">
+        <div id="playerAccordion" class="accordion-collapse collapse show">
             <div class="accordion-body">
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
                     <div class="col-6">PlayerName</div>
                     <div class="col-6 text-end">{{ player.myName$ | async }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-6">PlayerStatus</div>
+                    <div class="col-6"><a class="link-primary" (click)="onChangePlayerStateClick()">PlayerState</a></div>
                     <div class="col-6 text-end">{{ matchPlayer.myState$ | async }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
@@ -115,7 +87,7 @@
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
                     <div class="col-6">Kills</div>
-                    <div class="col-6 text-end">{{ matchPlayer.myState$ | async }}</div>
+                    <div class="col-6 text-end">{{ matchPlayerStats.myEliminations$ | async }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
                     <div class="col-6">Assists</div>
@@ -145,16 +117,105 @@
             </div>
         </div>
     </div>
+    <!-- #endregion -->
+
+    <!-- #region Inventory -->
     <div class="accordion-item">
         <h2 class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#playerLocationAccordion">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#inventoryAccordion">
+                Inventory
+            </button>
+        </h2>
+        <div id="inventoryAccordion" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Item In Use</div>
+                    <div class="col-6 text-end">{{ (matchPlayerInventory.myInUseItem$ | async)?.friendlyName }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Weapons</div>
+                    <div class="col-6 text-end">
+                        <div *ngFor="let weaponItem of matchPlayerInventory.myWeaponSlots$ | async | keyvalue">
+                            {{ weaponItem.value?.item?.friendlyName }}
+                        </div>
+                    </div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-12">Inventory</div>
+                    <div class="col-12 text-end">
+                        <div *ngFor="let slotItem of matchPlayerInventory.myInventorySlots$ | async | keyvalue">
+                            {{ slotItem.value?.item?.friendlyName ? slotItem.value?.item?.friendlyName : slotItem.value?.item?.id }}
+                            {{ slotItem.value?.amount || 0 > 0 ? "[" + slotItem.value?.amount + "]" : "" }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #endregion -->
+
+    <!-- #region Teammates -->
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#teammatesAccordion">
+                Teammates
+            </button>
+        </h2>
+        <div id="teammatesAccordion" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <div
+                    class="row"
+                    *ngFor="let teammate of (matchRoster.teammateRoster$ | async)?.allPlayers"
+                    appHighlightOnChange
+                    [highlightColor]="changedHighlightColor"
+                >
+                    <div class="col-6">{{ teammate.name }}</div>
+                    <div class="col-6 text-end">[{{ teammate.legend?.friendlyName }}]</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #endregion -->
+
+    <!-- #region Match Roster -->
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#matchRosterAccordion">
+                Match Roster
+            </button>
+        </h2>
+        <div id="matchRosterAccordion" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-7">Tabs Teams</div>
+                    <div class="col-5 text-end">{{ matchRoster.numTeams$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-7">Tabs Players</div>
+                    <div class="col-5 text-end">{{ matchRoster.numPlayers$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-7">Players Loaded</div>
+                    <div class="col-5 text-end">{{ (matchRoster.matchRoster$ | async)?.allPlayers?.length }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #endregion -->
+
+    <!-- #region Player Location -->
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#playerLocationAccordion">
                 Player Location
             </button>
         </h2>
         <div id="playerLocationAccordion" class="accordion-collapse collapse">
             <div class="accordion-body">
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-6">LocationPhase</div>
+                    <div class="col-6">
+                        <a class="link-primary" (click)="onChangeLocationPhaseClick()">LocationPhase</a>
+                    </div>
                     <div class="col-6 text-end">{{ matchPlayerLocation.myLocationPhase$ | async }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
@@ -192,34 +253,5 @@
             </div>
         </div>
     </div>
-    <div class="accordion-item">
-        <h2 class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#inventoryAccordion">Inventory</button>
-        </h2>
-        <div id="inventoryAccordion" class="accordion-collapse collapse">
-            <div class="accordion-body">
-                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-6">Item In Use</div>
-                    <div class="col-6 text-end">{{ (matchPlayerInventory.myInUseItem$ | async)?.friendlyName }}</div>
-                </div>
-                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-6">Weapons</div>
-                    <div class="col-6 text-end">
-                        <div *ngFor="let weaponItem of matchPlayerInventory.myWeaponSlots$ | async | keyvalue">
-                            {{ weaponItem.value?.item?.friendlyName }}
-                        </div>
-                    </div>
-                </div>
-                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-12">Inventory</div>
-                    <div class="col-12 text-end">
-                        <div *ngFor="let slotItem of matchPlayerInventory.myInventorySlots$ | async | keyvalue">
-                            {{ slotItem.value?.item?.friendlyName ? slotItem.value?.item?.friendlyName : slotItem.value?.item?.id }}
-                            {{ slotItem.value?.amount || 0 > 0 ? "[" + slotItem.value?.amount + "]" : "" }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- #endregion -->
 </section>

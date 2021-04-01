@@ -30,13 +30,13 @@ export class MatchService implements OnDestroy {
     }
 
     private currentStartDate?: Date;
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(private readonly overwolf: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {
@@ -47,7 +47,7 @@ export class MatchService implements OnDestroy {
 
     private setupStartEndEvents(): void {
         merge(this.startedEvent$, this.endedEvent$)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this._unsubscribe$))
             .subscribe((newState) => this.state$.next(newState));
     }
 
@@ -85,12 +85,12 @@ export class MatchService implements OnDestroy {
             },
         });
 
-        this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe)).subscribe((infoUpdate) => {
+        this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
             const newState = triggers.triggeredFirstKey(this.state$.value.state, infoUpdate, undefined);
             newStateChangeFn(newState);
         });
 
-        this.overwolf.newGameEvent$.pipe(takeUntil(this._unsubscribe)).subscribe((gameEvent) => {
+        this.overwolf.newGameEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe((gameEvent) => {
             const newState = triggers.triggeredFirstKey(this.state$.value.state, undefined, gameEvent);
             newStateChangeFn(newState);
         });
@@ -101,7 +101,7 @@ export class MatchService implements OnDestroy {
 
         this.overwolf.infoUpdates$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "match_info"),
                 filter((infoUpdate) => !!infoUpdate.info.match_info?.game_mode),
                 map((infoUpdate) => infoUpdate.info.match_info?.game_mode)

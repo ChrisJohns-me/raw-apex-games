@@ -43,7 +43,7 @@ import { SingletonServiceProviderFactory } from "src/app/singleton-service.provi
     useFactory: (...deps: any[]) => SingletonServiceProviderFactory("BackgroundService", BackgroundService, deps),
 })
 export class BackgroundService implements OnDestroy {
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly game: GameService,
@@ -66,8 +66,8 @@ export class BackgroundService implements OnDestroy {
     ) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public startBackgroundServices(): void {

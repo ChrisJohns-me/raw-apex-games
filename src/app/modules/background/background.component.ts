@@ -12,7 +12,7 @@ import { BackgroundService } from "./background.service";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BackgroundComponent implements OnInit, OnDestroy {
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly backgroundService: BackgroundService,
@@ -27,11 +27,11 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     private registerUIWindows(): void {
-        this.developmentToolsWindow.open().pipe(takeUntil(this._unsubscribe)).subscribe();
+        this.developmentToolsWindow.open().pipe(takeUntil(this._unsubscribe$)).subscribe();
     }
 }

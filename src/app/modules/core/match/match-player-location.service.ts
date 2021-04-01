@@ -27,7 +27,7 @@ export class MatchPlayerLocationService implements OnDestroy {
     /** Last known local player when match ends. Cleared on match start. */
     public readonly myEndingCoordinates$ = new BehaviorSubject<Optional<MatchMapCoordinates>>(undefined);
 
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly match: MatchService,
@@ -36,8 +36,8 @@ export class MatchPlayerLocationService implements OnDestroy {
     ) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {
@@ -50,7 +50,7 @@ export class MatchPlayerLocationService implements OnDestroy {
     }
 
     private setupMatchStateEvents(): void {
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
             this.myCoordinates$.next(undefined);
             this.myLocationPhase$.next(undefined);
             this.myStartingCoordinates$.next(undefined);
@@ -62,7 +62,7 @@ export class MatchPlayerLocationService implements OnDestroy {
     private setupMyCoordinates(): void {
         this.overwolf.infoUpdates$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "location" && !!infoUpdate.info.match_info?.location),
                 map((infoUpdate) => infoUpdate.info.match_info?.location)
             )
@@ -92,12 +92,12 @@ export class MatchPlayerLocationService implements OnDestroy {
                 this.myLocationPhase$.value === MatchLocationPhase.Dropping && !!this.myLandingCoordinates$.value,
         });
 
-        this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe)).subscribe((infoUpdate) => {
+        this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
             const newPhase = triggers.triggeredFirstKey(infoUpdate, false);
             setNewLocationPhaseFn(newPhase);
         });
 
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
             const newPhase = triggers.triggeredFirstKey(undefined, true);
             setNewLocationPhaseFn(newPhase);
         });
@@ -106,7 +106,7 @@ export class MatchPlayerLocationService implements OnDestroy {
     private setupMyStartingCoordinates(): void {
         this.myCoordinates$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter(() => !this.myStartingCoordinates$.value),
                 filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z))
             )
@@ -116,7 +116,7 @@ export class MatchPlayerLocationService implements OnDestroy {
     private setupMyEndingCoordinates(): void {
         this.match.endedEvent$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter(() => !!this.myStartingCoordinates$.value && !this.myEndingCoordinates$.value),
                 map(() => this.myCoordinates$.value),
                 filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z)),
@@ -128,7 +128,7 @@ export class MatchPlayerLocationService implements OnDestroy {
     private setupMyLandingCoordinates(): void {
         this.playerInventory.myInUseItem$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter((inUse) => !!inUse),
                 map(() => this.myCoordinates$.value),
                 filter(() => !this.myLandingCoordinates$.value),

@@ -11,7 +11,7 @@ export class PlayerDamageBoxComponent implements OnInit, OnDestroy {
     public primaryTitle = "Player Damage Box";
     public secondaryTitle = "";
 
-    private _unsubscribe = new Subject<void>();
+    private _unsubscribe$ = new Subject<void>();
 
     constructor(private readonly cdr: ChangeDetectorRef) {
         console.debug(`[${this.constructor.name}] instantiated`);
@@ -22,8 +22,8 @@ export class PlayerDamageBoxComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     private registerGameEvents(): void {

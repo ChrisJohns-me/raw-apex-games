@@ -35,7 +35,7 @@ export class MatchPlayerInflictionService implements OnDestroy {
     /** Damage event stream for the local user */
     public readonly myDamageEvent$ = new Subject<MatchInflictionEvent>();
 
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly matchActivity: MatchActivityService,
@@ -47,8 +47,8 @@ export class MatchPlayerInflictionService implements OnDestroy {
     ) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {
@@ -62,7 +62,7 @@ export class MatchPlayerInflictionService implements OnDestroy {
     private setupMyKillfeedEvents(): void {
         this.matchActivity.killfeedEvent$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter((killfeedEvent) => !isEmpty(killfeedEvent.victim.name)),
                 filter((killfeedEvent) => isPlayerNameEqual(killfeedEvent.attacker?.name, this.player.myName$.value)),
                 filter((killfeedEvent) => !isPlayerNameEqual(killfeedEvent.victim.name, this.player.myName$.value))
@@ -76,7 +76,7 @@ export class MatchPlayerInflictionService implements OnDestroy {
     private setupMyDamageEvents(): void {
         this.overwolf.newGameEvent$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter((gameEvent) => gameEvent.name === "damage"),
                 map((gameEvent) => gameEvent.data as overwolf.gep.ApexLegends.GameEventDamage),
                 filter(() => this.matchPlayer.myState$.value !== PlayerState.Eliminated)

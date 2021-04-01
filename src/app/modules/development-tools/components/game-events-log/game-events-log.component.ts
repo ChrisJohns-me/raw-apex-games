@@ -25,7 +25,7 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
     public autoScroll = true;
 
     private gameLogStartTime?: Date;
-    private _unsubscribe = new Subject<void>();
+    private _unsubscribe$ = new Subject<void>();
 
     constructor(private readonly cdr: ChangeDetectorRef) {}
 
@@ -35,8 +35,8 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public clearLog(): void {
@@ -53,7 +53,7 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
         if (!this.newGameEvent$) return void console.error(`[${this.constructor.name}] Unable to listen to GameEvents; empty data stream.`);
 
         merge(this.infoUpdates$, this.newGameEvent$)
-            .pipe(takeUntil(this._unsubscribe))
+            .pipe(takeUntil(this._unsubscribe$))
             .subscribe((event) => {
                 this.addLogItem(event);
             });

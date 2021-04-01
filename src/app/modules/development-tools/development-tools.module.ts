@@ -1,4 +1,5 @@
 import { NgModule } from "@angular/core";
+import { ReactiveFormsModule } from "@angular/forms";
 import { SharedModule } from "../shared/shared.module";
 import { GameDataPaneComponent } from "./components/game-data-pane/game-data-pane.component";
 import { GameEventsLogComponent } from "./components/game-events-log/game-events-log.component";
@@ -7,7 +8,7 @@ import { DevelopmentToolsWindowComponent } from "./windows/development-tools-win
 
 @NgModule({
     declarations: [DevelopmentToolsWindowComponent, GameEventsLogComponent, GameSimulatorComponent, GameDataPaneComponent],
-    imports: [SharedModule],
+    imports: [SharedModule, ReactiveFormsModule],
     exports: [DevelopmentToolsWindowComponent],
 })
 export class DevelopmentToolsModule {}

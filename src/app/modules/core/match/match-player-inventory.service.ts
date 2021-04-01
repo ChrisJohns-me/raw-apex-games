@@ -27,18 +27,18 @@ export class MatchPlayerInventoryService implements OnDestroy {
     public readonly myInventorySlots$ = new BehaviorSubject<InventorySlots>({});
 
     private inventoryInfoUpdates$: Observable<OWInfoUpdates2Event>;
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {
         this.inventoryInfoUpdates$ = this.overwolf.infoUpdates$.pipe(
-            takeUntil(this._unsubscribe),
+            takeUntil(this._unsubscribe$),
             filter((infoUpdate) => infoUpdate.feature === "inventory")
         );
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {
@@ -52,7 +52,7 @@ export class MatchPlayerInventoryService implements OnDestroy {
      * Reset states on match start
      */
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
             this.myInUseItem$.next(undefined);
             this.myWeaponSlots$.next({});
             this.myInventorySlots$.next({});

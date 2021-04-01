@@ -1,4 +1,8 @@
 import { Component } from "@angular/core";
+import { GamePhase } from "@common/game-phase";
+import { MatchLocationPhase } from "@common/match/match-location";
+import { MatchState } from "@common/match/match-state";
+import { PlayerState } from "@common/player-state";
 import { GameProcessService } from "@core/game-process.service";
 import { GameService } from "@core/game.service";
 import { MatchMapService } from "@core/match/match-map.service";
@@ -39,4 +43,57 @@ export class GameDataPaneComponent {
         public readonly matchRoster: MatchRosterService,
         public readonly player: PlayerService
     ) {}
+
+    public onChangeGameProcessIsRunningClick(): void {
+        this.gameProcess.isRunning$.next(!this.gameProcess.isRunning$.value);
+    }
+
+    public onChangeGameProcessIsInFocusClick(): void {
+        this.gameProcess.isInFocus$.next(!this.gameProcess.isInFocus$.value);
+    }
+
+    public onChangeMatchStateClick(): void {
+        const state = this.match.state$.value;
+        if (state.state === MatchState.Active) {
+            this.match.state$.next({ startDate: state.startDate, endDate: new Date(), state: MatchState.Inactive });
+        } else {
+            this.match.state$.next({ startDate: new Date(), state: MatchState.Active });
+        }
+    }
+
+    public onChangeGamePhaseClick(): void {
+        const phase = this.game.phase$.value;
+        const newPhase =
+            phase === GamePhase.Lobby
+                ? GamePhase.LegendSelection
+                : phase === GamePhase.LegendSelection
+                ? GamePhase.InGame
+                : GamePhase.Lobby;
+        this.game.phase$.next(newPhase);
+    }
+
+    public onChangeLocationPhaseClick(): void {
+        const phase = this.matchPlayerLocation.myLocationPhase$.value;
+        const newPhase = !phase
+            ? MatchLocationPhase.Dropship
+            : phase === MatchLocationPhase.Dropship
+            ? MatchLocationPhase.Dropping
+            : phase === MatchLocationPhase.Dropping
+            ? MatchLocationPhase.HasLanded
+            : undefined;
+        this.matchPlayerLocation.myLocationPhase$.next(newPhase);
+    }
+
+    public onChangePlayerStateClick(): void {
+        const state = this.matchPlayer.myState$.value;
+        const newState = !state
+            ? PlayerState.Alive
+            : state === PlayerState.Alive
+            ? PlayerState.Knocked
+            : state === PlayerState.Knocked
+            ? PlayerState.Eliminated
+            : undefined;
+
+        this.matchPlayer.myState$.next(newState);
+    }
 }

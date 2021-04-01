@@ -27,7 +27,7 @@ export class MatchActivityService implements OnDestroy {
     public readonly killfeedEvent$ = new Subject<MatchInflictionEvent>();
     public readonly killfeedEventHistory$ = new BehaviorSubject<MatchInflictionEvent[]>([]);
 
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly match: MatchService,
@@ -37,8 +37,8 @@ export class MatchActivityService implements OnDestroy {
     ) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {
@@ -51,7 +51,7 @@ export class MatchActivityService implements OnDestroy {
      * Reset state on match start
      */
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
             this.killfeedEventHistory$.next([]);
         });
     }
@@ -63,7 +63,7 @@ export class MatchActivityService implements OnDestroy {
     private setupKillfeed(): void {
         this.overwolf.newGameEvent$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter((gameEvent) => gameEvent.name === "kill_feed"),
                 map((gameEvent) => gameEvent.data as OWGameEventKillFeed)
             )
@@ -102,7 +102,7 @@ export class MatchActivityService implements OnDestroy {
 
         this.overwolf.newGameEvent$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter((gameEvent) => gameEvent.name === "knockdown" || gameEvent.name === "kill"),
                 filter((gameEvent) => !!gameEvent.data && typeof gameEvent.data === "object"),
                 filter((gameEvent) => !!(gameEvent.data as KillOrKnockdownData).victimName),

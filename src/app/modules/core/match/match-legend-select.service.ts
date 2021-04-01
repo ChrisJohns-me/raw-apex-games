@@ -23,12 +23,12 @@ export class MatchLegendSelectService implements OnDestroy {
      */
     public readonly legendSelected$ = new Subject<{ playerName: string; legend: Legend }>();
 
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
     constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {
@@ -37,7 +37,7 @@ export class MatchLegendSelectService implements OnDestroy {
 
     private setupLegendSelected(): void {
         const teamUpdates$ = this.match.state$.pipe(
-            takeUntil(this._unsubscribe),
+            takeUntil(this._unsubscribe$),
             filter((stateChanged) => stateChanged.state === MatchState.Inactive),
             switchMap(() => this.overwolf.infoUpdates$),
             filter((infoUpdate) => infoUpdate.feature === "team"),

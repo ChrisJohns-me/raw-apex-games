@@ -91,12 +91,12 @@ export class OverwolfDataProviderService implements OnDestroy {
     //#endregion
 
     private isRunning$ = new BehaviorSubject<boolean>(false);
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor() {
         this.gameMonitorGameInfoDelegate.gameInfo$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 map((gameInfo) => gameInfo?.isRunning ?? false),
                 distinctUntilChanged(),
                 share()
@@ -107,8 +107,8 @@ export class OverwolfDataProviderService implements OnDestroy {
     public ngOnDestroy(): void {
         this.unregisterDelegateEventHooks();
         this.unregisterGameMonitorEventHooks();
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {

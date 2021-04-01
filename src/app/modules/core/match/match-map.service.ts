@@ -20,12 +20,12 @@ export class MatchMapService implements OnDestroy {
      */
     public readonly map$ = new BehaviorSubject<Optional<MatchMap>>(undefined);
 
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
     constructor(private readonly match: MatchService, private readonly matchPlayerLocation: MatchPlayerLocationService) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {
@@ -39,7 +39,7 @@ export class MatchMapService implements OnDestroy {
         this.matchPlayerLocation.myStartingCoordinates$
             .pipe(
                 filter((startingCoordinates) => !!startingCoordinates && !isEmpty(startingCoordinates)),
-                takeUntil(this._unsubscribe)
+                takeUntil(this._unsubscribe$)
             )
             .subscribe((startingCoordinates) => {
                 const gameMap = MatchMapList.find((map) => map.dropshipZStart == startingCoordinates?.z);

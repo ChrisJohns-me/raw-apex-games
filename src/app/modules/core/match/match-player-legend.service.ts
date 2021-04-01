@@ -22,7 +22,7 @@ export class MatchPlayerLegendService implements OnDestroy {
         playerName: string;
         legend: Legend;
     }[] = [];
-    private readonly _unsubscribe = new Subject<void>();
+    private readonly _unsubscribe$ = new Subject<void>();
     constructor(
         private readonly match: MatchService,
         private readonly matchLegendSelect: MatchLegendSelectService,
@@ -31,8 +31,8 @@ export class MatchPlayerLegendService implements OnDestroy {
     ) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe.next();
-        this._unsubscribe.complete();
+        this._unsubscribe$.next();
+        this._unsubscribe$.complete();
     }
 
     public start(): void {
@@ -42,7 +42,7 @@ export class MatchPlayerLegendService implements OnDestroy {
     }
 
     private setupOnMatchEnd(): void {
-        this.match.endedEvent$.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+        this.match.endedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
             this.stagingLegends = [];
         });
     }
@@ -50,7 +50,7 @@ export class MatchPlayerLegendService implements OnDestroy {
     private setupMyLegend(): void {
         this.matchLegendSelect.legendSelected$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter((selection) => !!selection.legend),
                 tap((selection) => {
                     this.stagingLegends = this.stagingLegends.filter((sl) => sl.playerName !== selection.playerName);
@@ -70,7 +70,7 @@ export class MatchPlayerLegendService implements OnDestroy {
     private setupMyUltimateCooldown(): void {
         this.overwolf.infoUpdates$
             .pipe(
-                takeUntil(this._unsubscribe),
+                takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "me" && !!infoUpdate.info.me?.ultimate_cooldown),
                 map((infoUpdate) => String(infoUpdate.info.me?.ultimate_cooldown?.ultimate_cooldown ?? "")),
                 map((ultimateCooldown) => parseFloat(String(ultimateCooldown))),

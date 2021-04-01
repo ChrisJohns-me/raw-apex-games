@@ -1,7 +1,12 @@
+import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { MatchRosterService } from "@core/match/match-roster.service";
 import { OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "@core/overwolf-data-provider";
 import { OverwolfExposedDataService } from "@core/overwolf-exposed-data.service";
+import { PlayerService } from "@core/player.service";
 import { BehaviorSubject, Subject } from "rxjs";
+import { MockMatchRosterService } from "src/app/mocks/mock-match-roster.service";
+import { MockPlayerService } from "src/app/mocks/mock-player.service";
 import { GameSimulatorComponent } from "./game-simulator.component";
 
 class MockOverwolfExposedDataService {
@@ -27,7 +32,12 @@ describe("GameSimulatorComponent", () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [GameSimulatorComponent],
-            providers: [{ provide: OverwolfExposedDataService, useClass: MockOverwolfExposedDataService }],
+            providers: [
+                { provide: ChangeDetectorRef, useClass: MockOverwolfExposedDataService },
+                { provide: OverwolfExposedDataService, useClass: MockOverwolfExposedDataService },
+                { provide: PlayerService, useClass: MockPlayerService },
+                { provide: MatchRosterService, useClass: MockMatchRosterService },
+            ],
         }).compileComponents();
     });
 
