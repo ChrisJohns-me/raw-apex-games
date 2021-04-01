@@ -1,5 +1,5 @@
 import { Subject } from "rxjs";
-import { recursiveJSONParse } from "src/utilities";
+import { isEmpty, recursiveJSONParse } from "src/utilities";
 import { OWGameEvent } from "../../../overwolf-types";
 
 export class NewGameEventDelegate {
@@ -16,13 +16,14 @@ export class NewGameEventDelegate {
             console.warn("Unrecognized event.", events);
             return;
         }
-        newGameEvent?.events.forEach((e) => {
+        newGameEvent?.events?.forEach((e) => {
             const cleanedGameEvent = this.cleanGameEvent(e);
-            this.newGameEvent$.next(cleanedGameEvent);
+            if (cleanedGameEvent) this.newGameEvent$.next(cleanedGameEvent);
         });
     }
 
     private cleanGameEvent(event: overwolf.games.events.GameEvent): Optional<OWGameEvent> {
+        if (isEmpty(event?.name)) return;
         if (!event || !event.name) return;
         const newEvent: OWGameEvent = {
             name: event.name as keyof overwolf.gep.ApexLegends.EventData,

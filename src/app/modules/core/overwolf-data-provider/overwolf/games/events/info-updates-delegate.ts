@@ -16,7 +16,7 @@ export class InfoUpdatesDelegate {
             return;
         }
         const cleanedInfoUpdate = this.cleanInfoUpdate(infoUpdate);
-        this.infoUpdates$.next(cleanedInfoUpdate);
+        if (cleanedInfoUpdate) this.infoUpdates$.next(cleanedInfoUpdate);
     }
 
     private cleanInfoUpdate(owInfoUpdate: overwolf.games.events.InfoUpdates2Event): Optional<OWInfoUpdates2Event> {
