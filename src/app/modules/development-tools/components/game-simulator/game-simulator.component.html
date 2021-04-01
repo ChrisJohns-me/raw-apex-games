@@ -48,9 +48,17 @@
                     class="btn btn-outline-dark"
                     type="button"
                     [disabled]="!rosterPlayerSelected"
-                    (click)="onInflictDamageClick(rosterPlayerSelected)"
+                    (click)="onInflictDamageClick(rosterPlayerSelected, true)"
                 >
-                    Damage
+                    Shield Damage
+                </button>
+                <button
+                    class="btn btn-outline-dark"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onInflictDamageClick(rosterPlayerSelected, false)"
+                >
+                    Health Damage
                 </button>
                 <button
                     class="btn btn-outline-warning"

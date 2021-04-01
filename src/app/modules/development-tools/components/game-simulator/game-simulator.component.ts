@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MatchRosterService } from "@core/match/match-roster.service";
+import { OWGameEvent } from "@core/overwolf-data-provider";
 import { OverwolfExposedDataService } from "@core/overwolf-exposed-data.service";
 import { PlayerService } from "@core/player.service";
 import { MatchRosterPlayer } from "@shared/models/match/match-roster-player";
+import { isPlayerNameEqual } from "@shared/models/utilities/player";
 import { JSONTryParse } from "@shared/utilities";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
 import { Subject } from "rxjs";
@@ -62,22 +64,58 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
 
     public onKillfeedKnockeddownClick(player?: MatchRosterPlayer): void {
         if (!player) return;
+        const killfeedEvent: OWGameEvent = {
+            name: "kill_feed",
+            data: {
+                local_player_name: this.player.myName$.value,
+                attackerName: this.getRandomPlayer()?.name,
+                victimName: player.name,
+                weaponName: "energy_ar",
+                action: "knockdown",
+            },
+        };
+        const commands: Command[] = [
+            {
+                timestamp: new Date(0),
+                command: killfeedEvent,
+            },
+        ];
+
+        this.runCommands(commands);
     }
 
     public onKillfeedEliminatedClick(player?: MatchRosterPlayer): void {
         if (!player) return;
+        const killfeedEvent: OWGameEvent = {
+            name: "kill_feed",
+            data: {
+                local_player_name: this.player.myName$.value,
+                attackerName: this.getRandomPlayer()?.name,
+                victimName: player.name,
+                weaponName: "energy_ar",
+                action: "kill",
+            },
+        };
+        const commands: Command[] = [
+            {
+                timestamp: new Date(0),
+                command: killfeedEvent,
+            },
+        ];
+
+        this.runCommands(commands);
     }
 
-    public onInflictDamageClick(player?: MatchRosterPlayer): void {
+    public onInflictDamageClick(player?: MatchRosterPlayer, toShield = true): void {
         if (!player) return;
-        const event: overwolf.games.events.GameEvent = {
+        const event: OWGameEvent = {
             name: "damage",
-            data: `{
-                "targetName": "${player.name}",
-                "damageAmount": "${String(Math.random() * 50)}",
-                "armor": "${Math.random() < 0.5 ? true : false}",
-                "headshot": "${Math.random() < 0.25 ? true : false}"
-            }`,
+            data: {
+                targetName: player.name,
+                damageAmount: Math.random() * 50,
+                armor: toShield,
+                headshot: Math.random() < 0.25 ? true : false,
+            },
         };
         const commands: Command[] = [
             {
@@ -91,20 +129,19 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
 
     public onInflictKnockClick(player?: MatchRosterPlayer): void {
         if (!player) return;
-
-        const event: overwolf.games.events.GameEvent = {
+        const event: OWGameEvent = {
             name: "knockdown",
-            data: `{ "victimName": "${player.name}" }`,
+            data: { victimName: player.name },
         };
-        const killfeedEvent: overwolf.games.events.GameEvent = {
+        const killfeedEvent: OWGameEvent = {
             name: "kill_feed",
-            data: `{
-                "local_player_name": "${this.player.myName$.value}",
-                "attackerName": "${this.player.myName$.value}",
-                "victimName": "${player.name}",
-                "weaponName": "energy_ar",
-                "action": "knockdown"
-            }`,
+            data: {
+                local_player_name: this.player.myName$.value,
+                attackerName: this.player.myName$.value,
+                victimName: player.name,
+                weaponName: "energy_ar",
+                action: "knockdown",
+            },
         };
         const commands: Command[] = [
             {
@@ -122,19 +159,19 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
 
     public onInflictEliminateClick(player?: MatchRosterPlayer): void {
         if (!player) return;
-        const event: overwolf.games.events.GameEvent = {
+        const event: OWGameEvent = {
             name: "kill",
-            data: `{ "victimName": "${player.name}" }`,
+            data: { victimName: player.name },
         };
-        const killfeedEvent: overwolf.games.events.GameEvent = {
+        const killfeedEvent: OWGameEvent = {
             name: "kill_feed",
-            data: `{
-                "local_player_name": "${this.player.myName$.value}",
-                "attackerName": "${this.player.myName$.value}",
-                "victimName": "${player.name}",
-                "weaponName": "energy_ar",
-                "action": "kill"
-            }`,
+            data: {
+                local_player_name: this.player.myName$.value,
+                attackerName: this.player.myName$.value,
+                victimName: player.name,
+                weaponName: "energy_ar",
+                action: "kill",
+            },
         };
 
         const commands: Command[] = [
@@ -213,5 +250,14 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
                 this.cdr.detectChanges();
             }, startTimeDiff / speedAdjust);
         });
+    }
+
+    private getRandomPlayer(): Optional<MatchRosterPlayer> {
+        const players = this.matchRoster.matchRoster$.value.allPlayers;
+        if ((players?.length ?? 0) <= 1) return;
+        const randomNum = Math.floor(Math.random() * players.length);
+        const randomPlayer = players[randomNum];
+        if (isPlayerNameEqual(randomPlayer.name, this.player.myName$.value)) return this.getRandomPlayer();
+        return randomPlayer;
     }
 }
