@@ -51,10 +51,7 @@ export class GameDataPaneComponent implements OnInit {
         // Refresh UI Timer
         interval(5000)
             .pipe()
-            .subscribe(() => {
-                console.log(`refresh`);
-                this.cdr.detectChanges();
-            });
+            .subscribe(() => this.cdr.detectChanges());
     }
 
     public onChangeGameProcessIsRunningClick(): void {
