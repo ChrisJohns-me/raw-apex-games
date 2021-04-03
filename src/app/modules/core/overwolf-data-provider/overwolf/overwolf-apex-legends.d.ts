@@ -320,6 +320,7 @@ declare namespace overwolf.gep.ApexLegends {
         name: keyof overwolf.gep.ApexLegends.EventData;
         data:
             | string
+            | null
             | overwolf.gep.ApexLegends.GameEventKillFeed
             | overwolf.gep.ApexLegends.GameEventDamage
             | overwolf.gep.ApexLegends.GameEventKnockdown

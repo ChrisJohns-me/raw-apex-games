@@ -4,13 +4,18 @@
         {
             "id": "empty_handed",
             "friendlyName": "Melee",
-            "inGameInfoNameRegExPattern": "^(Melee|Empty Handed)$",
-            "inGameEventNameRegExPattern": "^Melee$"
+            "inGameInfoNameRegExPattern": "^(Melee|Empty Handed|)$",
+            "inGameEventNameRegExPattern": "^(Melee|Boxing Gloves Melee)$"
         },
         {
             "id": "killfeed_bleedout",
             "friendlyName": "Bleed Out",
             "inGameEventNameRegExPattern": "^Bleed Out$"
+        },
+        {
+            "id": "killfeed_fall",
+            "friendlyName": "Fall",
+            "inGameEventNameRegExPattern": "^Fall$"
         },
         {
             "id": "killfeed_finisher",
@@ -124,7 +129,7 @@
         {
             "id": "eva_8",
             "friendlyName": "EVA-8 Auto",
-            "inGameInfoNameRegExPattern": "^eva_8$",
+            "inGameInfoNameRegExPattern": "^EVA-8 Auto$",
             "inGameEventNameRegExPattern": "^eva8$"
         },
         {

@@ -12,8 +12,8 @@ export class MatchRoster<T extends MatchRosterPlayer = MatchRosterPlayer> {
      * Append a new player to it's respective team via `teamId`
      */
     public addPlayer(newPlayer: T): void {
-        const alreadyExistingPlayer = this.allPlayers.find((p) => isPlayerNameEqual(p.name, newPlayer.name));
-        if (alreadyExistingPlayer) {
+        const playerExistsInRoster = this.allPlayers.some((p) => isPlayerNameEqual(p.name, newPlayer.name));
+        if (playerExistsInRoster) {
             console.warn(`"${newPlayer.name}" already exists in the roster, overwriting.`, newPlayer, this.teams);
             this.removePlayerName(newPlayer.name);
         }

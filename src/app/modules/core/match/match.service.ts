@@ -108,7 +108,7 @@ export class MatchService implements OnDestroy {
             )
             .subscribe((gameModeId) => {
                 if (!gameModeId) return;
-                const isBlacklisted = !!blacklistedGameModes.find((blacklist) => blacklist.test(gameModeId));
+                const isBlacklisted = blacklistedGameModes.some((blacklist) => blacklist.test(gameModeId));
                 if (isBlacklisted) return;
                 if (gameModeId === this.gameMode$.value.id) return;
 

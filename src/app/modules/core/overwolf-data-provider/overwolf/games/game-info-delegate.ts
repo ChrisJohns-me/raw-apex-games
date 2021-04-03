@@ -11,6 +11,7 @@ export class GameInfoDelegate {
      */
     public onGameInfo(gameInfo?: OWRunningGameInfo): void {
         if (!gameInfo || gameInfo.classId !== OWCONFIG.APEXLEGENDSCLASSID) return;
+        console.debug(`[${this.constructor.name}] onGameInfo`, gameInfo);
         this.gameInfo$.next(gameInfo);
     }
 }

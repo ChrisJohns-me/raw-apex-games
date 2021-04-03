@@ -1,13 +1,7 @@
 <app-ui-container [isDesktopWindow]="false" [isContentDraggable]="true" primaryTitle="In Game Damage Collector">
     <div class="damage-collector-container">
         <div *ngFor="let badge of enemyBadgeList; index as i">
-            victim.name: {{ badge.rosterPlayer.name }}<br />
-            shieldDamage: {{ badge.latestInflictionAccum?.shieldDamageSum }}<br />
-            healthDamage: {{ badge.latestInflictionAccum?.healthDamageSum }}<br />
-            totalDamage: {{ (badge.latestInflictionAccum?.shieldDamageSum || 0) + (badge.latestInflictionAccum?.healthDamageSum || 0)
-            }}<br />
-            isKnocked: {{ badge.latestInflictionAccum?.isKnocked }}<br />
-            isEliminated: {{ badge.latestInflictionAccum?.isEliminated }}<br /><br />
+            <app-player-damage-box [badgeData]="badge"></app-player-damage-box>
         </div>
     </div>
 </app-ui-container>

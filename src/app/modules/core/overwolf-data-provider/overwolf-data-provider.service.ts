@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory";
-import { BehaviorSubject, from, interval, merge, Observable, of, Subject, throwError } from "rxjs";
+import { BehaviorSubject, defer, from, interval, merge, Observable, of, Subject, throwError } from "rxjs";
 import {
     catchError,
     delay,
@@ -24,8 +24,6 @@ import { OWCONFIG } from "./overwolf/overwolf-config";
 /**
  * @classdesc Data directly from the Overwolf API.
  *            Data JSON parsed, but same structure to what Overwolf API provides.
- * @todo When `isFocused` == true, should the Delegate Event Hooks be re-registered?
- * @todo Automatic or interval health-checks?
  */
 @Injectable({
     providedIn: "root",
@@ -123,7 +121,8 @@ export class OverwolfDataProviderService implements OnDestroy {
                 console.debug(
                     `[${this.constructor.name}] (Is Running HealthCheck)\n` +
                         `Game Running: ${this.isRunning$.value}\n` +
-                        `Features Registered: ${this.areFeaturesRegistered}`
+                        `Features Registered: ${this.areFeaturesRegistered}` +
+                        `${this.isFeatureRegistrationInProgress ? " (In Progress)" : ""}`
                 )
             )
         );
@@ -177,28 +176,31 @@ export class OverwolfDataProviderService implements OnDestroy {
         if (this.areFeaturesRegistered) return of(true);
         if (this.isFeatureRegistrationInProgress) return of(false);
         this.isFeatureRegistrationInProgress = true;
-        console.debug(`[${this.constructor.name}] Requesting Overwolf features:`, OWCONFIG.REQUIRED_FEATURES);
+        console.debug(`[${this.constructor.name}] Registering Overwolf features:`, OWCONFIG.REQUIRED_FEATURES);
 
-        const promise = new Promise<string[]>((resolve, reject) => {
-            overwolf.games.events.setRequiredFeatures(OWCONFIG.REQUIRED_FEATURES, (result?) => {
-                if (result.success) resolve(result.supportedFeatures ?? []);
-                else reject(result.error || (result as any).reason);
+        const createPromise = () => {
+            return new Promise<string[]>((resolve, reject) => {
+                overwolf.games.events.setRequiredFeatures(OWCONFIG.REQUIRED_FEATURES, (result?) => {
+                    if (result.success) resolve(result.supportedFeatures ?? []);
+                    else reject(result.error || (result as any).reason);
+                });
             });
-        });
+        };
 
-        return of(null).pipe(
-            mergeMap(() => from(promise)),
+        return defer(() => from(createPromise())).pipe(
             retryWhen((errors) =>
                 errors.pipe(
-                    mergeMap((error, count) => {
-                        console.warn(
-                            `[${this.constructor.name}] Request for Overwolf features failed. Retrying...(#${count + 1})\n` +
-                                `Error: ${error?.message ?? JSON.stringify(error)}`
-                        );
-                        if (count >= OWCONFIG.REQUIRED_FEATURES_RETRY_COUNT) {
+                    mergeMap((error, i) => {
+                        const retryAttempt = i + 1;
+                        if (retryAttempt >= OWCONFIG.REQUIRED_FEATURES_RETRY_COUNT) {
                             return throwError(error);
                         }
-                        return of(error).pipe(delay((count + 1) * OWCONFIG.REQUIRED_FEATURES_RETRY_DELAY_MULTIPLIER));
+                        console.warn(
+                            `[${this.constructor.name}] Registration for Overwolf features failed. Retrying...(#${retryAttempt})\n` +
+                                `Error: ${error?.message ?? JSON.stringify(error)}`
+                        );
+                        const delayMs = retryAttempt * OWCONFIG.REQUIRED_FEATURES_RETRY_DELAY_MULTIPLIER;
+                        return of(error).pipe(delay(delayMs));
                     })
                 )
             ),

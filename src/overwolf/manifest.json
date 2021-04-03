@@ -123,10 +123,11 @@
         "launch_events": [
             {
                 "event": "GameLaunch",
+                "tracked": true,
                 "event_data": {
                     "game_ids": [21566]
                 },
-                "start_minimized": false
+                "start_minimized": true
             }
         ],
         "hotkeys": {

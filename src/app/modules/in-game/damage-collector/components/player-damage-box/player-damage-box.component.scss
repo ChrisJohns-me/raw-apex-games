@@ -1,0 +1,134 @@
+$base-height: 75px;
+$base-width: 400px;
+
+.badge-container {
+    border: 3px solid #e7e1cd;
+    background: linear-gradient(45deg, #000000cc, #e7e1cdcc);
+    height: $base-height;
+    width: $base-width;
+    font-family: "Quantico", sans-serif;
+    color: #ffffff;
+
+    .badge {
+        display: flex;
+        height: 100%;
+    }
+
+    &.victim-teammate {
+        opacity: 0.75;
+    }
+
+    &.knocked {
+        background: linear-gradient(45deg, rgba(80, 17, 17, 0.8), #411712cc);
+        color: red;
+    }
+
+    &.eliminated {
+        $dot-size: 3px;
+        $dot-space: 12px;
+        $bg-color: #000000cc;
+        $dot-color: rgba(22, 22, 22, 0.8);
+        background: linear-gradient(90deg, $bg-color ($dot-space - $dot-size), transparent 1%) center,
+            linear-gradient($bg-color ($dot-space - $dot-size), transparent 1%) center, $dot-color;
+        background-size: $dot-space $dot-space;
+        border-color: green;
+        color: #ffffff;
+
+        &.beacon-timed-out {
+            $color1: #353535cc;
+            $color2: #222222cc;
+            background-image: linear-gradient(
+                120deg,
+                $color1 25%,
+                $color2 25%,
+                $color2 50%,
+                $color1 50%,
+                $color1 75%,
+                $color2 75%,
+                $color2 100%
+            );
+            background-size: 46.19px 80px;
+            border-color: grey;
+            color: lightgray;
+        }
+    }
+}
+
+.damage {
+    display: flex;
+    height: 100%;
+    width: 25%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    text-transform: uppercase;
+
+    .damage-header {
+        font-size: $base-height * 0.1;
+    }
+
+    .damage-footer {
+        font-size: $base-height * 0.14;
+    }
+
+    .damage-sum {
+        font-size: $base-height * 0.32;
+        line-height: $base-height * 0.24;
+    }
+}
+
+.player-ui {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    flex: 1 0 auto;
+    padding: $base-height * 0.04 0;
+
+    .player-name {
+        font-size: $base-height * 0.2;
+        line-height: $base-height * 0.25;
+        margin-top: $base-height * 0.05;
+    }
+
+    .player-shield-container {
+        display: inline-flex;
+        width: calc(100% - #{$base-width * 0.04});
+    }
+
+    .player-shield-ui-box-shadow {
+        background-color: #ffffff3d;
+        height: $base-height * 0.12;
+        width: calc(20% - #{$base-width * 0.01});
+        margin: 0 $base-width * 0.0075;
+
+        &:first-of-type {
+            margin-left: 0;
+        }
+
+        &:last-of-type {
+            margin-right: 0;
+        }
+
+        .player-shield-ui-box {
+            background-color: #ffffff;
+            height: $base-height * 0.12;
+            width: 100%; // Actual amount per shield box
+        }
+    }
+
+    .player-health-container {
+        width: calc(100% - #{$base-width * 0.04});
+    }
+
+    .player-health-ui-box-shadow {
+        width: 100%;
+        background-color: #ffffff3d;
+        height: $base-height * 0.18;
+
+        .player-health-ui-box {
+            height: 100%;
+            width: 100%; // Actual amount
+            background-color: #ffffff;
+        }
+    }
+}

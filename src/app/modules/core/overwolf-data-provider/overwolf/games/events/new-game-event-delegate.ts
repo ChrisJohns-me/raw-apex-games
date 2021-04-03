@@ -1,5 +1,12 @@
 import { OWGameEvent } from "@core/overwolf-data-provider";
-import { isEmpty, recursiveJSONParse } from "@shared/utilities";
+import {
+    isEmpty,
+    recursiveEmptyObjectsToNull,
+    recursiveEmptyStringsToNull,
+    recursiveJSONParse,
+    recursiveParseBoolean,
+    recursiveParseNull,
+} from "@shared/utilities";
 import { Subject } from "rxjs";
 
 export class NewGameEventDelegate {
@@ -25,9 +32,16 @@ export class NewGameEventDelegate {
     private cleanGameEvent(event: overwolf.games.events.GameEvent): Optional<OWGameEvent> {
         if (isEmpty(event?.name)) return;
         if (!event || !event.name) return;
+        const eventDataJSON = recursiveJSONParse(event.data);
+        const eventDataBooleanParsed = recursiveParseBoolean(eventDataJSON);
+        const eventDataNullParsed = recursiveParseNull(eventDataBooleanParsed);
+        const eventDataEmptyObjectsAsNull = recursiveEmptyObjectsToNull(eventDataNullParsed);
+        const eventDataEmptyStringsAsNull = recursiveEmptyStringsToNull(eventDataEmptyObjectsAsNull);
+        const eventData = eventDataEmptyStringsAsNull;
+
         const newEvent: OWGameEvent = {
             name: event.name as keyof overwolf.gep.ApexLegends.EventData,
-            data: recursiveJSONParse<OWGameEvent["data"]>(event.data),
+            data: eventData as OWGameEvent["data"],
         };
         return newEvent;
     }

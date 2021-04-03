@@ -66,13 +66,13 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         if (!player) return;
         const killfeedEvent: OWGameEvent = {
             name: "kill_feed",
-            data: {
-                local_player_name: this.player.myName$.value,
-                attackerName: this.getRandomPlayer()?.name,
-                victimName: player.name,
-                weaponName: "energy_ar",
-                action: "knockdown",
-            },
+            data: `{
+                "local_player_name": "${this.player.myName$.value}",
+                "attackerName": "${this.getRandomPlayer()?.name}",
+                "victimName": "${player.name}",
+                "weaponName": "energy_ar",
+                "action": "knockdown"
+            }`,
         };
         const commands: Command[] = [
             {
@@ -88,13 +88,13 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         if (!player) return;
         const killfeedEvent: OWGameEvent = {
             name: "kill_feed",
-            data: {
-                local_player_name: this.player.myName$.value,
-                attackerName: this.getRandomPlayer()?.name,
-                victimName: player.name,
-                weaponName: "energy_ar",
-                action: "kill",
-            },
+            data: `{
+                "local_player_name": "${this.player.myName$.value}",
+                "attackerName": "${this.getRandomPlayer()?.name}",
+                "victimName": "${player.name}",
+                "weaponName": "energy_ar",
+                "action": "kill"
+            }`,
         };
         const commands: Command[] = [
             {
@@ -110,12 +110,12 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         if (!player) return;
         const event: OWGameEvent = {
             name: "damage",
-            data: {
-                targetName: player.name,
-                damageAmount: Math.random() * 50,
-                armor: toShield,
-                headshot: Math.random() < 0.25 ? true : false,
-            },
+            data: `{
+                "targetName": "${player.name}",
+                "damageAmount": "${Math.random() * 50}",
+                "armor": "${toShield}",
+                "headshot": "${Math.random() < 0.25 ? true : false}"
+            }`,
         };
         const commands: Command[] = [
             {
@@ -135,13 +135,13 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         };
         const killfeedEvent: OWGameEvent = {
             name: "kill_feed",
-            data: {
-                local_player_name: this.player.myName$.value,
-                attackerName: this.player.myName$.value,
-                victimName: player.name,
-                weaponName: "energy_ar",
-                action: "knockdown",
-            },
+            data: `{
+                "local_player_name": "${this.player.myName$.value}",
+                "attackerName": "${this.player.myName$.value}",
+                "victimName": "${player.name}",
+                "weaponName": "energy_ar",
+                "action": "knockdown"
+            }`,
         };
         const commands: Command[] = [
             {
@@ -165,13 +165,13 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         };
         const killfeedEvent: OWGameEvent = {
             name: "kill_feed",
-            data: {
-                local_player_name: this.player.myName$.value,
-                attackerName: this.player.myName$.value,
-                victimName: player.name,
-                weaponName: "energy_ar",
-                action: "kill",
-            },
+            data: `{
+                "local_player_name": "${this.player.myName$.value}",
+                "attackerName": "${this.player.myName$.value}",
+                "victimName": "${player.name}",
+                "weaponName": "energy_ar",
+                "action": "kill"
+            }`,
         };
 
         const commands: Command[] = [

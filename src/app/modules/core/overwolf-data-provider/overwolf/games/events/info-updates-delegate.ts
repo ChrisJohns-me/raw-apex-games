@@ -1,5 +1,11 @@
 import { OWInfoUpdates2Event } from "@core/overwolf-data-provider";
-import { recursiveJSONParse } from "@shared/utilities";
+import {
+    recursiveEmptyObjectsToNull,
+    recursiveEmptyStringsToNull,
+    recursiveJSONParse,
+    recursiveParseBoolean,
+    recursiveParseNull,
+} from "@shared/utilities";
 import { Subject } from "rxjs";
 
 export class InfoUpdatesDelegate {
@@ -21,8 +27,15 @@ export class InfoUpdatesDelegate {
 
     private cleanInfoUpdate(owInfoUpdate: overwolf.games.events.InfoUpdates2Event): Optional<OWInfoUpdates2Event> {
         if (!owInfoUpdate || !owInfoUpdate.info || !owInfoUpdate.feature) return;
+        const infoDataJSON = recursiveJSONParse(owInfoUpdate.info);
+        const infoDataBooleanParsed = recursiveParseBoolean(infoDataJSON);
+        const infoDataNullParsed = recursiveParseNull(infoDataBooleanParsed);
+        const infoDataEmptyObjectsAsNull = recursiveEmptyObjectsToNull(infoDataNullParsed);
+        const infoDataEmptyStringsAsNull = recursiveEmptyStringsToNull(infoDataEmptyObjectsAsNull);
+        const infoDataParsed = infoDataEmptyStringsAsNull;
+
         const newInfoUpdate: OWInfoUpdates2Event = {
-            info: recursiveJSONParse<OWInfoUpdates2Event["info"]>(owInfoUpdate.info),
+            info: infoDataParsed as OWInfoUpdates2Event["info"],
             feature: owInfoUpdate.feature as OWInfoUpdates2Event["feature"],
         };
         return newInfoUpdate;

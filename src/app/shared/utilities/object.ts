@@ -1,3 +1,6 @@
+import { parseBoolean } from "./boolean";
+import { JSONTryParse } from "./json";
+
 /**
  * @description Uses .find() with RegExp.
  * @example findKeyByRegEx({ key_99: "foo" }, /^key_/) = key_99
@@ -69,4 +72,100 @@ export function incrementedKeysToValueArray<V extends ObjectPropertyTypes<T>, T 
         arr.push(value);
     });
     return arr;
+}
+
+/**
+ * Attempts to parse JSON with a given input.
+ * Traverses through an object to parse any values that may be JSON.
+ * Does not parse JSON strings within JSON strings.
+ */
+export function recursiveJSONParse<T = any>(obj: any): any {
+    if (typeof obj === "string") {
+        if ((obj as string).trim().startsWith("{") && (obj as string).trim().endsWith("}")) {
+            return (JSONTryParse(obj) as T) ?? ((obj as unknown) as T);
+        } else return obj;
+    } else if (obj && typeof obj === "object") {
+        const newObj = { ...obj };
+        for (const key in obj) {
+            if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
+            newObj[key] = recursiveJSONParse(obj[key]);
+        }
+        return newObj;
+    } else {
+        return obj;
+    }
+}
+
+/**
+ * Traverses through an object to parse any string boolean values.
+ */
+export function recursiveParseBoolean<T = any>(obj: any): any {
+    if (typeof obj === "string" && (obj.trim() === "true" || obj.trim() === "false")) {
+        return parseBoolean(obj);
+    } else if (obj && typeof obj === "object") {
+        const newObj = { ...obj };
+        for (const key in obj) {
+            if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
+            newObj[key] = recursiveParseBoolean(obj[key]);
+        }
+        return newObj;
+    } else {
+        return obj;
+    }
+}
+
+/**
+ * Traverses through an object to parse any string null values.
+ */
+export function recursiveParseNull<T = any>(obj: any): any {
+    if (typeof obj === "string" && (obj.trim() === "null" || obj.trim() === "undefined")) {
+        return null;
+    } else if (obj && typeof obj === "object") {
+        const newObj = { ...obj };
+        for (const key in obj) {
+            if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
+            newObj[key] = recursiveParseNull(obj[key]);
+        }
+        return newObj;
+    } else {
+        return obj;
+    }
+}
+
+/**
+ * Traverses through an object to convert empty objects to null values.
+ */
+export function recursiveEmptyObjectsToNull<T = any>(obj: any): any {
+    if (obj && typeof obj === "object") {
+        if (Object.keys(obj).length === 0) {
+            return null;
+        } else {
+            const newObj = { ...obj };
+            for (const key in obj) {
+                if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
+                newObj[key] = recursiveEmptyObjectsToNull(obj[key]);
+            }
+            return newObj;
+        }
+    } else {
+        return obj;
+    }
+}
+
+/**
+ * Traverses through an object to convert empty strings to null values.
+ */
+export function recursiveEmptyStringsToNull<T = any>(obj: any): any {
+    if (typeof obj === "string" && obj.trim() === "") {
+        return null;
+    } else if (obj && typeof obj === "object") {
+        const newObj = { ...obj };
+        for (const key in obj) {
+            if (!Object.prototype.hasOwnProperty.call(obj, key)) continue;
+            newObj[key] = recursiveEmptyStringsToNull(obj[key]);
+        }
+        return newObj;
+    } else {
+        return obj;
+    }
 }

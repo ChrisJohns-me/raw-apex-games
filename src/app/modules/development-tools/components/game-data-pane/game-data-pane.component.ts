@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { GameProcessService } from "@core/game-process.service";
 import { GameService } from "@core/game.service";
 import { MatchMapService } from "@core/match/match-map.service";
@@ -14,13 +14,15 @@ import { GamePhase } from "@shared/models/game-phase";
 import { MatchLocationPhase } from "@shared/models/match/match-location";
 import { MatchState } from "@shared/models/match/match-state";
 import { PlayerState } from "@shared/models/player-state";
+import { interval } from "rxjs";
 
 @Component({
     selector: "app-game-data-pane",
     templateUrl: "./game-data-pane.component.html",
     styleUrls: ["./game-data-pane.component.scss"],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GameDataPaneComponent {
+export class GameDataPaneComponent implements OnInit {
     public Infinity = Infinity;
     public changedHighlightColor = "#ffc9c9";
 
@@ -31,6 +33,7 @@ export class GameDataPaneComponent {
     }
 
     constructor(
+        private readonly cdr: ChangeDetectorRef,
         public readonly game: GameService,
         public readonly gameProcess: GameProcessService,
         public readonly match: MatchService,
@@ -43,6 +46,16 @@ export class GameDataPaneComponent {
         public readonly matchRoster: MatchRosterService,
         public readonly player: PlayerService
     ) {}
+
+    public ngOnInit(): void {
+        // Refresh UI Timer
+        interval(5000)
+            .pipe()
+            .subscribe(() => {
+                console.log(`refresh`);
+                this.cdr.detectChanges();
+            });
+    }
 
     public onChangeGameProcessIsRunningClick(): void {
         this.gameProcess.isRunning$.next(!this.gameProcess.isRunning$.value);

@@ -16,10 +16,10 @@ describe("NewGameEventDelegate", () => {
         // Act
         const goodEvent: NewGameEvents = { events: [{ name: "match_start", data: "" }] };
         const badEvent = { badObj: "irrelevant" };
+        const expected: OWGameEvent = { name: "match_start", data: null };
 
         sut.newGameEvent$.subscribe((actual) => {
             called++;
-            const expected: OWGameEvent = { name: "match_start", data: "" };
             expect(actual).toEqual(expected);
         });
         sut.onNewGameEvents(goodEvent as any);
@@ -38,10 +38,10 @@ describe("NewGameEventDelegate", () => {
         // Act
         const goodEvent: NewGameEvents = { events: [{ name: "match_start", data: "" }] };
         const badEvent = { events: [{ badObj: "irrelevant" }] };
+        const expected: OWGameEvent = { name: "match_start", data: null };
 
         sut.newGameEvent$.subscribe((actual) => {
             called++;
-            const expected: OWGameEvent = { name: "match_start", data: "" };
             expect(actual).toEqual(expected);
         });
         sut.onNewGameEvents(goodEvent as any);

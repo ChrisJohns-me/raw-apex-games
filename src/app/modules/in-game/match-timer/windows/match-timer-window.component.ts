@@ -23,7 +23,7 @@ export class MatchTimerWindowComponent implements OnInit, OnDestroy {
     public get matchDurationDate(): Date {
         const startMs = (this.matchStartDate ?? new Date()).getTime();
         const endMs = (this.matchEndDate ?? new Date()).getTime();
-        return new Date(endMs - startMs);
+        return new Date(endMs > startMs ? endMs - startMs : Date.now() - startMs);
     }
 
     public showTimer = false;
@@ -55,7 +55,9 @@ export class MatchTimerWindowComponent implements OnInit, OnDestroy {
                 }),
                 switchMap(() => timer(0, UI_TIMER_REFRESH_RATE))
             )
-            .subscribe(() => this.cdr.detectChanges());
+            .subscribe(() => {
+                this.cdr.detectChanges();
+            });
     }
 
     private setupMatchStopEvent(): void {
@@ -66,6 +68,8 @@ export class MatchTimerWindowComponent implements OnInit, OnDestroy {
                 delay(SHOW_TIMER_TIMEOUT),
                 tap(() => (this.showTimer = false))
             )
-            .subscribe(() => this.cdr.detectChanges());
+            .subscribe(() => {
+                this.cdr.detectChanges();
+            });
     }
 }
