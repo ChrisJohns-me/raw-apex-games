@@ -42,7 +42,7 @@ export class MatchPlayerInflictionService implements OnDestroy {
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
         private readonly matchRoster: MatchRosterService,
-        private readonly overwolf: OverwolfDataProviderService,
+        private readonly overwolfData: OverwolfDataProviderService,
         private readonly player: PlayerService
     ) {}
 
@@ -74,7 +74,7 @@ export class MatchPlayerInflictionService implements OnDestroy {
      * Damage events caused by the local player
      */
     private setupMyDamageEvents(): void {
-        this.overwolf.newGameEvent$
+        this.overwolfData.newGameEvent$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((gameEvent) => gameEvent.name === "damage"),

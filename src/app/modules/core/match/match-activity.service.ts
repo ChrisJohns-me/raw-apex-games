@@ -32,7 +32,7 @@ export class MatchActivityService implements OnDestroy {
     constructor(
         private readonly match: MatchService,
         private readonly matchRoster: MatchRosterService,
-        private readonly overwolf: OverwolfDataProviderService,
+        private readonly overwolfData: OverwolfDataProviderService,
         private readonly player: PlayerService
     ) {}
 
@@ -61,7 +61,7 @@ export class MatchActivityService implements OnDestroy {
      * From the gameEvent name: "kill_feed"
      */
     private setupKillfeed(): void {
-        this.overwolf.newGameEvent$
+        this.overwolfData.newGameEvent$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((gameEvent) => gameEvent.name === "kill_feed"),
@@ -100,7 +100,7 @@ export class MatchActivityService implements OnDestroy {
     private setupKillsAndKnockdowns(): void {
         type KillOrKnockdownData = overwolf.gep.ApexLegends.GameEventKill | overwolf.gep.ApexLegends.GameEventKnockdown;
 
-        this.overwolf.newGameEvent$
+        this.overwolfData.newGameEvent$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((gameEvent) => gameEvent.name === "knockdown" || gameEvent.name === "kill"),

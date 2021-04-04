@@ -18,6 +18,11 @@
             "inGameEventNameRegExPattern": "^Fall$"
         },
         {
+            "id": "killfeed_ring",
+            "friendlyName": "Ring",
+            "inGameEventNameRegExPattern": "^the Ring$"
+        },
+        {
             "id": "killfeed_finisher",
             "friendlyName": "Finisher",
             "inGameEventNameRegExPattern": "^Finisher$"

@@ -22,7 +22,7 @@ export class GameService implements OnDestroy {
 
     private readonly _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {}
+    constructor(private readonly match: MatchService, private readonly overwolfData: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();
@@ -45,7 +45,7 @@ export class GameService implements OnDestroy {
             [GamePhase.InGame]: (infoUpdate, matchState) => matchState === MatchState.Active,
         });
 
-        this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
+        this.overwolfData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
             const newPhase = triggers.triggeredFirstKey(infoUpdate, undefined);
             setNewPhaseFn(newPhase);
         });

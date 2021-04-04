@@ -31,7 +31,7 @@ export class MatchPlayerLocationService implements OnDestroy {
 
     constructor(
         private readonly match: MatchService,
-        private readonly overwolf: OverwolfDataProviderService,
+        private readonly overwolfData: OverwolfDataProviderService,
         private readonly playerInventory: MatchPlayerInventoryService
     ) {}
 
@@ -60,7 +60,7 @@ export class MatchPlayerLocationService implements OnDestroy {
     }
 
     private setupMyCoordinates(): void {
-        this.overwolf.infoUpdates$
+        this.overwolfData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "location" && !!infoUpdate.info.match_info?.location),
@@ -92,7 +92,7 @@ export class MatchPlayerLocationService implements OnDestroy {
                 this.myLocationPhase$.value === MatchLocationPhase.Dropping && !!this.myLandingCoordinates$.value,
         });
 
-        this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
+        this.overwolfData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
             const newPhase = triggers.triggeredFirstKey(infoUpdate, false);
             setNewLocationPhaseFn(newPhase);
         });

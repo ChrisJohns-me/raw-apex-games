@@ -18,13 +18,11 @@ import { addMilliseconds } from "date-fns";
 import { combineLatest, merge, Subject } from "rxjs";
 import { distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
 
-const ACCUM_EXPIRE = 10000;
+const ACCUM_EXPIRE = 15000;
 const SHIELD_MAX = 125;
 const HEALTH_MAX = 100;
 const SHIELD_DEFAULT_ASSUMPTION = 75;
 const HEALTH_DEFAULT_ASSUMPTION = 100;
-
-const DEBUG_ALLOW_RESET = true;
 
 export interface EnemyBadge {
     isVictimTeammate: boolean;
@@ -121,17 +119,27 @@ export class DamageCollectorWindowComponent implements OnInit, OnDestroy {
                 );
 
                 if (foundVictimBadge) {
-                    this.updateExistingVictimBadge(foundVictimBadge, inflictionEvent);
+                    const updatedVictimBadge = this.addInflictionToBadge(foundVictimBadge, inflictionEvent);
+
+                    if (updatedVictimBadge) {
+                        this.enemyBadgeList = [
+                            updatedVictimBadge,
+                            ...this.enemyBadgeList.filter(
+                                (e) => !isPlayerNameEqual(e.rosterPlayer.name, updatedVictimBadge?.rosterPlayer.name)
+                            ),
+                        ];
+                    }
+
                     if (this.isTimestampExpired(inflictionEvent.latestTimestamp)) {
                         this.resetBadge(foundVictimBadge);
                     } else {
-                        this.updateTeammates(foundVictimBadge);
+                        this.setTeammates(foundVictimBadge);
                     }
                 } else {
                     const newEnemyBadge = this.createVictimBadge(inflictionEvent);
                     if (newEnemyBadge) {
                         this.enemyBadgeList.push(newEnemyBadge);
-                        this.updateTeammates(newEnemyBadge);
+                        this.setTeammates(newEnemyBadge);
                     }
                 }
                 this.cdr.detectChanges();
@@ -164,25 +172,27 @@ export class DamageCollectorWindowComponent implements OnInit, OnDestroy {
         return enemyBadge;
     }
 
-    private updateExistingVictimBadge(foundVictimBadge: EnemyBadge, inflictionEvent: MatchInflictionEventAccum): void {
-        if (!DEBUG_ALLOW_RESET && !inflictionEvent.latestTimestamp) return;
+    private addInflictionToBadge(currentBadge: EnemyBadge, inflictionEvent: MatchInflictionEventAccum): Optional<EnemyBadge> {
+        if (!currentBadge) return;
+        if (!inflictionEvent.latestTimestamp) return;
         if (inflictionEvent.hasShield) {
-            foundVictimBadge.maybeShieldMax = mathClamp(
+            currentBadge.maybeShieldMax = mathClamp(
                 inflictionEvent.shieldDamageSum > SHIELD_DEFAULT_ASSUMPTION ? inflictionEvent.shieldDamageSum : SHIELD_DEFAULT_ASSUMPTION,
                 0,
                 SHIELD_MAX
             );
-            foundVictimBadge.maybeShieldAmount = mathClamp(SHIELD_DEFAULT_ASSUMPTION - inflictionEvent.shieldDamageSum, 0, SHIELD_MAX);
+            currentBadge.maybeShieldAmount = mathClamp(SHIELD_DEFAULT_ASSUMPTION - inflictionEvent.shieldDamageSum, 0, SHIELD_MAX);
         } else {
-            foundVictimBadge.maybeShieldMax = mathClamp(inflictionEvent.shieldDamageSum, 0, SHIELD_MAX);
-            foundVictimBadge.maybeShieldAmount = 0;
+            currentBadge.maybeShieldMax = mathClamp(inflictionEvent.shieldDamageSum, 0, SHIELD_MAX);
+            currentBadge.maybeShieldAmount = 0;
         }
-        foundVictimBadge.isVictimTeammate = false;
-        foundVictimBadge.latestInflictionAccum = inflictionEvent;
-        foundVictimBadge.maybeHealthAmount = mathClamp(HEALTH_DEFAULT_ASSUMPTION - inflictionEvent.healthDamageSum, 0, HEALTH_MAX);
+        currentBadge.isVictimTeammate = false;
+        currentBadge.latestInflictionAccum = inflictionEvent;
+        currentBadge.maybeHealthAmount = mathClamp(HEALTH_DEFAULT_ASSUMPTION - inflictionEvent.healthDamageSum, 0, HEALTH_MAX);
+        return currentBadge;
     }
 
-    private updateTeammates(victimBadge: EnemyBadge): void {
+    private setTeammates(victimBadge: EnemyBadge): void {
         const matchRoster = this.matchRoster.matchRoster$.value;
         const victimRosterTeam: Optional<MatchRosterTeam> = matchRoster.teams.find((t) => t.teamId === victimBadge.rosterPlayer?.teamId);
         const victimRosterTeammates: MatchRosterPlayer[] = victimRosterTeam?.members ?? [];
@@ -202,7 +212,6 @@ export class DamageCollectorWindowComponent implements OnInit, OnDestroy {
      * - Sets the badge to an "enemy teammate" badge, if their teammates do still have infliction events.
      */
     private resetBadge(badge: EnemyBadge): void {
-        if (!DEBUG_ALLOW_RESET) return;
         const enemyTeamHasEvents = this.enemyBadgeList
             .filter((e) => e.rosterPlayer.teamId === badge.rosterPlayer.teamId)
             .some((team) => !this.isTimestampExpired(team.latestInflictionAccum?.latestTimestamp));

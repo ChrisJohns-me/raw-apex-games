@@ -13,18 +13,18 @@ import { OverwolfDataProviderService, OWGameEvent, OWInfoUpdates2Event, OWRunnin
 })
 export class OverwolfExposedDataService implements OnDestroy {
     public get rawGameInfo$(): BehaviorSubject<Optional<OWRunningGameInfo>> {
-        return this.overwolf.gameInfo$;
+        return this.overwolfData.gameInfo$;
     }
     public get rawInfoUpdates$(): Subject<OWInfoUpdates2Event> {
-        return this.overwolf.infoUpdates$;
+        return this.overwolfData.infoUpdates$;
     }
     public get rawNewGameEvent$(): Subject<OWGameEvent> {
-        return this.overwolf.newGameEvent$;
+        return this.overwolfData.newGameEvent$;
     }
 
     private readonly _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly overwolf: OverwolfDataProviderService) {}
+    constructor(private readonly overwolfData: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();
@@ -36,14 +36,14 @@ export class OverwolfExposedDataService implements OnDestroy {
     }
 
     public injectOnGameInfo(gameInfo: OWRunningGameInfo): void {
-        this.overwolf["gameInfoDelegate"].onGameInfo(gameInfo);
+        this.overwolfData["gameInfoDelegate"].onGameInfo(gameInfo);
     }
 
     public injectOnInfoUpdates2(infoUpdate: overwolf.games.events.InfoUpdates2Event): void {
-        this.overwolf["infoUpdatesDelegate"].onInfoUpdates2(infoUpdate);
+        this.overwolfData["infoUpdatesDelegate"].onInfoUpdates2(infoUpdate);
     }
 
     public injectOnNewGameEvents(newGameEvent: overwolf.games.events.GameEvent): void {
-        this.overwolf["newGameEventDelegate"].onNewGameEvents({ events: [newGameEvent] });
+        this.overwolfData["newGameEventDelegate"].onNewGameEvents({ events: [newGameEvent] });
     }
 }

@@ -1,25 +1,14 @@
-import { Injectable, OnDestroy } from "@angular/core";
+import { Inject, Injectable, OnDestroy } from "@angular/core";
 import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory";
-import { BehaviorSubject, defer, from, interval, merge, Observable, of, Subject, throwError } from "rxjs";
-import {
-    catchError,
-    delay,
-    distinctUntilChanged,
-    filter,
-    map,
-    mergeMap,
-    retryWhen,
-    share,
-    switchMap,
-    takeUntil,
-    tap,
-} from "rxjs/operators";
+import { BehaviorSubject, interval, merge, Subject } from "rxjs";
+import { distinctUntilChanged, filter, map, share, switchMap, takeUntil, tap } from "rxjs/operators";
+import { OverwolfFeatureRegistrationService, OWFeatureRegistrationStatus } from "./overwolf-feature-registration.service";
 import { OverwolfEventHookHandler } from "./overwolf-hook-handler";
 import { OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./overwolf-types";
 import { InfoUpdatesDelegate } from "./overwolf/games/events/info-updates-delegate";
 import { NewGameEventDelegate } from "./overwolf/games/events/new-game-event-delegate";
 import { GameInfoDelegate } from "./overwolf/games/game-info-delegate";
-import { OWCONFIG } from "./overwolf/overwolf-config";
+import { OWConfig, OW_CONFIG } from "./overwolf/overwolf-config";
 
 /**
  * @classdesc Data directly from the Overwolf API.
@@ -27,7 +16,7 @@ import { OWCONFIG } from "./overwolf/overwolf-config";
  */
 @Injectable({
     providedIn: "root",
-    deps: [],
+    deps: [OW_CONFIG, OverwolfFeatureRegistrationService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("OverwolfDataProviderService", OverwolfDataProviderService, deps),
 })
 export class OverwolfDataProviderService implements OnDestroy {
@@ -42,7 +31,7 @@ export class OverwolfDataProviderService implements OnDestroy {
         return this.newGameEventDelegate.newGameEvent$;
     }
 
-    private readonly gameInfoDelegate = new GameInfoDelegate();
+    private readonly gameInfoDelegate = new GameInfoDelegate(this.config.APEXLEGENDSCLASSID);
     private readonly infoUpdatesDelegate = new InfoUpdatesDelegate();
     private readonly newGameEventDelegate = new NewGameEventDelegate();
     private readonly delegateEventHooks: { [key: string]: OverwolfEventHookHandler } = {
@@ -68,9 +57,7 @@ export class OverwolfDataProviderService implements OnDestroy {
     //#endregion
 
     //#region Game Monitor
-    private areFeaturesRegistered = false;
-    private isFeatureRegistrationInProgress = false;
-    private readonly gameMonitorGameInfoDelegate = new GameInfoDelegate();
+    private readonly gameMonitorGameInfoDelegate = new GameInfoDelegate(this.config.APEXLEGENDSCLASSID);
     private readonly gameMonitorEventHooks: { [key: string]: OverwolfEventHookHandler } = {
         RUNNINGGAMEINFO: new OverwolfEventHookHandler(overwolf.games.getRunningGameInfo, undefined, (e) =>
             this.gameMonitorGameInfoDelegate.onGameInfo(e)
@@ -91,7 +78,10 @@ export class OverwolfDataProviderService implements OnDestroy {
     private isRunning$ = new BehaviorSubject<boolean>(false);
     private readonly _unsubscribe$ = new Subject<void>();
 
-    constructor() {
+    constructor(
+        @Inject(OW_CONFIG) private readonly config: OWConfig,
+        private readonly featureRegistration: OverwolfFeatureRegistrationService
+    ) {
         this.gameMonitorGameInfoDelegate.gameInfo$
             .pipe(
                 takeUntil(this._unsubscribe$),
@@ -116,24 +106,22 @@ export class OverwolfDataProviderService implements OnDestroy {
     }
 
     private setupRunningCheck(): void {
-        const isRunningHealthcheck$ = interval(OWCONFIG.HEALTHCHECK_TIME).pipe(
+        const isRunningHealthcheck$ = interval(this.config.HEALTHCHECK_TIME).pipe(
             tap(() =>
                 console.debug(
                     `[${this.constructor.name}] (Is Running HealthCheck)\n` +
                         `Game Running: ${this.isRunning$.value}\n` +
-                        `Features Registered: ${this.areFeaturesRegistered}` +
-                        `${this.isFeatureRegistrationInProgress ? " (In Progress)" : ""}`
+                        `Features: ${this.featureRegistration.registrationStatus$.value}`
                 )
             )
         );
-
         merge(isRunningHealthcheck$, this.isRunning$)
             .pipe(
-                filter((isRunning) => !!isRunning),
-                switchMap(() => this.registerRequiredFeatures())
+                filter(() => this.isRunning$.value),
+                switchMap(() => this.featureRegistration.registerFeatures())
             )
-            .subscribe((areFeaturesRegistered) => {
-                if (!areFeaturesRegistered) {
+            .subscribe(() => {
+                if (this.featureRegistration.registrationStatus$.value !== OWFeatureRegistrationStatus.SUCCESS) {
                     this.notRunning();
                     return;
                 }
@@ -168,57 +156,9 @@ export class OverwolfDataProviderService implements OnDestroy {
     }
     //#endregion
 
-    /**
-     * Register required event features
-     * @returns true and Completes the observable stream if successful.
-     */
-    private registerRequiredFeatures(): Observable<boolean> {
-        if (this.areFeaturesRegistered) return of(true);
-        if (this.isFeatureRegistrationInProgress) return of(false);
-        this.isFeatureRegistrationInProgress = true;
-        console.debug(`[${this.constructor.name}] Registering Overwolf features:`, OWCONFIG.REQUIRED_FEATURES);
-
-        const createPromise = () => {
-            return new Promise<string[]>((resolve, reject) => {
-                overwolf.games.events.setRequiredFeatures(OWCONFIG.REQUIRED_FEATURES, (result?) => {
-                    if (result.success) resolve(result.supportedFeatures ?? []);
-                    else reject(result.error || (result as any).reason);
-                });
-            });
-        };
-
-        return defer(() => from(createPromise())).pipe(
-            retryWhen((errors) =>
-                errors.pipe(
-                    mergeMap((error, i) => {
-                        const retryAttempt = i + 1;
-                        if (retryAttempt >= OWCONFIG.REQUIRED_FEATURES_RETRY_COUNT) {
-                            return throwError(error);
-                        }
-                        console.warn(
-                            `[${this.constructor.name}] Registration for Overwolf features failed. Retrying...(#${retryAttempt})\n` +
-                                `Error: ${error?.message ?? JSON.stringify(error)}`
-                        );
-                        const delayMs = retryAttempt * OWCONFIG.REQUIRED_FEATURES_RETRY_DELAY_MULTIPLIER;
-                        return of(error).pipe(delay(delayMs));
-                    })
-                )
-            ),
-            map((features) => !!features?.length),
-            tap((success) => (this.areFeaturesRegistered = success)),
-            tap(() => (this.isFeatureRegistrationInProgress = false)),
-            catchError((error) => {
-                console.error(
-                    `[${this.constructor.name}] Could not set Overwolf features: ${JSON.stringify(OWCONFIG.REQUIRED_FEATURES)}, ` +
-                        `error: ${error?.message ?? JSON.stringify(error)}`
-                );
-                return of(false);
-            })
-        );
-    }
-
     private notRunning() {
         this.unregisterDelegateEventHooks();
+        this.featureRegistration.unregisterFeatures();
         console.warn(`[${this.constructor.name}] Overwolf Data Provider Service is not running.`);
     }
 }

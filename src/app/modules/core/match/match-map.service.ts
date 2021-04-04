@@ -6,11 +6,10 @@ import { isEmpty } from "@shared/utilities";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
 import { MatchPlayerLocationService } from "./match-player-location.service";
-import { MatchService } from "./match.service";
 
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, MatchPlayerLocationService],
+    deps: [MatchPlayerLocationService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchMapService", MatchMapService, deps),
 })
 export class MatchMapService implements OnDestroy {
@@ -21,7 +20,7 @@ export class MatchMapService implements OnDestroy {
     public readonly map$ = new BehaviorSubject<Optional<MatchMap>>(undefined);
 
     private readonly _unsubscribe$ = new Subject<void>();
-    constructor(private readonly match: MatchService, private readonly matchPlayerLocation: MatchPlayerLocationService) {}
+    constructor(private readonly matchPlayerLocation: MatchPlayerLocationService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();

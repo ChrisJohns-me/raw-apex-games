@@ -1,10 +1,10 @@
 import { HttpClientModule } from "@angular/common/http";
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
+import { OverwolfModule } from "@core/overwolf-data-provider/overwolf.module";
 import { environment } from "src/environments/environment";
 import { AppComponent } from "./app.component";
 import { BackgroundModule } from "./modules/background/background.module";
-import { CoreModule } from "./modules/core/core.module";
 import { DevelopmentToolsModule } from "./modules/development-tools/development-tools.module";
 import { NoopDevelopmentToolsModule } from "./modules/development-tools/noop-development-tools.module";
 import { DamageCollectorWindowModule } from "./modules/in-game/damage-collector/damage-collector.module";
@@ -16,11 +16,11 @@ import { UltTimerWindowModule } from "./modules/in-game/ult-timer/ult-timer.modu
     imports: [
         BackgroundModule,
         BrowserModule,
-        CoreModule,
+        DamageCollectorWindowModule,
         environment.allowDevTools ? DevelopmentToolsModule : NoopDevelopmentToolsModule,
         HttpClientModule,
-        DamageCollectorWindowModule,
         MatchTimerWindowModule,
+        OverwolfModule,
         UltTimerWindowModule,
     ],
     bootstrap: [AppComponent],

@@ -29,8 +29,8 @@ export class MatchPlayerInventoryService implements OnDestroy {
     private inventoryInfoUpdates$: Observable<OWInfoUpdates2Event>;
     private readonly _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly match: MatchService, private readonly overwolf: OverwolfDataProviderService) {
-        this.inventoryInfoUpdates$ = this.overwolf.infoUpdates$.pipe(
+    constructor(private readonly match: MatchService, private readonly overwolfData: OverwolfDataProviderService) {
+        this.inventoryInfoUpdates$ = this.overwolfData.infoUpdates$.pipe(
             takeUntil(this._unsubscribe$),
             filter((infoUpdate) => infoUpdate.feature === "inventory")
         );

@@ -32,7 +32,7 @@ export class MatchService implements OnDestroy {
     private currentStartDate?: Date;
     private readonly _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly overwolf: OverwolfDataProviderService) {}
+    constructor(private readonly overwolfData: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();
@@ -85,12 +85,12 @@ export class MatchService implements OnDestroy {
             },
         });
 
-        this.overwolf.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
+        this.overwolfData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
             const newState = triggers.triggeredFirstKey(this.state$.value.state, infoUpdate, undefined);
             newStateChangeFn(newState);
         });
 
-        this.overwolf.newGameEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe((gameEvent) => {
+        this.overwolfData.newGameEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe((gameEvent) => {
             const newState = triggers.triggeredFirstKey(this.state$.value.state, undefined, gameEvent);
             newStateChangeFn(newState);
         });
@@ -99,7 +99,7 @@ export class MatchService implements OnDestroy {
     private setupGameMode(): void {
         const blacklistedGameModes = [/nametext/];
 
-        this.overwolf.infoUpdates$
+        this.overwolfData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "match_info"),

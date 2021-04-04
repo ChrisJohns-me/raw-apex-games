@@ -1,9 +1,8 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory";
 import { BehaviorSubject, Subject } from "rxjs";
-import { filter, takeUntil } from "rxjs/operators";
+import { takeUntil } from "rxjs/operators";
 import { OverwolfDataProviderService } from "./overwolf-data-provider";
-import { OWCONFIG } from "./overwolf-data-provider/overwolf/overwolf-config";
 
 /**
  * @classdesc Provides general information about the game process
@@ -19,7 +18,7 @@ export class GameProcessService implements OnDestroy {
 
     private readonly _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly overwolf: OverwolfDataProviderService) {}
+    constructor(private readonly overwolfData: OverwolfDataProviderService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();
@@ -31,15 +30,10 @@ export class GameProcessService implements OnDestroy {
     }
 
     private setupGameInfoUpdated(): void {
-        this.overwolf.gameInfo$
-            .pipe(
-                takeUntil(this._unsubscribe$),
-                filter((gameInfo) => gameInfo?.classId === OWCONFIG.APEXLEGENDSCLASSID)
-            )
-            .subscribe((gameInfo) => {
-                if (!gameInfo) return;
-                if (gameInfo.isRunning !== this.isRunning$.value) this.isRunning$.next(gameInfo.isRunning);
-                if (gameInfo.isInFocus !== this.isInFocus$.value) this.isInFocus$.next(gameInfo.isInFocus);
-            });
+        this.overwolfData.gameInfo$.pipe(takeUntil(this._unsubscribe$)).subscribe((gameInfo) => {
+            if (!gameInfo) return;
+            if (gameInfo.isRunning !== this.isRunning$.value) this.isRunning$.next(gameInfo.isRunning);
+            if (gameInfo.isInFocus !== this.isInFocus$.value) this.isInFocus$.next(gameInfo.isInFocus);
+        });
     }
 }

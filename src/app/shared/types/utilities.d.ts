@@ -3,6 +3,11 @@ type Nullable<T> = T | undefined | null;
 type AnyObject = { [key: string]: any };
 
 /**
+ * Make all properties (including subtypes) in T optional
+ */
+type DeepPartial<T> = Partial<{ [P in keyof T]: DeepPartial<T[P]> }>;
+
+/**
  * Unionizes all of an object's property types
  * @example
  *      ObjectPropertyTypes<{key1: string, key2: number, key3: boolean}> = string | number | boolean

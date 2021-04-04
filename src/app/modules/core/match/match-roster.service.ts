@@ -54,9 +54,9 @@ export class MatchRosterService implements OnDestroy {
     constructor(
         private readonly match: MatchService,
         private readonly matchLegendSelect: MatchLegendSelectService,
-        private readonly overwolf: OverwolfDataProviderService
+        private readonly overwolfData: OverwolfDataProviderService
     ) {
-        this.rosterUpdate$ = this.overwolf.infoUpdates$.pipe(
+        this.rosterUpdate$ = this.overwolfData.infoUpdates$.pipe(
             takeUntil(this._unsubscribe$),
             filter((infoUpdate) => infoUpdate.feature === "roster"),
             map((infoUpdate) => infoUpdate.info.match_info),
@@ -114,7 +114,7 @@ export class MatchRosterService implements OnDestroy {
      * Update teams/players counters
      */
     private setupCounts(): void {
-        this.overwolf.infoUpdates$
+        this.overwolfData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "match_info" && !!infoUpdate.info.match_info?.tabs),
@@ -187,7 +187,7 @@ export class MatchRosterService implements OnDestroy {
      * Mostly only useful for getting teammate's name, if primary source fails.
      */
     private setupTeammateRosterSecondary(): void {
-        this.overwolf.infoUpdates$
+        this.overwolfData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "team"),

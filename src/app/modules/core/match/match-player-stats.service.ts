@@ -42,7 +42,7 @@ export class MatchPlayerStatsService implements OnDestroy {
 
     constructor(
         private readonly match: MatchService,
-        private readonly overwolf: OverwolfDataProviderService,
+        private readonly overwolfData: OverwolfDataProviderService,
         private readonly matchPlayer: MatchPlayerService
     ) {}
 
@@ -75,7 +75,7 @@ export class MatchPlayerStatsService implements OnDestroy {
             subject.next(newAmount);
         };
 
-        this.overwolf.infoUpdates$
+        this.overwolfData.infoUpdates$
             .pipe(
                 filter((infoUpdate) => infoUpdate.feature === "match_info" && !!infoUpdate.info.match_info?.tabs),
                 map((infoUpdate) => infoUpdate.info.match_info?.tabs)
@@ -91,7 +91,7 @@ export class MatchPlayerStatsService implements OnDestroy {
     }
 
     private setupTotalDamageDealt(): void {
-        this.overwolf.infoUpdates$
+        this.overwolfData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "damage" && !!infoUpdate.info.me?.totalDamageDealt),
@@ -109,7 +109,7 @@ export class MatchPlayerStatsService implements OnDestroy {
             .pipe(
                 takeUntil(this._unsubscribe$),
                 tap((stateChanged) => (stateChanged.state === MatchState.Active ? setVictoryFn(false) : null)),
-                switchMap(() => this.overwolf.infoUpdates$),
+                switchMap(() => this.overwolfData.infoUpdates$),
                 filter(() => this.matchPlayer.myState$.value !== PlayerState.Eliminated),
                 filter((infoUpdate) => infoUpdate.feature === "rank"),
                 map((infoUpdate) => infoUpdate.info.match_info),

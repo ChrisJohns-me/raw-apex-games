@@ -26,7 +26,7 @@ export class MatchPlayerLegendService implements OnDestroy {
     constructor(
         private readonly match: MatchService,
         private readonly matchLegendSelect: MatchLegendSelectService,
-        private readonly overwolf: OverwolfDataProviderService,
+        private readonly overwolfData: OverwolfDataProviderService,
         private readonly player: PlayerService
     ) {}
 
@@ -68,7 +68,7 @@ export class MatchPlayerLegendService implements OnDestroy {
     }
 
     private setupMyUltimateCooldown(): void {
-        this.overwolf.infoUpdates$
+        this.overwolfData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "me" && !!infoUpdate.info.me?.ultimate_cooldown),
