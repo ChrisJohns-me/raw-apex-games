@@ -90,8 +90,20 @@ export class InflictionAggregator {
         );
     }
 
-    // Brand-new victim, or victim's accumulation amounts has expired
+    /**
+     * Brand-new victim, or victim's accumulation amounts has expired
+     * @overwolfQuirk Overwolf incorrectly sets "armor" to "false" when inflicting any damage of 50 or greater.
+     *                As a workaround, manually set "armor" to "true" on initial aggregated inflictions of 50 or greater. (causes some inaccuracies)
+     * @see https://trello.com/c/jYDAAOSJ/2-damageamount-50
+     */
     private handleNewVictimInfl(inflEvent: MatchInflictionEventAccum): MatchInflictionEventAccum {
+        // @overwolfQuirk
+        if (!inflEvent.isKnocked && !inflEvent.isEliminated && !inflEvent.hasShield && inflEvent.healthDamageSum >= 50) {
+            inflEvent.shieldDamageSum = inflEvent.healthDamageSum;
+            inflEvent.healthDamageSum = 0;
+            inflEvent.hasShield = true;
+        }
+
         const updatedVictimAccum = this.mergeInflictionEvents(inflEvent);
         // Remove existing expired accumulation amounts and add new infliction event
         this.accumulations = [...this.victimFilteredAccumulations(inflEvent.victim?.name), updatedVictimAccum];

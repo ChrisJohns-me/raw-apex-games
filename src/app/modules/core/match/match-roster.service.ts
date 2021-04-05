@@ -45,7 +45,7 @@ export class MatchRosterService implements OnDestroy {
      */
     public readonly numPlayers$ = new BehaviorSubject<number>(0);
 
-    private readonly rosterUpdate$: Observable<[rosterKey: string, rosterItem: Optional<OWMatchInfoRoster>]>;
+    private readonly rosterUpdate$: Observable<[rosterId: number, rosterItem: Optional<OWMatchInfoRoster>]>;
 
     private stagedMatchRoster = new MatchRoster();
     private stagedTeammateRoster = new MatchRoster<MatchRosterTeammate>();
@@ -64,7 +64,8 @@ export class MatchRosterService implements OnDestroy {
                 findKeyByKeyRegEx(matchInfo, /^roster_/) as string,
                 findValueByKeyRegEx<OWMatchInfoRoster>(matchInfo, /^roster_/),
             ]),
-            filter(([rosterKey]) => !isEmpty(rosterKey))
+            filter(([rosterKey]) => !isEmpty(rosterKey) && typeof rosterKey === "string"),
+            map(([rosterKey, rosterItem]) => [parseInt(rosterKey.match(/\d*/g)?.join("") ?? "-1"), rosterItem])
         );
     }
 
@@ -141,10 +142,10 @@ export class MatchRosterService implements OnDestroy {
                 filter(() => !this.match.isActive),
                 filter(([, rosterItem]) => !isEmpty(rosterItem?.name) && !isEmpty(rosterItem?.team_id))
             )
-            .subscribe(([rosterKey, rosterItem]) => {
+            .subscribe(([rosterId, rosterItem]) => {
                 const newRosterPlayer: MatchRosterPlayer = {
                     name: rosterItem!.name,
-                    rosterKey: rosterKey,
+                    rosterId: rosterId,
                     teamId: rosterItem!.team_id,
                     platformHardware: rosterItem?.platform_hw,
                     platformSoftware: rosterItem?.platform_sw,
@@ -165,12 +166,12 @@ export class MatchRosterService implements OnDestroy {
                 filter(() => !this.match.isActive),
                 filter(([, rosterItem]) => !isEmpty(rosterItem) && !!rosterItem?.isTeammate)
             )
-            .subscribe(([rosterKey, rosterItem]) => {
+            .subscribe(([rosterId, rosterItem]) => {
                 rosterItem = rosterItem!;
 
                 const newRosterTeammate: MatchRosterTeammate = {
                     name: rosterItem.name,
-                    rosterKey: rosterKey,
+                    rosterId: rosterId,
                     teamId: rosterItem.team_id,
                     platformHardware: rosterItem.platform_hw,
                     platformSoftware: rosterItem.platform_sw,
@@ -222,7 +223,7 @@ export class MatchRosterService implements OnDestroy {
                 legend: teammate.legend ?? existingTeammate.legend,
                 platformHardware: teammate.platformHardware ?? existingTeammate.platformHardware,
                 platformSoftware: teammate.platformSoftware ?? existingTeammate.platformSoftware,
-                rosterKey: teammate.rosterKey ?? existingTeammate.rosterKey,
+                rosterId: teammate.rosterId ?? existingTeammate.rosterId,
                 teamId: teammate.platformSoftware ?? existingTeammate.teamId,
             };
         }

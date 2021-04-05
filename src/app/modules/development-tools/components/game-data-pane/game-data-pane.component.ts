@@ -65,9 +65,9 @@ export class GameDataPaneComponent implements OnInit {
     public onChangeMatchStateClick(): void {
         const state = this.match.state$.value;
         if (state.state === MatchState.Active) {
-            this.match.state$.next({ startDate: state.startDate, endDate: new Date(), state: MatchState.Inactive });
+            this.match.endedEvent$.next({ startDate: state.startDate, endDate: new Date(), state: MatchState.Inactive });
         } else {
-            this.match.state$.next({ startDate: new Date(), state: MatchState.Active });
+            this.match.startedEvent$.next({ startDate: new Date(), state: MatchState.Active });
         }
     }
 

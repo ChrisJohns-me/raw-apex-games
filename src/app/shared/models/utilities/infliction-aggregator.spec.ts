@@ -33,6 +33,45 @@ describe("InflictionEventAggregator", () => {
             });
         });
 
+        /**
+         * Initial damage event shows "armor=false", if the damageAmount is 50 or greater
+         * @overwolfQuirk
+         * @see https://trello.com/c/jYDAAOSJ/2-damageamount-50
+         */
+        it("assumes initial HEALTH damage event of greater than 50 is to damage to shield", () => {
+            // Arrange
+            sut = new InflictionAggregator({
+                expireAggregateMs: 10000,
+                emitOnExpire: false,
+            });
+
+            scheduler.run(({ expectObservable, hot }) => {
+                // Act
+                const obs$ = hot("a", { a: createInfl("Victim1Damage", "Me", 0, 0, 50, false, false, false) });
+                const actual = sut.getInflictionAggregate$([obs$]);
+
+                // Assert
+                expectObservable(actual).toBe("a", { a: createInflAccum("Victim1Damage", "Me", 0, 50, 0, true, false, false) });
+            });
+        });
+
+        it("does not assume initial HEALTH damage event of less than 50 is to damage to shield", () => {
+            // Arrange
+            sut = new InflictionAggregator({
+                expireAggregateMs: 10000,
+                emitOnExpire: false,
+            });
+
+            scheduler.run(({ expectObservable, hot }) => {
+                // Act
+                const obs$ = hot("a", { a: createInfl("Victim1Damage", "Me", 0, 0, 49, false, false, false) });
+                const actual = sut.getInflictionAggregate$([obs$]);
+
+                // Assert
+                expectObservable(actual).toBe("a", { a: createInflAccum("Victim1Damage", "Me", 0, 0, 49, false, false, false) });
+            });
+        });
+
         it("shows a victim after a knockdown event", () => {
             // Arrange
             sut = new InflictionAggregator({

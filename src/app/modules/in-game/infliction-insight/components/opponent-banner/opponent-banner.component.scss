@@ -1,7 +1,7 @@
 $base-height: 75px;
 $base-width: 400px;
 
-.badge-container {
+.banner-container {
     border: 3px solid #e7e1cd;
     background: linear-gradient(45deg, #000000cc, #e7e1cdcc);
     height: $base-height;
@@ -9,7 +9,7 @@ $base-width: 400px;
     font-family: "Quantico", sans-serif;
     color: #ffffff;
 
-    .badge {
+    .banner {
         display: flex;
         height: 100%;
     }

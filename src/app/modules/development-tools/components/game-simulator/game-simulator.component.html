@@ -43,21 +43,24 @@
             </div>
             <div class="col-6">
                 <h6>Inflictions</h6>
+                <label for="damageRange" class="form-label">Damage</label>
+                <input type="range" class="form-range" min="0" max="200" id="damageRange" value="20" formControlName="damageAmount" />
+                <br />
                 <button
                     class="btn btn-outline-dark"
                     type="button"
                     [disabled]="!rosterPlayerSelected"
-                    (click)="onInflictDamageClick(rosterPlayerSelected, true)"
+                    (click)="onInflictDamageClick(rosterPlayerSelected, damageAmount, true)"
                 >
-                    Shield Damage
+                    Shield Damage ({{ damageAmount }})
                 </button>
                 <button
                     class="btn btn-outline-dark"
                     type="button"
                     [disabled]="!rosterPlayerSelected"
-                    (click)="onInflictDamageClick(rosterPlayerSelected, false)"
+                    (click)="onInflictDamageClick(rosterPlayerSelected, damageAmount, false)"
                 >
-                    Health Damage
+                    Health Damage ({{ damageAmount }})
                 </button>
                 <button
                     class="btn btn-outline-warning"

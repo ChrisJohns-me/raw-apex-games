@@ -16,10 +16,11 @@ import { isPlayerNameEqual } from "@shared/models/utilities/player";
 import { isEmpty, mathClamp } from "@shared/utilities";
 import { addMilliseconds } from "date-fns";
 import { combineLatest, merge, Subject } from "rxjs";
-import { distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
+import { delay, distinctUntilChanged, filter, takeUntil, tap } from "rxjs/operators";
 import { OpponentBanner } from "../components/opponent-banner/opponent-banner.component";
 
 const ACCUM_EXPIRE = 15000;
+const MATCH_END_TIMEOUT = 15000;
 const SHIELD_MAX = 125;
 const HEALTH_MAX = 100;
 const SHIELD_DEFAULT_ASSUMPTION = 75;
@@ -34,11 +35,38 @@ const HEALTH_DEFAULT_ASSUMPTION = 100;
 export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
     public isVisible = false;
 
+    /**
+     * Sorts by:
+     *  - team with the latest inflication timestamp
+     *  - roster ID
+     */
+    public get sortedOpponentBannerList(): OpponentBanner[] {
+        return [...this.opponentBannerList].sort((ob1, ob2) => {
+            if (ob1.rosterPlayer.teamId !== ob2.rosterPlayer.teamId) {
+                const ob1LatestInfl = [...this.opponentBannerList.filter((o) => o.rosterPlayer.teamId === ob1.rosterPlayer.teamId)].sort(
+                    (a, b) =>
+                        (b.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
+                        (a.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
+                )[0];
+                const ob2LatestInfl = [...this.opponentBannerList.filter((o) => o.rosterPlayer.teamId === ob2.rosterPlayer.teamId)].sort(
+                    (a, b) =>
+                        (b.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
+                        (a.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
+                )[0];
+                return (
+                    (ob2LatestInfl.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
+                    (ob1LatestInfl.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
+                );
+            }
+            return (ob1.rosterPlayer.rosterId ?? 0) - (ob2.rosterPlayer.rosterId ?? 0);
+        });
+    }
     public opponentBannerList: OpponentBanner[] = [];
     private readonly inflictionAggregator = new InflictionAggregator({
         expireAggregateMs: ACCUM_EXPIRE,
         emitOnExpire: true,
     });
+    private acceptingResetEvents = false;
     private _unsubscribe$ = new Subject<void>();
 
     constructor(
@@ -52,7 +80,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
     ) {}
 
     public ngOnInit(): void {
-        this.setupVisibleStates();
+        this.setupOnMatchStart();
         this.setupOnMatchEnd();
         this.setupInflictionEventList();
     }
@@ -62,9 +90,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    private setupVisibleStates(): void {
-        const nonAliveEvents$ = this.matchPlayer.myState$.pipe(filter((myState) => myState !== PlayerState.Alive));
-
+    private setupOnMatchStart(): void {
         combineLatest([this.match.state$, this.matchPlayer.myState$, this.matchPlayerLocation.myLocationPhase$])
             .pipe(
                 takeUntil(this._unsubscribe$),
@@ -77,14 +103,8 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
                 distinctUntilChanged()
             )
             .subscribe(() => {
+                this.acceptingResetEvents = true;
                 this.isVisible = true;
-                this.cdr.detectChanges();
-            });
-
-        merge(this.match.endedEvent$, nonAliveEvents$)
-            .pipe(takeUntil(this._unsubscribe$))
-            .subscribe(() => {
-                this.isVisible = false;
                 this.cdr.detectChanges();
             });
     }
@@ -93,11 +113,19 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
      * Reset state on match end
      */
     private setupOnMatchEnd(): void {
-        this.match.endedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
-            this.inflictionAggregator.clearAccumulations();
-            this.opponentBannerList = [];
-            this.cdr.detectChanges();
-        });
+        const nonAliveEvents$ = this.matchPlayer.myState$.pipe(filter((myState) => myState !== PlayerState.Alive));
+        merge(this.match.endedEvent$, nonAliveEvents$)
+            .pipe(
+                takeUntil(this._unsubscribe$),
+                tap(() => (this.acceptingResetEvents = false)),
+                delay(MATCH_END_TIMEOUT)
+            )
+            .subscribe(() => {
+                this.isVisible = false;
+                this.cdr.detectChanges();
+                this.inflictionAggregator.clearAccumulations();
+                this.opponentBannerList = [];
+            });
     }
 
     private setupInflictionEventList(): void {
@@ -123,7 +151,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
                     }
 
                     if (this.isTimestampExpired(inflictionEvent.latestTimestamp)) {
-                        this.resetBanner(foundOpponentBanner);
+                        if (this.acceptingResetEvents) this.resetBanner(foundOpponentBanner);
                     } else {
                         this.setTeammates(foundOpponentBanner);
                     }

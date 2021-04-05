@@ -28,10 +28,15 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
 
     public rosterActionsForm = new FormGroup({
         playerSelected: new FormControl(),
+        damageAmount: new FormControl(20),
     });
 
     public get rosterPlayerSelected(): MatchRosterPlayer | undefined {
         return this.rosterActionsForm.get("playerSelected")?.value;
+    }
+
+    public get damageAmount(): number | undefined {
+        return this.rosterActionsForm.get("damageAmount")?.value;
     }
 
     private _unsubscribe$ = new Subject<void>();
@@ -106,13 +111,13 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         this.runCommands(commands);
     }
 
-    public onInflictDamageClick(player?: MatchRosterPlayer, toShield = true): void {
+    public onInflictDamageClick(player?: MatchRosterPlayer, damageAmount?: number, toShield = true): void {
         if (!player) return;
         const event: OWGameEvent = {
             name: "damage",
             data: `{
                 "targetName": "${player.name}",
-                "damageAmount": "${Math.random() * 50}",
+                "damageAmount": "${damageAmount}",
                 "armor": "${toShield}",
                 "headshot": "${Math.random() < 0.25 ? true : false}"
             }`,

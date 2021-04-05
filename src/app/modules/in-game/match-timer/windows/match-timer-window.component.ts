@@ -5,7 +5,7 @@ import { isValid } from "date-fns";
 import { Subject, timer } from "rxjs";
 import { delay, filter, switchMap, takeUntil, tap } from "rxjs/operators";
 
-const SHOW_TIMER_TIMEOUT = 15000;
+const MATCH_END_TIMEOUT = 15000;
 const UI_TIMER_REFRESH_RATE = 1000;
 
 @Component({
@@ -65,7 +65,7 @@ export class MatchTimerWindowComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this._unsubscribe$),
                 tap((stateChanged) => (this.matchEndDate = stateChanged.endDate)),
-                delay(SHOW_TIMER_TIMEOUT),
+                delay(MATCH_END_TIMEOUT),
                 tap(() => (this.showTimer = false))
             )
             .subscribe(() => {

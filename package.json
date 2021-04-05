@@ -4,7 +4,7 @@
     "scripts": {
         "ng": "ng",
         "build": "ng build",
-        "test": "ng test --plugin ~webpack.partial.dev.js",
+        "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e",
         "dev-build": "ng build --watch --plugin ~webpack.partial.dev.js",
