@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
-import { DamageCollectorWindowService } from "@app/modules/in-game/damage-collector/windows/damage-collector-window.service";
+import { InflictionInsightWindowService } from "@app/modules/in-game/infliction-insight/windows/infliction-insight-window.service";
 import { MatchTimerWindowService } from "@app/modules/in-game/match-timer/windows/match-timer-window.service";
 import { UltTimerWindowService } from "@app/modules/in-game/ult-timer/windows/ult-timer-window.service";
 import { OWGameEvent, OWInfoUpdates2Event } from "@core/overwolf-data-provider";
@@ -33,12 +33,12 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
         this._matchTimerWindowEnabled = value;
         this.matchTimerWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe$)).subscribe();
     }
-    public get damageCollectorWindowEnabled(): boolean {
-        return this._damageCollectorWindowEnabled;
+    public get inflictionInsightWindowEnabled(): boolean {
+        return this._inflictionInsightWindowEnabled;
     }
-    public set damageCollectorWindowEnabled(value: boolean) {
-        this._damageCollectorWindowEnabled = value;
-        this.damageCollectorWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe$)).subscribe();
+    public set inflictionInsightWindowEnabled(value: boolean) {
+        this._inflictionInsightWindowEnabled = value;
+        this.inflictionInsightWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe$)).subscribe();
     }
 
     public infoUpdates$: Subject<OWInfoUpdates2Event>;
@@ -46,11 +46,11 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
 
     private _ultTimerWindowEnabled = false;
     private _matchTimerWindowEnabled = false;
-    private _damageCollectorWindowEnabled = false;
+    private _inflictionInsightWindowEnabled = false;
     private _unsubscribe$ = new Subject<void>();
 
     constructor(
-        private readonly damageCollectorWindow: DamageCollectorWindowService,
+        private readonly inflictionInsightWindow: InflictionInsightWindowService,
         private readonly inGameUltTimerWindow: UltTimerWindowService,
         private readonly matchTimerWindow: MatchTimerWindowService,
         private readonly overwolfExposedData: OverwolfExposedDataService
@@ -63,7 +63,7 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
         // Default window values
         this.ultTimerWindowEnabled = true;
         this.matchTimerWindowEnabled = true;
-        this.damageCollectorWindowEnabled = true; // false;
+        this.inflictionInsightWindowEnabled = true; // false;
     }
 
     public ngOnDestroy(): void {

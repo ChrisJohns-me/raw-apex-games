@@ -1,0 +1,48 @@
+<div
+    class="banner-container"
+    *ngIf="banner"
+    [ngClass]="{
+        'victim-teammate': banner.isVictimTeammate,
+        knocked: banner.latestInflictionAccum?.isKnocked,
+        'eliminated beacon-timed-out': banner.latestInflictionAccum?.isEliminated
+    }"
+>
+    <div class="banner">
+        <div class="damage">
+            <div class="damage-header">Your Damage</div>
+            <div class="damage-sum">
+                {{ (banner.latestInflictionAccum?.shieldDamageSum || 0) + (banner.latestInflictionAccum?.healthDamageSum || 0) }}
+            </div>
+            <div class="damage-footer">Total</div>
+        </div>
+        <div class="player-ui">
+            <div class="player-name">{{ banner.rosterPlayer.name }}</div>
+            <div class="player-shield-container">
+                <ng-container *ngFor="let shieldNum of [0, 1, 2, 3, 4]">
+                    <div class="player-shield-ui-box-shadow" *ngIf="banner.maybeShieldMax / 25 > shieldNum">
+                        <div
+                            class="player-shield-ui-box"
+                            *ngIf="
+                                !banner.latestInflictionAccum?.isKnocked &&
+                                !banner.latestInflictionAccum?.isEliminated &&
+                                banner.maybeShieldAmount > shieldNum * 25
+                            "
+                            [style.width.%]="
+                                banner.maybeShieldAmount < 25 * (shieldNum + 1) ? ((banner.maybeShieldAmount % 25) / 25) * 100 : 100
+                            "
+                        ></div>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="player-health-container">
+                <div class="player-health-ui-box-shadow">
+                    <div
+                        class="player-health-ui-box"
+                        *ngIf="!banner.latestInflictionAccum?.isKnocked && !banner.latestInflictionAccum?.isEliminated"
+                        [style.width.%]="banner.maybeHealthAmount"
+                    ></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -7,7 +7,7 @@ import { AppComponent } from "./app.component";
 import { BackgroundModule } from "./modules/background/background.module";
 import { DevelopmentToolsModule } from "./modules/development-tools/development-tools.module";
 import { NoopDevelopmentToolsModule } from "./modules/development-tools/noop-development-tools.module";
-import { DamageCollectorWindowModule } from "./modules/in-game/damage-collector/damage-collector.module";
+import { InflictionInsightWindowModule } from "./modules/in-game/infliction-insight/infliction-insight.module";
 import { MatchTimerWindowModule } from "./modules/in-game/match-timer/match-timer.module";
 import { UltTimerWindowModule } from "./modules/in-game/ult-timer/ult-timer.module";
 
@@ -16,9 +16,9 @@ import { UltTimerWindowModule } from "./modules/in-game/ult-timer/ult-timer.modu
     imports: [
         BackgroundModule,
         BrowserModule,
-        DamageCollectorWindowModule,
         environment.allowDevTools ? DevelopmentToolsModule : NoopDevelopmentToolsModule,
         HttpClientModule,
+        InflictionInsightWindowModule,
         MatchTimerWindowModule,
         OverwolfModule,
         UltTimerWindowModule,

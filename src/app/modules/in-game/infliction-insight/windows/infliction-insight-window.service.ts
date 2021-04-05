@@ -5,8 +5,8 @@ import { Observable } from "rxjs";
 @Injectable({
     providedIn: "root",
 })
-export class DamageCollectorWindowService {
-    private readonly uiWindow = new UIWindow(WindowName.InGameDamageCollector);
+export class InflictionInsightWindowService {
+    private readonly uiWindow = new UIWindow(WindowName.InGameInflictionInsight);
 
     public open(): Observable<void> {
         return this.uiWindow.restore();

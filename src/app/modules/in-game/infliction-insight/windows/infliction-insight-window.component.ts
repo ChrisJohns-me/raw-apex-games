@@ -17,6 +17,7 @@ import { isEmpty, mathClamp } from "@shared/utilities";
 import { addMilliseconds } from "date-fns";
 import { combineLatest, merge, Subject } from "rxjs";
 import { distinctUntilChanged, filter, takeUntil } from "rxjs/operators";
+import { OpponentBanner } from "../components/opponent-banner/opponent-banner.component";
 
 const ACCUM_EXPIRE = 15000;
 const SHIELD_MAX = 125;
@@ -24,25 +25,16 @@ const HEALTH_MAX = 100;
 const SHIELD_DEFAULT_ASSUMPTION = 75;
 const HEALTH_DEFAULT_ASSUMPTION = 100;
 
-export interface EnemyBadge {
-    isVictimTeammate: boolean;
-    rosterPlayer: MatchRosterPlayer;
-    latestInflictionAccum?: MatchInflictionEventAccum;
-    maybeShieldMax: number;
-    maybeShieldAmount: number;
-    maybeHealthAmount: number;
-}
-
 @Component({
-    selector: "app-in-game-damage-collector-window",
-    templateUrl: "./damage-collector-window.component.html",
-    styleUrls: ["./damage-collector-window.component.scss"],
+    selector: "app-in-game-infliction-insight-window",
+    templateUrl: "./infliction-insight-window.component.html",
+    styleUrls: ["./infliction-insight-window.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DamageCollectorWindowComponent implements OnInit, OnDestroy {
+export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
     public isVisible = false;
 
-    public enemyBadgeList: EnemyBadge[] = [];
+    public opponentBannerList: OpponentBanner[] = [];
     private readonly inflictionAggregator = new InflictionAggregator({
         expireAggregateMs: ACCUM_EXPIRE,
         emitOnExpire: true,
@@ -103,7 +95,7 @@ export class DamageCollectorWindowComponent implements OnInit, OnDestroy {
     private setupOnMatchEnd(): void {
         this.match.endedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
             this.inflictionAggregator.clearAccumulations();
-            this.enemyBadgeList = [];
+            this.opponentBannerList = [];
             this.cdr.detectChanges();
         });
     }
@@ -114,41 +106,41 @@ export class DamageCollectorWindowComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe$))
             .subscribe((inflictionEvent) => {
                 if (isEmpty(inflictionEvent.victim?.name)) return;
-                const foundVictimBadge = this.enemyBadgeList.find((b) =>
+                const foundOpponentBanner = this.opponentBannerList.find((b) =>
                     isPlayerNameEqual(b.rosterPlayer?.name, inflictionEvent.victim?.name)
                 );
 
-                if (foundVictimBadge) {
-                    const updatedVictimBadge = this.addInflictionToBadge(foundVictimBadge, inflictionEvent);
+                if (foundOpponentBanner) {
+                    const updatedOpponentBanner = this.addInflictionToBanner(foundOpponentBanner, inflictionEvent);
 
-                    if (updatedVictimBadge) {
-                        this.enemyBadgeList = [
-                            updatedVictimBadge,
-                            ...this.enemyBadgeList.filter(
-                                (e) => !isPlayerNameEqual(e.rosterPlayer.name, updatedVictimBadge?.rosterPlayer.name)
+                    if (updatedOpponentBanner) {
+                        this.opponentBannerList = [
+                            updatedOpponentBanner,
+                            ...this.opponentBannerList.filter(
+                                (e) => !isPlayerNameEqual(e.rosterPlayer.name, updatedOpponentBanner?.rosterPlayer.name)
                             ),
                         ];
                     }
 
                     if (this.isTimestampExpired(inflictionEvent.latestTimestamp)) {
-                        this.resetBadge(foundVictimBadge);
+                        this.resetBanner(foundOpponentBanner);
                     } else {
-                        this.setTeammates(foundVictimBadge);
+                        this.setTeammates(foundOpponentBanner);
                     }
                 } else {
-                    const newEnemyBadge = this.createVictimBadge(inflictionEvent);
-                    if (newEnemyBadge) {
-                        this.enemyBadgeList.push(newEnemyBadge);
-                        this.setTeammates(newEnemyBadge);
+                    const newOpponentBanner = this.createOpponentBanner(inflictionEvent);
+                    if (newOpponentBanner) {
+                        this.opponentBannerList.push(newOpponentBanner);
+                        this.setTeammates(newOpponentBanner);
                     }
                 }
                 this.cdr.detectChanges();
             });
     }
 
-    private createVictimBadge(inflictionEvent: MatchInflictionEventAccum): Optional<EnemyBadge> {
+    private createOpponentBanner(inflictionEvent: MatchInflictionEventAccum): Optional<OpponentBanner> {
         if (isEmpty(inflictionEvent.victim?.name)) return;
-        const enemyBadge: EnemyBadge = {
+        const opponentBanner: OpponentBanner = {
             isVictimTeammate: false,
             rosterPlayer: inflictionEvent.victim!,
             latestInflictionAccum: inflictionEvent,
@@ -156,12 +148,12 @@ export class DamageCollectorWindowComponent implements OnInit, OnDestroy {
             maybeShieldAmount: SHIELD_DEFAULT_ASSUMPTION - inflictionEvent.shieldDamageSum,
             maybeHealthAmount: HEALTH_DEFAULT_ASSUMPTION - inflictionEvent.healthDamageSum,
         };
-        return enemyBadge;
+        return opponentBanner;
     }
 
-    private createVictimTeammateBadge(player: MatchRosterPlayer): Optional<EnemyBadge> {
+    private createOpponentTeammateBanner(player: MatchRosterPlayer): Optional<OpponentBanner> {
         if (isEmpty(player.name)) return;
-        const enemyBadge: EnemyBadge = {
+        const opponentBanner: OpponentBanner = {
             isVictimTeammate: true,
             rosterPlayer: player,
             latestInflictionAccum: undefined,
@@ -169,59 +161,59 @@ export class DamageCollectorWindowComponent implements OnInit, OnDestroy {
             maybeShieldAmount: SHIELD_DEFAULT_ASSUMPTION,
             maybeHealthAmount: HEALTH_DEFAULT_ASSUMPTION,
         };
-        return enemyBadge;
+        return opponentBanner;
     }
 
-    private addInflictionToBadge(currentBadge: EnemyBadge, inflictionEvent: MatchInflictionEventAccum): Optional<EnemyBadge> {
-        if (!currentBadge) return;
+    private addInflictionToBanner(currentBanner: OpponentBanner, inflictionEvent: MatchInflictionEventAccum): Optional<OpponentBanner> {
+        if (!currentBanner) return;
         if (!inflictionEvent.latestTimestamp) return;
         if (inflictionEvent.hasShield) {
-            currentBadge.maybeShieldMax = mathClamp(
+            currentBanner.maybeShieldMax = mathClamp(
                 inflictionEvent.shieldDamageSum > SHIELD_DEFAULT_ASSUMPTION ? inflictionEvent.shieldDamageSum : SHIELD_DEFAULT_ASSUMPTION,
                 0,
                 SHIELD_MAX
             );
-            currentBadge.maybeShieldAmount = mathClamp(SHIELD_DEFAULT_ASSUMPTION - inflictionEvent.shieldDamageSum, 0, SHIELD_MAX);
+            currentBanner.maybeShieldAmount = mathClamp(SHIELD_DEFAULT_ASSUMPTION - inflictionEvent.shieldDamageSum, 0, SHIELD_MAX);
         } else {
-            currentBadge.maybeShieldMax = mathClamp(inflictionEvent.shieldDamageSum, 0, SHIELD_MAX);
-            currentBadge.maybeShieldAmount = 0;
+            currentBanner.maybeShieldMax = mathClamp(inflictionEvent.shieldDamageSum, 0, SHIELD_MAX);
+            currentBanner.maybeShieldAmount = 0;
         }
-        currentBadge.isVictimTeammate = false;
-        currentBadge.latestInflictionAccum = inflictionEvent;
-        currentBadge.maybeHealthAmount = mathClamp(HEALTH_DEFAULT_ASSUMPTION - inflictionEvent.healthDamageSum, 0, HEALTH_MAX);
-        return currentBadge;
+        currentBanner.isVictimTeammate = false;
+        currentBanner.latestInflictionAccum = inflictionEvent;
+        currentBanner.maybeHealthAmount = mathClamp(HEALTH_DEFAULT_ASSUMPTION - inflictionEvent.healthDamageSum, 0, HEALTH_MAX);
+        return currentBanner;
     }
 
-    private setTeammates(victimBadge: EnemyBadge): void {
+    private setTeammates(opponentBanner: OpponentBanner): void {
         const matchRoster = this.matchRoster.matchRoster$.value;
-        const victimRosterTeam: Optional<MatchRosterTeam> = matchRoster.teams.find((t) => t.teamId === victimBadge.rosterPlayer?.teamId);
+        const victimRosterTeam: Optional<MatchRosterTeam> = matchRoster.teams.find((t) => t.teamId === opponentBanner.rosterPlayer?.teamId);
         const victimRosterTeammates: MatchRosterPlayer[] = victimRosterTeam?.members ?? [];
         if (isEmpty(victimRosterTeammates)) return;
 
         victimRosterTeammates
-            .filter((rosterTeammate) => !isPlayerNameEqual(rosterTeammate.name, victimBadge.rosterPlayer.name))
-            .filter((rosterTeammate) => !this.enemyBadgeList.some((b) => isPlayerNameEqual(b.rosterPlayer.name, rosterTeammate.name)))
+            .filter((rosterTeammate) => !isPlayerNameEqual(rosterTeammate.name, opponentBanner.rosterPlayer.name))
+            .filter((rosterTeammate) => !this.opponentBannerList.some((b) => isPlayerNameEqual(b.rosterPlayer.name, rosterTeammate.name)))
             .forEach((rosterTeammate) => {
-                const teammateBadge = this.createVictimTeammateBadge(rosterTeammate);
-                if (teammateBadge) this.enemyBadgeList.push(teammateBadge);
+                const teammateBanner = this.createOpponentTeammateBanner(rosterTeammate);
+                if (teammateBanner) this.opponentBannerList.push(teammateBanner);
             });
     }
 
     /**
-     * - Removes the badge if there are no more infliction events for their team.
-     * - Sets the badge to an "enemy teammate" badge, if their teammates do still have infliction events.
+     * - Removes the banner if there are no more infliction events for their team.
+     * - Sets the banner to an "opponent teammate" banner, if their teammates do still have infliction events.
      */
-    private resetBadge(badge: EnemyBadge): void {
-        const enemyTeamHasEvents = this.enemyBadgeList
-            .filter((e) => e.rosterPlayer.teamId === badge.rosterPlayer.teamId)
+    private resetBanner(banner: OpponentBanner): void {
+        const opponentTeamHasEvents = this.opponentBannerList
+            .filter((e) => e.rosterPlayer.teamId === banner.rosterPlayer.teamId)
             .some((team) => !this.isTimestampExpired(team.latestInflictionAccum?.latestTimestamp));
 
-        // Set this current badge to an "enemy teammate" badge, if their teammates have latest infliction events
-        if (enemyTeamHasEvents) {
-            badge.isVictimTeammate = true;
+        // Set this current banner to an "opponent teammate" banner, if their teammates have latest infliction events
+        if (opponentTeamHasEvents) {
+            banner.isVictimTeammate = true;
         } else {
-            // Remove badge and all teammates if there are no more latest infliction events
-            this.enemyBadgeList = this.enemyBadgeList.filter((b) => b.rosterPlayer.teamId !== badge.rosterPlayer.teamId);
+            // Remove banner and all teammates if there are no more latest infliction events
+            this.opponentBannerList = this.opponentBannerList.filter((b) => b.rosterPlayer.teamId !== banner.rosterPlayer.teamId);
         }
     }
 

@@ -93,7 +93,7 @@
                     "height": 50
                 }
             },
-            "in-game-damage-collector": {
+            "in-game-infliction-insight": {
                 "file": "index.html",
                 "in_game_only": false,
                 "resizable": false,
@@ -102,16 +102,16 @@
                 "mute": true,
                 "popup_blocker": true,
                 "size": {
-                    "width": 500,
-                    "height": 500
+                    "width": 400,
+                    "height": 400
                 },
                 "min_size": {
-                    "width": 500,
-                    "height": 500
+                    "width": 400,
+                    "height": 400
                 },
                 "max_size": {
-                    "width": 500,
-                    "height": 500
+                    "width": 400,
+                    "height": 400
                 }
             }
         },

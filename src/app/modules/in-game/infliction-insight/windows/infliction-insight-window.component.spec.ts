@@ -17,11 +17,11 @@ import { MatchLocationPhase } from "@shared/models/match/match-location";
 import { MatchState, MatchStateChangedEvent } from "@shared/models/match/match-state";
 import { PlayerState } from "@shared/models/player-state";
 import { TestScheduler } from "rxjs/testing";
-import { DamageCollectorWindowComponent } from "./damage-collector-window.component";
+import { InflictionInsightWindowComponent } from "./infliction-insight-window.component";
 
-describe("DamageCollectorWindowComponent", () => {
-    let sut: DamageCollectorWindowComponent;
-    let fixture: ComponentFixture<DamageCollectorWindowComponent>;
+describe("InflictionInsightWindowComponent", () => {
+    let sut: InflictionInsightWindowComponent;
+    let fixture: ComponentFixture<InflictionInsightWindowComponent>;
     let scheduler: TestScheduler;
     let matchPlayerInflictionService: MockMatchPlayerInflictionService | MatchPlayerInflictionService;
     let matchPlayerLocationService: MockMatchPlayerLocationService | MatchPlayerLocationService;
@@ -32,7 +32,7 @@ describe("DamageCollectorWindowComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [DamageCollectorWindowComponent, MockUIContainerComponent],
+            declarations: [InflictionInsightWindowComponent, MockUIContainerComponent],
             providers: [
                 { provide: ChangeDetectorRef, useValue: {} },
                 { provide: MatchPlayerInflictionService, useClass: MockMatchPlayerInflictionService },
@@ -53,7 +53,7 @@ describe("DamageCollectorWindowComponent", () => {
             expect(actual).toEqual(expected);
         });
         scheduler.maxFrames = 5000;
-        fixture = TestBed.createComponent(DamageCollectorWindowComponent);
+        fixture = TestBed.createComponent(InflictionInsightWindowComponent);
         sut = fixture.componentInstance;
         matchPlayerInflictionService = TestBed.inject(MatchPlayerInflictionService);
         matchPlayerLocationService = TestBed.inject(MatchPlayerLocationService);
@@ -158,7 +158,7 @@ describe("DamageCollectorWindowComponent", () => {
         expect(actual).toBeFalse();
     });
 
-    // it("shows an enemy after a damage event", () => {
+    // it("shows an opponent after a damage event", () => {
     //     scheduler.run(({ hot, expectObservable }) => {
     //         // Arrange
     //         const startEvent: MatchStateChangedEvent = {
@@ -195,7 +195,7 @@ describe("DamageCollectorWindowComponent", () => {
     //             latestAttacker: { name: "Me" },
     //             latestTimestamp: new Date(),
     //         };
-    //         const expectedValue: EnemyBadge[] = [
+    //         const expectedValue: OpponentBanner[] = [
     //             {
     //                 isTeammate: false,
     //                 rosterPlayer: expectedInflictionAccum.victim!,
@@ -204,12 +204,12 @@ describe("DamageCollectorWindowComponent", () => {
     //         ];
 
     //         // Assert
-    //         const actual = of(sut.enemyBadgeList);
+    //         const actual = of(sut.OpponentBannerList);
     //         expectObservable(actual).toBe("a", { a: expectedValue });
     //     });
     // });
 
-    // it("shows an enemy after a knockdown event", () => {
+    // it("shows an opponent after a knockdown event", () => {
     //     scheduler.run(({ hot, expectObservable }) => {
     //         // Arrange
     //         const startEvent: MatchStateChangedEvent = {
@@ -246,7 +246,7 @@ describe("DamageCollectorWindowComponent", () => {
     //             latestAttacker: { name: "Me" },
     //             latestTimestamp: new Date(),
     //         };
-    //         const expectedValue: EnemyBadge[] = [
+    //         const expectedValue: OpponentBanner[] = [
     //             {
     //                 isTeammate: false,
     //                 rosterPlayer: expectedInflictionAccum.victim!,
@@ -255,13 +255,13 @@ describe("DamageCollectorWindowComponent", () => {
     //         ];
 
     //         // Assert
-    //         const actual = of(sut.enemyBadgeList);
+    //         const actual = of(sut.OpponentBannerList);
     //         expectObservable(actual).toBe("a", { a: expectedValue });
     //     });
     // });
 
     // TODO:
-    // it("shows an enemy after an elimination event", () => {
+    // it("shows an opponent after an elimination event", () => {
     //     scheduler.run(({ hot, cold, expectObservable, flush }) => {
     //         // Arrange
     //         const startEvent: MatchStateChangedEvent = {
@@ -291,8 +291,8 @@ describe("DamageCollectorWindowComponent", () => {
     //         };
     //         of(actualValue).subscribe(matchPlayerInflictionService.myDamageEvent$);
     //         // flush();
-    //         console.log(sut.enemyBadgeList);
-    //         const actual = cold(actualMarble, { a: sut.enemyBadgeList });
+    //         console.log(sut.OpponentBannerList);
+    //         const actual = cold(actualMarble, { a: sut.OpponentBannerList });
 
     //         const expectedInflictionAccum: MatchInflictionEventAccum = {
     //             victim: { name: "Victim1" },
@@ -304,7 +304,7 @@ describe("DamageCollectorWindowComponent", () => {
     //             latestAttacker: { name: "Me" },
     //             latestTimestamp: new Date(),
     //         };
-    //         const expectedValue: EnemyBadge[] = [
+    //         const expectedValue: OpponentBanner[] = [
     //             {
     //                 isTeammate: false,
     //                 rosterPlayer: expectedInflictionAccum.victim!,
@@ -312,14 +312,14 @@ describe("DamageCollectorWindowComponent", () => {
     //             },
     //         ];
 
-    //         const expectedResetValue: EnemyBadge[] = [];
+    //         const expectedResetValue: OpponentBanner[] = [];
 
     //         // Assert
     //         expectObservable(actual).toBe(expectMarble, { a: expectedValue, b: expectedResetValue });
     //     });
     // });
 
-    // it("resets/hides damage aggregate sum to one enemy after a timeout period", fakeAsync(() => {
+    // it("resets/hides damage aggregate sum to one opponent after a timeout period", fakeAsync(() => {
     //     // Arrange
     //     let subscribeCalled = false;
     //     const victim = { name: "ShieldANDHealthDamage" };
@@ -329,13 +329,13 @@ describe("DamageCollectorWindowComponent", () => {
     //     };
     //     jasmine.clock().mockDate(startEvent.startDate);
 
-    //     sut.enemyBadgeList$.pipe(skip(6), take(1)).subscribe((enemyBadgeList) => {
+    //     sut.OpponentBannerList$.pipe(skip(6), take(1)).subscribe((OpponentBannerList) => {
     //         // Assert
     //         const expectedShieldDamage = 0;
     //         const expectedHealthDamage = 0;
-    //         const victimBadge = enemyBadgeList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim.name));
-    //         expect(victimBadge?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
-    //         expect(victimBadge?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
+    //         const opponentBanner = OpponentBannerList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim.name));
+    //         expect(opponentBanner?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
+    //         expect(opponentBanner?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
     //         subscribeCalled = true;
     //     });
 
@@ -375,21 +375,21 @@ describe("DamageCollectorWindowComponent", () => {
     //     };
     //     jasmine.clock().mockDate(startEvent.startDate);
 
-    //     sut.enemyBadgeList$.pipe(skip(8), take(1)).subscribe((enemyBadgeList) => {
+    //     sut.OpponentBannerList$.pipe(skip(8), take(1)).subscribe((OpponentBannerList) => {
     //         // Assert
     //         const expectedShieldDamage = 0;
     //         const expectedHealthDamage = 0;
-    //         const victimBadge1 = enemyBadgeList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim1.name));
-    //         expect(victimBadge1?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
-    //         expect(victimBadge1?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
+    //         const opponentBanner1 = OpponentBannerList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim1.name));
+    //         expect(opponentBanner1?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
+    //         expect(opponentBanner1?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
 
-    //         const victimBadge2 = enemyBadgeList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim2.name));
-    //         expect(victimBadge2?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
-    //         expect(victimBadge2?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
+    //         const opponentBanner2 = OpponentBannerList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim2.name));
+    //         expect(opponentBanner2?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
+    //         expect(opponentBanner2?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
 
-    //         const victimBadge3 = enemyBadgeList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim3.name));
-    //         expect(victimBadge3?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
-    //         expect(victimBadge3?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
+    //         const opponentBanner3 = OpponentBannerList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim3.name));
+    //         expect(opponentBanner3?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
+    //         expect(opponentBanner3?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
     //         subscribeCalled = true;
     //     });
 
@@ -417,7 +417,7 @@ describe("DamageCollectorWindowComponent", () => {
     //     expect(subscribeCalled).toBeTrue();
     // }));
 
-    // it("shows enemy teammates after a damage event", () => {});
+    // it("shows opponent teammates after a damage event", () => {});
 
-    // it("shows the teammates of a damaged enemy", () => {});
+    // it("shows the teammates of a damaged opponent", () => {});
 });

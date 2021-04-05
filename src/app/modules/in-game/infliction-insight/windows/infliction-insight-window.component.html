@@ -1,0 +1,7 @@
+<app-ui-container [isDesktopWindow]="false" [isContentDraggable]="true" primaryTitle="Infliction Insight">
+    <div class="infliction-insight-container">
+        <div *ngFor="let banner of opponentBannerList; index as i">
+            <app-opponent-banner [bannerData]="banner"></app-opponent-banner>
+        </div>
+    </div>
+</app-ui-container>
