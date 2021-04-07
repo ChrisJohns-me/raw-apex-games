@@ -8,7 +8,7 @@
         "version": "0.0.1",
         "minimum-overwolf-version": "0.165.0",
         "minimum-gep-version": "0.165.0",
-        "description": "Allfather, give me sight!",
+        "description": "(Development) Allfather, give me sight!",
         "dock_button_title": "Allfather",
         "icon": "iconMouseOver.png",
         "icon_gray": "iconMouseNormal.png",
@@ -43,12 +43,12 @@
                 "override_on_update": true,
                 "show_in_taskbar": true,
                 "size": {
-                    "width": 500,
-                    "height": 500
+                    "width": 1600,
+                    "height": 900
                 },
                 "min_size": {
-                    "width": 500,
-                    "height": 500
+                    "width": 300,
+                    "height": 250
                 }
             },
             "in-game-match-timer": {
@@ -56,7 +56,7 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "show_in_taskbar": false,
+                "show_in_taskbar": true,
                 "mute": true,
                 "popup_blocker": true,
                 "size": {
@@ -77,7 +77,7 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "show_in_taskbar": false,
+                "show_in_taskbar": true,
                 "mute": true,
                 "popup_blocker": true,
                 "size": {
@@ -156,6 +156,8 @@
             ]
         },
         "force_browser": "user",
+        "disable_dt": false,
+        "disable_cleanup": true,
         "developer": {
             "enable_auto_refresh": false,
             "reload_delay": 1000,

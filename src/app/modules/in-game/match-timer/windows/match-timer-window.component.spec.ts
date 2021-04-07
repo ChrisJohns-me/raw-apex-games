@@ -85,8 +85,8 @@ describe("MatchTimerWindowComponent", () => {
         matchService.state$.next(endEvent);
         tick(60 * 1000); // There may be a delay between match end and hiding the timer
 
-        const actual = sut.showTimer;
         // Assert
+        const actual = sut.showTimer;
         expect(actual).toBeFalse();
         discardPeriodicTasks();
     }));

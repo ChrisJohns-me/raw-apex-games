@@ -9,6 +9,7 @@ import { MatchPlayerStatsService } from "@core/match/match-player-stats.service"
 import { MatchPlayerService } from "@core/match/match-player.service";
 import { MatchRosterService } from "@core/match/match-roster.service";
 import { MatchService } from "@core/match/match.service";
+import { OverwolfExposedDataService } from "@core/overwolf-exposed-data.service";
 import { PlayerService } from "@core/player.service";
 import { GamePhase } from "@shared/models/game-phase";
 import { MatchLocationPhase } from "@shared/models/match/match-location";
@@ -32,8 +33,11 @@ export class GameDataPaneComponent implements OnInit {
         return new Date(endDate.getTime() - startDate.getTime());
     }
 
+    private ultimatePercentOverride?: number = undefined;
+
     constructor(
         private readonly cdr: ChangeDetectorRef,
+        private readonly overwolfExposedData: OverwolfExposedDataService,
         public readonly game: GameService,
         public readonly gameProcess: GameProcessService,
         public readonly match: MatchService,
@@ -96,14 +100,30 @@ export class GameDataPaneComponent implements OnInit {
 
     public onChangePlayerStateClick(): void {
         const state = this.matchPlayer.myState$.value;
-        const newState = !state
-            ? PlayerState.Alive
-            : state === PlayerState.Alive
-            ? PlayerState.Knocked
-            : state === PlayerState.Knocked
-            ? PlayerState.Eliminated
-            : undefined;
+        const newState =
+            state === PlayerState.Disconnected
+                ? PlayerState.Alive
+                : state === PlayerState.Alive
+                ? PlayerState.Knocked
+                : state === PlayerState.Knocked
+                ? PlayerState.Eliminated
+                : PlayerState.Disconnected;
 
         this.matchPlayer.myState$.next(newState);
+    }
+
+    public onChangePlayerUltimatePercentClick(): void {
+        if (this.ultimatePercentOverride == null) {
+            this.ultimatePercentOverride = 0;
+        } else if (this.ultimatePercentOverride >= 100) {
+            this.ultimatePercentOverride = undefined;
+        } else {
+            this.ultimatePercentOverride += 5;
+        }
+
+        this.overwolfExposedData.injectOnInfoUpdates2({
+            info: { me: { ultimate_cooldown: { ultimate_cooldown: this.ultimatePercentOverride } } },
+            feature: "me",
+        });
     }
 }

@@ -1,6 +1,7 @@
 import { HttpClientModule } from "@angular/common/http";
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
+import { ConfigurationModule } from "@core/configuration/configuration.module";
 import { OverwolfModule } from "@core/overwolf-data-provider/overwolf.module";
 import { environment } from "src/environments/environment";
 import { AppComponent } from "./app.component";
@@ -16,6 +17,7 @@ import { UltTimerWindowModule } from "./modules/in-game/ult-timer/ult-timer.modu
     imports: [
         BackgroundModule,
         BrowserModule,
+        ConfigurationModule,
         environment.allowDevTools ? DevelopmentToolsModule : NoopDevelopmentToolsModule,
         HttpClientModule,
         InflictionInsightWindowModule,

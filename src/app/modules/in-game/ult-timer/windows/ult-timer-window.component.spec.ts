@@ -24,10 +24,10 @@ describe("UltTimerWindowComponent", () => {
     let sut: UltTimerWindowComponent;
     let fixture: ComponentFixture<UltTimerWindowComponent>;
     let scheduler: TestScheduler;
-    let matchService: MockMatchService;
-    let matchPlayerService: MockMatchPlayerService;
-    let matchPlayerLegendService: MockMatchPlayerLegendService;
-    let matchPlayerLocationService: MockMatchPlayerLocationService;
+    let matchService: MatchService;
+    let matchPlayerService: MatchPlayerService;
+    let matchPlayerLegendService: MatchPlayerLegendService;
+    let matchPlayerLocationService: MatchPlayerLocationService;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -108,6 +108,20 @@ describe("UltTimerWindowComponent", () => {
 
         // Act
         matchPlayerService.myState$.next(PlayerState.Eliminated);
+
+        const actual = sut.isVisible;
+        // Assert
+        expect(actual).toBeFalse();
+    }));
+
+    it("should hide when player is disconnected", fakeAsync(() => {
+        // Arrange
+        matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
+        matchService.startedEvent$.next(matchService.state$.value);
+        matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+
+        // Act
+        matchPlayerService.myState$.next(PlayerState.Disconnected);
 
         const actual = sut.isVisible;
         // Assert

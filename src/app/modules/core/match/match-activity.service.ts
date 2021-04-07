@@ -3,7 +3,10 @@ import { SingletonServiceProviderFactory } from "@app/singleton-service.provider
 import { OverwolfDataProviderService, OWGameEventKillFeed } from "@core/overwolf-data-provider";
 import { WeaponItem } from "@shared/models/items/weapon-item";
 import { MatchInflictionEvent } from "@shared/models/match/match-infliction-event";
+import { MatchRosterPlayer } from "@shared/models/match/match-roster-player";
+import { PlayerState } from "@shared/models/player-state";
 import { isPlayerNameEqual } from "@shared/models/utilities/player";
+import { isEmpty } from "@shared/utilities";
 import { differenceInMilliseconds } from "date-fns";
 import { BehaviorSubject, Subject } from "rxjs";
 import { delay, filter, map, takeUntil } from "rxjs/operators";
@@ -11,7 +14,7 @@ import { PlayerService } from "../player.service";
 import { MatchRosterService } from "./match-roster.service";
 import { MatchService } from "./match.service";
 
-// TODO: Test:
+// TODO: Test these constants, and the usefulness of the Secondary Killfeed method.
 const KILLFEED_SECONDARY_DELAY = 1000; // Should be larger than `KILLFEED_UNIQUE_TIMEFRAME`
 const KILLFEED_UNIQUE_TIMEFRAME = 3000; // Prevents duplicates from Primary & Secondary source within this timeframe
 
@@ -45,6 +48,38 @@ export class MatchActivityService implements OnDestroy {
         this.setupOnMatchStart();
         this.setupKillfeed();
         this.setupKillsAndKnockdowns();
+    }
+
+    /**
+     * Accounts for knockdowns and eliminations done by requested player (inferring that the player might be alive).
+     * Makes assumption about disconnected players to be eliminated.
+     * @param player
+     */
+    public playerLastKnownState(player: MatchRosterPlayer): Optional<{ timestamp: Date; state: PlayerState }> {
+        if (isEmpty(player.name)) return;
+        if (isEmpty(this.matchRoster.matchRoster$.value.allPlayers)) return undefined;
+        const playerKillfeedHistory = this.killfeedEventHistory$.value
+            .filter((kf) => isPlayerNameEqual(kf.victim.name, player.name) || isPlayerNameEqual(kf.attacker?.name, player.name))
+            .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+        const lastKnownActivity = playerKillfeedHistory[0];
+        const lastKnownActivityDate = lastKnownActivity?.timestamp ?? this.match.state$.value.startDate;
+
+        const playerDisconnection = this.matchRoster.rosterPlayerDisconnectionList$.value
+            .filter((p) => isPlayerNameEqual(p.rosterPlayer.name, player.name))
+            .find((p) => p.timestamp > lastKnownActivityDate);
+        if (!isEmpty(playerDisconnection)) {
+            return {
+                timestamp: playerDisconnection!.timestamp,
+                state: PlayerState.Disconnected,
+            };
+        }
+
+        const isKnocked = isPlayerNameEqual(lastKnownActivity?.victim?.name, player.name) && lastKnownActivity?.isKnockdown;
+        const isEliminated = isPlayerNameEqual(lastKnownActivity?.victim?.name, player.name) && lastKnownActivity?.isElimination;
+        return {
+            timestamp: lastKnownActivityDate,
+            state: isKnocked ? PlayerState.Knocked : isEliminated ? PlayerState.Eliminated : PlayerState.Alive,
+        };
     }
 
     /**
@@ -93,7 +128,7 @@ export class MatchActivityService implements OnDestroy {
     /**
      * Secondary source of killfeed events.
      * From the gameEvent name: "kill", "knockdown".
-     * This event is used as a backup if the primary does not emit.
+     * @overwolfQuirk This event is used as a backup if the primary does not emit.
      * However, this event provides less information about the action; therefore it is
      *  delayed to attempt to use the primary source if possible.
      */

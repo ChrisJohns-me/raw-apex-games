@@ -59,7 +59,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     }
     private ultimateProgressHistory: UltimateProgress[] = [];
     private ultimateReadyDate?: Date;
-    private readonly visibleStates$: Observable<[MatchStateChangedEvent, Optional<PlayerState>, Optional<MatchLocationPhase>]>;
+    private readonly visibleStates$: Observable<[MatchStateChangedEvent, PlayerState, Optional<MatchLocationPhase>]>;
     private _unsubscribe$ = new Subject<void>();
 
     constructor(

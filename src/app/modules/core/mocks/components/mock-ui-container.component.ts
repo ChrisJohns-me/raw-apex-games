@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { Title } from "@angular/platform-browser";
+import { UIContainerComponent } from "@shared/components/ui-container/ui-container.component";
 import { APP_NAME } from "@shared/models/app";
 
 @Component({
@@ -8,7 +9,8 @@ import { APP_NAME } from "@shared/models/app";
     styles: [],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MockUIContainerComponent {
+export class MockUIContainerComponent implements MockedClass<UIContainerComponent> {
+    @Input() public injectBootstrapCSS = false;
     @Input() public isDesktopWindow = true;
     @Input() public isTitlebarDraggable = true;
     @Input() public isContentDraggable = true;
@@ -24,8 +26,6 @@ export class MockUIContainerComponent {
     private _primaryTitle = "";
 
     constructor(private readonly titleService: Title) {}
-
-    public ngOnInit(): void {}
 
     public onCloseButtonClick(): void {}
 

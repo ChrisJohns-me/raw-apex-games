@@ -1,6 +1,8 @@
 import { Injectable, OnDestroy } from "@angular/core";
 import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory";
-import { OverwolfDataProviderService, OWMatchInfoRoster, OWMatchInfoTeammate } from "@core/overwolf-data-provider";
+import { ConfigurationService } from "@core/configuration/configuration.service";
+import { OverwolfDataProviderService, OWMatchInfo, OWMatchInfoRoster, OWMatchInfoTeammate } from "@core/overwolf-data-provider";
+import { PlayerService } from "@core/player.service";
 import { MatchRoster } from "@shared/models/match/match-roster";
 import { MatchRosterPlayer } from "@shared/models/match/match-roster-player";
 import { MatchRosterTeammate } from "@shared/models/match/match-roster-teammate";
@@ -12,12 +14,15 @@ import { filter, map, takeUntil } from "rxjs/operators";
 import { MatchLegendSelectService } from "./match-legend-select.service";
 import { MatchService } from "./match.service";
 
+type RosterUpdate = { rosterId: number; rosterItem: Optional<OWMatchInfoRoster>; rosterAction: "ADD" | "DEL" };
+type RosterPlayerDisconnection = { timestamp: Date; rosterPlayer: OWMatchInfoRoster };
+
 /**
  * @classdesc Provides a list, counts, and information about players in the match.
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, MatchLegendSelectService, OverwolfDataProviderService],
+    deps: [ConfigurationService, MatchService, MatchLegendSelectService, OverwolfDataProviderService, PlayerService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchRosterService", MatchRosterService, deps),
 })
 export class MatchRosterService implements OnDestroy {
@@ -33,7 +38,10 @@ export class MatchRosterService implements OnDestroy {
      * @returns {MatchRoster<MatchRosterTeammate>}
      */
     public readonly teammateRoster$ = new BehaviorSubject<MatchRoster<MatchRosterTeammate>>(new MatchRoster<MatchRosterTeammate>());
-
+    /**
+     * @returns {RosterPlayerDisconnected[]} List of players in the match who may have disconnected.
+     */
+    public readonly rosterPlayerDisconnectionList$ = new BehaviorSubject<RosterPlayerDisconnection[]>([]);
     /**
      * From Overwolf's "tabs" data
      * @returns {number} teams alive in the current match.
@@ -45,28 +53,20 @@ export class MatchRosterService implements OnDestroy {
      */
     public readonly numPlayers$ = new BehaviorSubject<number>(0);
 
-    private readonly rosterUpdate$: Observable<[rosterId: number, rosterItem: Optional<OWMatchInfoRoster>]>;
+    private readonly rosterUpdate$: Observable<RosterUpdate>;
 
     private stagedMatchRoster = new MatchRoster();
     private stagedTeammateRoster = new MatchRoster<MatchRosterTeammate>();
     private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
+        private readonly config: ConfigurationService,
         private readonly match: MatchService,
         private readonly matchLegendSelect: MatchLegendSelectService,
-        private readonly overwolfData: OverwolfDataProviderService
+        private readonly overwolfData: OverwolfDataProviderService,
+        private readonly player: PlayerService
     ) {
-        this.rosterUpdate$ = this.overwolfData.infoUpdates$.pipe(
-            takeUntil(this._unsubscribe$),
-            filter((infoUpdate) => infoUpdate.feature === "roster"),
-            map((infoUpdate) => infoUpdate.info.match_info),
-            map((matchInfo): [string, Optional<OWMatchInfoRoster>] => [
-                findKeyByKeyRegEx(matchInfo, /^roster_/) as string,
-                findValueByKeyRegEx<OWMatchInfoRoster>(matchInfo, /^roster_/),
-            ]),
-            filter(([rosterKey]) => !isEmpty(rosterKey) && typeof rosterKey === "string"),
-            map(([rosterKey, rosterItem]) => [parseInt(rosterKey.match(/\d*/g)?.join("") ?? "-1"), rosterItem])
-        );
+        this.rosterUpdate$ = this.setupRosterUpdate$();
     }
 
     public ngOnDestroy(): void {
@@ -79,9 +79,58 @@ export class MatchRosterService implements OnDestroy {
         this.setupOnMatchEnd();
         this.setupCounts();
         this.setupMatchRoster();
+        this.setupPlayerDisconnectionList();
         this.setupTeammateRosterPrimary();
         this.setupTeammateRosterSecondary();
         this.setupTeammateLegends();
+    }
+
+    /**
+     * @returns {Observable<RosterUpdate>} stream with information about the addition or removal of roster items.
+     */
+    private setupRosterUpdate$(): Observable<RosterUpdate> {
+        const rosterAdditionFn = (rosterId: number, rosterInfo: OWMatchInfoRoster): RosterUpdate => ({
+            rosterId: rosterId,
+            rosterItem: rosterInfo,
+            rosterAction: "ADD",
+        });
+        const rosterDeletionFn = (rosterId: number): RosterUpdate => {
+            const me = this.matchRoster$.value.allPlayers.find((p) => isPlayerNameEqual(p.name, this.player.myName$.value));
+            const prevRosterPlayer = this.matchRoster$.value.allPlayers.find((p) => p.rosterId === rosterId);
+            const prevRosterItem: OWMatchInfoRoster = {
+                isTeammate: prevRosterPlayer?.teamId === me?.teamId,
+                name: prevRosterPlayer?.name ?? "",
+                platform_hw: prevRosterPlayer?.platformHardware ?? 2,
+                platform_sw: prevRosterPlayer?.platformSoftware ?? 2,
+                team_id: prevRosterPlayer?.teamId ?? -1,
+                state: "dead",
+            };
+            return {
+                rosterId: rosterId,
+                rosterItem: prevRosterItem,
+                rosterAction: "DEL",
+            };
+        };
+
+        return this.overwolfData.infoUpdates$.pipe(
+            takeUntil(this._unsubscribe$),
+            filter((infoUpdate) => infoUpdate.feature === "roster"),
+            map((infoUpdate) => infoUpdate.info.match_info),
+            map((matchInfo): [number, OWMatchInfo] => {
+                const rosterKey = findKeyByKeyRegEx(matchInfo, /^roster_/) as string;
+                const rosterId = rosterKey.match(/\d*/g)?.join("") ?? "-1";
+                return [parseInt(rosterId), matchInfo as OWMatchInfo];
+            }),
+            map(([rosterId, matchInfo]) => {
+                if (!isEmpty(matchInfo)) {
+                    const rosterInfo = (matchInfo as any)[`roster_${rosterId}`] as OWMatchInfoRoster;
+                    return rosterAdditionFn(rosterId, rosterInfo);
+                } else {
+                    return rosterDeletionFn(rosterId);
+                }
+            }),
+            filter((rosterUpdate) => rosterUpdate.rosterAction !== "DEL" || !this.config.assumptions.isRosterNullPlayerDisconnect)
+        );
     }
 
     /**
@@ -140,9 +189,11 @@ export class MatchRosterService implements OnDestroy {
             .pipe(
                 // Should only receive roster additions prior to the match start
                 filter(() => !this.match.isActive),
-                filter(([, rosterItem]) => !isEmpty(rosterItem?.name) && !isEmpty(rosterItem?.team_id))
+                filter(
+                    ({ rosterItem, rosterAction }) => rosterAction === "ADD" && !isEmpty(rosterItem?.name) && !isEmpty(rosterItem?.team_id)
+                )
             )
-            .subscribe(([rosterId, rosterItem]) => {
+            .subscribe(({ rosterId, rosterItem }) => {
                 const newRosterPlayer: MatchRosterPlayer = {
                     name: rosterItem!.name,
                     rosterId: rosterId,
@@ -156,6 +207,23 @@ export class MatchRosterService implements OnDestroy {
     }
 
     /**
+     * Listens to the roster info prior to a match,
+     *  pushes all roster items into a staging variable.
+     */
+    private setupPlayerDisconnectionList(): void {
+        this.rosterUpdate$
+            .pipe(
+                filter(() => !this.match.isActive),
+                filter(({ rosterItem, rosterAction }) => rosterAction === "DEL" && !isEmpty(rosterItem?.name))
+            )
+            .subscribe(({ rosterItem }) => {
+                if (!rosterItem) return;
+                const rosterPlayerDisconnection: RosterPlayerDisconnection = { timestamp: new Date(), rosterPlayer: rosterItem };
+                this.rosterPlayerDisconnectionList$.next([...this.rosterPlayerDisconnectionList$.value, rosterPlayerDisconnection]);
+            });
+    }
+
+    /**
      * Listens to "feature":"roster" info prior to a match,
      *  pushes all roster items into a staging variable.
      */
@@ -164,9 +232,9 @@ export class MatchRosterService implements OnDestroy {
             .pipe(
                 // Should only receive roster additions prior to the match start
                 filter(() => !this.match.isActive),
-                filter(([, rosterItem]) => !isEmpty(rosterItem) && !!rosterItem?.isTeammate)
+                filter(({ rosterItem, rosterAction }) => rosterAction === "ADD" && !isEmpty(rosterItem) && !!rosterItem?.isTeammate)
             )
-            .subscribe(([rosterId, rosterItem]) => {
+            .subscribe(({ rosterId, rosterItem }) => {
                 rosterItem = rosterItem!;
 
                 const newRosterTeammate: MatchRosterTeammate = {

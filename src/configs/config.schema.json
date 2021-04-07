@@ -1,0 +1,37 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "featureFlags": {
+            "type": "object",
+            "properties": {
+                "matchTimerWindow": {
+                    "type": "boolean"
+                },
+                "ultTimerWindow": {
+                    "type": "boolean"
+                },
+                "inflictionInsightWindow": {
+                    "type": "boolean"
+                }
+            },
+            "required": ["matchTimerWindow", "ultTimerWindow", "inflictionInsightWindow"]
+        },
+        "assumptions": {
+            "type": "object",
+            "properties": {
+                "opponentShieldDefault": {
+                    "type": "integer"
+                },
+                "opponentHealthDefault": {
+                    "type": "integer"
+                },
+                "isRosterNullPlayerDisconnect": {
+                    "type": "boolean"
+                }
+            },
+            "required": ["opponentShieldDefault", "opponentHealthDefault", "isRosterNullPlayerDisconnect"]
+        }
+    },
+    "required": ["featureFlags", "assumptions"]
+}

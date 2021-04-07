@@ -136,7 +136,7 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         if (!player) return;
         const event: OWGameEvent = {
             name: "knockdown",
-            data: { victimName: player.name },
+            data: `{ "victimName": "${player.name}" }`,
         };
         const killfeedEvent: OWGameEvent = {
             name: "kill_feed",
@@ -166,7 +166,7 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         if (!player) return;
         const event: OWGameEvent = {
             name: "kill",
-            data: { victimName: player.name },
+            data: `{ "victimName": "${player.name}" }`,
         };
         const killfeedEvent: OWGameEvent = {
             name: "kill_feed",

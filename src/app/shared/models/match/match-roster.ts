@@ -1,3 +1,4 @@
+import { isEmpty } from "@shared/utilities";
 import { isPlayerNameEqual } from "../utilities/player";
 import { MatchRosterPlayer } from "./match-roster-player";
 import { MatchRosterTeam } from "./match-roster-team";
@@ -21,8 +22,9 @@ export class MatchRoster<T extends MatchRosterPlayer = MatchRosterPlayer> {
         const foundTeam = this.teams.find((t) => !!t.teamId && t.teamId === newPlayer.teamId);
         if (foundTeam) foundTeam.members.push(newPlayer);
         else {
+            if (isEmpty(newPlayer.teamId)) console.error(`Received blank team ID for "${newPlayer.name}"`);
             const newTeam: MatchRosterTeam<T> = {
-                teamId: newPlayer.teamId!,
+                teamId: newPlayer.teamId ?? -1,
                 members: [newPlayer],
             };
             this.teams.push(newTeam);

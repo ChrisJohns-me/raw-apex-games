@@ -1,10 +1,18 @@
-import { InventorySlots } from "@shared/models/inventory-slots";
-import { Item } from "@shared/models/items/item";
-import { WeaponItem } from "@shared/models/items/weapon-item";
+import { MatchPlayerInventoryService } from "@core/match/match-player-inventory.service";
 import { BehaviorSubject } from "rxjs";
 
-export class MockMatchPlayerInventoryService {
-    public myInUseItem$ = new BehaviorSubject<Optional<Item>>(undefined);
-    public myWeaponSlots$ = new BehaviorSubject<InventorySlots<WeaponItem>>({});
-    public myInventorySlots$ = new BehaviorSubject<InventorySlots>({});
+export class MockMatchPlayerInventoryService implements MockedClass<MatchPlayerInventoryService> {
+    public myInUseItem$: MatchPlayerInventoryService["myInUseItem$"] = new BehaviorSubject<
+        MatchPlayerInventoryService["myInUseItem$"]["value"]
+    >(undefined);
+    public myWeaponSlots$: MatchPlayerInventoryService["myWeaponSlots$"] = new BehaviorSubject<
+        MatchPlayerInventoryService["myWeaponSlots$"]["value"]
+    >({});
+    public myInventorySlots$: MatchPlayerInventoryService["myInventorySlots$"] = new BehaviorSubject<
+        MatchPlayerInventoryService["myInventorySlots$"]["value"]
+    >({});
+
+    public start(): void {
+        throw new Error("Method not implemented.");
+    }
 }

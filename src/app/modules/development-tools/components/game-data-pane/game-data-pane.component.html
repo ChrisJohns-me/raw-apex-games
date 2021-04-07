@@ -82,7 +82,7 @@
                     <div class="col-6 text-end">{{ matchPlayerStats.victory$ | async }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-6">UltimatePercent</div>
+                    <div class="col-6"><a class="link-primary" (click)="onChangePlayerUltimatePercentClick()">UltimatePercent</a></div>
                     <div class="col-6 text-end">{{ matchPlayerLegend.myUltimateCooldown$ | async | percent: "0.0-0" }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">

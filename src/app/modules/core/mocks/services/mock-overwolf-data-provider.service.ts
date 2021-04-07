@@ -1,16 +1,14 @@
-import { OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "@core/overwolf-data-provider/overwolf-types";
+import { OverwolfDataProviderService } from "@core/overwolf-data-provider";
 import { BehaviorSubject, Subject } from "rxjs";
 
-export class MockOverwolfDataProviderService {
-    public gameInfo$ = new BehaviorSubject<Optional<OWRunningGameInfo>>(undefined);
-    public infoUpdates$ = new Subject<OWInfoUpdates2Event>();
-    public newGameEvent$ = new Subject<OWGameEvent>();
-
-    constructor() {
-        //
-    }
+export class MockOverwolfDataProviderService implements MockedClass<OverwolfDataProviderService> {
+    public gameInfo$: OverwolfDataProviderService["gameInfo$"] = new BehaviorSubject<OverwolfDataProviderService["gameInfo$"]["value"]>(
+        undefined
+    );
+    public infoUpdates$: OverwolfDataProviderService["infoUpdates$"] = new Subject();
+    public newGameEvent$: OverwolfDataProviderService["newGameEvent$"] = new Subject();
 
     public start(): void {
-        //
+        throw new Error("Method not implemented.");
     }
 }

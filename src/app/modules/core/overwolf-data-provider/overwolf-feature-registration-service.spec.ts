@@ -42,6 +42,19 @@ describe("OverwolfFeatureRegistrationService", () => {
         expect(overwolf.games.events.setRequiredFeatures).toHaveBeenCalled();
     });
 
+    it("retries at least 3 times after failure", fakeAsync(() => {
+        // Arrange
+        const eventsSpy = createOverwolfSpyObj<typeof overwolf.games.events>("overwolf.games.events", ["setRequiredFeatures"]);
+        eventsSpy.setRequiredFeatures.and.throwError("Mocked error");
+
+        // Act
+        sut.registerFeatures().subscribe();
+        tick(60000);
+
+        // Assert
+        expect(eventsSpy.setRequiredFeatures).toHaveBeenCalledTimes(3);
+    }));
+
     // it("provides registration status on success", (done) => {
     //     scheduler.run(({ flush, cold, hot, expectObservable }) => {
     //         // Arrange
@@ -67,17 +80,4 @@ describe("OverwolfFeatureRegistrationService", () => {
     //         });
     //     });
     // });
-
-    it("retries at least 3 times after failure", fakeAsync(() => {
-        // Arrange
-        const eventsSpy = createOverwolfSpyObj<typeof overwolf.games.events>("overwolf.games.events", ["setRequiredFeatures"]);
-        eventsSpy.setRequiredFeatures.and.throwError("Mocked error");
-
-        // Act
-        sut.registerFeatures().subscribe();
-        tick(60000);
-
-        // Assert
-        expect(eventsSpy.setRequiredFeatures).toHaveBeenCalledTimes(3);
-    }));
 });

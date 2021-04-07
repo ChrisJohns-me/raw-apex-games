@@ -15,7 +15,7 @@ import { MatchService } from "./match.service";
 })
 export class MatchPlayerService implements OnDestroy {
     /** Reset on match start */
-    public readonly myState$ = new BehaviorSubject<Optional<PlayerState>>(undefined);
+    public readonly myState$ = new BehaviorSubject<PlayerState>(PlayerState.Disconnected);
     /** Immediately check if local player is alive */
     public get isAlive(): boolean {
         return this.myState$.value === PlayerState.Alive;
@@ -58,8 +58,9 @@ export class MatchPlayerService implements OnDestroy {
             [PlayerState.Knocked]: (infoUpdate, gameEvent) =>
                 (infoUpdate?.feature === "inventory" && infoUpdate.info.me?.inUse?.inUse === "Knockdown Shield") ||
                 gameEvent?.name === "knocked_out",
-            [PlayerState.Eliminated]: (infoUpdate, gameEvent, matchState) =>
-                matchState === MatchState.Inactive || gameEvent?.name === "death" || gameEvent?.name === "match_end",
+            [PlayerState.Eliminated]: (infoUpdate, gameEvent) => gameEvent?.name === "death",
+            [PlayerState.Disconnected]: (infoUpdate, gameEvent, matchState) =>
+                matchState === MatchState.Inactive || gameEvent?.name === "match_end",
         });
 
         this.overwolfData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {

@@ -4,9 +4,6 @@
 declare namespace overwolf.gep.ApexLegends {
     type PlayerState = "alive" | "dead" | "knockedout";
 
-    /**
-     * All available game events. When a new event is triggered, it's one of these keys.
-     */
     interface GameEventDamage {
         targetName: string;
         damageAmount: number;
@@ -47,10 +44,6 @@ declare namespace overwolf.gep.ApexLegends {
     }
 
     // --------------------------------------------------------------------------
-
-    /**
-     * All available game info updates. When a new info update is triggered, it's one of these keys.
-     */
 
     interface MatchInfoMeUltimateCooldown {
         ultimate_cooldown: number;
@@ -290,7 +283,6 @@ declare namespace overwolf.gep.ApexLegends {
         MatchState = "match_state",
         MatchSummary = "match_summary",
         Me = "me",
-        Phase = "phase",
         Rank = "rank",
         Revive = "revive",
         Roster = "roster",

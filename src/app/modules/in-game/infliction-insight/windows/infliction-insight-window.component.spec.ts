@@ -1,11 +1,13 @@
 import { ChangeDetectorRef } from "@angular/core";
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { ConfigurationService } from "@core/configuration/configuration.service";
 import { MatchPlayerInflictionService } from "@core/match/match-player-infliction.service";
 import { MatchPlayerLocationService } from "@core/match/match-player-location.service";
 import { MatchPlayerService } from "@core/match/match-player.service";
 import { MatchRosterService } from "@core/match/match-roster.service";
 import { MatchService } from "@core/match/match.service";
 import { MockUIContainerComponent } from "@core/mocks/components/mock-ui-container.component";
+import { MockConfigurationService } from "@core/mocks/services/mock-configuration.service";
 import { MockMatchPlayerInflictionService } from "@core/mocks/services/mock-match-player-infliction.service";
 import { MockMatchPlayerLocationService } from "@core/mocks/services/mock-match-player-location.service";
 import { MockMatchPlayerService } from "@core/mocks/services/mock-match-player.service";
@@ -23,18 +25,20 @@ describe("InflictionInsightWindowComponent", () => {
     let sut: InflictionInsightWindowComponent;
     let fixture: ComponentFixture<InflictionInsightWindowComponent>;
     let scheduler: TestScheduler;
-    let matchPlayerInflictionService: MockMatchPlayerInflictionService | MatchPlayerInflictionService;
-    let matchPlayerLocationService: MockMatchPlayerLocationService | MatchPlayerLocationService;
-    let matchPlayerService: MockMatchPlayerService | MatchPlayerService;
-    let matchRosterService: MockMatchRosterService | MatchRosterService;
-    let matchService: MockMatchService | MatchService;
-    let playerService: MockPlayerService | PlayerService;
+    let config: ConfigurationService;
+    let matchPlayerInflictionService: MatchPlayerInflictionService;
+    let matchPlayerLocationService: MatchPlayerLocationService;
+    let matchPlayerService: MatchPlayerService;
+    let matchRosterService: MatchRosterService;
+    let matchService: MatchService;
+    let playerService: PlayerService;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [InflictionInsightWindowComponent, MockUIContainerComponent],
             providers: [
                 { provide: ChangeDetectorRef, useValue: {} },
+                { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: MatchPlayerInflictionService, useClass: MockMatchPlayerInflictionService },
                 { provide: MatchPlayerLocationService, useClass: MockMatchPlayerLocationService },
                 { provide: MatchPlayerService, useClass: MockMatchPlayerService },
@@ -45,16 +49,16 @@ describe("InflictionInsightWindowComponent", () => {
         }).compileComponents();
     });
 
-    beforeEach(() => {
+    beforeEach(async () => {
         jasmine.clock().uninstall();
         jasmine.clock().install();
-        jasmine.clock().mockDate(new Date(0));
         scheduler = new TestScheduler((actual, expected) => {
             expect(actual).toEqual(expected);
         });
         scheduler.maxFrames = 5000;
         fixture = TestBed.createComponent(InflictionInsightWindowComponent);
         sut = fixture.componentInstance;
+        config = TestBed.inject(ConfigurationService);
         matchPlayerInflictionService = TestBed.inject(MatchPlayerInflictionService);
         matchPlayerLocationService = TestBed.inject(MatchPlayerLocationService);
         matchPlayerService = TestBed.inject(MatchPlayerService);
@@ -74,6 +78,7 @@ describe("InflictionInsightWindowComponent", () => {
 
     it("shows on match start and landed", () => {
         // Arrange
+        jasmine.clock().mockDate(new Date(0));
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date(),
             state: MatchState.Active,
@@ -93,48 +98,75 @@ describe("InflictionInsightWindowComponent", () => {
         expect(actual).toBeTrue();
     });
 
-    it("hides when player is knocked", () => {
+    it("continues to show after a player is knocked", fakeAsync(() => {
         // Arrange
+        jasmine.clock().mockDate(new Date(0));
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date(),
             state: MatchState.Active,
         };
-
-        // Act
         matchService.startedEvent$.next(startEvent);
         matchService.state$.next(startEvent);
         matchPlayerService.myState$.next(PlayerState.Alive);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+        tick(60 * 1000);
 
+        // Act
         matchPlayerService.myState$.next(PlayerState.Knocked);
+        tick(60 * 1000);
 
         // Assert
         const actual = sut.isVisible;
-        expect(actual).toBeFalse();
-    });
+        expect(actual).toBeTrue();
+    }));
 
-    it("hides when player is eliminated", () => {
+    it("hides when player is eliminated", fakeAsync(() => {
         // Arrange
+        jasmine.clock().mockDate(new Date(0));
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date(),
             state: MatchState.Active,
         };
-
-        // Act
         matchService.startedEvent$.next(startEvent);
         matchService.state$.next(startEvent);
         matchPlayerService.myState$.next(PlayerState.Alive);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+        tick(60 * 1000);
 
+        // Act
         matchPlayerService.myState$.next(PlayerState.Eliminated);
+        tick(60 * 1000);
 
         // Assert
         const actual = sut.isVisible;
         expect(actual).toBeFalse();
-    });
+    }));
 
-    it("hides on match end", () => {
+    it("hides when player is disconnected", fakeAsync(() => {
         // Arrange
+        jasmine.clock().mockDate(new Date(0));
+        const startEvent: MatchStateChangedEvent = {
+            startDate: new Date(),
+            state: MatchState.Active,
+        };
+        matchService.startedEvent$.next(startEvent);
+        matchService.state$.next(startEvent);
+        matchPlayerService.myState$.next(PlayerState.Alive);
+        matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+        tick(60 * 1000);
+
+        // Act
+        matchPlayerService.myState$.next(PlayerState.Disconnected);
+        tick(60 * 1000);
+
+        // Assert
+        const actual = sut.isVisible;
+        expect(actual).toBeFalse();
+    }));
+
+    it("hides on match end", fakeAsync(() => {
+        // Arrange
+        jasmine.clock().mockDate(new Date(0));
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date(),
             state: MatchState.Active,
@@ -148,19 +180,23 @@ describe("InflictionInsightWindowComponent", () => {
         matchService.state$.next(startEvent);
         matchPlayerService.myState$.next(PlayerState.Alive);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+        tick(60 * 1000);
 
         // Act
         matchService.endedEvent$.next(endEvent);
         matchService.state$.next(endEvent);
+        tick(60 * 1000);
 
         // Assert
         const actual = sut.isVisible;
         expect(actual).toBeFalse();
-    });
+        discardPeriodicTasks();
+    }));
 
     // it("shows an opponent after a damage event", () => {
     //     scheduler.run(({ hot, expectObservable }) => {
     //         // Arrange
+    //         jasmine.clock().mockDate(new Date(0));
     //         const startEvent: MatchStateChangedEvent = {
     //             startDate: new Date(),
     //             state: MatchState.Active,
@@ -212,6 +248,7 @@ describe("InflictionInsightWindowComponent", () => {
     // it("shows an opponent after a knockdown event", () => {
     //     scheduler.run(({ hot, expectObservable }) => {
     //         // Arrange
+    //         jasmine.clock().mockDate(new Date(0));
     //         const startEvent: MatchStateChangedEvent = {
     //             startDate: new Date(),
     //             state: MatchState.Active,
@@ -264,6 +301,7 @@ describe("InflictionInsightWindowComponent", () => {
     // it("shows an opponent after an elimination event", () => {
     //     scheduler.run(({ hot, cold, expectObservable, flush }) => {
     //         // Arrange
+    //         jasmine.clock().mockDate(new Date(0));
     //         const startEvent: MatchStateChangedEvent = {
     //             startDate: new Date(),
     //             state: MatchState.Active,

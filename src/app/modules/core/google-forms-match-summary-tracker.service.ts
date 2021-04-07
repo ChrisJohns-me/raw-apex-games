@@ -8,11 +8,12 @@ import { MatchStateChangedEvent } from "@shared/models/match/match-state";
 import { MatchSummary } from "@shared/models/match/match-summary";
 import { combineLatest, Observable, of, ReplaySubject, Subject } from "rxjs";
 import { catchError, delay, filter, map, retryWhen, switchMap, take, takeUntil, tap } from "rxjs/operators";
-import { Config } from "src/config";
 import { MatchMapService } from "./match/match-map.service";
 import { MatchPlayerLegendService } from "./match/match-player-legend.service";
 import { MatchPlayerStatsService } from "./match/match-player-stats.service";
 import { MatchService } from "./match/match.service";
+
+const googleFormUrl = `https://docs.google.com/forms/u/0/d/e/1FAIpQLSeE3N2b9jwbcdsHRWU4L2SlAWRRQezlUl9mX0w-XbOzYsFADA/formResponse`;
 
 // TODO: used like this;
 // private setupBackgroundEvents(): void {
@@ -76,7 +77,7 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
     }
 
     public reportMatchSummaryToGoogleForms(matchSummary: MatchSummary): Observable<{ success: boolean; error?: unknown }> {
-        const url = Config.googleFormUrl;
+        const url = googleFormUrl;
 
         const params = {
             "entry.894638192": matchSummary.legend?.friendlyName ?? "",

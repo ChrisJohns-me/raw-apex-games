@@ -1,6 +1,10 @@
 type Optional<T> = T | undefined;
 type Nullable<T> = T | undefined | null;
 type AnyObject = { [key: string]: any };
+type MockedClass<T> = Omit<
+    Pick<T, keyof T>,
+    "ngOnChanges" | "ngOnInit" | "ngDoCheck" | "ngAfterContentInit" | "ngAfterContentChecked" | "ngAfterViewChecked" | "ngOnDestroy"
+>;
 
 /**
  * Make all properties (including subtypes) in T optional

@@ -18,7 +18,7 @@
                     "builder": "ngx-build-plus:browser",
                     "options": {
                         "allowedCommonJsDependencies": ["zone.js/dist/zone-error"],
-                        "outputPath": "dist/apex-legends-overwolf-allfather-app",
+                        "outputPath": "dist/development",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": "src/polyfills.ts",
@@ -27,7 +27,12 @@
                         "assets": [
                             {
                                 "glob": "**/*",
-                                "input": "src/overwolf/",
+                                "input": "src/overwolf/dev/",
+                                "output": "/"
+                            },
+                            {
+                                "glob": "config.json",
+                                "input": "src/configs/",
                                 "output": "/"
                             },
                             "src/favicon.ico",
@@ -41,10 +46,22 @@
                     },
                     "configurations": {
                         "production": {
+                            "outputPath": "dist/production",
                             "fileReplacements": [
                                 {
                                     "replace": "src/environments/environment.ts",
                                     "with": "src/environments/environment.prod.ts"
+                                },
+                                {
+                                    "replace": "src/configs/config.json",
+                                    "with": "src/configs/config.prod.json"
+                                }
+                            ],
+                            "assets": [
+                                {
+                                    "glob": "**/*",
+                                    "input": "src/overwolf/prod/",
+                                    "output": "/"
                                 }
                             ],
                             "optimization": true,
@@ -57,13 +74,13 @@
                             "budgets": [
                                 {
                                     "type": "initial",
-                                    "maximumWarning": "500kb",
-                                    "maximumError": "1mb"
+                                    "maximumWarning": "1mb",
+                                    "maximumError": "5mb"
                                 },
                                 {
                                     "type": "anyComponentStyle",
-                                    "maximumWarning": "2kb",
-                                    "maximumError": "4kb"
+                                    "maximumWarning": "500kb",
+                                    "maximumError": "1mb"
                                 }
                             ]
                         }

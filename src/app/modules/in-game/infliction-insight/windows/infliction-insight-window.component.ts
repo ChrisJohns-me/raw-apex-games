@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { ConfigurationService } from "@core/configuration/configuration.service";
 import { MatchPlayerInflictionService } from "@core/match/match-player-infliction.service";
 import { MatchPlayerLocationService } from "@core/match/match-player-location.service";
 import { MatchPlayerService } from "@core/match/match-player.service";
@@ -16,15 +17,13 @@ import { isPlayerNameEqual } from "@shared/models/utilities/player";
 import { isEmpty, mathClamp } from "@shared/utilities";
 import { addMilliseconds } from "date-fns";
 import { combineLatest, merge, Subject } from "rxjs";
-import { delay, distinctUntilChanged, filter, takeUntil, tap } from "rxjs/operators";
+import { delay, distinctUntilChanged, filter, pairwise, takeUntil, tap } from "rxjs/operators";
 import { OpponentBanner } from "../components/opponent-banner/opponent-banner.component";
 
 const ACCUM_EXPIRE = 15000;
-const MATCH_END_TIMEOUT = 15000;
+const MATCH_END_TIMEOUT = 30000;
 const SHIELD_MAX = 125;
 const HEALTH_MAX = 100;
-const SHIELD_DEFAULT_ASSUMPTION = 75;
-const HEALTH_DEFAULT_ASSUMPTION = 100;
 
 @Component({
     selector: "app-in-game-infliction-insight-window",
@@ -70,6 +69,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
     private _unsubscribe$ = new Subject<void>();
 
     constructor(
+        private readonly config: ConfigurationService,
         private readonly cdr: ChangeDetectorRef,
         private readonly match: MatchService,
         private readonly matchPlayer: MatchPlayerService,
@@ -110,11 +110,17 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Reset state on match end
+     * Reset state on match end or elimination
      */
     private setupOnMatchEnd(): void {
-        const nonAliveEvents$ = this.matchPlayer.myState$.pipe(filter((myState) => myState !== PlayerState.Alive));
-        merge(this.match.endedEvent$, nonAliveEvents$)
+        const deathEvents = this.matchPlayer.myState$.pipe(
+            pairwise(),
+            filter(
+                ([prevState, currState]) =>
+                    prevState === PlayerState.Alive && (currState === PlayerState.Eliminated || currState === PlayerState.Disconnected)
+            )
+        );
+        merge(this.match.endedEvent$, deathEvents)
             .pipe(
                 takeUntil(this._unsubscribe$),
                 tap(() => (this.acceptingResetEvents = false)),
@@ -122,9 +128,9 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
             )
             .subscribe(() => {
                 this.isVisible = false;
-                this.cdr.detectChanges();
                 this.inflictionAggregator.clearAccumulations();
                 this.opponentBannerList = [];
+                this.cdr.detectChanges();
             });
     }
 
@@ -172,9 +178,9 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
             isVictimTeammate: false,
             rosterPlayer: inflictionEvent.victim!,
             latestInflictionAccum: inflictionEvent,
-            maybeShieldMax: inflictionEvent.hasShield ? SHIELD_DEFAULT_ASSUMPTION : 0,
-            maybeShieldAmount: SHIELD_DEFAULT_ASSUMPTION - inflictionEvent.shieldDamageSum,
-            maybeHealthAmount: HEALTH_DEFAULT_ASSUMPTION - inflictionEvent.healthDamageSum,
+            maybeShieldMax: inflictionEvent.hasShield ? this.config.assumptions.opponentShieldDefault : 0,
+            maybeShieldAmount: this.config.assumptions.opponentShieldDefault - inflictionEvent.shieldDamageSum,
+            maybeHealthAmount: this.config.assumptions.opponentHealthDefault - inflictionEvent.healthDamageSum,
         };
         return opponentBanner;
     }
@@ -185,9 +191,9 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
             isVictimTeammate: true,
             rosterPlayer: player,
             latestInflictionAccum: undefined,
-            maybeShieldMax: SHIELD_DEFAULT_ASSUMPTION,
-            maybeShieldAmount: SHIELD_DEFAULT_ASSUMPTION,
-            maybeHealthAmount: HEALTH_DEFAULT_ASSUMPTION,
+            maybeShieldMax: this.config.assumptions.opponentShieldDefault,
+            maybeShieldAmount: this.config.assumptions.opponentShieldDefault,
+            maybeHealthAmount: this.config.assumptions.opponentHealthDefault,
         };
         return opponentBanner;
     }
@@ -197,18 +203,28 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         if (!inflictionEvent.latestTimestamp) return;
         if (inflictionEvent.hasShield) {
             currentBanner.maybeShieldMax = mathClamp(
-                inflictionEvent.shieldDamageSum > SHIELD_DEFAULT_ASSUMPTION ? inflictionEvent.shieldDamageSum : SHIELD_DEFAULT_ASSUMPTION,
+                inflictionEvent.shieldDamageSum > this.config.assumptions.opponentShieldDefault
+                    ? inflictionEvent.shieldDamageSum
+                    : this.config.assumptions.opponentShieldDefault,
                 0,
                 SHIELD_MAX
             );
-            currentBanner.maybeShieldAmount = mathClamp(SHIELD_DEFAULT_ASSUMPTION - inflictionEvent.shieldDamageSum, 0, SHIELD_MAX);
+            currentBanner.maybeShieldAmount = mathClamp(
+                this.config.assumptions.opponentShieldDefault - inflictionEvent.shieldDamageSum,
+                0,
+                SHIELD_MAX
+            );
         } else {
             currentBanner.maybeShieldMax = mathClamp(inflictionEvent.shieldDamageSum, 0, SHIELD_MAX);
             currentBanner.maybeShieldAmount = 0;
         }
         currentBanner.isVictimTeammate = false;
         currentBanner.latestInflictionAccum = inflictionEvent;
-        currentBanner.maybeHealthAmount = mathClamp(HEALTH_DEFAULT_ASSUMPTION - inflictionEvent.healthDamageSum, 0, HEALTH_MAX);
+        currentBanner.maybeHealthAmount = mathClamp(
+            this.config.assumptions.opponentHealthDefault - inflictionEvent.healthDamageSum,
+            0,
+            HEALTH_MAX
+        );
         return currentBanner;
     }
 

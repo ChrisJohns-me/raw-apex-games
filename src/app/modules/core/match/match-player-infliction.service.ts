@@ -79,7 +79,10 @@ export class MatchPlayerInflictionService implements OnDestroy {
                 takeUntil(this._unsubscribe$),
                 filter((gameEvent) => gameEvent.name === "damage"),
                 map((gameEvent) => gameEvent.data as overwolf.gep.ApexLegends.GameEventDamage),
-                filter(() => this.matchPlayer.myState$.value !== PlayerState.Eliminated)
+                filter(() => {
+                    const myState = this.matchPlayer.myState$.value;
+                    return myState !== PlayerState.Eliminated && myState !== PlayerState.Disconnected;
+                })
             )
             .subscribe((rawDamageEvent) => {
                 if (!rawDamageEvent || !rawDamageEvent.targetName) return;

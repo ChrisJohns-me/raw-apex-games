@@ -19,7 +19,9 @@ import { MockMatchPlayerStatsService } from "@core/mocks/services/mock-match-pla
 import { MockMatchPlayerService } from "@core/mocks/services/mock-match-player.service";
 import { MockMatchRosterService } from "@core/mocks/services/mock-match-roster.service";
 import { MockMatchService } from "@core/mocks/services/mock-match.service";
+import { MockOverwolfExposedDataService } from "@core/mocks/services/mock-overwolf-exposed-data.service";
 import { MockPlayerService } from "@core/mocks/services/mock-player.service";
+import { OverwolfExposedDataService } from "@core/overwolf-exposed-data.service";
 import { PlayerService } from "@core/player.service";
 import { GameDataPaneComponent } from "./game-data-pane.component";
 
@@ -32,6 +34,7 @@ describe("GameDataPaneComponent", () => {
             declarations: [GameDataPaneComponent],
             providers: [
                 { provide: GameService, useClass: MockGameService },
+                { provide: OverwolfExposedDataService, useClass: MockOverwolfExposedDataService },
                 { provide: GameProcessService, useClass: MockGameProcessService },
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: MatchMapService, useClass: MockMatchMapService },

@@ -1,0 +1,12 @@
+{
+    "featureFlags": {
+        "matchTimerWindow": true,
+        "ultTimerWindow": true,
+        "inflictionInsightWindow": true
+    },
+    "assumptions": {
+        "opponentShieldDefault": 75,
+        "opponentHealthDefault": 100,
+        "isRosterNullPlayerDisconnect": true
+    }
+}

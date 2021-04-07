@@ -1,7 +1,11 @@
-import { MatchInflictionEvent } from "@shared/models/match/match-infliction-event";
+import { MatchPlayerInflictionService } from "@core/match/match-player-infliction.service";
 import { Subject } from "rxjs";
 
-export class MockMatchPlayerInflictionService {
-    public myKillfeedEvent$ = new Subject<MatchInflictionEvent>();
-    public myDamageEvent$ = new Subject<MatchInflictionEvent>();
+export class MockMatchPlayerInflictionService implements MockedClass<MatchPlayerInflictionService> {
+    public myKillfeedEvent$: MatchPlayerInflictionService["myKillfeedEvent$"] = new Subject();
+    public myDamageEvent$: MatchPlayerInflictionService["myDamageEvent$"] = new Subject();
+
+    public start(): void {
+        throw new Error("Method not implemented.");
+    }
 }

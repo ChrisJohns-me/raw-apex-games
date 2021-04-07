@@ -2,7 +2,7 @@ import { TestScheduler } from "rxjs/testing";
 import { MatchInflictionEvent, MatchInflictionEventAccum } from "../match/match-infliction-event";
 import { InflictionAggregator } from "./infliction-aggregator";
 
-describe("InflictionEventAggregator", () => {
+describe("InflictionAggregator", () => {
     let sut: InflictionAggregator;
     let scheduler: TestScheduler;
 
