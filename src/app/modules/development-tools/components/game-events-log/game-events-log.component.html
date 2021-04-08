@@ -4,6 +4,16 @@
             <input
                 class="form-check-input"
                 type="checkbox"
+                id="enableLoggingSwitch"
+                [checked]="enableLogging"
+                (change)="enableLogging = !enableLogging"
+            />
+            <label class="form-check-label" for="enableLoggingSwitch">Enable Logging</label>
+        </div>
+        <div class="form-check form-switch form-check-inline">
+            <input
+                class="form-check-input"
+                type="checkbox"
                 id="autoScrollSwitch"
                 [checked]="autoScroll"
                 (change)="autoScroll = !autoScroll"
@@ -28,7 +38,7 @@
 <div class="row">
     <div class="col">
         <div class="log-container">
-            <div class="log-area bg-light border p-2" id="gameLog" #gameLog>
+            <div class="log-area border p-2" [ngClass]="{ disabled: !enableLogging }" id="gameLog" #gameLog>
                 <ng-container *ngFor="let logItem of gameLogArr">
                     <span>[{{ logItem.timestamp | date: "yyyy-MM-dd hh:mm:ss.SSS aa" }}]&nbsp;</span>
                     <span>{{ logItem.data }}</span>

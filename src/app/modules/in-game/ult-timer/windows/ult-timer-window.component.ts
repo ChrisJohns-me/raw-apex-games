@@ -1,5 +1,6 @@
 import { formatPercent } from "@angular/common";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { ConfigurationService } from "@core/configuration/configuration.service";
 import { MatchPlayerLegendService } from "@core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "@core/match/match-player-location.service";
 import { MatchPlayerService } from "@core/match/match-player.service";
@@ -8,13 +9,11 @@ import { MatchLocationPhase } from "@shared/models/match/match-location";
 import { MatchState, MatchStateChangedEvent } from "@shared/models/match/match-state";
 import { PlayerState } from "@shared/models/player-state";
 import { average, averageRate } from "@shared/utilities";
-import { format, formatDistanceToNowStrict, isValid } from "date-fns";
+import { differenceInSeconds, format, formatDistanceToNowStrict, isFuture, isValid } from "date-fns";
 import { combineLatest, Observable, Subject, timer } from "rxjs";
 import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 
-const NUM_PROGRESS_HISTORY = 10;
 const ABNORMAL_INCREASE_AMOUNT = 0.1; // Ultimate accelerant or charging station
-const UI_REFRESH_RATE = 1000;
 
 interface UltimateProgress {
     timestamp: Date;
@@ -29,23 +28,22 @@ interface UltimateProgress {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UltTimerWindowComponent implements OnInit, OnDestroy {
-    public isDateValid = isValid;
     public isVisible = false; // based on match state + player state
     public ultimatePercent = 0;
     public get isUltimateReady(): boolean {
         return this.ultimatePercent >= 0.99;
     }
     /**
-     * @returns {Date} time remaining
-     * @returns empty Date if ready date is invalid
+     * @returns {Date} Estimated date when ultimate will be ready
+     * @returns undefined if the date has passed
      */
-    public get ultimateReadyRemaining(): Date {
-        if (!this.ultimateReadyDate || !isValid(this.ultimateReadyDate)) return new Date(0);
-        const readyDate = this.ultimateReadyDate as Date;
-        const now = new Date();
-        const remaining = new Date(readyDate.getTime() - now.getTime());
-        return remaining?.getTime() <= 0 ? new Date(0) : remaining;
+    public get maybeReadyDate(): Date | undefined {
+        if (!this._maybeReadyDate || !isValid(this._maybeReadyDate) || !isFuture(this._maybeReadyDate)) return;
+        if (differenceInSeconds(this._maybeReadyDate, new Date()) <= 1) return; // give no date if it's under x seconds
+        return this._maybeReadyDate;
     }
+
+    private _maybeReadyDate?: Date;
 
     private get avgIncrement(): number {
         const incrementArr = this.ultimateProgressHistory.map((h) => h.increment);
@@ -58,12 +56,12 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
         return avg;
     }
     private ultimateProgressHistory: UltimateProgress[] = [];
-    private ultimateReadyDate?: Date;
     private readonly visibleStates$: Observable<[MatchStateChangedEvent, PlayerState, Optional<MatchLocationPhase>]>;
     private _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
+        private readonly config: ConfigurationService,
         private readonly match: MatchService,
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerLegend: MatchPlayerLegendService,
@@ -116,8 +114,8 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
                 tap((percent) => this.addPercentHistory((this.ultimatePercent = percent))),
                 filter(() => this.ultimateProgressHistory.length >= 2),
                 map((percent) => this.calcReadyDate(percent, new Date())),
-                tap((readyDate) => (this.ultimateReadyDate = readyDate)),
-                switchMap(() => timer(0, UI_REFRESH_RATE))
+                tap((readyDate) => (this._maybeReadyDate = readyDate)),
+                switchMap(() => timer(0, this.config.featureConfigs.ultTimer.refreshTime))
             )
             .subscribe(() => this.cdr.detectChanges());
     }
@@ -145,7 +143,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
             console.debug(`[${this.constructor.name}] Ultimate likely used`);
             this.ultimateProgressHistory.push({ percent: newPercent, increment: lastIncrement, timestamp: new Date() });
         }
-        this.ultimateProgressHistory = this.ultimateProgressHistory.slice(-NUM_PROGRESS_HISTORY);
+        this.ultimateProgressHistory = this.ultimateProgressHistory.slice(-this.config.featureConfigs.ultTimer.maxHistoryCount);
     }
 
     private calcReadyDate(percent: number, date: Date): Optional<Date> {

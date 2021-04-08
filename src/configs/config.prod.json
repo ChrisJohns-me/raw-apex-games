@@ -1,12 +1,41 @@
 {
-    "featureFlags": {
-        "matchTimerWindow": true,
-        "ultTimerWindow": true,
-        "inflictionInsightWindow": true
-    },
+    "$schema": "./config.schema.json",
     "assumptions": {
         "opponentShieldDefault": 75,
         "opponentHealthDefault": 100,
-        "isRosterNullPlayerDisconnect": true
-    }
+        "isRosterNullPlayerDisconnect": true,
+        "knockdownExpireTime": 10000,
+        "eliminationExpireTime": 300000
+    },
+    "facts": {
+        "respawnBannerExpireTime": 60000,
+        "shieldMax": 125,
+        "healthMax": 100
+    },
+    "featureFlags": {
+        "enableMatchTimerWindow": true,
+        "enableUltTimerWindow": true,
+        "enableInflictionInsightWindow": true,
+        "inflictionInsight": {
+            "showAssumedOpponentTeammateShields": false,
+            "showAssumedOpponentTeammateHealth": false,
+            "assumeKnockdownExpires": true,
+            "assumeEliminationExpires": true
+        }
+    },
+    "featureConfigs": {
+        "inflictionInsight": {
+            "refreshTime": 1000,
+            "damageResetTime": 20000
+        },
+        "ultTimer": {
+            "refreshTime": 1000,
+            "maxHistoryCount": 5
+        }
+    },
+    "general": {
+        "playerDeathHUDTimeout": 30000,
+        "matchEndHUDTimeout": 15000
+    },
+    "overwolfQuirks": {}
 }

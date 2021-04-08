@@ -2,21 +2,6 @@
     "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
     "properties": {
-        "featureFlags": {
-            "type": "object",
-            "properties": {
-                "matchTimerWindow": {
-                    "type": "boolean"
-                },
-                "ultTimerWindow": {
-                    "type": "boolean"
-                },
-                "inflictionInsightWindow": {
-                    "type": "boolean"
-                }
-            },
-            "required": ["matchTimerWindow", "ultTimerWindow", "inflictionInsightWindow"]
-        },
         "assumptions": {
             "type": "object",
             "properties": {
@@ -28,10 +13,120 @@
                 },
                 "isRosterNullPlayerDisconnect": {
                     "type": "boolean"
+                },
+                "knockdownExpireTime": {
+                    "type": "number"
+                },
+                "eliminationExpireTime": {
+                    "type": "number"
                 }
             },
-            "required": ["opponentShieldDefault", "opponentHealthDefault", "isRosterNullPlayerDisconnect"]
+            "required": [
+                "opponentShieldDefault",
+                "opponentHealthDefault",
+                "isRosterNullPlayerDisconnect",
+                "knockdownExpireTime",
+                "eliminationExpireTime"
+            ]
+        },
+        "facts": {
+            "type": "object",
+            "properties": {
+                "respawnBannerExpireTime": {
+                    "type": "integer"
+                },
+                "shieldMax": {
+                    "type": "integer"
+                },
+                "healthMax": {
+                    "type": "integer"
+                }
+            },
+            "required": ["shieldMax", "healthMax"]
+        },
+        "featureFlags": {
+            "type": "object",
+            "properties": {
+                "enableMatchTimerWindow": {
+                    "type": "boolean"
+                },
+                "enableUltTimerWindow": {
+                    "type": "boolean"
+                },
+                "enableInflictionInsightWindow": {
+                    "type": "boolean"
+                },
+                "inflictionInsight": {
+                    "type": "object",
+                    "properties": {
+                        "showAssumedOpponentTeammateShields": {
+                            "type": "boolean"
+                        },
+                        "showAssumedOpponentTeammateHealth": {
+                            "type": "boolean"
+                        },
+                        "assumeKnockdownExpires": {
+                            "type": "boolean"
+                        },
+                        "assumeEliminationExpires": {
+                            "type": "boolean"
+                        }
+                    },
+                    "required": [
+                        "showAssumedOpponentTeammateShields",
+                        "showAssumedOpponentTeammateHealth",
+                        "assumeKnockdownExpires",
+                        "assumeEliminationExpires"
+                    ]
+                }
+            },
+            "required": ["enableMatchTimerWindow", "enableUltTimerWindow", "enableInflictionInsightWindow", "inflictionInsight"]
+        },
+        "featureConfigs": {
+            "type": "object",
+            "properties": {
+                "inflictionInsight": {
+                    "type": "object",
+                    "properties": {
+                        "damageResetTime": {
+                            "type": "number"
+                        },
+                        "refreshTime": {
+                            "type": "number"
+                        }
+                    },
+                    "required": ["damageResetTime", "refreshTime"]
+                },
+                "ultTimer": {
+                    "type": "object",
+                    "properties": {
+                        "refreshTime": {
+                            "type": "number"
+                        },
+                        "maxHistoryCount": {
+                            "type": "number"
+                        }
+                    },
+                    "required": ["refreshTime", "maxHistoryCount"]
+                }
+            },
+            "required": ["inflictionInsight", "ultTimer"]
+        },
+        "general": {
+            "type": "object",
+            "properties": {
+                "playerDeathHUDTimeout": {
+                    "type": "integer"
+                },
+                "matchEndHUDTimeout": {
+                    "type": "integer"
+                }
+            },
+            "required": ["playerDeathHUDTimeout", "matchEndHUDTimeout"]
+        },
+        "overwolfQuirks": {
+            "type": "object"
         }
     },
-    "required": ["featureFlags", "assumptions"]
+    "required": ["featureFlags", "assumptions", "facts", "overwolfQuirks"]
 }

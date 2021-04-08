@@ -1,10 +1,12 @@
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { ConfigurationService } from "@core/configuration/configuration.service";
 import { MatchPlayerLegendService } from "@core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "@core/match/match-player-location.service";
 import { MatchPlayerService } from "@core/match/match-player.service";
 import { MatchService } from "@core/match/match.service";
 import { MockUIContainerComponent } from "@core/mocks/components/mock-ui-container.component";
+import { MockConfigurationService } from "@core/mocks/services/mock-configuration.service";
 import { MockMatchPlayerLegendService } from "@core/mocks/services/mock-match-player-legend.service";
 import { MockMatchPlayerLocationService } from "@core/mocks/services/mock-match-player-location.service";
 import { MockMatchPlayerService } from "@core/mocks/services/mock-match-player.service";
@@ -12,6 +14,8 @@ import { MockMatchService } from "@core/mocks/services/mock-match.service";
 import { MatchLocationPhase } from "@shared/models/match/match-location";
 import { MatchState } from "@shared/models/match/match-state";
 import { PlayerState } from "@shared/models/player-state";
+import { FormatDistanceToNowStrictPipe } from "@shared/pipes/format-distance-to-now-strict.pipe";
+import { differenceInMilliseconds } from "date-fns";
 import { of } from "rxjs";
 import { filter, mapTo, take, tap } from "rxjs/operators";
 import { TestScheduler } from "rxjs/testing";
@@ -31,9 +35,10 @@ describe("UltTimerWindowComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [UltTimerWindowComponent, MockUIContainerComponent],
+            declarations: [UltTimerWindowComponent, MockUIContainerComponent, FormatDistanceToNowStrictPipe],
             providers: [
                 { provide: ChangeDetectorRef, useValue: {} },
+                { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: MatchPlayerService, useClass: MockMatchPlayerService },
                 { provide: MatchPlayerLegendService, useClass: MockMatchPlayerLegendService },
@@ -69,9 +74,9 @@ describe("UltTimerWindowComponent", () => {
         expect(actual).toBeFalse();
     });
 
-    it("should return starting date at zero", fakeAsync(() => {
-        const actual = sut.ultimateReadyRemaining;
-        expect(actual.getTime()).toBeLessThanOrEqual(new Date(1).getTime());
+    it("should return starting date at undefined", fakeAsync(() => {
+        const actual = sut.maybeReadyDate;
+        expect(actual).toBeUndefined();
     }));
 
     it("should show when player has landed", fakeAsync(() => {
@@ -211,8 +216,9 @@ describe("UltTimerWindowComponent", () => {
                     const percentRemaining = 1 - currPercent;
                     const expectedTimeRemainingMs = percentRemaining * totalTimeMs;
 
-                    const actual = sut.ultimateReadyRemaining;
-                    expect(actual.getTime()).toBeCloseTo(expectedTimeRemainingMs, -4, `Failed on percent: ${currPercent}`);
+                    const actualReadyDate = sut.maybeReadyDate;
+                    const actualRemaining = differenceInMilliseconds(actualReadyDate!, new Date());
+                    expect(actualRemaining).toBeCloseTo(expectedTimeRemainingMs, -4, `Failed on percent: ${currPercent}`);
                 })
             )
             .subscribe();
@@ -252,8 +258,9 @@ describe("UltTimerWindowComponent", () => {
                     const percentRemaining = 1 - currPercent;
                     const expectedTimeRemainingMs = percentRemaining * totalTimeMs;
 
-                    const actual = sut.ultimateReadyRemaining;
-                    expect(actual.getTime()).toBeCloseTo(expectedTimeRemainingMs, -5, `Failed on percent: ${currPercent}`);
+                    const actualReadyDate = sut.maybeReadyDate;
+                    const actualRemaining = differenceInMilliseconds(actualReadyDate!, new Date());
+                    expect(actualRemaining).toBeCloseTo(expectedTimeRemainingMs, -5, `Failed on percent: ${currPercent}`);
                 })
             )
             .subscribe();

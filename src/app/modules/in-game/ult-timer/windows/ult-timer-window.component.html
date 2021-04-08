@@ -1,8 +1,9 @@
-<app-ui-container [isDesktopWindow]="false" [isContentDraggable]="true" primaryTitle="In Game Ultimate Timer">
+<app-ui-container [isDesktopWindow]="false" [isContentDraggable]="true" primaryTitle="Ultimate Timer">
     <div class="timer-container" *ngIf="!isUltimateReady && isVisible">
         <p class="timer-display">
-            <ng-container *ngIf="isDateValid(ultimateReadyRemaining)">{{ ultimateReadyRemaining | date: "mm:ss" }}</ng-container>
-            <ng-container *ngIf="!isDateValid(ultimateReadyRemaining)">00:00</ng-container>
+            <ng-container *ngIf="maybeReadyDate">
+                {{ maybeReadyDate | formatDistanceToNowStrict: true }}
+            </ng-container>
         </p>
     </div>
 </app-ui-container>

@@ -13,4 +13,9 @@ $top-distance: 195px;
     user-select: text;
     overflow: scroll;
     white-space: nowrap;
+    background-color: var(--bs-light);
+
+    &.disabled {
+        opacity: 0.5;
+    }
 }

@@ -3,6 +3,7 @@ import { Subject } from "rxjs";
 
 export class MockMatchPlayerInflictionService implements MockedClass<MatchPlayerInflictionService> {
     public myKillfeedEvent$: MatchPlayerInflictionService["myKillfeedEvent$"] = new Subject();
+    public notMyKillfeedEvent$: MatchPlayerInflictionService["notMyKillfeedEvent$"] = new Subject();
     public myDamageEvent$: MatchPlayerInflictionService["myDamageEvent$"] = new Subject();
 
     public start(): void {

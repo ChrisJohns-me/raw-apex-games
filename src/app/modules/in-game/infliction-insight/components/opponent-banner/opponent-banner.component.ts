@@ -1,10 +1,12 @@
 import { ChangeDetectorRef, Component, Input, OnDestroy } from "@angular/core";
+import { ConfigurationService } from "@core/configuration/configuration.service";
 import { MatchInflictionEventAccum } from "@shared/models/match/match-infliction-event";
 import { MatchRosterPlayer } from "@shared/models/match/match-roster-player";
-import { Subject } from "rxjs";
+import { interval, Subject, Subscription } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 
 export interface OpponentBanner {
-    isVictimTeammate: boolean;
+    isIndirectBanner: boolean;
     rosterPlayer: MatchRosterPlayer;
     latestInflictionAccum?: MatchInflictionEventAccum;
     maybeShieldMax: number;
@@ -16,20 +18,41 @@ export interface OpponentBanner {
     selector: "app-opponent-banner",
     templateUrl: "./opponent-banner.component.html",
     styleUrls: ["./opponent-banner.component.scss"],
-    // changeDetection: ChangeDetectionStrategy.OnPush,
+    // changeDetection: ChangeDetectionStrategy.OnPush, // TODO
 })
 export class OpponentBannerComponent implements OnDestroy {
-    @Input("bannerData") public banner: Optional<OpponentBanner>;
+    @Input("bannerData") public set banner(value: Optional<OpponentBanner>) {
+        this.bannerData = value;
+        this.setupRefresh();
+        this.cdr.detectChanges();
+    }
+    public get banner(): Optional<OpponentBanner> {
+        return this.bannerData;
+    }
 
-    public primaryTitle = "Player Damage Box";
-    public secondaryTitle = "";
-
+    private bannerData: Optional<OpponentBanner>;
+    private refreshTimerSubscription?: Subscription;
     private _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef) {}
+    constructor(private readonly cdr: ChangeDetectorRef, private readonly config: ConfigurationService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();
         this._unsubscribe$.complete();
+    }
+
+    private setupRefresh() {
+        const inflAccum = this.banner?.latestInflictionAccum;
+        const requiresRefresh = inflAccum?.isKnocked || inflAccum?.isEliminated;
+        if (!requiresRefresh) {
+            if (this.refreshTimerSubscription) this.refreshTimerSubscription = undefined;
+            return;
+        }
+
+        this.refreshTimerSubscription = interval(this.config.featureConfigs.inflictionInsight.refreshTime)
+            .pipe(takeUntil(this._unsubscribe$))
+            .subscribe(() => {
+                this.cdr.detectChanges();
+            });
     }
 }

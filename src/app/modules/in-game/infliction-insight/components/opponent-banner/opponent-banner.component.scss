@@ -1,42 +1,49 @@
 $base-height: 75px;
 $base-width: 400px;
+$main-transparency: 0.9;
+$indirect-transparency: 0.75;
+$knocked-transparency: 0.6;
+$eliminated-transparency: 0.6;
 
 .banner-container {
     border: 3px solid #e7e1cd;
-    background: linear-gradient(45deg, #000000cc, #e7e1cdcc);
+    background: linear-gradient(45deg, #000000, #e7e1cd);
     height: $base-height;
     width: $base-width;
     font-family: "Quantico", sans-serif;
     color: #ffffff;
+    opacity: $main-transparency;
 
     .banner {
         display: flex;
         height: 100%;
     }
 
-    &.victim-teammate {
-        opacity: 0.75;
+    &.indirect-banner {
+        opacity: $indirect-transparency;
     }
 
     &.knocked {
-        background: linear-gradient(45deg, rgba(80, 17, 17, 0.8), #411712cc);
+        background: linear-gradient(45deg, #501111, #411712);
         color: red;
+        opacity: $knocked-transparency;
     }
 
     &.eliminated {
         $dot-size: 3px;
         $dot-space: 12px;
-        $bg-color: #000000cc;
-        $dot-color: rgba(22, 22, 22, 0.8);
+        $bg-color: #000000;
+        $dot-color: #161616cc;
         background: linear-gradient(90deg, $bg-color ($dot-space - $dot-size), transparent 1%) center,
             linear-gradient($bg-color ($dot-space - $dot-size), transparent 1%) center, $dot-color;
         background-size: $dot-space $dot-space;
         border-color: green;
         color: #ffffff;
+        opacity: $eliminated-transparency;
 
         &.beacon-timed-out {
-            $color1: #353535cc;
-            $color2: #222222cc;
+            $color1: #353535;
+            $color2: #000000;
             background-image: linear-gradient(
                 120deg,
                 $color1 25%,
@@ -131,4 +138,19 @@ $base-width: 400px;
             background-color: #ffffff;
         }
     }
+
+    .player-status-container {
+        font-size: $base-height * 0.2; // 16px
+        line-height: $base-height * 0.25;
+        margin-bottom: $base-height * 0.05;
+        font-weight: bold;
+    }
+}
+
+.eliminated .player-ui .player-status-container {
+    color: red;
+}
+
+.knocked .player-ui .player-status-container {
+    color: red;
 }

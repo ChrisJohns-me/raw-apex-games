@@ -2,7 +2,7 @@
     class="banner-container"
     *ngIf="banner"
     [ngClass]="{
-        'victim-teammate': banner.isVictimTeammate,
+        'indirect-banner': banner.isIndirectBanner,
         knocked: banner.latestInflictionAccum?.isKnocked,
         'eliminated beacon-timed-out': banner.latestInflictionAccum?.isEliminated
     }"
@@ -17,7 +17,10 @@
         </div>
         <div class="player-ui">
             <div class="player-name">{{ banner.rosterPlayer.name }}</div>
-            <div class="player-shield-container">
+            <div
+                class="player-shield-container"
+                *ngIf="!banner.latestInflictionAccum?.isEliminated && !banner.latestInflictionAccum?.isKnocked"
+            >
                 <ng-container *ngFor="let shieldNum of [0, 1, 2, 3, 4]">
                     <div class="player-shield-ui-box-shadow" *ngIf="banner.maybeShieldMax / 25 > shieldNum">
                         <div
@@ -34,7 +37,10 @@
                     </div>
                 </ng-container>
             </div>
-            <div class="player-health-container">
+            <div
+                class="player-health-container"
+                *ngIf="!banner.latestInflictionAccum?.isEliminated && !banner.latestInflictionAccum?.isKnocked"
+            >
                 <div class="player-health-ui-box-shadow">
                     <div
                         class="player-health-ui-box"
@@ -42,6 +48,15 @@
                         [style.width.%]="banner.maybeHealthAmount"
                     ></div>
                 </div>
+            </div>
+            <div
+                class="player-status-container"
+                *ngIf="banner.latestInflictionAccum?.isKnocked || banner.latestInflictionAccum?.isEliminated"
+            >
+                {{ banner.latestInflictionAccum?.isEliminated ? "Eliminated" : "Knocked" }}
+                <ng-container *ngIf="banner.latestInflictionAccum?.latestTimestamp">
+                    {{ banner.latestInflictionAccum!.latestTimestamp! | formatDistanceToNowStrict: true }}
+                </ng-container>
             </div>
         </div>
     </div>

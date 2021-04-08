@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inpu
 import { OWGameEvent, OWInfoUpdates2Event } from "@core/overwolf-data-provider";
 import { cleanInt } from "@shared/utilities";
 import { merge, Observable, Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { filter, takeUntil } from "rxjs/operators";
 
 interface GameLog {
     timestamp: Date;
@@ -22,6 +22,7 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
 
     public gameLogArr: GameLog[] = [];
     public autoTrimLog = false;
+    public enableLogging = true;
     public autoScroll = true;
 
     private gameLogStartTime?: Date;
@@ -53,7 +54,10 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
         if (!this.newGameEvent$) return void console.error(`[${this.constructor.name}] Unable to listen to GameEvents; empty data stream.`);
 
         merge(this.infoUpdates$, this.newGameEvent$)
-            .pipe(takeUntil(this._unsubscribe$))
+            .pipe(
+                takeUntil(this._unsubscribe$),
+                filter(() => this.enableLogging)
+            )
             .subscribe((event) => {
                 this.addLogItem(event);
             });

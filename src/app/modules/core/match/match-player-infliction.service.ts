@@ -7,7 +7,7 @@ import { MatchRosterPlayer } from "@shared/models/match/match-roster-player";
 import { PlayerState } from "@shared/models/player-state";
 import { isPlayerNameEqual } from "@shared/models/utilities/player";
 import { cleanInt, isEmpty, parseBoolean } from "@shared/utilities";
-import { Subject } from "rxjs";
+import { Observable, partition, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { MatchActivityService } from "./match-activity.service";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
@@ -31,7 +31,9 @@ import { MatchRosterService } from "./match-roster.service";
 })
 export class MatchPlayerInflictionService implements OnDestroy {
     /** Eliminations/knockdown event stream for the local user */
-    public readonly myKillfeedEvent$ = new Subject<MatchInflictionEvent>();
+    public myKillfeedEvent$: Observable<MatchInflictionEvent>;
+    /** Eliminations/knockdown event stream for all players except the local user */
+    public notMyKillfeedEvent$: Observable<MatchInflictionEvent>;
     /** Damage event stream for the local user */
     public readonly myDamageEvent$ = new Subject<MatchInflictionEvent>();
 
@@ -44,7 +46,15 @@ export class MatchPlayerInflictionService implements OnDestroy {
         private readonly matchRoster: MatchRosterService,
         private readonly overwolfData: OverwolfDataProviderService,
         private readonly player: PlayerService
-    ) {}
+    ) {
+        [this.myKillfeedEvent$, this.notMyKillfeedEvent$] = partition(
+            this.matchActivity.killfeedEvent$,
+            (killfeedEvent) =>
+                !isEmpty(killfeedEvent.victim.name) &&
+                isPlayerNameEqual(killfeedEvent.attacker?.name, this.player.myName$.value) &&
+                !isPlayerNameEqual(killfeedEvent.victim.name, this.player.myName$.value)
+        );
+    }
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();
@@ -52,22 +62,7 @@ export class MatchPlayerInflictionService implements OnDestroy {
     }
 
     public start(): void {
-        this.setupMyKillfeedEvents();
         this.setupMyDamageEvents();
-    }
-
-    /**
-     * Killfeed events that are caused by the local player
-     */
-    private setupMyKillfeedEvents(): void {
-        this.matchActivity.killfeedEvent$
-            .pipe(
-                takeUntil(this._unsubscribe$),
-                filter((killfeedEvent) => !isEmpty(killfeedEvent.victim.name)),
-                filter((killfeedEvent) => isPlayerNameEqual(killfeedEvent.attacker?.name, this.player.myName$.value)),
-                filter((killfeedEvent) => !isPlayerNameEqual(killfeedEvent.victim.name, this.player.myName$.value))
-            )
-            .subscribe((killfeedEvent) => this.myKillfeedEvent$.next(killfeedEvent));
     }
 
     /**
