@@ -1,12 +1,7 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.spec.json",
   "compilerOptions": {
-    "outDir": "../../out-tsc/spec",
-    "types": [
-      "jasmine",
-      "node",
-      "resize-observer-browser",
-    ]
+    "outDir": "../../out-tsc/spec"
   },
   "files": [
     "src/test.ts",
@@ -14,8 +9,6 @@
   ],
   "include": [
     "src/**/*.spec.ts",
-    "src/**/*.d.ts",
-    "../../shared/types/**/*.d.ts",
-    "../../node_modules/@overwolf/types/overwolf.d.ts"
+    "../../**/*.d.ts"
   ]
 }

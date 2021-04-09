@@ -39,7 +39,7 @@
                                 "output": "/"
                             },
                             "projects/allfather-app/src/favicon.ico",
-                            "projects/allfather-app/src/assets"
+                            "projects/allfather-app/src/assets/images"
                         ],
                         "styles": ["projects/allfather-app/src/styles.scss"],
                         "stylePreprocessorOptions": {
@@ -112,7 +112,7 @@
                         "polyfills": "projects/allfather-app/src/polyfills.ts",
                         "tsConfig": "projects/allfather-app/tsconfig.spec.json",
                         "karmaConfig": "projects/allfather-app/karma.conf.js",
-                        "assets": ["projects/allfather-app/src/favicon.ico", "projects/allfather-app/src/assets"],
+                        "assets": ["projects/allfather-app/src/favicon.ico", "projects/allfather-app/src/assets/images"],
                         "styles": ["projects/allfather-app/src/styles.scss"],
                         "stylePreprocessorOptions": {
                             "includePaths": ["projects/allfather-app/src/assets/styles/"]
@@ -168,7 +168,7 @@
                         "polyfills": "projects/allfather-web/src/polyfills.ts",
                         "tsConfig": "projects/allfather-web/tsconfig.app.json",
                         "aot": true,
-                        "assets": ["projects/allfather-web/src/favicon.ico", "projects/allfather-web/src/assets"],
+                        "assets": ["projects/allfather-web/src/favicon.ico", "projects/allfather-web/src/assets/images"],
                         "styles": ["projects/allfather-web/src/styles.scss"],
                         "scripts": []
                     },
@@ -226,7 +226,7 @@
                         "polyfills": "projects/allfather-web/src/polyfills.ts",
                         "tsConfig": "projects/allfather-web/tsconfig.spec.json",
                         "karmaConfig": "projects/allfather-web/karma.conf.js",
-                        "assets": ["projects/allfather-web/src/favicon.ico", "projects/allfather-web/src/assets"],
+                        "assets": ["projects/allfather-web/src/favicon.ico", "projects/allfather-web/src/assets/images"],
                         "styles": ["projects/allfather-web/src/styles.scss"],
                         "scripts": []
                     }

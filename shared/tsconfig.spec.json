@@ -1,5 +1,5 @@
 {
-  "extends": "../tsconfig.json",
+  "extends": "../tsconfig.spec.json",
   "compilerOptions": {
     "outDir": "../out-tsc/spec",
     "types": [
@@ -8,7 +8,6 @@
     ]
   },
   "files": [
-    "**/*.spec.ts",
-    "**/*.d.ts"
+    "**/*.spec.ts"
   ]
 }

@@ -17,5 +17,12 @@ type Nullable<T> = T | undefined | null;
 type AnyObject = { [key: string]: any };
 type MockedClass<T> = Omit<
     Pick<T, keyof T>,
-    "ngOnChanges" | "ngOnInit" | "ngDoCheck" | "ngAfterContentInit" | "ngAfterContentChecked" | "ngAfterViewChecked" | "ngOnDestroy"
+    | "ngOnChanges"
+    | "ngOnInit"
+    | "ngDoCheck"
+    | "ngAfterContentInit"
+    | "ngAfterContentChecked"
+    | "ngAfterViewChecked"
+    | "ngOnDestroy"
+    | "ngAfterViewInit"
 >;
