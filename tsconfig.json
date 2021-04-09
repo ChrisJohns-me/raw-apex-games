@@ -20,22 +20,12 @@
       "es2018",
       "dom"
     ],
-    "typeRoots": [
-      "node_modules/@types",
-      "node_modules/@overwolf"
-    ],
     "paths": {
-      "manifest.json": [
-        "src/overwolf/manifest.json"
+      "@allfather-app/*": [
+        "projects/allfather-app/src/*"
       ],
-      "@shared/*": [
-        "src/app/shared/*"
-      ],
-      "@core/*": [
-        "src/app/modules/core/*"
-      ],
-      "@app/*": [
-        "src/app/*"
+      "@allfather-web/*": [
+        "projects/allfather-web/src/*"
       ]
     }
   },

@@ -1,0 +1,26 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/app",
+    "types": [
+      "resize-observer-browser"
+    ],
+    "typeRoots": [
+      "node_modules/@types",
+      "node_modules/@overwolf"
+    ]
+  },
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts",
+    "../../shared/types/**/*.d.ts",
+    "../../node_modules/@overwolf/types/overwolf.d.ts"
+  ],
+  "exclude": [
+    "src/test.ts",
+    "src/**/*.spec.ts"
+  ]
+}
