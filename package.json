@@ -1,14 +1,19 @@
 {
-    "name": "apex-legends-overwolf-allfather-app",
+    "name": "allfather",
     "version": "0.0.1",
     "scripts": {
-        "ng": "ng",
-        "test": "ng test",
-        "e2e": "ng e2e",
-        "build-dev": "ng build --watch --plugin ~webpack.partial.dev.js",
-        "build-prod": "ng build --prod --plugin ~webpack.partial.prod.js",
-        "livereload": "livereload ./dist/* -x manifest.json",
-        "dev": "concurrently --kill-others --names \"BUILD,TEST,LIVERELOAD\" \"npm run build-dev\" \"npm run livereload\""
+        "test": "npm run app:test -- --watch=false && npm run web:test -- --watch=false && npm run shared:test -- --single-run",
+        "shared:test": "karma start ./shared/karma.conf.js",
+        "app:test": "ng test --project=allfatherApp",
+        "app:e2e": "ng e2e --project=allfatherApp",
+        "app:build-dev": "ng build --watch --plugin ~./projects/allfather-app/webpack.partial.dev.js --project=allfatherApp",
+        "app:build-prod": "ng build --prod --project=allfatherApp",
+        "app:livereload": "livereload ./dist/* -x manifest.json",
+        "app:dev": "concurrently --kill-others --names \"BUILD,TEST,LIVERELOAD\" \"npm run app:build-dev\" \"npm run app:livereload\"",
+        "web:test": "ng test --project=allfatherWeb",
+        "web:e2e": "ng e2e --project=allfatherWeb",
+        "web:build-dev": "ng build --watch --project=allfatherWeb",
+        "web:build-prod": "ng build --prod --project=allfatherWeb"
     },
     "private": true,
     "dependencies": {
@@ -54,6 +59,7 @@
         "karma-coverage": "~2.0.3",
         "karma-jasmine": "~4.0.0",
         "karma-jasmine-html-reporter": "^1.5.0",
+        "karma-typescript": "^5.5.1",
         "livereload": "^0.9.3",
         "localforage": "^1.9.0",
         "prettier": "2.2.1",
