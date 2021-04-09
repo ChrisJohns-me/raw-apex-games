@@ -14,8 +14,7 @@ import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-se
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
-import { findKeyByKeyRegEx, findValueByKeyRegEx, isEmpty } from "shared/utilities";
-import { cleanInt } from "shared/utilities/number";
+import { cleanInt, findKeyByKeyRegEx, findValueByKeyRegEx, isEmpty } from "shared/utilities";
 import { MatchLegendSelectService } from "./match-legend-select.service";
 import { MatchService } from "./match.service";
 

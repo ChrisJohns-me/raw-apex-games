@@ -1,4 +1,4 @@
-import { wordsToUpperCase } from "shared/utilities/string";
+import { wordsToUpperCase } from "shared/utilities/primitives/string";
 
 export class Legend {
     constructor(public id?: string) {}

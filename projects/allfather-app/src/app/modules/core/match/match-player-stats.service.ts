@@ -5,8 +5,7 @@ import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-se
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
-import { isEmpty, parseBoolean } from "shared/utilities";
-import { cleanInt } from "shared/utilities/number";
+import { cleanInt, isEmpty, parseBoolean } from "shared/utilities";
 import { MatchPlayerService } from "./match-player.service";
 import { MatchService } from "./match.service";
 

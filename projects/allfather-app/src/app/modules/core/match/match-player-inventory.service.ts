@@ -10,8 +10,7 @@ import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-se
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
-import { findKeyByKeyRegEx } from "shared/utilities";
-import { cleanInt } from "shared/utilities/number";
+import { cleanInt, findKeyByKeyRegEx } from "shared/utilities";
 import { MatchService } from "./match.service";
 
 /**

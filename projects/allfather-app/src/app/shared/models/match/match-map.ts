@@ -1,4 +1,4 @@
-import { wordsToUpperCase } from "shared/utilities/string";
+import { wordsToUpperCase } from "shared/utilities/primitives/string";
 import { MatchMapCoordinates } from "./match-map-coordinates";
 
 type ActiveDates = Array<{
