@@ -1,10 +1,5 @@
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration/configuration.service";
-import {
-    OverwolfDataProviderService,
-    OWMatchInfo,
-    OWMatchInfoRoster,
-    OWMatchInfoTeammate,
-} from "@allfather-app/app/modules/core/overwolf-data-provider";
+import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoRoster, OWMatchInfoTeammate } from "@allfather-app/app/modules/core/overwolf";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { MatchRoster } from "@allfather-app/app/shared/models/match/match-roster";
 import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/match-roster-player";
@@ -26,7 +21,7 @@ type RosterPlayerDisconnection = { timestamp: Date; rosterPlayer: OWMatchInfoRos
  */
 @Injectable({
     providedIn: "root",
-    deps: [ConfigurationService, MatchService, MatchLegendSelectService, OverwolfDataProviderService, PlayerService],
+    deps: [ConfigurationService, MatchService, MatchLegendSelectService, OverwolfGameDataService, PlayerService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchRosterService", MatchRosterService, deps),
 })
 export class MatchRosterService implements OnDestroy {
@@ -67,7 +62,7 @@ export class MatchRosterService implements OnDestroy {
         private readonly config: ConfigurationService,
         private readonly match: MatchService,
         private readonly matchLegendSelect: MatchLegendSelectService,
-        private readonly overwolfData: OverwolfDataProviderService,
+        private readonly overwolfGameData: OverwolfGameDataService,
         private readonly player: PlayerService
     ) {
         this.rosterUpdate$ = this.setupRosterUpdate$();
@@ -116,7 +111,7 @@ export class MatchRosterService implements OnDestroy {
             };
         };
 
-        return this.overwolfData.infoUpdates$.pipe(
+        return this.overwolfGameData.infoUpdates$.pipe(
             takeUntil(this._unsubscribe$),
             filter((infoUpdate) => infoUpdate.feature === "roster"),
             map((infoUpdate) => infoUpdate.info.match_info),
@@ -168,7 +163,7 @@ export class MatchRosterService implements OnDestroy {
      * Update teams/players counters
      */
     private setupCounts(): void {
-        this.overwolfData.infoUpdates$
+        this.overwolfGameData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "match_info" && !!infoUpdate.info.match_info?.tabs),
@@ -260,7 +255,7 @@ export class MatchRosterService implements OnDestroy {
      * Mostly only useful for getting teammate's name, if primary source fails.
      */
     private setupTeammateRosterSecondary(): void {
-        this.overwolfData.infoUpdates$
+        this.overwolfGameData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "team"),

@@ -8,7 +8,7 @@ import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/m
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { OverwolfExposedDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
+import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { GamePhase } from "@allfather-app/app/shared/models/game-phase";
 import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/match-location";
@@ -37,7 +37,7 @@ export class GameDataPaneComponent implements OnInit {
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
-        private readonly overwolfExposedData: OverwolfExposedDataService,
+        private readonly exposedOverwolfData: ExposedOverwolfGameDataService,
         public readonly game: GameService,
         public readonly gameProcess: GameProcessService,
         public readonly match: MatchService,
@@ -121,7 +121,7 @@ export class GameDataPaneComponent implements OnInit {
             this.ultimatePercentOverride += 5;
         }
 
-        this.overwolfExposedData.injectOnInfoUpdates2({
+        this.exposedOverwolfData.injectOnInfoUpdates2({
             info: { me: { ultimate_cooldown: { ultimate_cooldown: this.ultimatePercentOverride } } },
             feature: "me",
         });

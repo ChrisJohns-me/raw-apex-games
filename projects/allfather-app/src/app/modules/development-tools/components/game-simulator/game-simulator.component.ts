@@ -1,6 +1,6 @@
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
-import { OWGameEvent } from "@allfather-app/app/modules/core/overwolf-data-provider";
-import { OverwolfExposedDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
+import { OWGameEvent } from "@allfather-app/app/modules/core/overwolf";
+import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/match-roster-player";
 import { isPlayerNameEqual } from "@allfather-app/app/shared/models/utilities/player";
@@ -43,7 +43,7 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
 
     constructor(
         private cdr: ChangeDetectorRef,
-        private readonly overwolfExposedData: OverwolfExposedDataService,
+        private readonly exposedOverwolfData: ExposedOverwolfGameDataService,
         private readonly player: PlayerService,
         public readonly matchRoster: MatchRosterService
     ) {}
@@ -245,12 +245,12 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
             if (!cmd) return;
             const commandFn =
                 cmd.command?.feature != null
-                    ? this.overwolfExposedData.injectOnInfoUpdates2
-                    : this.overwolfExposedData.injectOnNewGameEvents;
+                    ? this.exposedOverwolfData.injectOnInfoUpdates2
+                    : this.exposedOverwolfData.injectOnNewGameEvents;
 
             const startTimeDiff = differenceInMilliseconds(cmd.timestamp, firstTimestamp);
             setTimeout(() => {
-                commandFn.bind(this.overwolfExposedData)(cmd.command);
+                commandFn.bind(this.exposedOverwolfData)(cmd.command);
                 this.latestCommand = cmd;
                 this.cdr.detectChanges();
             }, startTimeDiff / speedAdjust);

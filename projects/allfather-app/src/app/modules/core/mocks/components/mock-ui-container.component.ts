@@ -1,5 +1,6 @@
 import { UIContainerComponent } from "@allfather-app/app/shared/components/ui-container/ui-container.component";
 import { APP_NAME } from "@allfather-app/app/shared/models/app";
+import { ConfigPositionUnit, ConfigPositionXAnchor, ConfigPositionYAnchor } from "@allfather-app/configs/config.interface";
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 
@@ -11,9 +12,13 @@ import { Title } from "@angular/platform-browser";
 })
 export class MockUIContainerComponent implements MockedClass<UIContainerComponent> {
     @Input() public injectBootstrapCSS = false;
+    @Input() public isContentDraggable = true;
     @Input() public isDesktopWindow = true;
     @Input() public isTitlebarDraggable = true;
-    @Input() public isContentDraggable = true;
+    @Input() public position: { top: number; left: number } = { top: 0, left: 0 };
+    @Input() public positionUnit: ConfigPositionUnit = "pixel";
+    @Input() public positionXAnchor: ConfigPositionXAnchor = "left";
+    @Input() public positionYAnchor: ConfigPositionYAnchor = "top";
     @Input() public set primaryTitle(value: string) {
         this.titleService.setTitle(`${APP_NAME} - ${value}`);
         this._primaryTitle = value;

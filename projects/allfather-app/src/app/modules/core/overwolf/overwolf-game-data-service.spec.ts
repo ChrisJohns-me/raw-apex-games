@@ -1,9 +1,9 @@
 import { TestBed } from "@angular/core/testing";
 import { TestScheduler } from "rxjs/testing";
-import { OverwolfDataProviderService } from "./overwolf-data-provider.service";
+import { OverwolfGameDataService } from "./overwolf-game-data.service";
 
-describe("OverwolfDataProviderService", () => {
-    let sut: OverwolfDataProviderService;
+describe("OverwolfGameDataService", () => {
+    let sut: OverwolfGameDataService;
     let scheduler: TestScheduler;
 
     beforeEach(async () => {
@@ -15,6 +15,6 @@ describe("OverwolfDataProviderService", () => {
     });
 
     beforeEach(() => {
-        sut = TestBed.inject(OverwolfDataProviderService);
+        sut = TestBed.inject(OverwolfGameDataService);
     });
 });

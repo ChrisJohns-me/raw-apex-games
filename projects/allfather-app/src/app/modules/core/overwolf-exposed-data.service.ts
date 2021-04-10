@@ -1,30 +1,31 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, Subject } from "rxjs";
-import { OverwolfDataProviderService, OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./overwolf-data-provider";
+import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./overwolf";
 
 /**
- * Avoid directly using this service, or the OverwolfDataProviderService
+ * Avoid directly using this service, or the OverwolfGameDataService
  */
 @Injectable({
     providedIn: "root",
-    deps: [OverwolfDataProviderService],
-    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("OverwolfExposedDataService", OverwolfExposedDataService, deps),
+    deps: [OverwolfGameDataService],
+    useFactory: (...deps: unknown[]) =>
+        SingletonServiceProviderFactory("ExposedOverwolfGameDataService", ExposedOverwolfGameDataService, deps),
 })
-export class OverwolfExposedDataService implements OnDestroy {
+export class ExposedOverwolfGameDataService implements OnDestroy {
     public get rawGameInfo$(): BehaviorSubject<Optional<OWRunningGameInfo>> {
-        return this.overwolfData.gameInfo$;
+        return this.overwolfGameData.gameInfo$;
     }
     public get rawInfoUpdates$(): Subject<OWInfoUpdates2Event> {
-        return this.overwolfData.infoUpdates$;
+        return this.overwolfGameData.infoUpdates$;
     }
     public get rawNewGameEvent$(): Subject<OWGameEvent> {
-        return this.overwolfData.newGameEvent$;
+        return this.overwolfGameData.newGameEvent$;
     }
 
     private readonly _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly overwolfData: OverwolfDataProviderService) {}
+    constructor(private readonly overwolfGameData: OverwolfGameDataService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();
@@ -36,14 +37,14 @@ export class OverwolfExposedDataService implements OnDestroy {
     }
 
     public injectOnGameInfo(gameInfo: OWRunningGameInfo): void {
-        this.overwolfData["gameInfoDelegate"].onGameInfo(gameInfo);
+        this.overwolfGameData["gameInfoDelegate"]["onGameInfo"](gameInfo);
     }
 
     public injectOnInfoUpdates2(infoUpdate: overwolf.games.events.InfoUpdates2Event): void {
-        this.overwolfData["infoUpdatesDelegate"].onInfoUpdates2(infoUpdate);
+        this.overwolfGameData["infoUpdatesDelegate"]["onInfoUpdates2"](infoUpdate);
     }
 
     public injectOnNewGameEvents(newGameEvent: overwolf.games.events.GameEvent): void {
-        this.overwolfData["newGameEventDelegate"].onNewGameEvents({ events: [newGameEvent] });
+        this.overwolfGameData["newGameEventDelegate"]["onNewGameEvents"]({ events: [newGameEvent] });
     }
 }

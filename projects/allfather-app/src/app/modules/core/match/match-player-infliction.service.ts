@@ -1,4 +1,4 @@
-import { OverwolfDataProviderService } from "@allfather-app/app/modules/core/overwolf-data-provider";
+import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { MatchInflictionEvent } from "@allfather-app/app/shared/models/match/match-infliction-event";
 import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/match-roster-player";
@@ -24,7 +24,7 @@ import { MatchRosterService } from "./match-roster.service";
         MatchPlayerService,
         MatchPlayerInventoryService,
         MatchRosterService,
-        OverwolfDataProviderService,
+        OverwolfGameDataService,
         PlayerService,
     ],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerInflictionService", MatchPlayerInflictionService, deps),
@@ -44,7 +44,7 @@ export class MatchPlayerInflictionService implements OnDestroy {
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
         private readonly matchRoster: MatchRosterService,
-        private readonly overwolfData: OverwolfDataProviderService,
+        private readonly overwolfGameData: OverwolfGameDataService,
         private readonly player: PlayerService
     ) {
         [this.myKillfeedEvent$, this.notMyKillfeedEvent$] = partition(
@@ -69,7 +69,7 @@ export class MatchPlayerInflictionService implements OnDestroy {
      * Damage events caused by the local player
      */
     private setupMyDamageEvents(): void {
-        this.overwolfData.newGameEvent$
+        this.overwolfGameData.newGameEvent$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((gameEvent) => gameEvent.name === "damage"),

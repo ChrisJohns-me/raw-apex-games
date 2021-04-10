@@ -14,13 +14,37 @@ export function createOverwolfSpyObj<T>(owObjPath: string, owMethodNames: string
     owObjPath = owObjPath.replace("overwolf.", "");
     const baseName = owObjPath.substring(owObjPath.lastIndexOf(".") + 1);
     const spyObj = jasmine.createSpyObj(baseName, owMethodNames);
-    const spiedObject = owObjPath
+    const spiedObj = createOverwolfObj(owObjPath, spyObj);
+    globalThis.overwolf = spiedObj;
+
+    return spyObj as jasmine.SpyObj<T>;
+}
+
+/**
+ * Creates an object at the specified overwolf path.
+ * Helpful to remove "overwolf is not defined" errors, or to insert spies.
+ * This will replace the "overwolf" global variable.
+ * @param {string} owObjPath base overwolf path to create; eg. overwolf.games.events.onInfoUpdates2
+ * @param {any} endObj Object to place at the end of the path; defaults to an empty object.
+ * @returns {overwolf} The entire overwolf global object that was injected.
+ * @example createOverwolfObj("overwolf.games.events.onInfoUpdates2.addListener", () => {});
+ * @example Create multiple objects
+ *  createOverwolfObj("overwolf.games.events.onInfoUpdates2", {
+ *      addListener: () => {},
+ *      removeListener: () => {}
+ *  });
+ */
+type OverwolfObj = typeof overwolf;
+export function createOverwolfObj(owObjPath?: string, endObj?: any): OverwolfObj {
+    if (!owObjPath) return (globalThis.overwolf = {} as OverwolfObj);
+
+    owObjPath = owObjPath!.replace("overwolf.", "");
+    const emptyObject = owObjPath
         .split(".")
         .reverse()
         .reduce((prev, curr) => {
             return { [curr]: prev };
-        }, spyObj as any);
-    globalThis.overwolf = spiedObject;
+        }, endObj ?? {});
 
-    return spyObj as jasmine.SpyObj<T>;
+    return (globalThis.overwolf = emptyObject);
 }

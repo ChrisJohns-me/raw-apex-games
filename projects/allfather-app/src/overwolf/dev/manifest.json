@@ -91,6 +91,10 @@
                 "max_size": {
                     "width": 200,
                     "height": 50
+                },
+                "start_position": {
+                    "top": 0,
+                    "left": 0
                 }
             },
             "in-game-infliction-insight": {

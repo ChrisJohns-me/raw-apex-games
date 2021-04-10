@@ -126,7 +126,38 @@
         },
         "overwolfQuirks": {
             "type": "object"
+        },
+        "uiContainers": {
+            "type": "object",
+            "properties": {
+                "inflictionInsight": {
+                    "type": "object",
+                    "properties": {
+                        "defaultPosition": {
+                            "type": "object",
+                            "properties": {
+                                "x": {
+                                    "type": "number"
+                                },
+                                "y": {
+                                    "type": "number"
+                                }
+                            }
+                        },
+                        "positionUnit": {
+                            "type": "string"
+                        },
+                        "positionXAnchor": {
+                            "type": "string"
+                        },
+                        "positionYAnchor": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
-    "required": ["featureFlags", "assumptions", "facts", "overwolfQuirks"]
+    "required": ["featureFlags", "assumptions", "facts", "overwolfQuirks"],
+    "additionalProperties": false
 }

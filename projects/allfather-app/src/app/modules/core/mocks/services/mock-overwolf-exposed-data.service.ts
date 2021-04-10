@@ -1,32 +1,32 @@
-import { OverwolfExposedDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
+import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
 import { BehaviorSubject, Subject } from "rxjs";
 
-export class MockOverwolfExposedDataService implements MockedClass<OverwolfExposedDataService> {
-    public rawGameInfo$: OverwolfExposedDataService["rawGameInfo$"] = new BehaviorSubject<
-        OverwolfExposedDataService["rawGameInfo$"]["value"]
+export class MockExposedOverwolfGameDataService implements MockedClass<ExposedOverwolfGameDataService> {
+    public rawGameInfo$: ExposedOverwolfGameDataService["rawGameInfo$"] = new BehaviorSubject<
+        ExposedOverwolfGameDataService["rawGameInfo$"]["value"]
     >(undefined);
-    public rawInfoUpdates$: OverwolfExposedDataService["rawInfoUpdates$"] = new Subject();
-    public rawNewGameEvent$: OverwolfExposedDataService["rawNewGameEvent$"] = new Subject();
+    public rawInfoUpdates$: ExposedOverwolfGameDataService["rawInfoUpdates$"] = new Subject();
+    public rawNewGameEvent$: ExposedOverwolfGameDataService["rawNewGameEvent$"] = new Subject();
 
     public start(): void {
         throw new Error("Method not implemented.");
     }
 
     public injectOnGameInfo(
-        ...args: Parameters<OverwolfExposedDataService["injectOnGameInfo"]>
-    ): ReturnType<OverwolfExposedDataService["injectOnGameInfo"]> {
+        ...args: Parameters<ExposedOverwolfGameDataService["injectOnGameInfo"]>
+    ): ReturnType<ExposedOverwolfGameDataService["injectOnGameInfo"]> {
         throw new Error("Method not implemented.");
     }
 
     public injectOnInfoUpdates2(
-        ...args: Parameters<OverwolfExposedDataService["injectOnInfoUpdates2"]>
-    ): ReturnType<OverwolfExposedDataService["injectOnInfoUpdates2"]> {
+        ...args: Parameters<ExposedOverwolfGameDataService["injectOnInfoUpdates2"]>
+    ): ReturnType<ExposedOverwolfGameDataService["injectOnInfoUpdates2"]> {
         throw new Error("Method not implemented.");
     }
 
     public injectOnNewGameEvents(
-        ...args: Parameters<OverwolfExposedDataService["injectOnNewGameEvents"]>
-    ): ReturnType<OverwolfExposedDataService["injectOnNewGameEvents"]> {
+        ...args: Parameters<ExposedOverwolfGameDataService["injectOnNewGameEvents"]>
+    ): ReturnType<ExposedOverwolfGameDataService["injectOnNewGameEvents"]> {
         throw new Error("Method not implemented.");
     }
 }

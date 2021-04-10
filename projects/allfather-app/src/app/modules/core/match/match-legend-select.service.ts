@@ -1,4 +1,4 @@
-import { OverwolfDataProviderService, OWMatchInfo, OWMatchInfoLegendSelect } from "@allfather-app/app/modules/core/overwolf-data-provider";
+import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoLegendSelect } from "@allfather-app/app/modules/core/overwolf";
 import { Legend } from "@allfather-app/app/shared/models/legend";
 import { MatchState } from "@allfather-app/app/shared/models/match/match-state";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
@@ -13,7 +13,7 @@ import { MatchService } from "./match.service";
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, OverwolfDataProviderService],
+    deps: [MatchService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchLegendSelectService", MatchLegendSelectService, deps),
 })
 export class MatchLegendSelectService implements OnDestroy {
@@ -24,7 +24,7 @@ export class MatchLegendSelectService implements OnDestroy {
     public readonly legendSelected$ = new Subject<{ playerName: string; legend: Legend }>();
 
     private readonly _unsubscribe$ = new Subject<void>();
-    constructor(private readonly match: MatchService, private readonly overwolfData: OverwolfDataProviderService) {}
+    constructor(private readonly match: MatchService, private readonly overwolfGameData: OverwolfGameDataService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();
@@ -39,7 +39,7 @@ export class MatchLegendSelectService implements OnDestroy {
         const teamUpdates$ = this.match.state$.pipe(
             takeUntil(this._unsubscribe$),
             filter((stateChanged) => stateChanged.state === MatchState.Inactive),
-            switchMap(() => this.overwolfData.infoUpdates$),
+            switchMap(() => this.overwolfGameData.infoUpdates$),
             filter((infoUpdate) => infoUpdate.feature === "team"),
             map((infoUpdate) => infoUpdate.info.match_info as OWMatchInfo)
         );

@@ -1,4 +1,4 @@
-import { OverwolfDataProviderService, OWGameEventKillFeed } from "@allfather-app/app/modules/core/overwolf-data-provider";
+import { OverwolfGameDataService, OWGameEventKillFeed } from "@allfather-app/app/modules/core/overwolf";
 import { WeaponItem } from "@allfather-app/app/shared/models/items/weapon-item";
 import { MatchInflictionEvent } from "@allfather-app/app/shared/models/match/match-infliction-event";
 import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/match-roster-player";
@@ -23,7 +23,7 @@ const KILLFEED_UNIQUE_TIMEFRAME = 3000; // Prevents duplicates from Primary & Se
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, MatchRosterService, OverwolfDataProviderService, PlayerService],
+    deps: [MatchService, MatchRosterService, OverwolfGameDataService, PlayerService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchActivityService", MatchActivityService, deps),
 })
 export class MatchActivityService implements OnDestroy {
@@ -35,7 +35,7 @@ export class MatchActivityService implements OnDestroy {
     constructor(
         private readonly match: MatchService,
         private readonly matchRoster: MatchRosterService,
-        private readonly overwolfData: OverwolfDataProviderService,
+        private readonly overwolfGameData: OverwolfGameDataService,
         private readonly player: PlayerService
     ) {}
 
@@ -96,7 +96,7 @@ export class MatchActivityService implements OnDestroy {
      * From the gameEvent name: "kill_feed"
      */
     private setupKillfeed(): void {
-        this.overwolfData.newGameEvent$
+        this.overwolfGameData.newGameEvent$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((gameEvent) => gameEvent.name === "kill_feed"),
@@ -135,7 +135,7 @@ export class MatchActivityService implements OnDestroy {
     private setupKillsAndKnockdowns(): void {
         type KillOrKnockdownData = overwolf.gep.ApexLegends.GameEventKill | overwolf.gep.ApexLegends.GameEventKnockdown;
 
-        this.overwolfData.newGameEvent$
+        this.overwolfGameData.newGameEvent$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((gameEvent) => gameEvent.name === "knockdown" || gameEvent.name === "kill"),

@@ -1,8 +1,4 @@
-import {
-    OverwolfDataProviderService,
-    OWInfoUpdates2Event,
-    OWMatchInfoMeInventory,
-} from "@allfather-app/app/modules/core/overwolf-data-provider";
+import { OverwolfGameDataService, OWInfoUpdates2Event, OWMatchInfoMeInventory } from "@allfather-app/app/modules/core/overwolf";
 import { InventorySlots } from "@allfather-app/app/shared/models/inventory-slots";
 import { Item } from "@allfather-app/app/shared/models/items/item";
 import { WeaponItem } from "@allfather-app/app/shared/models/items/weapon-item";
@@ -18,7 +14,7 @@ import { MatchService } from "./match.service";
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, OverwolfDataProviderService],
+    deps: [MatchService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerInventoryService", MatchPlayerInventoryService, deps),
 })
 export class MatchPlayerInventoryService implements OnDestroy {
@@ -32,8 +28,8 @@ export class MatchPlayerInventoryService implements OnDestroy {
     private inventoryInfoUpdates$: Observable<OWInfoUpdates2Event>;
     private readonly _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly match: MatchService, private readonly overwolfData: OverwolfDataProviderService) {
-        this.inventoryInfoUpdates$ = this.overwolfData.infoUpdates$.pipe(
+    constructor(private readonly match: MatchService, private readonly overwolfGameData: OverwolfGameDataService) {
+        this.inventoryInfoUpdates$ = this.overwolfGameData.infoUpdates$.pipe(
             takeUntil(this._unsubscribe$),
             filter((infoUpdate) => infoUpdate.feature === "inventory")
         );

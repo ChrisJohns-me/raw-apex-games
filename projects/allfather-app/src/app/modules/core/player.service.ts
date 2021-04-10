@@ -3,11 +3,11 @@ import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-se
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
-import { OverwolfDataProviderService, OWGameEventKillFeed } from "./overwolf-data-provider";
+import { OverwolfGameDataService, OWGameEventKillFeed } from "./overwolf";
 
 @Injectable({
     providedIn: "root",
-    deps: [OverwolfDataProviderService],
+    deps: [OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("PlayerService", PlayerService, deps),
 })
 export class PlayerService implements OnDestroy {
@@ -18,7 +18,7 @@ export class PlayerService implements OnDestroy {
     public readonly myName$ = new BehaviorSubject<Optional<string>>(undefined);
 
     private readonly _unsubscribe$ = new Subject<void>();
-    constructor(private readonly overwolfData: OverwolfDataProviderService) {}
+    constructor(private readonly overwolfGameData: OverwolfGameDataService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();
@@ -35,7 +35,7 @@ export class PlayerService implements OnDestroy {
             if (!isPlayerNameEqual(name, this.myName$.value)) this.myName$.next(name);
         };
 
-        this.overwolfData.infoUpdates$
+        this.overwolfGameData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "me" && !!infoUpdate.info.me?.name),
@@ -43,7 +43,7 @@ export class PlayerService implements OnDestroy {
             )
             .subscribe((myName) => setNameFn(myName));
 
-        this.overwolfData.newGameEvent$
+        this.overwolfGameData.newGameEvent$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((gameEvent) => gameEvent.name === "kill_feed"),

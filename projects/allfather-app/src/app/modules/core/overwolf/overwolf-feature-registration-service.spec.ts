@@ -1,8 +1,8 @@
 import { createOverwolfSpyObj } from "@allfather-app/app/shared/testing/helpers";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { TestScheduler } from "rxjs/testing";
-import { OverwolfFeatureRegistrationService } from "./overwolf-feature-registration.service";
-import { OWConfig, OW_CONFIG } from "./overwolf/overwolf-config";
+import { OWConfig, OW_CONFIG } from "./overwolf-config";
+import { OverwolfFeatureRegistrationService, OWFeatureRegistrationStatus } from "./overwolf-feature-registration.service";
 
 const mockOWConfig: OWConfig = {
     REQUIRED_FEATURES_RETRY_COUNT: 3,
@@ -55,29 +55,30 @@ describe("OverwolfFeatureRegistrationService", () => {
         expect(eventsSpy.setRequiredFeatures).toHaveBeenCalledTimes(3);
     }));
 
-    // it("provides registration status on success", (done) => {
-    //     scheduler.run(({ flush, cold, hot, expectObservable }) => {
-    //         // Arrange
-    //         const eventsSpy = createOverwolfSpyObj<typeof overwolf.games.events>("overwolf.games.events", ["setRequiredFeatures"]);
-    //         eventsSpy.setRequiredFeatures.and.callFake((features, callback) => {
-    //             callback({
-    //                 success: true,
-    //                 supportedFeatures: features,
-    //             });
-    //             done();
-    //         });
+    it("provides registration status on success", () => {
+        scheduler.run(({ cold, expectObservable }) => {
+            // Arrange
+            const eventsSpy = createOverwolfSpyObj<typeof overwolf.games.events>("overwolf.games.events", ["setRequiredFeatures"]);
+            eventsSpy.setRequiredFeatures.and.callFake((features, callback) => {
+                cold("5s -c").subscribe(() => {
+                    callback({
+                        success: true,
+                        supportedFeatures: features,
+                    });
+                });
+            });
 
-    //         // Act
-    //         cold("-----a").subscribe(() => {
-    //             sut.registerFeatures().subscribe();
-    //         });
+            // Act
+            cold("10s -b").subscribe(() => {
+                sut.registerFeatures().subscribe();
+            });
 
-    //         // Assert
-    //         expectObservable(sut.registrationStatus$).toBe("a----bc", {
-    //             a: OWFeatureRegistrationStatus.NOT_REGISTERED,
-    //             b: OWFeatureRegistrationStatus.IN_PROGRESS,
-    //             c: OWFeatureRegistrationStatus.SUCCESS,
-    //         });
-    //     });
-    // });
+            // Assert
+            expectObservable(sut.registrationStatus$).toBe("a 10s b 5s c", {
+                a: OWFeatureRegistrationStatus.NOT_REGISTERED,
+                b: OWFeatureRegistrationStatus.IN_PROGRESS,
+                c: OWFeatureRegistrationStatus.SUCCESS,
+            });
+        });
+    });
 });

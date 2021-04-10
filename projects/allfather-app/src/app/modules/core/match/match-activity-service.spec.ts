@@ -1,8 +1,8 @@
 import { MockMatchRosterService } from "@allfather-app/app/modules/core/mocks/services/mock-match-roster.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
-import { MockOverwolfDataProviderService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-data-provider.service";
+import { MockOverwolfGameDataService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-data-provider.service";
 import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-player.service";
-import { OverwolfDataProviderService } from "@allfather-app/app/modules/core/overwolf-data-provider";
+import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { MatchInflictionEvent } from "@allfather-app/app/shared/models/match/match-infliction-event";
 import { MatchRoster } from "@allfather-app/app/shared/models/match/match-roster";
@@ -27,7 +27,7 @@ describe("MatchActivityService", () => {
                 MatchActivityService,
                 { provide: MatchRosterService, useClass: MockMatchRosterService },
                 { provide: MatchService, useClass: MockMatchService },
-                { provide: OverwolfDataProviderService, useClass: MockOverwolfDataProviderService },
+                { provide: OverwolfGameDataService, useClass: MockOverwolfGameDataService },
                 { provide: PlayerService, useClass: MockPlayerService },
             ],
         });

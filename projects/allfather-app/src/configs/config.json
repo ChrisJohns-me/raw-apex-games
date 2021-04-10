@@ -37,5 +37,16 @@
         "playerDeathHUDTimeout": 30000,
         "matchEndHUDTimeout": 15000
     },
-    "overwolfQuirks": {}
+    "overwolfQuirks": {},
+    "uiContainers": {
+        "inflictionInsight": {
+            "defaultPosition": {
+                "x": 0.5,
+                "y": 0.95
+            },
+            "positionUnit": "percent",
+            "positionXAnchor": "left",
+            "positionYAnchor": "bottom"
+        }
+    }
 }

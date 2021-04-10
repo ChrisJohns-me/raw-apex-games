@@ -1,4 +1,4 @@
-import { OWGameEvent } from "@allfather-app/app/modules/core/overwolf-data-provider";
+import { OWGameEvent } from "@allfather-app/app/modules/core/overwolf";
 import { Subject } from "rxjs";
 import {
     isEmpty,
@@ -8,22 +8,36 @@ import {
     recursiveParseBoolean,
     recursiveParseNull,
 } from "shared/utilities";
+import { OverwolfEventListenerDelegate } from "../../overwolf-delegate";
 
-export class NewGameEventDelegate {
+export class NewGameEventDelegate implements OverwolfEventListenerDelegate {
+    public eventListeners = {
+        NEWGAMEEVENT: (e: overwolf.games.events.NewGameEvents): void => this.onNewGameEvents(e),
+    };
+
     public readonly newGameEvent$ = new Subject<OWGameEvent>();
+
+    public startEventListeners(): void {
+        this.stopEventListeners();
+        overwolf.games.events.onNewEvents.addListener((e) => this.eventListeners.NEWGAMEEVENT(e));
+    }
+
+    public stopEventListeners(): void {
+        overwolf.games.events.onNewEvents.removeListener(this.eventListeners.NEWGAMEEVENT);
+    }
 
     /**
      * Feature events: Kill feed, damage, etc.
-     * @param newGameEvent
+     * @param newGameEventList
      */
-    public onNewGameEvents(newGameEvent: overwolf.games.events.NewGameEvents): void {
-        console.debug(`[${this.constructor.name}] onNewEvents`, newGameEvent);
-        const events = newGameEvent?.events;
+    private onNewGameEvents(newGameEventList: overwolf.games.events.NewGameEvents): void {
+        console.debug(`[${this.constructor.name}] onNewEvents`, JSON.stringify(newGameEventList));
+        const events = newGameEventList?.events;
         if (!events || !Array.isArray(events)) {
             console.warn("Unrecognized event.", events);
             return;
         }
-        newGameEvent?.events?.forEach((e) => {
+        newGameEventList?.events?.forEach((e) => {
             const cleanedGameEvent = this.cleanGameEvent(e);
             if (cleanedGameEvent) this.newGameEvent$.next(cleanedGameEvent);
         });

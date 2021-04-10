@@ -1,4 +1,4 @@
-import { OverwolfDataProviderService, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf-data-provider";
+import { OverwolfGameDataService, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
 import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/match-location";
 import { MatchMapCoordinates } from "@allfather-app/app/shared/models/match/match-map-coordinates";
 import { TriggerConditions } from "@allfather-app/app/shared/models/utilities/trigger-conditions";
@@ -12,7 +12,7 @@ import { MatchService } from "./match.service";
 
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, OverwolfDataProviderService, MatchPlayerInventoryService],
+    deps: [MatchService, OverwolfGameDataService, MatchPlayerInventoryService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerLocationService", MatchPlayerLocationService, deps),
 })
 export class MatchPlayerLocationService implements OnDestroy {
@@ -31,7 +31,7 @@ export class MatchPlayerLocationService implements OnDestroy {
 
     constructor(
         private readonly match: MatchService,
-        private readonly overwolfData: OverwolfDataProviderService,
+        private readonly overwolfGameData: OverwolfGameDataService,
         private readonly playerInventory: MatchPlayerInventoryService
     ) {}
 
@@ -60,7 +60,7 @@ export class MatchPlayerLocationService implements OnDestroy {
     }
 
     private setupMyCoordinates(): void {
-        this.overwolfData.infoUpdates$
+        this.overwolfGameData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "location" && !!infoUpdate.info.match_info?.location),
@@ -92,7 +92,7 @@ export class MatchPlayerLocationService implements OnDestroy {
                 this.myLocationPhase$.value === MatchLocationPhase.Dropping && !!this.myLandingCoordinates$.value,
         });
 
-        this.overwolfData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
+        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
             const newPhase = triggers.triggeredFirstKey(infoUpdate, false);
             setNewLocationPhaseFn(newPhase);
         });

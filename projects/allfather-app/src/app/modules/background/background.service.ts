@@ -12,8 +12,8 @@ import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/m
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { OverwolfDataProviderService } from "@allfather-app/app/modules/core/overwolf-data-provider";
-import { OverwolfExposedDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
+import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
+import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
@@ -22,6 +22,7 @@ import { Subject } from "rxjs";
 @Injectable({
     providedIn: "root",
     deps: [
+        ExposedOverwolfGameDataService,
         GameService,
         GameProcessService,
         GoogleFormsMatchSummaryTrackerService,
@@ -36,8 +37,7 @@ import { Subject } from "rxjs";
         MatchPlayerLocationService,
         MatchPlayerStatsService,
         MatchRosterService,
-        OverwolfDataProviderService,
-        OverwolfExposedDataService,
+        OverwolfGameDataService,
         PlayerService,
     ],
     useFactory: (...deps: any[]) => SingletonServiceProviderFactory("BackgroundService", BackgroundService, deps),
@@ -46,6 +46,7 @@ export class BackgroundService implements OnDestroy {
     private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
+        private readonly exposedOverwolfData: ExposedOverwolfGameDataService,
         private readonly game: GameService,
         private readonly gameProcess: GameProcessService,
         private readonly googleFormsMatchSummaryTracker: GoogleFormsMatchSummaryTrackerService,
@@ -60,8 +61,7 @@ export class BackgroundService implements OnDestroy {
         private readonly matchPlayerLocation: MatchPlayerLocationService,
         private readonly matchPlayerStats: MatchPlayerStatsService,
         private readonly matchRoster: MatchRosterService,
-        private readonly overwolfDataProvider: OverwolfDataProviderService,
-        private readonly overwolfExposedData: OverwolfExposedDataService,
+        private readonly overwolfGameData: OverwolfGameDataService,
         private readonly player: PlayerService
     ) {}
 
@@ -72,8 +72,9 @@ export class BackgroundService implements OnDestroy {
 
     public startBackgroundServices(): void {
         console.debug(`[${this.constructor.name}] Starting Background Services`);
-        this.overwolfDataProvider.start();
+        this.overwolfGameData.start();
 
+        this.exposedOverwolfData.start();
         this.game.start();
         this.gameProcess.start();
         this.googleFormsMatchSummaryTracker.start();
@@ -88,7 +89,6 @@ export class BackgroundService implements OnDestroy {
         this.matchPlayerLocation.start();
         this.matchPlayerStats.start();
         this.matchRoster.start();
-        this.overwolfExposedData.start();
         this.player.start();
     }
 }

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
-import { BehaviorSubject, defer, from, Observable, of, throwError } from "rxjs";
+import { BehaviorSubject, bindCallback, defer, Observable, of, throwError } from "rxjs";
 import { catchError, delay, map, mergeMap, retryWhen, tap } from "rxjs/operators";
-import { OWConfig, OW_CONFIG } from "./overwolf/overwolf-config";
+import { OWConfig, OW_CONFIG } from "./overwolf-config";
 
 export enum OWFeatureRegistrationStatus {
     NOT_REGISTERED = "not_registered",
@@ -11,7 +11,8 @@ export enum OWFeatureRegistrationStatus {
 }
 
 /**
- * @classdesc
+ * @classdesc Overwolf registration hook; required before listening to events.
+ * @see https://overwolf.github.io/docs/topics/using-events#how-to-register-to-features
  */
 @Injectable({
     providedIn: "root",
@@ -27,7 +28,7 @@ export class OverwolfFeatureRegistrationService {
         this.registrationStatus$.next(OWFeatureRegistrationStatus.IN_PROGRESS);
         console.debug(`[${this.constructor.name}] Registering Overwolf features:`, this.config.REQUIRED_FEATURES);
 
-        return defer(() => from(this.createRequest())).pipe(
+        return defer(() => this.createRequest$()).pipe(
             retryWhen((errors) => this.retry$(errors)),
             map((features) => !!features?.length),
             tap((success) =>
@@ -47,13 +48,21 @@ export class OverwolfFeatureRegistrationService {
         this.registrationStatus$.next(OWFeatureRegistrationStatus.NOT_REGISTERED);
     }
 
-    private createRequest(): Promise<string[]> {
-        return new Promise<string[]>((resolve, reject) => {
-            overwolf.games.events.setRequiredFeatures(this.config.REQUIRED_FEATURES, (result?) => {
-                if (result.success) resolve(result.supportedFeatures ?? []);
-                else reject(result.error || (result as any).reason);
-            });
-        });
+    private createRequest$(): Observable<string[]> {
+        const getSetRequiredFeaturesObs = bindCallback(overwolf.games.events.setRequiredFeatures);
+        return getSetRequiredFeaturesObs(this.config.REQUIRED_FEATURES).pipe(
+            map((result) => {
+                if (result.success) return result.supportedFeatures ?? [];
+                else return result.error || (result as any).reason;
+            })
+        );
+
+        // return new Promise<string[]>((resolve, reject) => {
+        //     overwolf.games.events.setRequiredFeatures(this.config.REQUIRED_FEATURES, (result?) => {
+        //         if (result.success) resolve(result.supportedFeatures ?? []);
+        //         else reject(result.error || (result as any).reason);
+        //     });
+        // });
     }
 
     private retry$(errors: Observable<any>): Observable<any> {

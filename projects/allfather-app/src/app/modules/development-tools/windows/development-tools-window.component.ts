@@ -1,5 +1,5 @@
-import { OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf-data-provider";
-import { OverwolfExposedDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
+import { OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
+import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
 import { InflictionInsightWindowService } from "@allfather-app/app/modules/in-game/infliction-insight/windows/infliction-insight-window.service";
 import { MatchTimerWindowService } from "@allfather-app/app/modules/in-game/match-timer/windows/match-timer-window.service";
 import { UltTimerWindowService } from "@allfather-app/app/modules/in-game/ult-timer/windows/ult-timer-window.service";
@@ -53,10 +53,10 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
         private readonly inflictionInsightWindow: InflictionInsightWindowService,
         private readonly inGameUltTimerWindow: UltTimerWindowService,
         private readonly matchTimerWindow: MatchTimerWindowService,
-        private readonly overwolfExposedData: OverwolfExposedDataService
+        private readonly exposedOverwolfData: ExposedOverwolfGameDataService
     ) {
-        this.infoUpdates$ = this.overwolfExposedData.rawInfoUpdates$;
-        this.newGameEvent$ = this.overwolfExposedData.rawNewGameEvent$;
+        this.infoUpdates$ = this.exposedOverwolfData.rawInfoUpdates$;
+        this.newGameEvent$ = this.exposedOverwolfData.rawNewGameEvent$;
     }
 
     public ngOnInit(): void {

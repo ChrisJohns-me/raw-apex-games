@@ -18,9 +18,9 @@ import { MockMatchPlayerStatsService } from "@allfather-app/app/modules/core/moc
 import { MockMatchPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player.service";
 import { MockMatchRosterService } from "@allfather-app/app/modules/core/mocks/services/mock-match-roster.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
-import { MockOverwolfExposedDataService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-exposed-data.service";
+import { MockExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-exposed-data.service";
 import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-player.service";
-import { OverwolfExposedDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
+import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { GameDataPaneComponent } from "./game-data-pane.component";
@@ -34,7 +34,7 @@ describe("GameDataPaneComponent", () => {
             declarations: [GameDataPaneComponent],
             providers: [
                 { provide: GameService, useClass: MockGameService },
-                { provide: OverwolfExposedDataService, useClass: MockOverwolfExposedDataService },
+                { provide: ExposedOverwolfGameDataService, useClass: MockExposedOverwolfGameDataService },
                 { provide: GameProcessService, useClass: MockGameProcessService },
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: MatchMapService, useClass: MockMatchMapService },

@@ -7,14 +7,14 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { findValueByKeyRegEx, isEmpty } from "shared/utilities";
 import { MatchService } from "./match/match.service";
-import { OverwolfDataProviderService, OWInfoUpdates2Event } from "./overwolf-data-provider";
+import { OverwolfGameDataService, OWInfoUpdates2Event } from "./overwolf";
 
 /**
  * @classdesc Provides general information about the game and it's meta state
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, OverwolfDataProviderService],
+    deps: [MatchService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("GameService", GameService, deps),
 })
 export class GameService implements OnDestroy {
@@ -22,7 +22,7 @@ export class GameService implements OnDestroy {
 
     private readonly _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly match: MatchService, private readonly overwolfData: OverwolfDataProviderService) {}
+    constructor(private readonly match: MatchService, private readonly overwolfGameData: OverwolfGameDataService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();
@@ -45,7 +45,7 @@ export class GameService implements OnDestroy {
             [GamePhase.InGame]: (infoUpdate, matchState) => matchState === MatchState.Active,
         });
 
-        this.overwolfData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
+        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
             const newPhase = triggers.triggeredFirstKey(infoUpdate, undefined);
             setNewPhaseFn(newPhase);
         });

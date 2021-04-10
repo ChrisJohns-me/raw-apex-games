@@ -1,6 +1,7 @@
-import { from, Observable } from "rxjs";
-import { map, mergeMap } from "rxjs/operators";
+import { combineLatest, from, Observable, of } from "rxjs";
+import { filter, map, mergeMap, switchMap } from "rxjs/operators";
 
+export type MonitorDisplay = overwolf.utils.Display;
 export type UIWindowInfo = overwolf.windows.WindowInfo;
 type WindowIdResultCallback = overwolf.CallbackFunction<overwolf.windows.WindowIdResult>;
 type MessageBoxParams = overwolf.windows.MessageBoxParams;
@@ -43,6 +44,19 @@ export class UIWindow {
                     resolve(result.window);
                 } else {
                     reject(`Could not get current window. reason: ${result.error ?? JSON.stringify(result)}.`);
+                }
+            });
+        });
+        return from(promise);
+    }
+
+    public static getMonitors(): Observable<MonitorDisplay[]> {
+        const promise = new Promise<MonitorDisplay[]>((resolve, reject) => {
+            overwolf.utils.getMonitorsList((result?) => {
+                if (result && result.displays && Array.isArray(result.displays)) {
+                    resolve(result.displays);
+                } else {
+                    reject(`Could not get current window. reason: ${(result as any)?.error ?? JSON.stringify(result)}.`);
                 }
             });
         });
@@ -135,6 +149,18 @@ export class UIWindow {
 
     public getState(): Observable<WindowState> {
         return this.obtain().pipe(mergeMap((window) => this.getStateInternal(window.id)));
+    }
+
+    public getSize(): Observable<{ height: number; width: number }> {
+        return this.obtain().pipe(map((window) => ({ height: window.height, width: window.width })));
+    }
+
+    public getMonitor(): Observable<MonitorDisplay> {
+        return this.obtain().pipe(
+            switchMap((window) => combineLatest([of(window), UIWindow.getMonitors()])),
+            map(([window, monitors]) => monitors.find((m) => m.id === window.monitorId)),
+            filter((monitor) => !!monitor)
+        ) as Observable<MonitorDisplay>;
     }
 
     private obtain(): Observable<UIWindowInfo> {

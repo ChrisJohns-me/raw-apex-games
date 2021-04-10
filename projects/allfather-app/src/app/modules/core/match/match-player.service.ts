@@ -1,4 +1,4 @@
-import { OverwolfDataProviderService, OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf-data-provider";
+import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
 import { MatchState } from "@allfather-app/app/shared/models/match/match-state";
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { TriggerConditions } from "@allfather-app/app/shared/models/utilities/trigger-conditions";
@@ -10,7 +10,7 @@ import { MatchService } from "./match.service";
 
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, OverwolfDataProviderService],
+    deps: [MatchService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerService", MatchPlayerService, deps),
 })
 export class MatchPlayerService implements OnDestroy {
@@ -23,7 +23,7 @@ export class MatchPlayerService implements OnDestroy {
 
     private readonly _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly match: MatchService, private readonly overwolfData: OverwolfDataProviderService) {}
+    constructor(private readonly match: MatchService, private readonly overwolfGameData: OverwolfGameDataService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();
@@ -63,12 +63,12 @@ export class MatchPlayerService implements OnDestroy {
                 matchState === MatchState.Inactive || gameEvent?.name === "match_end",
         });
 
-        this.overwolfData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
+        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
             const newState = triggers.triggeredFirstKey(infoUpdate, undefined, undefined);
             setNewStateFn(newState);
         });
 
-        this.overwolfData.newGameEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe((gameEvent) => {
+        this.overwolfGameData.newGameEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe((gameEvent) => {
             const newState = triggers.triggeredFirstKey(undefined, gameEvent, undefined);
             setNewStateFn(newState);
         });

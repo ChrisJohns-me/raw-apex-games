@@ -1,3 +1,6 @@
+import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
+import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
+import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { of } from "rxjs";
 import { GameEventsLogComponent } from "./game-events-log.component";
@@ -9,6 +12,10 @@ describe("GameEventsLogComponent", () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [GameEventsLogComponent],
+            providers: [
+                { provide: ChangeDetectorRef, useValue: {} },
+                { provide: MatchService, useClass: MockMatchService },
+            ],
         }).compileComponents();
     });
 

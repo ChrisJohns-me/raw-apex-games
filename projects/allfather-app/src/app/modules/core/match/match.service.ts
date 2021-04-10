@@ -1,4 +1,4 @@
-import { OverwolfDataProviderService, OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf-data-provider";
+import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
 import { MatchGameMode } from "@allfather-app/app/shared/models/match/match-game-mode";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/shared/models/match/match-state";
 import { TriggerConditions } from "@allfather-app/app/shared/models/utilities/trigger-conditions";
@@ -12,7 +12,7 @@ import { filter, map, takeUntil } from "rxjs/operators";
  */
 @Injectable({
     providedIn: "root",
-    deps: [OverwolfDataProviderService],
+    deps: [OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchService", MatchService, deps),
 })
 export class MatchService implements OnDestroy {
@@ -32,7 +32,7 @@ export class MatchService implements OnDestroy {
     private currentStartDate?: Date;
     private readonly _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly overwolfData: OverwolfDataProviderService) {}
+    constructor(private readonly overwolfGameData: OverwolfGameDataService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();
@@ -85,12 +85,12 @@ export class MatchService implements OnDestroy {
             },
         });
 
-        this.overwolfData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
+        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
             const newState = triggers.triggeredFirstKey(this.state$.value.state, infoUpdate, undefined);
             newStateChangeFn(newState);
         });
 
-        this.overwolfData.newGameEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe((gameEvent) => {
+        this.overwolfGameData.newGameEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe((gameEvent) => {
             const newState = triggers.triggeredFirstKey(this.state$.value.state, undefined, gameEvent);
             newStateChangeFn(newState);
         });
@@ -99,7 +99,7 @@ export class MatchService implements OnDestroy {
     private setupGameMode(): void {
         const blacklistedGameModes = [/nametext/];
 
-        this.overwolfData.infoUpdates$
+        this.overwolfGameData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "match_info"),

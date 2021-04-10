@@ -1,7 +1,8 @@
-import { OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf-data-provider";
+import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
+import { OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { merge, Observable, Subject } from "rxjs";
-import { filter, takeUntil } from "rxjs/operators";
+import { delay, filter, takeUntil } from "rxjs/operators";
 import { cleanInt } from "shared/utilities";
 
 interface GameLog {
@@ -22,13 +23,20 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
 
     public gameLogArr: GameLog[] = [];
     public autoTrimLog = false;
-    public enableLogging = true;
+    public get enableLogging(): boolean {
+        return this._enableLogging;
+    }
+    public set enableLogging(value: boolean) {
+        if (!value) this.clearLog();
+        this._enableLogging = value;
+    }
     public autoScroll = true;
 
     private gameLogStartTime?: Date;
+    private _enableLogging = true;
     private _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef) {}
+    constructor(private readonly match: MatchService, private readonly cdr: ChangeDetectorRef) {}
 
     public ngOnInit(): void {
         this.setupAutoTrimLog();
@@ -46,7 +54,13 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
     }
 
     private setupAutoTrimLog(): void {
-        // TODO
+        this.match.endedEvent$
+            .pipe(
+                takeUntil(this._unsubscribe$),
+                filter(() => this.enableLogging && this.autoTrimLog),
+                delay(30000)
+            )
+            .subscribe(() => this.clearLog());
     }
 
     private setupLogSubscription(): void {

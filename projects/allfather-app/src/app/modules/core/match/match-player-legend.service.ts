@@ -1,4 +1,4 @@
-import { OverwolfDataProviderService } from "@allfather-app/app/modules/core/overwolf-data-provider";
+import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { Legend } from "@allfather-app/app/shared/models/legend";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
@@ -11,7 +11,7 @@ import { MatchService } from "./match.service";
 
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, MatchLegendSelectService, OverwolfDataProviderService, PlayerService],
+    deps: [MatchService, MatchLegendSelectService, OverwolfGameDataService, PlayerService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerLegendService", MatchPlayerLegendService, deps),
 })
 export class MatchPlayerLegendService implements OnDestroy {
@@ -26,7 +26,7 @@ export class MatchPlayerLegendService implements OnDestroy {
     constructor(
         private readonly match: MatchService,
         private readonly matchLegendSelect: MatchLegendSelectService,
-        private readonly overwolfData: OverwolfDataProviderService,
+        private readonly overwolfGameData: OverwolfGameDataService,
         private readonly player: PlayerService
     ) {}
 
@@ -68,7 +68,7 @@ export class MatchPlayerLegendService implements OnDestroy {
     }
 
     private setupMyUltimateCooldown(): void {
-        this.overwolfData.infoUpdates$
+        this.overwolfGameData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "me" && !!infoUpdate.info.me?.ultimate_cooldown),

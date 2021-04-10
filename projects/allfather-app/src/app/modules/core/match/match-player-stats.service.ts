@@ -1,4 +1,4 @@
-import { OverwolfDataProviderService } from "@allfather-app/app/modules/core/overwolf-data-provider";
+import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { MatchState } from "@allfather-app/app/shared/models/match/match-state";
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
@@ -14,7 +14,7 @@ import { MatchService } from "./match.service";
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, OverwolfDataProviderService, MatchPlayerService],
+    deps: [MatchService, OverwolfGameDataService, MatchPlayerService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerStatsService", MatchPlayerStatsService, deps),
 })
 export class MatchPlayerStatsService implements OnDestroy {
@@ -41,7 +41,7 @@ export class MatchPlayerStatsService implements OnDestroy {
 
     constructor(
         private readonly match: MatchService,
-        private readonly overwolfData: OverwolfDataProviderService,
+        private readonly overwolfGameData: OverwolfGameDataService,
         private readonly matchPlayer: MatchPlayerService
     ) {}
 
@@ -74,7 +74,7 @@ export class MatchPlayerStatsService implements OnDestroy {
             subject.next(newAmount);
         };
 
-        this.overwolfData.infoUpdates$
+        this.overwolfGameData.infoUpdates$
             .pipe(
                 filter((infoUpdate) => infoUpdate.feature === "match_info" && !!infoUpdate.info.match_info?.tabs),
                 map((infoUpdate) => infoUpdate.info.match_info?.tabs)
@@ -90,7 +90,7 @@ export class MatchPlayerStatsService implements OnDestroy {
     }
 
     private setupTotalDamageDealt(): void {
-        this.overwolfData.infoUpdates$
+        this.overwolfGameData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
                 filter((infoUpdate) => infoUpdate.feature === "damage" && !!infoUpdate.info.me?.totalDamageDealt),
@@ -108,7 +108,7 @@ export class MatchPlayerStatsService implements OnDestroy {
             .pipe(
                 takeUntil(this._unsubscribe$),
                 tap((stateChanged) => (stateChanged.state === MatchState.Active ? setVictoryFn(false) : null)),
-                switchMap(() => this.overwolfData.infoUpdates$),
+                switchMap(() => this.overwolfGameData.infoUpdates$),
                 filter(() => {
                     const myState = this.matchPlayer.myState$.value;
                     return myState !== PlayerState.Eliminated && myState !== PlayerState.Disconnected;
