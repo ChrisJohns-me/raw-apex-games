@@ -1,5 +1,5 @@
-import { OWRunningGameInfo } from "@allfather-app/app/modules/core/overwolf/types/overwolf-types";
 import { BehaviorSubject } from "rxjs";
+import { OWRunningGameInfo } from "../..";
 import { OverwolfEventListenerDelegate } from "../overwolf-delegate";
 
 export class GameInfoDelegate implements OverwolfEventListenerDelegate {

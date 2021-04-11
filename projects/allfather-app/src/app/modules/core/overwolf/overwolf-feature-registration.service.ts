@@ -22,24 +22,25 @@ export class OverwolfFeatureRegistrationService {
 
     constructor(@Inject(OW_CONFIG) private readonly config: OWConfig) {}
 
-    public registerFeatures(): Observable<boolean> {
-        if (this.registrationStatus$.value === OWFeatureRegistrationStatus.SUCCESS) return of(false);
-        if (this.registrationStatus$.value === OWFeatureRegistrationStatus.IN_PROGRESS) return of(false);
+    public registerFeatures(): Observable<OWFeatureRegistrationStatus> {
+        if (this.registrationStatus$.value === OWFeatureRegistrationStatus.SUCCESS) return of(OWFeatureRegistrationStatus.SUCCESS);
+        if (this.registrationStatus$.value === OWFeatureRegistrationStatus.IN_PROGRESS) return of(OWFeatureRegistrationStatus.IN_PROGRESS);
         this.registrationStatus$.next(OWFeatureRegistrationStatus.IN_PROGRESS);
         console.debug(`[${this.constructor.name}] Registering Overwolf features:`, this.config.REQUIRED_FEATURES);
 
         return defer(() => this.createRequest$()).pipe(
             retryWhen((errors) => this.retry$(errors)),
             map((features) => !!features?.length),
-            tap((success) =>
-                this.registrationStatus$.next(success ? OWFeatureRegistrationStatus.SUCCESS : OWFeatureRegistrationStatus.FAIL)
+            map(
+                (success): OWFeatureRegistrationStatus => (success ? OWFeatureRegistrationStatus.SUCCESS : OWFeatureRegistrationStatus.FAIL)
             ),
+            tap((status) => this.registrationStatus$.next(status)),
             catchError((error) => {
                 console.error(
                     `[${this.constructor.name}] Could not set Overwolf features: ${JSON.stringify(this.config.REQUIRED_FEATURES)}, ` +
                         `error: ${error?.message ?? JSON.stringify(error)}`
                 );
-                return of(false);
+                return of(OWFeatureRegistrationStatus.FAIL);
             })
         );
     }
@@ -56,13 +57,6 @@ export class OverwolfFeatureRegistrationService {
                 else return result.error || (result as any).reason;
             })
         );
-
-        // return new Promise<string[]>((resolve, reject) => {
-        //     overwolf.games.events.setRequiredFeatures(this.config.REQUIRED_FEATURES, (result?) => {
-        //         if (result.success) resolve(result.supportedFeatures ?? []);
-        //         else reject(result.error || (result as any).reason);
-        //     });
-        // });
     }
 
     private retry$(errors: Observable<any>): Observable<any> {

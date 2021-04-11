@@ -12,7 +12,7 @@ import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services
 import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/match-location";
 import { MatchState } from "@allfather-app/app/shared/models/match/match-state";
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
-import { FormatDistanceToNowStrictPipe } from "@allfather-app/app/shared/pipes/format-distance-to-now-strict.pipe";
+import { CustomFormatDistanceToNowPipe } from "@allfather-app/app/shared/pipes/custom-format-distance-to-now.pipe";
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { differenceInMilliseconds } from "date-fns";
@@ -35,7 +35,7 @@ describe("UltTimerWindowComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [UltTimerWindowComponent, MockUIContainerComponent, FormatDistanceToNowStrictPipe],
+            declarations: [UltTimerWindowComponent, MockUIContainerComponent, CustomFormatDistanceToNowPipe],
             providers: [
                 { provide: ChangeDetectorRef, useValue: {} },
                 { provide: ConfigurationService, useClass: MockConfigurationService },

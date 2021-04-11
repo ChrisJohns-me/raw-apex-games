@@ -1,7 +1,7 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Inject, Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, interval, merge, Subject } from "rxjs";
-import { distinctUntilChanged, filter, map, share, switchMap, takeUntil, tap } from "rxjs/operators";
+import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { InfoUpdatesDelegate } from "./api/games/events/info-updates-delegate";
 import { NewGameEventDelegate } from "./api/games/events/new-game-event-delegate";
 import { GameInfoDelegate } from "./api/games/game-info-delegate";
@@ -39,6 +39,7 @@ export class OverwolfGameDataService implements OnDestroy {
     //#endregion
 
     private isRunning$ = new BehaviorSubject<boolean>(false);
+    private delegateEventListenersStarted = false;
     private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
@@ -49,8 +50,7 @@ export class OverwolfGameDataService implements OnDestroy {
             .pipe(
                 takeUntil(this._unsubscribe$),
                 map((gameInfo) => gameInfo?.isRunning ?? false),
-                distinctUntilChanged(),
-                share()
+                distinctUntilChanged()
             )
             .subscribe((isRunning) => this.isRunning$.next(isRunning));
     }
@@ -80,6 +80,7 @@ export class OverwolfGameDataService implements OnDestroy {
         );
         merge(isRunningHealthcheck$, this.isRunning$)
             .pipe(
+                takeUntil(this._unsubscribe$),
                 filter(() => this.isRunning$.value),
                 switchMap(() => this.featureRegistration.registerFeatures())
             )
@@ -88,8 +89,10 @@ export class OverwolfGameDataService implements OnDestroy {
                     this.notRunning();
                     return;
                 }
-                this.startDelegateEventListeners();
-                console.debug(`[${this.constructor.name}] Overwolf Data Provider Service is ready.`);
+                if (!this.delegateEventListenersStarted) {
+                    this.startDelegateEventListeners();
+                    console.debug(`[${this.constructor.name}] Overwolf Data Provider Service is ready.`);
+                }
             });
     }
 
@@ -112,6 +115,7 @@ export class OverwolfGameDataService implements OnDestroy {
         this.gameInfoDelegate.startEventListeners();
         this.infoUpdatesDelegate.startEventListeners();
         this.newGameEventDelegate.startEventListeners();
+        this.delegateEventListenersStarted = true;
         console.debug(`[${this.constructor.name}] Game Delegate Event Listeners Started`);
     }
 
@@ -119,6 +123,7 @@ export class OverwolfGameDataService implements OnDestroy {
         this.gameInfoDelegate.stopEventListeners();
         this.infoUpdatesDelegate.stopEventListeners();
         this.newGameEventDelegate.stopEventListeners();
+        this.delegateEventListenersStarted = false;
         console.debug(`[${this.constructor.name}] Game Delegate Event Listeners Stopped`);
     }
     //#endregion

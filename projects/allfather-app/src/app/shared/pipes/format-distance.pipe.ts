@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
-import { formatDistanceStrict } from "date-fns";
+import { formatDistance } from "date-fns";
 
 /**
  * @param value The date expression: a `Date` object,  a number
@@ -10,17 +10,16 @@ import { formatDistanceStrict } from "date-fns";
  * @param roundingMethod which way to round partial units
  * @returns Return the distance between the given dates in words, using strict units. This is
  *  like formatDistance, but does not use helpers like 'almost', 'over', 'less than' and the like.
- * @see https://date-fns.org/docs/formatDistanceStrict
+ * @see https://date-fns.org/docs/formatDistance
  */
-@Pipe({ name: "formatDistanceStrict", pure: false })
-export class FormatDistanceStrictPipe implements PipeTransform {
+@Pipe({ name: "formatDistance", pure: false })
+export class FormatDistancePipe implements PipeTransform {
     transform(
         value: Date,
         baseDate: Date,
         addSuffix: boolean | undefined = undefined,
-        unit: "second" | "minute" | "hour" | "day" | "month" | "year" | undefined = undefined,
-        roundingMethod: "floor" | "ceil" | "round" | undefined = undefined
+        includeSeconds: boolean | undefined = undefined
     ): string {
-        return formatDistanceStrict(new Date(value), baseDate, { addSuffix, unit, roundingMethod });
+        return formatDistance(new Date(value), baseDate, { addSuffix, includeSeconds });
     }
 }
