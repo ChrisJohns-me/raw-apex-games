@@ -4,6 +4,7 @@ import { formatDistanceStrict } from "date-fns";
 /**
  * @param value The date expression: a `Date` object, a number
  * (milliseconds since UTC epoch), or an ISO string (https://www.w3.org/TR/NOTE-datetime).
+ * @param roundingMethod which way to round partial units
  * @param unitNaming Custom text to use for each unit.
  * @returns Return the distance between the given dates in words, using strict units. This is
  *  like formatDistance, but does not use helpers like 'almost', 'over', 'less than' and the like.
@@ -20,9 +21,10 @@ export class CustomFormatDistancePipe implements PipeTransform {
             hour?: string;
             minute?: string;
             second?: string;
-        }
+        },
+        roundingMethod?: "floor" | "ceil" | "round" | undefined
     ): string {
-        const customFormattedText = formatDistanceStrict(value, baseDate)
+        const customFormattedText = formatDistanceStrict(value, baseDate, { roundingMethod })
             .replace("year", unitNaming?.year ?? "year")
             .replace("years", unitNaming?.year ?? "year")
             .replace("month", unitNaming?.month ?? "month")
