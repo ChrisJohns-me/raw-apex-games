@@ -1,6 +1,6 @@
 {
     "name": "allfather",
-    "version": "0.0.1",
+    "version": "0.0.1-alpha.1",
     "scripts": {
         "test": "npm run app:test -- --watch=false && npm run web:test -- --watch=false && npm run shared:test -- --single-run",
         "shared:test": "karma start ./shared/karma.conf.js",
