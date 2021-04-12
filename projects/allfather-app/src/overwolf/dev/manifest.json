@@ -34,6 +34,23 @@
                 "file": "index.html",
                 "is_background_page": true
             },
+            "dashboard": {
+                "file": "index.html",
+                "desktop_only": true,
+                "native_window": true,
+                "resizable": true,
+                "transparent": true,
+                "override_on_update": true,
+                "show_in_taskbar": true,
+                "size": {
+                    "width": 1200,
+                    "height": 600
+                },
+                "min_size": {
+                    "width": 300,
+                    "height": 250
+                }
+            },
             "development-tools": {
                 "file": "index.html",
                 "desktop_only": true,
@@ -117,6 +134,23 @@
                     "width": 400,
                     "height": 455
                 }
+            },
+            "preferences": {
+                "file": "index.html",
+                "desktop_only": true,
+                "native_window": true,
+                "resizable": true,
+                "transparent": true,
+                "override_on_update": true,
+                "show_in_taskbar": true,
+                "size": {
+                    "width": 1200,
+                    "height": 600
+                },
+                "min_size": {
+                    "width": 300,
+                    "height": 250
+                }
             }
         },
         "game_targeting": {
@@ -163,7 +197,7 @@
         "disable_dt": false,
         "disable_cleanup": true,
         "developer": {
-            "enable_auto_refresh": false,
+            "enable_auto_refresh": true,
             "reload_delay": 1000,
             "filter": "*.*"
         }

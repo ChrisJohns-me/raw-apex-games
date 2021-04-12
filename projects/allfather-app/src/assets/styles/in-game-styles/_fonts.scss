@@ -1,3 +1,4 @@
+/** Quantico */
 @font-face {
     font-family: "Quantico";
     font-style: normal;
@@ -21,4 +22,18 @@
     font-style: italic;
     font-weight: 700;
     src: url("./../../fonts/Quantico-BoldItalic.ttf") format("truetype");
+}
+
+/** Play */
+@font-face {
+    font-family: "Play";
+    font-style: normal;
+    font-weight: 400;
+    src: url("./../../fonts/Play-Regular.ttf") format("truetype");
+}
+@font-face {
+    font-family: "Play";
+    font-style: normal;
+    font-weight: 700;
+    src: url("./../../fonts/Play-Bold.ttf") format("truetype");
 }

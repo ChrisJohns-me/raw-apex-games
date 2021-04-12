@@ -22,11 +22,11 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     @Input() public positionXAnchor: ConfigPositionXAnchor = "left";
     @Input() public positionYAnchor: ConfigPositionYAnchor = "top";
     @Input() public set primaryTitle(value: string) {
-        this.titleService.setTitle(`${APP_NAME} - ${value}`);
+        this.titleService.setTitle(`${value} - ${APP_NAME}`);
         this._primaryTitle = value;
     }
     public get primaryTitle(): string {
-        return this._primaryTitle;
+        return `${APP_NAME} - ${this._primaryTitle}`;
     }
     @Input() public secondaryTitle = "";
 

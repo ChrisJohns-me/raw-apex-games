@@ -1,4 +1,5 @@
-$titlebar-height: 1.75rem;
+@import "in-game-styles";
+$titlebar-height: 3rem;
 
 :host {
     display: flex;
@@ -14,15 +15,16 @@ $titlebar-height: 1.75rem;
         flex: 1 0;
 
         &.desktop-window {
-            background-color: white;
+            // ...
         }
     }
 }
 
 .titlebar {
     display: flex;
-    background: blue;
+    background: darkblue;
     height: $titlebar-height;
+    min-height: $titlebar-height;
     align-items: center;
 
     &-icon {
@@ -31,12 +33,14 @@ $titlebar-height: 1.75rem;
 
     &-primary-title,
     &-secondary-title {
+        font-family: "Play", sans-serif;
         flex: 1 0;
-        padding: 0 0.5rem;
+        padding: 0 1rem;
         color: white;
     }
 
     &-controls {
+        padding: 0 1rem;
         flex: 0 0;
     }
 }
@@ -45,15 +49,6 @@ $titlebar-height: 1.75rem;
 }
 
 .secondary-title {
-}
-
-.control-button {
-    margin: 0;
-    padding: 0 1rem;
-    font-size: 1.5rem;
-    // line-height: 100%;
-    line-height: $titlebar-height;
-    height: $titlebar-height;
 }
 
 .body {

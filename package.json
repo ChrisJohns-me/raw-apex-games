@@ -8,8 +8,6 @@
         "app:e2e": "ng e2e --project=allfatherApp",
         "app:build-dev": "ng build --watch --plugin ~./projects/allfather-app/webpack.partial.dev.js --project=allfatherApp",
         "app:build-prod": "ng build --prod --project=allfatherApp",
-        "app:livereload": "livereload ./dist/* -x manifest.json",
-        "app:dev": "concurrently --kill-others --names \"BUILD,TEST,LIVERELOAD\" \"npm run app:build-dev\" \"npm run app:livereload\"",
         "web:test": "ng test --project=allfatherWeb",
         "web:e2e": "ng e2e --project=allfatherWeb",
         "web:build-dev": "ng build --watch --project=allfatherWeb",

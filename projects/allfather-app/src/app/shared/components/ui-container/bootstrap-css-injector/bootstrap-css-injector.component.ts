@@ -9,7 +9,7 @@ import "bootstrap";
 @Component({
     selector: "app-bootstrap-css-injector",
     template: ``,
-    styleUrls: ["./_customize.scss", "./bootstrap.scss"],
+    styleUrls: ["./bootstrap.scss"],
     encapsulation: ViewEncapsulation.None,
 })
 export class BootstrapCSSInjectorComponent {

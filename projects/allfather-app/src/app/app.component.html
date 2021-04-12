@@ -3,9 +3,11 @@
         <app-background *ngSwitchCase="'background'"></app-background>
 
         <app-development-tools-window *ngSwitchCase="'development-tools'"></app-development-tools-window>
+        <app-dashboard-window *ngSwitchCase="'dashboard'"></app-dashboard-window>
         <app-in-game-match-timer-window *ngSwitchCase="'in-game-match-timer'"></app-in-game-match-timer-window>
         <app-in-game-ult-timer-window *ngSwitchCase="'in-game-ult-timer'"></app-in-game-ult-timer-window>
         <app-in-game-infliction-insight-window *ngSwitchCase="'in-game-infliction-insight'"></app-in-game-infliction-insight-window>
+        <app-preferences-window *ngSwitchCase="'preferences'"></app-preferences-window>
 
         <div *ngSwitchDefault>Could not match window with name: {{ winInfo.name }}</div>
     </ng-container>
