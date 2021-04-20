@@ -18,6 +18,8 @@ import { MatchService } from "../core/match/match.service";
 import { OverwolfGameDataService } from "../core/overwolf";
 import { ExposedOverwolfGameDataService } from "../core/overwolf-exposed-data.service";
 import { PlayerService } from "../core/player.service";
+import { ReportableDataManagerService } from "../core/reporting/reporting-engine/reportable-data-manager";
+import { ReportingService } from "../core/reporting/reporting.service";
 
 @Injectable({
     providedIn: "root",
@@ -39,6 +41,8 @@ import { PlayerService } from "../core/player.service";
         MatchRosterService,
         OverwolfGameDataService,
         PlayerService,
+        ReportableDataManagerService,
+        ReportingService,
     ],
     useFactory: (...deps: any[]) => SingletonServiceProviderFactory("BackgroundService", BackgroundService, deps),
 })
@@ -62,7 +66,9 @@ export class BackgroundService implements OnDestroy {
         private readonly matchPlayerStats: MatchPlayerStatsService,
         private readonly matchRoster: MatchRosterService,
         private readonly overwolfGameData: OverwolfGameDataService,
-        private readonly player: PlayerService
+        private readonly player: PlayerService,
+        private readonly reportableDataManager: ReportableDataManagerService,
+        private readonly reporting: ReportingService
     ) {}
 
     public ngOnDestroy(): void {
@@ -90,5 +96,7 @@ export class BackgroundService implements OnDestroy {
         this.matchPlayerStats.init();
         this.matchRoster.init();
         this.player.init();
+        this.reportableDataManager.init();
+        this.reporting.init();
     }
 }
