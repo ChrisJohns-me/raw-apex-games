@@ -24,7 +24,7 @@ import { UltTimerWindowComponent } from "./ult-timer-window.component";
 
 const percentsArr = [...Array(21).keys()].map((n) => n * 0.05); // 0 to 1 in 0.05 increments
 
-fdescribe("UltTimerWindowComponent", () => {
+describe("UltTimerWindowComponent", () => {
     let sut: UltTimerWindowComponent;
     let fixture: ComponentFixture<UltTimerWindowComponent>;
     let scheduler: TestScheduler;
