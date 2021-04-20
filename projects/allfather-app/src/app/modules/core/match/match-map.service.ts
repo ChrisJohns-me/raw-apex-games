@@ -1,5 +1,5 @@
-import { MatchMap } from "@allfather-app/app/shared/models/match/match-map";
-import { MatchMapList } from "@allfather-app/app/shared/models/match/match-map-list";
+import { MatchMap } from "@allfather-app/app/shared/models/match/map";
+import { MatchMapList } from "@allfather-app/app/shared/models/match/map-list";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, Subject } from "rxjs";
@@ -27,7 +27,7 @@ export class MatchMapService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         this.setupMap();
     }
 

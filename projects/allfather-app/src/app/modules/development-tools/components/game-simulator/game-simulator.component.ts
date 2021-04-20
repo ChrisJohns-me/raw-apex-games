@@ -2,13 +2,14 @@ import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-
 import { OWGameEvent } from "@allfather-app/app/modules/core/overwolf";
 import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/match-roster-player";
-import { isPlayerNameEqual } from "@allfather-app/app/shared/models/utilities/player";
+import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
 import { Subject } from "rxjs";
 import { JSONTryParse } from "shared/utilities";
+import { fullGame1Eventful } from "./simulations/full-game1-eventful";
+import { fullGame1Quick } from "./simulations/full-game1-quick";
 import { resetToInGame } from "./simulations/reset-to-in-game";
 import { resetToLobby } from "./simulations/reset-to-lobby";
 
@@ -25,16 +26,19 @@ interface Command {
 })
 export class GameSimulatorComponent implements OnInit, OnDestroy {
     public latestCommand?: Command;
-
+    public fullGameForm = new FormGroup({
+        speedAdjust: new FormControl(1),
+    });
+    public get speedAdjust(): number | undefined {
+        return this.fullGameForm.get("speedAdjust")?.value;
+    }
     public rosterActionsForm = new FormGroup({
         playerSelected: new FormControl(),
         damageAmount: new FormControl(20),
     });
-
     public get rosterPlayerSelected(): MatchRosterPlayer | undefined {
         return this.rosterActionsForm.get("playerSelected")?.value;
     }
-
     public get damageAmount(): number | undefined {
         return this.rosterActionsForm.get("damageAmount")?.value;
     }
@@ -57,13 +61,23 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         this._unsubscribe$.complete();
     }
 
+    public onPerformFullQuickGameClick(): void {
+        const commands = this.logToCommands(fullGame1Quick());
+        this.runCommands(commands);
+    }
+
+    public onPerformFullGameClick(speedAdjust?: number): void {
+        const commands = this.logToCommands(fullGame1Eventful());
+        this.runCommands(commands, speedAdjust);
+    }
+
     public onResetToInGameClick(): void {
-        const commands = this.logToCommands(resetToInGame);
+        const commands = this.logToCommands(resetToInGame());
         this.runCommands(commands);
     }
 
     public onResetToLobbyClick(): void {
-        const commands = this.logToCommands(resetToLobby);
+        const commands = this.logToCommands(resetToLobby());
         this.runCommands(commands);
     }
 
@@ -262,7 +276,7 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         if ((players?.length ?? 0) <= 1) return;
         const randomNum = Math.floor(Math.random() * players.length);
         const randomPlayer = players[randomNum];
-        if (isPlayerNameEqual(randomPlayer.name, this.player.myName$.value)) return this.getRandomPlayer();
+        if (randomPlayer.isMe) return this.getRandomPlayer();
         return randomPlayer;
     }
 }

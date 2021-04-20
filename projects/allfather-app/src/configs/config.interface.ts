@@ -25,6 +25,8 @@ export interface Facts {
     shieldMax: number;
     /** Max amount of health that is possible in the game */
     healthMax: number;
+    /** Largest ultimate ability cooldown time possible */
+    ultimateMaxCooldownTime: number;
 }
 
 /**
@@ -59,6 +61,10 @@ export interface FeatureConfigs {
         refreshTime: number;
         /** Number of percents to keep for calculation */
         maxHistoryCount: number;
+        /** Minimum percent amount of confidence that the ready date is deemed accurate */
+        highConfidenceAmount: number;
+        /** Minimum percent amount of confidence to display the ultimate timer at all */
+        lowConfidenceAmount: number;
     };
 }
 

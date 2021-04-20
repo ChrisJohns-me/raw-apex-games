@@ -40,9 +40,12 @@
                 },
                 "healthMax": {
                     "type": "integer"
+                },
+                "ultimateMaxCooldownTime": {
+                    "type": "integer"
                 }
             },
-            "required": ["shieldMax", "healthMax"]
+            "required": ["shieldMax", "healthMax", "ultimateMaxCooldownTime"]
         },
         "featureFlags": {
             "type": "object",
@@ -104,6 +107,12 @@
                             "type": "number"
                         },
                         "maxHistoryCount": {
+                            "type": "number"
+                        },
+                        "highConfidenceAmount": {
+                            "type": "number"
+                        },
+                        "lowConfidenceAmount": {
                             "type": "number"
                         }
                     },

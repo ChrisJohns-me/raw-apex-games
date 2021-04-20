@@ -1,23 +1,23 @@
-import { GameProcessService } from "@allfather-app/app/modules/core/game-process.service";
-import { GameService } from "@allfather-app/app/modules/core/game.service";
-import { GoogleFormsMatchSummaryTrackerService } from "@allfather-app/app/modules/core/google-forms-match-summary-tracker.service";
-import { MatchActivityService } from "@allfather-app/app/modules/core/match/match-activity.service";
-import { MatchLegendSelectService } from "@allfather-app/app/modules/core/match/match-legend-select.service";
-import { MatchMapService } from "@allfather-app/app/modules/core/match/match-map.service";
-import { MatchPlayerInflictionService } from "@allfather-app/app/modules/core/match/match-player-infliction.service";
-import { MatchPlayerInventoryService } from "@allfather-app/app/modules/core/match/match-player-inventory.service";
-import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
-import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
-import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/match-player-stats.service";
-import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
-import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
-import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
-import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
-import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
 import { Subject } from "rxjs";
+import { GameProcessService } from "../core/game-process.service";
+import { GameService } from "../core/game.service";
+import { GoogleFormsMatchSummaryTrackerService } from "../core/google-forms-match-summary-tracker.service";
+import { MatchActivityService } from "../core/match/match-activity.service";
+import { MatchLegendSelectService } from "../core/match/match-legend-select.service";
+import { MatchMapService } from "../core/match/match-map.service";
+import { MatchPlayerInflictionService } from "../core/match/match-player-infliction.service";
+import { MatchPlayerInventoryService } from "../core/match/match-player-inventory.service";
+import { MatchPlayerLegendService } from "../core/match/match-player-legend.service";
+import { MatchPlayerLocationService } from "../core/match/match-player-location.service";
+import { MatchPlayerStatsService } from "../core/match/match-player-stats.service";
+import { MatchPlayerService } from "../core/match/match-player.service";
+import { MatchRosterService } from "../core/match/match-roster.service";
+import { MatchService } from "../core/match/match.service";
+import { OverwolfGameDataService } from "../core/overwolf";
+import { ExposedOverwolfGameDataService } from "../core/overwolf-exposed-data.service";
+import { PlayerService } from "../core/player.service";
 
 @Injectable({
     providedIn: "root",
@@ -72,23 +72,23 @@ export class BackgroundService implements OnDestroy {
 
     public startBackgroundServices(): void {
         console.debug(`[${this.constructor.name}] Starting Background Services`);
-        this.overwolfGameData.start();
+        this.overwolfGameData.init();
 
-        this.exposedOverwolfData.start();
-        this.game.start();
-        this.gameProcess.start();
-        this.googleFormsMatchSummaryTracker.start();
-        this.match.start();
-        this.matchActivity.start();
-        this.matchLegendSelect.start();
-        this.matchMap.start();
-        this.matchPlayer.start();
-        this.matchPlayerInfliction.start();
-        this.matchPlayerInventory.start();
-        this.matchPlayerLegend.start();
-        this.matchPlayerLocation.start();
-        this.matchPlayerStats.start();
-        this.matchRoster.start();
-        this.player.start();
+        this.exposedOverwolfData.init();
+        this.game.init();
+        this.gameProcess.init();
+        this.googleFormsMatchSummaryTracker.init();
+        this.match.init();
+        this.matchActivity.init();
+        this.matchLegendSelect.init();
+        this.matchMap.init();
+        this.matchPlayer.init();
+        this.matchPlayerInfliction.init();
+        this.matchPlayerInventory.init();
+        this.matchPlayerLegend.init();
+        this.matchPlayerLocation.init();
+        this.matchPlayerStats.init();
+        this.matchRoster.init();
+        this.player.init();
     }
 }

@@ -1,4 +1,4 @@
-import { MockOverwolfGameDataService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-data-provider.service";
+import { MockOverwolfGameDataService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-game-data.service";
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { TestBed } from "@angular/core/testing";
 import { TestScheduler } from "rxjs/testing";

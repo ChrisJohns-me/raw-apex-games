@@ -162,6 +162,8 @@
                 "http://*.overwolf.com",
                 "https://*.overwolf.com",
                 "https://overwolf.github.io",
+                "https://*.tracker.gg",
+                "https://thetrackernetwork.com",
                 "https://*.google-analytics.com",
                 "http://*.google-analytics.com",
                 "https://www.googleapis.com",

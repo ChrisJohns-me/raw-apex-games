@@ -1,7 +1,7 @@
 import { wordsToUpperCase } from "shared/utilities/primitives/string";
 
 export class Legend {
-    constructor(public id?: string) {}
+    constructor(public legendId?: string) {}
 
     /**
      * Extracts a legend's name from in-game value.
@@ -9,8 +9,8 @@ export class Legend {
      * @returns "bangalore"
      */
     public get friendlyName(): string {
-        if (!this.id) return "";
-        let newLegendName = this.id.toLowerCase();
+        if (!this.legendId) return "";
+        let newLegendName = this.legendId.toLowerCase();
         newLegendName = newLegendName.replace(/#character_/g, "");
         newLegendName = newLegendName.replace(/_name/g, "");
         newLegendName = newLegendName.replace(/_/g, " ");

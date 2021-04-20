@@ -17,9 +17,9 @@ import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services
 import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-player.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { WeaponItem } from "@allfather-app/app/shared/models/items/weapon-item";
-import { MatchInflictionEvent, MatchInflictionEventAccum } from "@allfather-app/app/shared/models/match/match-infliction-event";
-import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/match-location";
-import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/shared/models/match/match-state";
+import { MatchInflictionEvent, MatchInflictionEventAccum } from "@allfather-app/app/shared/models/match/infliction-event";
+import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
+import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/shared/models/match/state";
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from "@angular/core/testing";
@@ -88,6 +88,7 @@ describe("InflictionInsightWindowComponent", () => {
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date(),
             state: MatchState.Active,
+            matchId: "test",
         };
 
         // Act
@@ -110,6 +111,7 @@ describe("InflictionInsightWindowComponent", () => {
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date(),
             state: MatchState.Active,
+            matchId: "test",
         };
         matchService.startedEvent$.next(startEvent);
         matchService.state$.next(startEvent);
@@ -132,6 +134,7 @@ describe("InflictionInsightWindowComponent", () => {
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date(),
             state: MatchState.Active,
+            matchId: "test",
         };
         matchService.startedEvent$.next(startEvent);
         matchService.state$.next(startEvent);
@@ -154,6 +157,7 @@ describe("InflictionInsightWindowComponent", () => {
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date(),
             state: MatchState.Active,
+            matchId: "test",
         };
         matchService.startedEvent$.next(startEvent);
         matchService.state$.next(startEvent);
@@ -176,11 +180,13 @@ describe("InflictionInsightWindowComponent", () => {
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date(),
             state: MatchState.Active,
+            matchId: "test",
         };
         const endEvent: MatchStateChangedEvent = {
             startDate: startEvent.startDate,
             endDate: new Date(),
             state: MatchState.Inactive,
+            matchId: "test",
         };
         matchService.startedEvent$.next(startEvent);
         matchService.state$.next(startEvent);
@@ -206,6 +212,7 @@ describe("InflictionInsightWindowComponent", () => {
             const startEvent: MatchStateChangedEvent = {
                 startDate: new Date(),
                 state: MatchState.Active,
+                matchId: "test",
             };
             config.assumptions.opponentShieldDefault = 76;
             config.assumptions.opponentHealthDefault = 101;
@@ -219,8 +226,8 @@ describe("InflictionInsightWindowComponent", () => {
             // Act
             const actualValue: MatchInflictionEvent = {
                 timestamp: new Date(),
-                victim: { name: "Victim1" },
-                attacker: { name: "Me" },
+                victim: { name: "Victim1", isMe: false },
+                attacker: { name: "Me", isMe: true },
                 hasShield: true,
                 isHeadshot: false,
                 shieldDamage: 27,
@@ -232,13 +239,13 @@ describe("InflictionInsightWindowComponent", () => {
             hot("a|", { a: actualValue }).subscribe(matchPlayerInflictionService.myDamageEvent$);
 
             const expectedInflictionAccum: MatchInflictionEventAccum = {
-                victim: { name: "Victim1" },
+                victim: { name: "Victim1", isMe: false },
                 shieldDamageSum: 27,
                 healthDamageSum: 0,
                 hasShield: true,
                 isKnocked: false,
                 isEliminated: false,
-                latestAttacker: { name: "Me" },
+                latestAttacker: { name: "Me", isMe: true },
                 latestTimestamp: new Date(),
             };
             const expectedValue: OpponentBanner[] = [
@@ -265,6 +272,7 @@ describe("InflictionInsightWindowComponent", () => {
             const startEvent: MatchStateChangedEvent = {
                 startDate: new Date(),
                 state: MatchState.Active,
+                matchId: "test",
             };
             config.assumptions.opponentShieldDefault = 26;
             config.assumptions.opponentHealthDefault = 92;
@@ -278,8 +286,8 @@ describe("InflictionInsightWindowComponent", () => {
             // Act
             const actualValue: MatchInflictionEvent = {
                 timestamp: new Date(),
-                victim: { name: "Victim1" },
-                attacker: { name: "Me" },
+                victim: { name: "Victim1", isMe: false },
+                attacker: { name: "Me", isMe: true },
                 hasShield: false,
                 isHeadshot: false,
                 shieldDamage: 0,
@@ -291,13 +299,13 @@ describe("InflictionInsightWindowComponent", () => {
             hot("a", { a: actualValue }).subscribe(matchPlayerInflictionService.myDamageEvent$);
 
             const expectedInflictionAccum: MatchInflictionEventAccum = {
-                victim: { name: "Victim1" },
+                victim: { name: "Victim1", isMe: false },
                 shieldDamageSum: 0,
                 healthDamageSum: 92,
                 hasShield: false,
                 isKnocked: true,
                 isEliminated: false,
-                latestAttacker: { name: "Me" },
+                latestAttacker: { name: "Me", isMe: true },
                 latestTimestamp: new Date(),
             };
             const expectedValue: OpponentBanner[] = [
@@ -324,6 +332,7 @@ describe("InflictionInsightWindowComponent", () => {
             const startEvent: MatchStateChangedEvent = {
                 startDate: new Date(),
                 state: MatchState.Active,
+                matchId: "test",
             };
             config.assumptions.opponentShieldDefault = 26;
             config.assumptions.opponentHealthDefault = 92;
@@ -337,8 +346,8 @@ describe("InflictionInsightWindowComponent", () => {
             // Act
             const actualValue: MatchInflictionEvent = {
                 timestamp: new Date(),
-                victim: { name: "Victim1" },
-                attacker: { name: "Me" },
+                victim: { name: "Victim1", isMe: false },
+                attacker: { name: "Me", isMe: true },
                 hasShield: false,
                 isHeadshot: false,
                 shieldDamage: 0,
@@ -350,13 +359,13 @@ describe("InflictionInsightWindowComponent", () => {
             hot("a", { a: actualValue }).subscribe(matchPlayerInflictionService.myDamageEvent$);
 
             const expectedInflictionAccum: MatchInflictionEventAccum = {
-                victim: { name: "Victim1" },
+                victim: { name: "Victim1", isMe: false },
                 shieldDamageSum: 0,
                 healthDamageSum: 92,
                 hasShield: false,
                 isKnocked: true,
                 isEliminated: true,
-                latestAttacker: { name: "Me" },
+                latestAttacker: { name: "Me", isMe: true },
                 latestTimestamp: new Date(),
             };
             const expectedValue: OpponentBanner[] = [
@@ -378,7 +387,7 @@ describe("InflictionInsightWindowComponent", () => {
 
     it("resets/hides damage aggregate sum to one opponent after a timeout period", fakeAsync(() => {
         // Arrange
-        const victim = { name: "ShieldANDHealthDamage" };
+        const victim = { name: "ShieldANDHealthDamage", isMe: false };
         config.assumptions.opponentShieldDefault = 26;
         config.assumptions.opponentHealthDefault = 92;
         config.facts.shieldMax = 151;
@@ -387,6 +396,7 @@ describe("InflictionInsightWindowComponent", () => {
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date("2020-01-01T00:00:00"),
             state: MatchState.Active,
+            matchId: "test",
         };
         jasmine.clock().mockDate(startEvent.startDate);
 
@@ -400,7 +410,7 @@ describe("InflictionInsightWindowComponent", () => {
         const baseDamageEvent: MatchInflictionEvent = {
             timestamp: damageTimestamp,
             victim: victim,
-            attacker: { name: "Me", teamId: 1 },
+            attacker: { name: "Me", isMe: true, teamId: 1 },
             hasShield: false,
             shieldDamage: 0,
             healthDamage: 0,
@@ -421,7 +431,7 @@ describe("InflictionInsightWindowComponent", () => {
             healthDamageSum: 102,
             isEliminated: false,
             isKnocked: false,
-            latestAttacker: { name: "Me", teamId: 1 },
+            latestAttacker: { name: "Me", isMe: true, teamId: 1 },
             latestTimestamp: damageTimestamp,
         };
         const expectedBannerList: OpponentBanner[] = [
@@ -447,6 +457,7 @@ describe("InflictionInsightWindowComponent", () => {
     //     const startEvent: MatchStateChangedEvent = {
     //         startDate: new Date("2020-01-01T00:00:00"),
     //         state: MatchState.Active,
+    //         matchId: "test"
     //     };
     //     jasmine.clock().mockDate(startEvent.startDate);
 

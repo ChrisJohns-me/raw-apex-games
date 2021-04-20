@@ -1,6 +1,6 @@
 import { OverwolfGameDataService, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
-import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/match-location";
-import { MatchMapCoordinates } from "@allfather-app/app/shared/models/match/match-map-coordinates";
+import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
+import { MatchMapCoordinates } from "@allfather-app/app/shared/models/match/map-coordinates";
 import { TriggerConditions } from "@allfather-app/app/shared/models/utilities/trigger-conditions";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
@@ -40,7 +40,7 @@ export class MatchPlayerLocationService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         this.setupMatchStateEvents();
         this.setupMyCoordinates();
         this.setupMyLocationPhase();

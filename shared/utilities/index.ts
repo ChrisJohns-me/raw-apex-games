@@ -1,4 +1,3 @@
-export * from "./primitives/array";
 export * from "./primitives/boolean";
 export * from "./primitives/json";
 export * from "./primitives/math";

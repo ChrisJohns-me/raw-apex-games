@@ -1,6 +1,6 @@
 import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoLegendSelect } from "@allfather-app/app/modules/core/overwolf";
 import { Legend } from "@allfather-app/app/shared/models/legend";
-import { MatchState } from "@allfather-app/app/shared/models/match/match-state";
+import { MatchState } from "@allfather-app/app/shared/models/match/state";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
 import { Subject } from "rxjs";
@@ -31,7 +31,7 @@ export class MatchLegendSelectService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         this.setupLegendSelected();
     }
 

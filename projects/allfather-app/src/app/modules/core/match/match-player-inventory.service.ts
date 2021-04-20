@@ -40,7 +40,7 @@ export class MatchPlayerInventoryService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         this.setupOnMatchStart();
         this.setupMyInventorySlots();
         this.setupMyInUseItem();

@@ -9,8 +9,8 @@ import { MockMatchPlayerLegendService } from "@allfather-app/app/modules/core/mo
 import { MockMatchPlayerLocationService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-location.service";
 import { MockMatchPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
-import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/match-location";
-import { MatchState } from "@allfather-app/app/shared/models/match/match-state";
+import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
+import { MatchState } from "@allfather-app/app/shared/models/match/state";
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { CustomFormatDistanceToNowPipe } from "@allfather-app/app/shared/pipes/custom-format-distance-to-now.pipe";
 import { ChangeDetectorRef } from "@angular/core";
@@ -81,7 +81,7 @@ describe("UltTimerWindowComponent", () => {
 
     it("should show when player has landed", fakeAsync(() => {
         // Arrange / Act
-        matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
+        matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
         matchService.startedEvent$.next(matchService.state$.value);
         matchPlayerService.myState$.next(PlayerState.Alive);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
@@ -93,7 +93,7 @@ describe("UltTimerWindowComponent", () => {
 
     it("should hide when player is knocked", fakeAsync(() => {
         // Arrange
-        matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
+        matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
         matchService.startedEvent$.next(matchService.state$.value);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
@@ -107,7 +107,7 @@ describe("UltTimerWindowComponent", () => {
 
     it("should hide when player is eliminated", fakeAsync(() => {
         // Arrange
-        matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
+        matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
         matchService.startedEvent$.next(matchService.state$.value);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
@@ -121,7 +121,7 @@ describe("UltTimerWindowComponent", () => {
 
     it("should hide when player is disconnected", fakeAsync(() => {
         // Arrange
-        matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
+        matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
         matchService.startedEvent$.next(matchService.state$.value);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
@@ -135,13 +135,13 @@ describe("UltTimerWindowComponent", () => {
 
     it("should hide when match is inactive", fakeAsync(() => {
         // Arrange
-        matchService.state$.next({ state: MatchState.Inactive, startDate: new Date() });
+        matchService.state$.next({ state: MatchState.Inactive, startDate: new Date(), matchId: "test" });
         matchService.startedEvent$.next(matchService.state$.value);
         matchPlayerService.myState$.next(PlayerState.Alive);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
         // Act
-        matchService.state$.next({ state: MatchState.Inactive, startDate: new Date(), endDate: new Date() });
+        matchService.state$.next({ state: MatchState.Inactive, startDate: new Date(), endDate: new Date(), matchId: "test" });
         matchService.endedEvent$.next(matchService.state$.value);
 
         const actual = sut.isVisible;
@@ -153,7 +153,7 @@ describe("UltTimerWindowComponent", () => {
     it("should have a property that returns true when the ultimate is ready", fakeAsync(() => {
         // Arrange
         jasmine.clock().mockDate(new Date("2020-01-01T00:00:00"));
-        matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
+        matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
         matchService.startedEvent$.next(matchService.state$.value);
         matchPlayerService.myState$.next(PlayerState.Alive);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
@@ -172,7 +172,7 @@ describe("UltTimerWindowComponent", () => {
     it("should have a property that returns false when the ultimate is NOT ready", fakeAsync(() => {
         // Arrange
         jasmine.clock().mockDate(new Date("2020-01-01T00:00:00"));
-        matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
+        matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
         matchService.startedEvent$.next(matchService.state$.value);
         matchPlayerService.myState$.next(PlayerState.Alive);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
@@ -195,7 +195,7 @@ describe("UltTimerWindowComponent", () => {
     it("should calculate time remaining accurately", fakeAsync(() => {
         // Arrange
         jasmine.clock().mockDate(new Date("2020-01-01T00:00:00"));
-        matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
+        matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
         matchService.startedEvent$.next(matchService.state$.value);
         matchPlayerService.myState$.next(PlayerState.Alive);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
@@ -229,7 +229,7 @@ describe("UltTimerWindowComponent", () => {
     it("should calculate time remaining with variance (approximately wihin 10 seconds)", fakeAsync(() => {
         // Arrange
         jasmine.clock().mockDate(new Date("2020-01-01T00:00:00"));
-        matchService.state$.next({ state: MatchState.Active, startDate: new Date() });
+        matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
         matchService.startedEvent$.next(matchService.state$.value);
         matchPlayerService.myState$.next(PlayerState.Alive);
         matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);

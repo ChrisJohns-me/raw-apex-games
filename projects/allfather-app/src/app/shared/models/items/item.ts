@@ -9,7 +9,7 @@ type ItemConstructor = {
 };
 
 export class Item {
-    public id?: string;
+    public itemId?: string;
     public friendlyName?: string;
     public imageName?: string;
 
@@ -72,12 +72,12 @@ export class Item {
 
         if (!foundItem) {
             console.warn(`Unable to find inventory item with name "${searchItemName}"`);
-            this.id = `unknown_${searchItemName}`;
+            this.itemId = `unknown_${searchItemName}`;
             this.friendlyName = `unknown_${searchItemName}`;
             return;
         }
 
-        this.id = foundItem.id;
+        this.itemId = foundItem.id;
         this.friendlyName = foundItem.friendlyName;
         // this.imageName = foundItem.imageName;
     }

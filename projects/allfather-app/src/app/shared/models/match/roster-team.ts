@@ -1,5 +1,5 @@
 import { PlayerState as TeamState } from "../player-state";
-import { MatchRosterPlayer } from "./match-roster-player";
+import { MatchRosterPlayer } from "./roster-player";
 
 export { TeamState };
 

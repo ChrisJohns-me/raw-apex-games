@@ -1,22 +1,34 @@
 import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/match-player-stats.service";
 import { BehaviorSubject } from "rxjs";
+import { ExtractSubjectType } from "shared/types/rxjs-utilities";
 
 export class MockMatchPlayerStatsService implements MockedClass<MatchPlayerStatsService> {
     public myEliminations$: MatchPlayerStatsService["myEliminations$"] = new BehaviorSubject<
-        MatchPlayerStatsService["myEliminations$"]["value"]
+        ExtractSubjectType<MatchPlayerStatsService["myEliminations$"]>
     >(0);
-    public myAssists$: MatchPlayerStatsService["myAssists$"] = new BehaviorSubject<MatchPlayerStatsService["myAssists$"]["value"]>(0);
-    public myDamage$: MatchPlayerStatsService["myDamage$"] = new BehaviorSubject<MatchPlayerStatsService["myDamage$"]["value"]>(0);
-    public myPlacement$: MatchPlayerStatsService["myPlacement$"] = new BehaviorSubject<MatchPlayerStatsService["myPlacement$"]["value"]>(0);
-    public victory$: MatchPlayerStatsService["victory$"] = new BehaviorSubject<MatchPlayerStatsService["victory$"]["value"]>(false);
-    public mySpectators$: MatchPlayerStatsService["mySpectators$"] = new BehaviorSubject<MatchPlayerStatsService["mySpectators$"]["value"]>(
+    public myAssists$: MatchPlayerStatsService["myAssists$"] = new BehaviorSubject<
+        ExtractSubjectType<MatchPlayerStatsService["myAssists$"]>
+    >(0);
+    public myDamage$: MatchPlayerStatsService["myDamage$"] = new BehaviorSubject<ExtractSubjectType<MatchPlayerStatsService["myDamage$"]>>(
         0
     );
+    public myPlacement$: MatchPlayerStatsService["myPlacement$"] = new BehaviorSubject<
+        ExtractSubjectType<MatchPlayerStatsService["myPlacement$"]>
+    >(0);
+    public victory$: MatchPlayerStatsService["victory$"] = new BehaviorSubject<ExtractSubjectType<MatchPlayerStatsService["victory$"]>>(
+        false
+    );
+    public mySpectators$: MatchPlayerStatsService["mySpectators$"] = new BehaviorSubject<
+        ExtractSubjectType<MatchPlayerStatsService["mySpectators$"]>
+    >(0);
     public myTotalDamageDealt$: MatchPlayerStatsService["myTotalDamageDealt$"] = new BehaviorSubject<
-        MatchPlayerStatsService["myTotalDamageDealt$"]["value"]
+        ExtractSubjectType<MatchPlayerStatsService["myTotalDamageDealt$"]>
+    >(0);
+    public myKnockdowns$: MatchPlayerStatsService["myKnockdowns$"] = new BehaviorSubject<
+        ExtractSubjectType<MatchPlayerStatsService["myKnockdowns$"]>
     >(0);
 
-    public start(): void {
+    public init(): void {
         throw new Error("Method not implemented.");
     }
 }

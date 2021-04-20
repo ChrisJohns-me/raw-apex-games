@@ -1,5 +1,5 @@
 import { wordsToUpperCase } from "shared/utilities/primitives/string";
-import { MatchMapCoordinates } from "./match-map-coordinates";
+import { MatchMapCoordinates } from "./map-coordinates";
 
 type ActiveDates = Array<{
     from: Date; // Useful to also cross-reference with the current date
@@ -14,14 +14,14 @@ export enum MatchMapId {
 }
 
 type MatchMapConstructor = {
-    id: string;
+    mapId: string;
     layoutId?: string;
     activeDates?: ActiveDates;
     dropshipZStart?: MatchMapCoordinates["z"];
 };
 
 export class MatchMap {
-    public id: string;
+    public mapId: string;
     public layoutId?: string; // Useful to reference map image
     public activeDates?: ActiveDates;
     public dropshipZStart?: MatchMapCoordinates["z"]; // Useful to cross-reference with starting location
@@ -30,8 +30,8 @@ export class MatchMap {
      * @returns "Kings Canyon"
      */
     public get friendlyName(): string {
-        if (!this.id) return "";
-        let newMapName = this.id.toLowerCase();
+        if (!this.mapId) return "";
+        let newMapName = this.mapId.toLowerCase();
         newMapName = newMapName.replace(/_/g, " ");
         newMapName = wordsToUpperCase(newMapName);
         return newMapName ?? "";
@@ -42,7 +42,7 @@ export class MatchMap {
     }
 
     constructor(ctor: MatchMapConstructor) {
-        this.id = ctor.id;
+        this.mapId = ctor.mapId;
         this.layoutId = ctor.layoutId;
         this.activeDates = ctor.activeDates;
         this.dropshipZStart = ctor.dropshipZStart;

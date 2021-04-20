@@ -1,5 +1,5 @@
 import { TestScheduler } from "rxjs/testing";
-import { MatchInflictionEvent, MatchInflictionEventAccum } from "../match/match-infliction-event";
+import { MatchInflictionEvent, MatchInflictionEventAccum } from "../match/infliction-event";
 import { InflictionAggregator } from "./infliction-aggregator";
 
 describe("InflictionAggregator", () => {
@@ -437,13 +437,13 @@ const createInfl = (
     knocked: boolean | undefined = undefined,
     elimination: boolean | undefined = undefined
 ): MatchInflictionEvent => ({
-    victim: victim ? { name: victim } : undefined!,
+    victim: victim ? { name: victim, isMe: false } : undefined!,
     shieldDamage: shield,
     healthDamage: health,
     hasShield: hasShield,
     isKnockdown: knocked,
     isElimination: elimination,
-    attacker: attacker ? { name: attacker } : undefined,
+    attacker: attacker ? { name: attacker, isMe: false } : undefined,
     timestamp: (time || time === 0) && !isNaN(time) ? new Date(time) : undefined!,
 });
 
@@ -457,12 +457,12 @@ const createInflAccum = (
     knocked: boolean | undefined = undefined,
     elimination: boolean | undefined = undefined
 ): MatchInflictionEventAccum => ({
-    victim: victim ? { name: victim } : undefined,
+    victim: victim ? { name: victim, isMe: false } : undefined,
     shieldDamageSum: shieldSum!,
     healthDamageSum: healthSum!,
     hasShield: hasShield!,
     isKnocked: knocked!,
     isEliminated: elimination!,
-    latestAttacker: attacker ? { name: attacker } : undefined,
+    latestAttacker: attacker ? { name: attacker, isMe: false } : undefined,
     latestTimestamp: (time || time === 0) && !isNaN(time) ? new Date(time) : undefined,
 });

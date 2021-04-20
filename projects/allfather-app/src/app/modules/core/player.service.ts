@@ -25,7 +25,7 @@ export class PlayerService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         this.setupMyName();
     }
 

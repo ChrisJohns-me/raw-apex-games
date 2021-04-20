@@ -32,7 +32,7 @@ export class ExposedOverwolfGameDataService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         // ...
     }
 

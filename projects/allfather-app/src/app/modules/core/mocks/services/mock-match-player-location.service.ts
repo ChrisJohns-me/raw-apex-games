@@ -1,24 +1,25 @@
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
 import { BehaviorSubject } from "rxjs";
+import { ExtractSubjectType } from "shared/types/rxjs-utilities";
 
 export class MockMatchPlayerLocationService implements MockedClass<MatchPlayerLocationService> {
     public myCoordinates$: MatchPlayerLocationService["myCoordinates$"] = new BehaviorSubject<
-        MatchPlayerLocationService["myCoordinates$"]["value"]
+        ExtractSubjectType<MatchPlayerLocationService["myCoordinates$"]>
     >(undefined);
     public myLocationPhase$: MatchPlayerLocationService["myLocationPhase$"] = new BehaviorSubject<
-        MatchPlayerLocationService["myLocationPhase$"]["value"]
+        ExtractSubjectType<MatchPlayerLocationService["myLocationPhase$"]>
     >(undefined);
     public myStartingCoordinates$: MatchPlayerLocationService["myStartingCoordinates$"] = new BehaviorSubject<
-        MatchPlayerLocationService["myStartingCoordinates$"]["value"]
+        ExtractSubjectType<MatchPlayerLocationService["myStartingCoordinates$"]>
     >(undefined);
     public myLandingCoordinates$: MatchPlayerLocationService["myLandingCoordinates$"] = new BehaviorSubject<
-        MatchPlayerLocationService["myLandingCoordinates$"]["value"]
+        ExtractSubjectType<MatchPlayerLocationService["myLandingCoordinates$"]>
     >(undefined);
     public myEndingCoordinates$: MatchPlayerLocationService["myEndingCoordinates$"] = new BehaviorSubject<
-        MatchPlayerLocationService["myEndingCoordinates$"]["value"]
+        ExtractSubjectType<MatchPlayerLocationService["myEndingCoordinates$"]>
     >(undefined);
 
-    public start(): void {
+    public init(): void {
         throw new Error("Method not implemented.");
     }
 }

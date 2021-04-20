@@ -1,7 +1,7 @@
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { MatchInflictionEvent } from "@allfather-app/app/shared/models/match/match-infliction-event";
-import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/match-roster-player";
+import { MatchInflictionEvent } from "@allfather-app/app/shared/models/match/infliction-event";
+import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { isPlayerNameEqual } from "@allfather-app/app/shared/models/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
@@ -31,9 +31,9 @@ import { MatchRosterService } from "./match-roster.service";
 })
 export class MatchPlayerInflictionService implements OnDestroy {
     /** Eliminations/knockdown event stream for the local user */
-    public myKillfeedEvent$: Observable<MatchInflictionEvent>;
+    public readonly myKillfeedEvent$: Observable<MatchInflictionEvent>;
     /** Eliminations/knockdown event stream for all players except the local user */
-    public notMyKillfeedEvent$: Observable<MatchInflictionEvent>;
+    public readonly notMyKillfeedEvent$: Observable<MatchInflictionEvent>;
     /** Damage event stream for the local user */
     public readonly myDamageEvent$ = new Subject<MatchInflictionEvent>();
 
@@ -49,10 +49,7 @@ export class MatchPlayerInflictionService implements OnDestroy {
     ) {
         [this.myKillfeedEvent$, this.notMyKillfeedEvent$] = partition(
             this.matchActivity.killfeedEvent$,
-            (killfeedEvent) =>
-                !isEmpty(killfeedEvent.victim.name) &&
-                isPlayerNameEqual(killfeedEvent.attacker?.name, this.player.myName$.value) &&
-                !isPlayerNameEqual(killfeedEvent.victim.name, this.player.myName$.value)
+            (killfeedEvent) => !isEmpty(killfeedEvent.victim.name) && !!killfeedEvent.attacker?.isMe && !killfeedEvent.victim.isMe
         );
     }
 
@@ -61,7 +58,7 @@ export class MatchPlayerInflictionService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         this.setupMyDamageEvents();
     }
 
@@ -83,7 +80,7 @@ export class MatchPlayerInflictionService implements OnDestroy {
                 if (!rawDamageEvent || !rawDamageEvent.targetName) return;
                 if (!this.player.myName$.value) return;
                 const matchRoster = this.matchRoster.matchRoster$.value;
-                const rosterMe = matchRoster.allPlayers.find((p) => isPlayerNameEqual(p.name, this.player.myName$.value));
+                const rosterMe = matchRoster.allPlayers.find((p) => p.isMe);
                 let rosterVictim = matchRoster.allPlayers.find((p) => isPlayerNameEqual(p.name, rawDamageEvent.targetName));
 
                 if (!rosterVictim) {
@@ -92,7 +89,7 @@ export class MatchPlayerInflictionService implements OnDestroy {
                         rawDamageEvent,
                         matchRoster
                     );
-                    rosterVictim = { name: rawDamageEvent.targetName } as MatchRosterPlayer;
+                    rosterVictim = { name: rawDamageEvent.targetName, isMe: false } as MatchRosterPlayer;
                 }
                 if (!rosterMe) {
                     console.error(

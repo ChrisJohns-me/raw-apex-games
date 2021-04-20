@@ -1,8 +1,8 @@
-import { MatchMap, MatchMapId } from "./match-map";
+import { MatchMap, MatchMapId } from "./map";
 
 export const MatchMapList: MatchMap[] = [
     new MatchMap({
-        id: MatchMapId.KingsCanyon,
+        mapId: MatchMapId.KingsCanyon,
         layoutId: "MU2_REV1",
         activeDates: [
             {
@@ -12,7 +12,7 @@ export const MatchMapList: MatchMap[] = [
         dropshipZStart: 234,
     }),
     new MatchMap({
-        id: MatchMapId.WorldsEdge,
+        mapId: MatchMapId.WorldsEdge,
         layoutId: "MU1_REV1",
         activeDates: [
             {
@@ -23,7 +23,7 @@ export const MatchMapList: MatchMap[] = [
         dropshipZStart: -Infinity, // Unknown
     }),
     new MatchMap({
-        id: MatchMapId.Olympus,
+        mapId: MatchMapId.Olympus,
         layoutId: "REV1",
         activeDates: [
             {

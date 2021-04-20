@@ -1,18 +1,19 @@
 import { MatchPlayerInventoryService } from "@allfather-app/app/modules/core/match/match-player-inventory.service";
 import { BehaviorSubject } from "rxjs";
+import { ExtractSubjectType } from "shared/types/rxjs-utilities";
 
 export class MockMatchPlayerInventoryService implements MockedClass<MatchPlayerInventoryService> {
     public myInUseItem$: MatchPlayerInventoryService["myInUseItem$"] = new BehaviorSubject<
-        MatchPlayerInventoryService["myInUseItem$"]["value"]
+        ExtractSubjectType<MatchPlayerInventoryService["myInUseItem$"]>
     >(undefined);
     public myWeaponSlots$: MatchPlayerInventoryService["myWeaponSlots$"] = new BehaviorSubject<
-        MatchPlayerInventoryService["myWeaponSlots$"]["value"]
+        ExtractSubjectType<MatchPlayerInventoryService["myWeaponSlots$"]>
     >({});
     public myInventorySlots$: MatchPlayerInventoryService["myInventorySlots$"] = new BehaviorSubject<
-        MatchPlayerInventoryService["myInventorySlots$"]["value"]
+        ExtractSubjectType<MatchPlayerInventoryService["myInventorySlots$"]>
     >({});
 
-    public start(): void {
+    public init(): void {
         throw new Error("Method not implemented.");
     }
 }

@@ -1,14 +1,15 @@
 import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
 import { BehaviorSubject, Subject } from "rxjs";
+import { ExtractSubjectType } from "shared/types/rxjs-utilities";
 
 export class MockExposedOverwolfGameDataService implements MockedClass<ExposedOverwolfGameDataService> {
     public rawGameInfo$: ExposedOverwolfGameDataService["rawGameInfo$"] = new BehaviorSubject<
-        ExposedOverwolfGameDataService["rawGameInfo$"]["value"]
+        ExtractSubjectType<ExposedOverwolfGameDataService["rawGameInfo$"]>
     >(undefined);
     public rawInfoUpdates$: ExposedOverwolfGameDataService["rawInfoUpdates$"] = new Subject();
     public rawNewGameEvent$: ExposedOverwolfGameDataService["rawNewGameEvent$"] = new Subject();
 
-    public start(): void {
+    public init(): void {
         throw new Error("Method not implemented.");
     }
 

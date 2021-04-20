@@ -1,13 +1,22 @@
 @import "in-game-styles";
 
 .timer-container {
-    color: white;
     display: inline-flex;
+    color: white;
     height: 100%;
     width: 100%;
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
+
+    &.no-confidence {
+        display: none;
+        opacity: 0;
+    }
+
+    &.low-confidence {
+        opacity: 0.25;
+    }
 }
 
 .timer-display {

@@ -6,11 +6,11 @@ import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { MatchInflictionEventAccum } from "@allfather-app/app/shared/models/match/match-infliction-event";
-import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/match-location";
-import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/match-roster-player";
-import { MatchRosterTeam } from "@allfather-app/app/shared/models/match/match-roster-team";
-import { MatchState } from "@allfather-app/app/shared/models/match/match-state";
+import { MatchInflictionEventAccum } from "@allfather-app/app/shared/models/match/infliction-event";
+import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
+import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
+import { MatchRosterTeam } from "@allfather-app/app/shared/models/match/roster-team";
+import { MatchState } from "@allfather-app/app/shared/models/match/state";
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { InflictionAggregator } from "@allfather-app/app/shared/models/utilities/infliction-aggregator";
 import { isPlayerNameEqual } from "@allfather-app/app/shared/models/utilities/player";
@@ -317,7 +317,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         currBanner.isIndirectBanner =
             (!inflEvent.shieldDamageSum || inflEvent.shieldDamageSum === 0) &&
             (!inflEvent.healthDamageSum || inflEvent.healthDamageSum === 0) &&
-            !isPlayerNameEqual(inflEvent.latestAttacker?.name, this.player.myName$.value);
+            !inflEvent.latestAttacker?.isMe;
         return currBanner;
     }
 

@@ -1,7 +1,7 @@
 import { OverwolfGameDataService, OWGameEventKillFeed } from "@allfather-app/app/modules/core/overwolf";
 import { WeaponItem } from "@allfather-app/app/shared/models/items/weapon-item";
-import { MatchInflictionEvent } from "@allfather-app/app/shared/models/match/match-infliction-event";
-import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/match-roster-player";
+import { MatchInflictionEvent } from "@allfather-app/app/shared/models/match/infliction-event";
+import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { isPlayerNameEqual } from "@allfather-app/app/shared/models/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
@@ -44,7 +44,7 @@ export class MatchActivityService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         this.setupOnMatchStart();
         this.setupKillfeed();
         this.setupKillsAndKnockdowns();
@@ -148,7 +148,7 @@ export class MatchActivityService implements OnDestroy {
                 const actionData = gameEvent.data as KillOrKnockdownData;
                 const allRosterPlayers = this.matchRoster.matchRoster$.value.allPlayers;
                 const victim = allRosterPlayers.find((p) => isPlayerNameEqual(p.name, actionData.victimName));
-                const attacker = allRosterPlayers.find((p) => isPlayerNameEqual(p.name, this.player.myName$.value));
+                const attacker = allRosterPlayers.find((p) => p.isMe);
                 const weapon = new WeaponItem({});
                 const isVictimKnocked = gameEvent.name === "knockdown";
                 const isVictimEliminated = gameEvent.name === "kill";

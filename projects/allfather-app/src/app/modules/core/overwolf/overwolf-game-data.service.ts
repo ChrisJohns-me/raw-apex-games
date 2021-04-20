@@ -62,7 +62,7 @@ export class OverwolfGameDataService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         this.startGameMonitorEventListeners();
         this.setupRunningCheck();
         this.setupNotRunningCheck();

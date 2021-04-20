@@ -18,6 +18,16 @@
             "inGameEventNameRegExPattern": "^Fall$"
         },
         {
+            "id": "killfeed_outofbounds",
+            "friendlyName": "Out of Bounds",
+            "inGameEventNameRegExPattern": "outofbounds"
+        },
+        {
+            "id": "killfeed_suicide",
+            "friendlyName": "Suicide",
+            "inGameEventNameRegExPattern": "suicide"
+        },
+        {
             "id": "killfeed_ring",
             "friendlyName": "Ring",
             "inGameEventNameRegExPattern": "^the Ring$"

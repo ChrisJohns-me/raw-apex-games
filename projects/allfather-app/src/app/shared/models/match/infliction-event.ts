@@ -1,5 +1,5 @@
 import { WeaponItem } from "../items/weapon-item";
-import { MatchRosterPlayer } from "./match-roster-player";
+import { MatchRosterPlayer } from "./roster-player";
 
 export interface MatchInflictionEvent {
     timestamp: Date;

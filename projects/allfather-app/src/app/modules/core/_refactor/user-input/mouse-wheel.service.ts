@@ -63,7 +63,7 @@
 //         );
 //     }
 
-//     public static start(): Observable<void> {
+//     public static init(): Observable<void> {
 //         return this.getExtension().pipe(
 //             mergeMap((extension) => {
 //                 const promise = new Promise<void>((resolve, reject) => {

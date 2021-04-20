@@ -1,4 +1,6 @@
-export const resetToInGame = `
+import { v4 as uuid } from "uuid";
+
+export const resetToInGame = (): string => `
 [2020-01-01 00:00:00.000 AM] {"info":{"me":{"name":"MasterKriff"}},"feature":"me"}
 [2020-01-01 00:00:00.500 AM] {"info":{"match_info":{"game_mode":"#PL_TRIO_RINGCOLLAPSE"}},"feature":"match_info"}
 [2020-01-01 00:00:01.200 AM] {"info":{"match_info":{"teammate_0":{"name":"MasterKriff","state":"alive"}}},"feature":"team"}
@@ -59,7 +61,7 @@ export const resetToInGame = `
 [2020-01-01 00:00:02.500 AM] {"info":{"match_info":{"legendSelect_0":{"playerName":"[Ktsu] BluePlasmaa","legendName":"#character_wraith_NAME","selectionOrder":"0","lead":false}}},"feature":"team"}
 [2020-01-01 00:00:02.750 AM] {"info":{"match_info":{"legendSelect_1":{"playerName":"[GOB] Strizer","legendName":"#character_horizon_NAME","selectionOrder":"1","lead":false}}},"feature":"team"}
 [2020-01-01 00:00:02.000 AM] {"info":{"match_info":{"legendSelect_2":{"playerName":"MasterKriff","legendName":"#character_octane_NAME","selectionOrder":"2","lead":true}}},"feature":"team"}
-[2020-01-01 00:00:03.100 AM] {"info":{"match_info":{"pseudo_match_id":"bcd32653-1541-4341-aec7-2f0e73213c73"}},"feature":"match_info"}
+[2020-01-01 00:00:03.100 AM] {"info":{"match_info":{"pseudo_match_id":"${uuid()}"}},"feature":"match_info"}
 [2020-01-01 00:00:03.200 AM] {"name":"match_start","data":""}
 [2020-01-01 00:00:04.250 AM] {"info":{"me":{"weapons":{}}},"feature":"inventory"}
 [2020-01-01 00:00:04.250 AM] {"info":{"me":{"inUse":{"inUse":""}}},"feature":"inventory"}

@@ -1,13 +1,8 @@
-import { Legend } from "@allfather-app/app/shared/models/legend";
-import { MatchGameMode } from "@allfather-app/app/shared/models/match/match-game-mode";
-import { MatchMap } from "@allfather-app/app/shared/models/match/match-map";
-import { MatchStateChangedEvent } from "@allfather-app/app/shared/models/match/match-state";
-import { MatchSummary } from "@allfather-app/app/shared/models/match/match-summary";
+import { MatchSummary } from "@allfather-app/app/shared/models/match/summary";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
-import { combineLatest, Observable, of, ReplaySubject, Subject } from "rxjs";
-import { catchError, delay, filter, map, retryWhen, switchMap, take, takeUntil, tap } from "rxjs/operators";
+import { ReplaySubject, Subject } from "rxjs";
 import { MatchMapService } from "./match/match-map.service";
 import { MatchPlayerLegendService } from "./match/match-player-legend.service";
 import { MatchPlayerStatsService } from "./match/match-player-stats.service";
@@ -68,7 +63,7 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         this.setupTracking();
     }
 
@@ -76,95 +71,93 @@ export class GoogleFormsMatchSummaryTrackerService implements OnDestroy {
         this._isTrackingEnabled = enabled;
     }
 
-    public reportMatchSummaryToGoogleForms(matchSummary: MatchSummary): Observable<{ success: boolean; error?: unknown }> {
-        const url = googleFormUrl;
-
-        const params = {
-            "entry.894638192": matchSummary.legend?.friendlyName ?? "",
-            "entry.424316428": matchSummary.map?.friendlyName ?? "",
-            "entry.606820101": matchSummary.gameMode?.friendlyName ?? "",
-            "entry.2001849655": String(matchSummary.placement ?? ""),
-            "entry.1889749617": String(matchSummary.damage ?? ""),
-            "entry.1895879894": String(matchSummary.eliminations ?? ""),
-        };
-
-        return this.httpClient
-            .get(url, { params, observe: "response", responseType: "text" })
-            .pipe(
-                takeUntil(this._unsubscribe$),
-                map((response) => ({
-                    success: response.ok,
-                    error: !response.ok ? response.statusText : undefined,
-                })),
-                retryWhen((errors) => errors.pipe(delay(RETRY_DELAY), take(MAX_RETRIES))),
-                catchError((err) => of({ success: false, error: err?.message }))
-            )
-            .pipe(tap(() => this.lastMatchSummary.next()));
+    public reportMatchSummaryToGoogleForms(matchSummary: MatchSummary): void {
+        // Observable<{ success: boolean; error?: unknown }> {
+        // const url = googleFormUrl;
+        // const params = {
+        //     "entry.894638192": matchSummary.legend?.friendlyName ?? "",
+        //     "entry.424316428": matchSummary.map?.friendlyName ?? "",
+        //     "entry.606820101": matchSummary.gameMode?.friendlyName ?? "",
+        //     "entry.2001849655": String(matchSummary.placement ?? ""),
+        //     "entry.1889749617": String(matchSummary.damage ?? ""),
+        //     "entry.1895879894": String(matchSummary.eliminations ?? ""),
+        // };
+        // return this.httpClient
+        //     .get(url, { params, observe: "response", responseType: "text" })
+        //     .pipe(
+        //         takeUntil(this._unsubscribe$),
+        //         map((response) => ({
+        //             success: response.ok,
+        //             error: !response.ok ? response.statusText : undefined,
+        //         })),
+        //         retryWhen((errors) => errors.pipe(delay(RETRY_DELAY), take(MAX_RETRIES))),
+        //         catchError((err) => of({ success: false, error: err?.message }))
+        //     )
+        //     .pipe(tap(() => this.lastMatchSummary.next()));
     }
 
     private setupTracking(): void {
-        let isTracking = false;
-        let isReportTriggered = false;
-
-        this.match.endedEvent$
-            .pipe(
-                takeUntil(this._unsubscribe$),
-                switchMap(() =>
-                    combineLatest<[Legend, MatchMap, MatchGameMode, number, number, number, MatchStateChangedEvent]>([
-                        this.matchPlayerLegend.myLegend$,
-                        this.matchMap.map$,
-                        this.match.gameMode$,
-                        this.matchPlayerStats.myPlacement$,
-                        this.matchPlayerStats.myEliminations$,
-                        this.matchPlayerStats.myDamage$,
-                        this.match.state$,
-                    ])
-                ),
-                filter(() => {
-                    const isTrackingEnabled = this.isTrackingEnabled;
-                    if (!isTrackingEnabled && (isTracking || isReportTriggered)) {
-                        isTracking = isReportTriggered = false;
-                        delete this.unreportedMatchSummary;
-                    }
-                    return isTrackingEnabled;
-                }),
-                tap(([legend, gameMap, gameMode, placement, eliminations, damage, matchState]) => {
-                    const matchDurationMs =
-                        !!matchState.endDate && !!matchState.startDate
-                            ? matchState.endDate?.getTime() - matchState.startDate?.getTime()
-                            : undefined;
-                    this.unreportedMatchSummary = {
-                        eliminations: eliminations,
-                        legend: legend,
-                        damage: damage,
-                        map: gameMap,
-                        placement: placement,
-                        gameMode: gameMode ?? undefined,
-                        durationMs: matchDurationMs,
-                    };
-                }),
-                filter(() => isTracking && isReportTriggered),
-                switchMap(() => this.reportMatchSummary(this.unreportedMatchSummary))
-            )
-            .subscribe((result) => {
-                console.debug("Match Summary Tracked:", result.success);
-                delete this.unreportedMatchSummary;
-            });
+        // let isTracking = false;
+        // let isReportTriggered = false;
+        // this.match.endedEvent$
+        //     .pipe(
+        //         takeUntil(this._unsubscribe$),
+        //         switchMap(() =>
+        //             combineLatest<[Legend, MatchMap, MatchGameMode, number, number, number, MatchStateChangedEvent]>([
+        //                 this.matchPlayerLegend.myLegend$,
+        //                 this.matchMap.map$,
+        //                 this.match.gameMode$,
+        //                 this.matchPlayerStats.myPlacement$,
+        //                 this.matchPlayerStats.myEliminations$,
+        //                 this.matchPlayerStats.myDamage$,
+        //                 this.match.state$,
+        //             ])
+        //         ),
+        //         filter(() => {
+        //             const isTrackingEnabled = this.isTrackingEnabled;
+        //             if (!isTrackingEnabled && (isTracking || isReportTriggered)) {
+        //                 isTracking = isReportTriggered = false;
+        //                 delete this.unreportedMatchSummary;
+        //             }
+        //             return isTrackingEnabled;
+        //         }),
+        //         tap(([legend, gameMap, gameMode, placement, eliminations, damage, matchState]) => {
+        //             const matchDurationMs =
+        //                 !!matchState.endDate && !!matchState.startDate
+        //                     ? matchState.endDate?.getTime() - matchState.startDate?.getTime()
+        //                     : undefined;
+        //             this.unreportedMatchSummary = {
+        //                 eliminations: eliminations,
+        //                 legend: legend,
+        //                 damage: damage,
+        //                 map: gameMap,
+        //                 placement: placement,
+        //                 gameMode: gameMode ?? undefined,
+        //                 durationMs: matchDurationMs,
+        //             };
+        //         }),
+        //         filter(() => isTracking && isReportTriggered),
+        //         switchMap(() => this.reportMatchSummary(this.unreportedMatchSummary))
+        //     )
+        //     .subscribe((result) => {
+        //         console.debug("Match Summary Tracked:", result.success);
+        //         delete this.unreportedMatchSummary;
+        //     });
     }
 
-    private reportMatchSummary(summary?: MatchSummary): Observable<{ success: boolean }> {
-        if (!this.isTrackingEnabled) return of();
-        if (!summary || !summary.legend || (summary.placement ?? 0) <= 0)
-            return of({ success: false, error: new Error("Missing Match Summary when attempting to track.") });
-
-        return this.reportMatchSummaryToGoogleForms(summary).pipe(
-            tap((response) => {
-                if (response.success) {
-                    this.lastMatchSummary.next(summary);
-                } else {
-                    alert("Tried to track match summary, got an error:\n" + response.error);
-                }
-            })
-        );
+    private reportMatchSummary(summary?: MatchSummary): void {
+        // Observable<{ success: boolean }> {
+        // if (!this.isTrackingEnabled) return of();
+        // if (!summary || !summary.legend || (summary.placement ?? 0) <= 0)
+        //     return of({ success: false, error: new Error("Missing Match Summary when attempting to track.") });
+        // return this.reportMatchSummaryToGoogleForms(summary).pipe(
+        //     tap((response) => {
+        //         if (response.success) {
+        //             this.lastMatchSummary.next(summary);
+        //         } else {
+        //             alert("Tried to track match summary, got an error:\n" + response.error);
+        //         }
+        //     })
+        // );
     }
 }

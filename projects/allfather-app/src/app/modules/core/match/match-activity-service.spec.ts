@@ -1,13 +1,13 @@
 import { MockMatchRosterService } from "@allfather-app/app/modules/core/mocks/services/mock-match-roster.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
-import { MockOverwolfGameDataService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-data-provider.service";
+import { MockOverwolfGameDataService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-game-data.service";
 import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-player.service";
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { MatchInflictionEvent } from "@allfather-app/app/shared/models/match/match-infliction-event";
-import { MatchRoster } from "@allfather-app/app/shared/models/match/match-roster";
-import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/match-roster-player";
-import { MatchState } from "@allfather-app/app/shared/models/match/match-state";
+import { MatchInflictionEvent } from "@allfather-app/app/shared/models/match/infliction-event";
+import { MatchRoster } from "@allfather-app/app/shared/models/match/roster";
+import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
+import { MatchState } from "@allfather-app/app/shared/models/match/state";
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { TestScheduler } from "rxjs/testing";
@@ -47,11 +47,11 @@ describe("MatchActivityService", () => {
             jasmine.clock().mockDate(new Date(0));
             const matchRoster = new MatchRoster();
             matchRosterService.matchRoster$.next(matchRoster);
-            const actualPlayer: MatchRosterPlayer = { name: "" };
+            const actualPlayer: MatchRosterPlayer = { name: "", isMe: false };
             tick(5000);
             const matchStartDate = new Date();
-            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active });
-            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active });
+            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
+            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
 
             // Act
             const actual = sut.playerLastKnownState(actualPlayer);
@@ -65,11 +65,11 @@ describe("MatchActivityService", () => {
             jasmine.clock().mockDate(new Date(0));
             const matchRoster = new MatchRoster();
             matchRosterService.matchRoster$.next(matchRoster);
-            const actualPlayer: MatchRosterPlayer = { name: "NonExistantPlayer", teamId: 0 };
+            const actualPlayer: MatchRosterPlayer = { name: "NonExistantPlayer", teamId: 0, isMe: false };
             tick(5000);
             const matchStartDate = new Date();
-            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active });
-            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active });
+            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
+            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
 
             // Act
             const actual = sut.playerLastKnownState(actualPlayer);
@@ -82,15 +82,15 @@ describe("MatchActivityService", () => {
             // Arrange
             jasmine.clock().mockDate(new Date(0));
             const matchRoster = new MatchRoster();
-            const actualPlayer: MatchRosterPlayer = { name: "Alive Player", teamId: 0 };
-            matchRoster.addPlayer({ name: "Player1", teamId: 0 });
-            matchRoster.addPlayer({ name: "Player2", teamId: 0 });
-            matchRoster.addPlayer({ name: "Player3", teamId: 0 });
+            const actualPlayer: MatchRosterPlayer = { name: "Alive Player", teamId: 0, isMe: false };
+            matchRoster.addPlayer({ name: "Player1", teamId: 0, isMe: false });
+            matchRoster.addPlayer({ name: "Player2", teamId: 0, isMe: false });
+            matchRoster.addPlayer({ name: "Player3", teamId: 0, isMe: false });
             matchRoster.addPlayer(actualPlayer);
             tick(5000);
             const matchStartDate = new Date();
-            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active });
-            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active });
+            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
+            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
             matchRosterService.matchRoster$.next(matchRoster);
             tick(10000);
 
@@ -109,15 +109,15 @@ describe("MatchActivityService", () => {
             // Arrange
             jasmine.clock().mockDate(new Date(0));
             const matchRoster = new MatchRoster();
-            const actualPlayer: MatchRosterPlayer = { name: "Alive Player", teamId: 0 };
-            matchRoster.addPlayer({ name: "Player1", teamId: 0 });
-            matchRoster.addPlayer({ name: "Player2", teamId: 0 });
-            matchRoster.addPlayer({ name: "Player3", teamId: 0 });
+            const actualPlayer: MatchRosterPlayer = { name: "Alive Player", teamId: 0, isMe: false };
+            matchRoster.addPlayer({ name: "Player1", teamId: 0, isMe: false });
+            matchRoster.addPlayer({ name: "Player2", teamId: 0, isMe: false });
+            matchRoster.addPlayer({ name: "Player3", teamId: 0, isMe: false });
             matchRoster.addPlayer(actualPlayer);
             tick(5000);
             const matchStartDate = new Date();
-            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active });
-            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active });
+            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
+            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
             matchRosterService.matchRoster$.next(matchRoster);
             tick(10000);
             // Player gets knocked down
@@ -125,7 +125,7 @@ describe("MatchActivityService", () => {
             const knockdownEvent: MatchInflictionEvent = {
                 timestamp: knockdownDate,
                 victim: actualPlayer,
-                attacker: { name: "Someone" },
+                attacker: { name: "Someone", isMe: false },
                 isKnockdown: true,
                 isElimination: false,
             };
@@ -136,7 +136,7 @@ describe("MatchActivityService", () => {
             const aliveDate = new Date();
             const aliveEvent: MatchInflictionEvent = {
                 timestamp: aliveDate,
-                victim: { name: "Someone Else" },
+                victim: { name: "Someone Else", isMe: false },
                 attacker: actualPlayer,
                 isKnockdown: true,
                 isElimination: false,
@@ -159,15 +159,15 @@ describe("MatchActivityService", () => {
             // Arrange
             jasmine.clock().mockDate(new Date(0));
             const matchRoster = new MatchRoster();
-            const actualPlayer: MatchRosterPlayer = { name: "Alive Player", teamId: 0 };
-            matchRoster.addPlayer({ name: "Player1", teamId: 0 });
-            matchRoster.addPlayer({ name: "Player2", teamId: 0 });
-            matchRoster.addPlayer({ name: "Player3", teamId: 0 });
+            const actualPlayer: MatchRosterPlayer = { name: "Alive Player", teamId: 0, isMe: false };
+            matchRoster.addPlayer({ name: "Player1", teamId: 0, isMe: false });
+            matchRoster.addPlayer({ name: "Player2", teamId: 0, isMe: false });
+            matchRoster.addPlayer({ name: "Player3", teamId: 0, isMe: false });
             matchRoster.addPlayer(actualPlayer);
             tick(5000);
             const matchStartDate = new Date();
-            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active });
-            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active });
+            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
+            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
             matchRosterService.matchRoster$.next(matchRoster);
             tick(10000);
             // Player gets eliminated
@@ -175,7 +175,7 @@ describe("MatchActivityService", () => {
             const eliminationEvent: MatchInflictionEvent = {
                 timestamp: eliminationDate,
                 victim: actualPlayer,
-                attacker: { name: "Someone" },
+                attacker: { name: "Someone", isMe: false },
                 isKnockdown: false,
                 isElimination: true,
             };
@@ -186,7 +186,7 @@ describe("MatchActivityService", () => {
             const aliveDate = new Date();
             const aliveEvent: MatchInflictionEvent = {
                 timestamp: aliveDate,
-                victim: { name: "Someone Else" },
+                victim: { name: "Someone Else", isMe: false },
                 attacker: actualPlayer,
                 isKnockdown: true,
                 isElimination: false,
@@ -209,22 +209,22 @@ describe("MatchActivityService", () => {
             // Arrange
             jasmine.clock().mockDate(new Date(0));
             const matchRoster = new MatchRoster();
-            const actualPlayer: MatchRosterPlayer = { name: "Alive Player", teamId: 0 };
-            matchRoster.addPlayer({ name: "Player1", teamId: 0 });
-            matchRoster.addPlayer({ name: "Player2", teamId: 0 });
-            matchRoster.addPlayer({ name: "Player3", teamId: 0 });
+            const actualPlayer: MatchRosterPlayer = { name: "Alive Player", teamId: 0, isMe: false };
+            matchRoster.addPlayer({ name: "Player1", teamId: 0, isMe: false });
+            matchRoster.addPlayer({ name: "Player2", teamId: 0, isMe: false });
+            matchRoster.addPlayer({ name: "Player3", teamId: 0, isMe: false });
             matchRoster.addPlayer(actualPlayer);
             tick(5000);
             const matchStartDate = new Date();
             matchRosterService.matchRoster$.next(matchRoster);
-            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active });
-            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active });
+            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
+            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
             tick(10000);
             const knockdownDate = new Date();
             const knockdownEvent: MatchInflictionEvent = {
                 timestamp: knockdownDate,
                 victim: actualPlayer,
-                attacker: { name: "Someone" },
+                attacker: { name: "Someone", isMe: false },
                 isKnockdown: true,
                 isElimination: false,
             };
@@ -246,22 +246,22 @@ describe("MatchActivityService", () => {
             // Arrange
             jasmine.clock().mockDate(new Date(0));
             const matchRoster = new MatchRoster();
-            const actualPlayer: MatchRosterPlayer = { name: "Alive Player", teamId: 0 };
-            matchRoster.addPlayer({ name: "Player1", teamId: 0 });
-            matchRoster.addPlayer({ name: "Player2", teamId: 0 });
-            matchRoster.addPlayer({ name: "Player3", teamId: 0 });
+            const actualPlayer: MatchRosterPlayer = { name: "Alive Player", teamId: 0, isMe: false };
+            matchRoster.addPlayer({ name: "Player1", teamId: 0, isMe: false });
+            matchRoster.addPlayer({ name: "Player2", teamId: 0, isMe: false });
+            matchRoster.addPlayer({ name: "Player3", teamId: 0, isMe: false });
             matchRoster.addPlayer(actualPlayer);
             tick(5000);
             const matchStartDate = new Date();
             matchRosterService.matchRoster$.next(matchRoster);
-            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active });
-            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active });
+            matchService.startedEvent$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
+            matchService.state$.next({ startDate: matchStartDate, state: MatchState.Active, matchId: "test" });
             tick(10000);
             const eliminationDate = new Date();
             const eliminationEvent: MatchInflictionEvent = {
                 timestamp: eliminationDate,
                 victim: actualPlayer,
-                attacker: { name: "Someone" },
+                attacker: { name: "Someone", isMe: false },
                 isKnockdown: false,
                 isElimination: true,
             };

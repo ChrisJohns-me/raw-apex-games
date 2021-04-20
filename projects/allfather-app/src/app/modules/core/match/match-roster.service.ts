@@ -1,9 +1,9 @@
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration/configuration.service";
 import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoRoster, OWMatchInfoTeammate } from "@allfather-app/app/modules/core/overwolf";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { MatchRoster } from "@allfather-app/app/shared/models/match/match-roster";
-import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/match-roster-player";
-import { MatchRosterTeammate } from "@allfather-app/app/shared/models/match/match-roster-teammate";
+import { MatchRoster } from "@allfather-app/app/shared/models/match/roster";
+import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
+import { MatchRosterTeammate } from "@allfather-app/app/shared/models/match/roster-teammate";
 import { isPlayerNameEqual } from "@allfather-app/app/shared/models/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
@@ -47,10 +47,20 @@ export class MatchRosterService implements OnDestroy {
      */
     public readonly numTeams$ = new BehaviorSubject<number>(0);
     /**
+     * Inferred from Overwolf's "tabs" data.
+     * @returns {number} number of teams that the match started out with.
+     */
+    public readonly startingNumTeams$ = new BehaviorSubject<number>(0);
+    /**
      * From Overwolf's "tabs" data
      * @returns {number} players alive in the current match; 0 if "fair-play" mode is on (<5 players remain).
      */
     public readonly numPlayers$ = new BehaviorSubject<number>(0);
+    /**
+     * Inferred from Overwolf's "tabs" data.
+     * @returns {number} number of players that the match started out with.
+     */
+    public readonly startingNumPlayers$ = new BehaviorSubject<number>(0);
 
     private readonly rosterUpdate$: Observable<RosterUpdate>;
 
@@ -73,7 +83,7 @@ export class MatchRosterService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         this.setupOnMatchStart();
         this.setupOnMatchEnd();
         this.setupCounts();
@@ -94,7 +104,7 @@ export class MatchRosterService implements OnDestroy {
             rosterAction: "ADD",
         });
         const rosterDeletionFn = (rosterId: number): RosterUpdate => {
-            const me = this.matchRoster$.value.allPlayers.find((p) => isPlayerNameEqual(p.name, this.player.myName$.value));
+            const me = this.matchRoster$.value.allPlayers.find((p) => p.isMe);
             const prevRosterPlayer = this.matchRoster$.value.allPlayers.find((p) => p.rosterId === rosterId);
             const prevRosterItem: OWMatchInfoRoster = {
                 isTeammate: prevRosterPlayer?.teamId === me?.teamId,
@@ -139,6 +149,9 @@ export class MatchRosterService implements OnDestroy {
         this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
             this.numPlayers$.next(0);
             this.numTeams$.next(0);
+            this.startingNumPlayers$.next(0);
+            this.startingNumTeams$.next(0);
+
             // Rosters should be ready to be emitted
             if (this.stagedMatchRoster.allPlayers.length) this.matchRoster$.next(this.stagedMatchRoster);
             else console.error(`Could not emit roster; staged match roster was empty!`);
@@ -174,8 +187,19 @@ export class MatchRosterService implements OnDestroy {
                 const numTeams = cleanInt(tabs!.teams);
                 const numPlayers = cleanInt(tabs!.players);
 
-                if (numTeams >= 0) this.numTeams$.next(numTeams);
-                if (numPlayers >= 0) this.numPlayers$.next(numPlayers);
+                if (numTeams >= 0) {
+                    this.numTeams$.next(numTeams);
+                    if (numTeams > this.startingNumTeams$.value) {
+                        this.startingNumTeams$.next(numTeams);
+                    }
+                }
+
+                if (numPlayers >= 0) {
+                    this.numPlayers$.next(numPlayers);
+                    if (numPlayers > this.startingNumPlayers$.value) {
+                        this.startingNumPlayers$.next(numPlayers);
+                    }
+                }
             });
     }
 
@@ -195,6 +219,7 @@ export class MatchRosterService implements OnDestroy {
             .subscribe(({ rosterId, rosterItem }) => {
                 const newRosterPlayer: MatchRosterPlayer = {
                     name: rosterItem!.name,
+                    isMe: rosterItem!.name === this.player.myName$.value,
                     rosterId: rosterId,
                     teamId: rosterItem!.team_id,
                     platformHardware: rosterItem?.platform_hw,
@@ -238,6 +263,7 @@ export class MatchRosterService implements OnDestroy {
 
                 const newRosterTeammate: MatchRosterTeammate = {
                     name: rosterItem.name,
+                    isMe: rosterItem!.name === this.player.myName$.value,
                     rosterId: rosterId,
                     teamId: rosterItem.team_id,
                     platformHardware: rosterItem.platform_hw,
@@ -258,35 +284,54 @@ export class MatchRosterService implements OnDestroy {
         this.overwolfGameData.infoUpdates$
             .pipe(
                 takeUntil(this._unsubscribe$),
+                // Should only receive roster additions prior to the match start
+                filter(() => !this.match.isActive),
                 filter((infoUpdate) => infoUpdate.feature === "team"),
                 map((infoUpdate) => infoUpdate.info.match_info),
                 map((m) => findValueByKeyRegEx<OWMatchInfoTeammate>(m, /^teammate_/)),
                 filter((teammate) => !isEmpty(teammate?.name))
             )
             .subscribe((teammate) => {
-                const newRosterTeammate: MatchRosterTeammate = { name: teammate!.name };
+                const newRosterTeammate: MatchRosterTeammate = {
+                    name: teammate!.name,
+                    isMe: teammate!.name === this.player.myName$.value,
+                };
                 this.addTeammate(newRosterTeammate);
             });
     }
 
+    /**
+     * Listens for teammate Legend Selections, matches player with Match Roster,
+     *  and adds that combined result to the Staging Teammate Roster.
+     */
     private setupTeammateLegends(): void {
         this.matchLegendSelect.legendSelected$.pipe(takeUntil(this._unsubscribe$)).subscribe((legendSelect) => {
             const rosterPlayer = this.stagedMatchRoster.allPlayers.find((p) => isPlayerNameEqual(p.name, legendSelect!.playerName));
             let newRosterTeammate: MatchRosterTeammate;
 
             if (rosterPlayer) newRosterTeammate = { ...rosterPlayer, legend: legendSelect.legend };
-            else newRosterTeammate = { name: legendSelect!.playerName, legend: legendSelect.legend };
+            else
+                newRosterTeammate = {
+                    name: legendSelect!.playerName,
+                    isMe: legendSelect!.playerName === this.player.myName$.value,
+                    legend: legendSelect.legend,
+                };
 
             this.stagedTeammateRoster.addPlayer(newRosterTeammate);
         });
     }
 
+    /**
+     * Sub-method that takes in a teammate, and adds/merges them to the Staging Teammate Roster
+     *
+     */
     private addTeammate(teammate: MatchRosterTeammate): void {
         const existingTeammate = this.teammateRoster$.value.allPlayers.find((p) => isPlayerNameEqual(p.name, teammate.name));
         let mergedTeammate: MatchRosterTeammate = teammate;
         if (existingTeammate) {
             mergedTeammate = {
                 name: teammate.name,
+                isMe: teammate.name === this.player.myName$.value,
                 legend: teammate.legend ?? existingTeammate.legend,
                 platformHardware: teammate.platformHardware ?? existingTeammate.platformHardware,
                 platformSoftware: teammate.platformSoftware ?? existingTeammate.platformSoftware,

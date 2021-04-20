@@ -6,7 +6,7 @@ export class MockMatchPlayerInflictionService implements MockedClass<MatchPlayer
     public notMyKillfeedEvent$: MatchPlayerInflictionService["notMyKillfeedEvent$"] = new Subject();
     public myDamageEvent$: MatchPlayerInflictionService["myDamageEvent$"] = new Subject();
 
-    public start(): void {
+    public init(): void {
         throw new Error("Method not implemented.");
     }
 }

@@ -1,5 +1,5 @@
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { MatchState } from "@allfather-app/app/shared/models/match/match-state";
+import { MatchState } from "@allfather-app/app/shared/models/match/state";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { isValid } from "date-fns";
 import { Subject, timer } from "rxjs";

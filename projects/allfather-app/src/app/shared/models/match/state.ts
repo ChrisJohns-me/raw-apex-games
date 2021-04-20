@@ -6,5 +6,6 @@ export enum MatchState {
 export interface MatchStateChangedEvent {
     startDate?: Date;
     endDate?: Date;
+    matchId: string;
     state: MatchState;
 }

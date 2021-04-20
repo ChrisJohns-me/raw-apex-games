@@ -1,5 +1,5 @@
 import { GamePhase } from "@allfather-app/app/shared/models/game-phase";
-import { MatchState } from "@allfather-app/app/shared/models/match/match-state";
+import { MatchState } from "@allfather-app/app/shared/models/match/state";
 import { TriggerConditions } from "@allfather-app/app/shared/models/utilities/trigger-conditions";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
@@ -29,7 +29,7 @@ export class GameService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         this.setupPhase();
     }
 

@@ -3,17 +3,27 @@ import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/match-location";
-import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/shared/models/match/match-state";
+import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
+import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/shared/models/match/state";
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { formatPercent } from "@angular/common";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { differenceInSeconds, format, formatDistanceToNowStrict, isFuture, isValid } from "date-fns";
+import { addMilliseconds, differenceInSeconds, format, formatDistanceToNowStrict, isFuture, isValid } from "date-fns";
 import { combineLatest, Observable, Subject, timer } from "rxjs";
 import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
-import { average, averageRate } from "shared/utilities";
+import { mathAverage, mathAverageRate, mathAverageVariance, mathClamp } from "shared/utilities";
 
-const ABNORMAL_INCREASE_AMOUNT = 0.1; // Ultimate accelerant or charging station
+/**
+ * Ultimate accelerant or charging station.
+ * Anything above this amount will not be logged to the history
+ */
+const ABNORMAL_INCREASE_AMOUNT = 0.1;
+
+enum ConfidenceLevel {
+    NONE = "none",
+    LOW = "low",
+    HIGH = "high",
+}
 
 interface UltimateProgress {
     timestamp: Date;
@@ -39,20 +49,30 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
      */
     public get maybeReadyDate(): Date | undefined {
         if (!this._maybeReadyDate || !isValid(this._maybeReadyDate) || !isFuture(this._maybeReadyDate)) return;
-        if (differenceInSeconds(this._maybeReadyDate, new Date()) <= 1) return; // give no date if it's under x seconds
+        if (differenceInSeconds(this._maybeReadyDate, new Date()) < 0.5) return; // give no date if it's under x seconds
         return this._maybeReadyDate;
+    }
+    /** Confidence level of accuracy; HIGH, LOW, NONE */
+    public get confidenceLevel(): ConfidenceLevel {
+        if (this.confidenceAmount >= this.config.featureConfigs.ultTimer.highConfidenceAmount) return ConfidenceLevel.HIGH;
+        else if (this.confidenceAmount >= this.config.featureConfigs.ultTimer.lowConfidenceAmount) return ConfidenceLevel.LOW;
+        else return ConfidenceLevel.NONE;
+    }
+    /** Confidence level of accuracy in percent */
+    public get confidenceAmount(): number {
+        return this.calcConfidenceAmount();
     }
 
     private _maybeReadyDate?: Date;
 
     private get avgIncrement(): number {
         const incrementArr = this.ultimateProgressHistory.map((h) => h.increment);
-        const avg = average(incrementArr);
+        const avg = mathAverage(incrementArr);
         return avg;
     }
     private get avgUpdateRateMs(): number {
         const timestampMsArr = this.ultimateProgressHistory.map((h) => h.timestamp.getTime());
-        const avg = averageRate(timestampMsArr);
+        const avg = mathAverageRate(timestampMsArr);
         return avg;
     }
     private ultimateProgressHistory: UltimateProgress[] = [];
@@ -159,9 +179,32 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
                 `Ready ~"${format(rawEstReadyDate, "yyyy:mm:dd kk:mm:ss")}", ` +
                 `History: ${this.ultimateProgressHistory.length}, ` +
                 `Increment: ${formatPercent(this.avgIncrement, "en-US")}, ` +
-                `Rate: ${this.avgUpdateRateMs / 1000}sec`
+                `Rate: ${this.avgUpdateRateMs / 1000}sec` +
+                `Confidence: ${this.confidenceLevel} (${formatPercent(this.confidenceAmount, "en-US")})`
         );
 
         return rawEstReadyDate;
+    }
+
+    private calcConfidenceAmount(): number {
+        let confidence = 0;
+        const maxReadyDate = addMilliseconds(new Date(), this.config.facts.ultimateMaxCooldownTime);
+        const maybeReadyDate = this.maybeReadyDate;
+        const maxHistoryCount = this.config.featureConfigs.ultTimer.maxHistoryCount;
+        const historyCount = this.ultimateProgressHistory.length;
+        const percentVariance = mathAverageVariance(this.ultimateProgressHistory.map((u) => u.increment));
+        // No estimation available
+        if (!maybeReadyDate) return 0;
+
+        // Cooldown is estimated to be higher than max amount possible
+        if (maybeReadyDate > maxReadyDate) confidence -= 0.5;
+
+        // The longer the history, the higher the confidence (max +0.5)
+        confidence += (historyCount / maxHistoryCount) * 0.5;
+
+        // The more variance in the percents, lower the confidence
+        confidence -= percentVariance * 0.1;
+
+        return mathClamp(confidence, 0, 1);
     }
 }

@@ -37,7 +37,7 @@ export class OverwolfWindowService {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         this.startWindowEventListeners();
     }
 

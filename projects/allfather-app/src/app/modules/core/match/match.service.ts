@@ -1,11 +1,17 @@
 import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
-import { MatchGameMode } from "@allfather-app/app/shared/models/match/match-game-mode";
-import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/shared/models/match/match-state";
+import { MatchGameMode } from "@allfather-app/app/shared/models/match/game-mode";
+import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/shared/models/match/state";
 import { TriggerConditions } from "@allfather-app/app/shared/models/utilities/trigger-conditions";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
-import { BehaviorSubject, merge, Subject } from "rxjs";
-import { filter, map, takeUntil } from "rxjs/operators";
+import { differenceInMilliseconds } from "date-fns";
+import { BehaviorSubject, merge, Observable, of, Subject } from "rxjs";
+import { filter, map, take, takeUntil, tap, timeoutWith } from "rxjs/operators";
+import { isEmpty } from "shared/utilities";
+import { v4 as uuid, validate as uuidValidate } from "uuid";
+
+/** Time allowed to wait for Overwolf's "psuedo_match_id", before generating our own */
+const MATCHID_TIMEOUT = 5000;
 
 /**
  * @classdesc Provides basic and general details about the match
@@ -16,20 +22,23 @@ import { filter, map, takeUntil } from "rxjs/operators";
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchService", MatchService, deps),
 })
 export class MatchService implements OnDestroy {
+    /** Provided by Overwolf's psuedo_match_id */
+    public readonly matchId$ = new BehaviorSubject<string>("");
     /** Emits changed state only when match has started */
     public readonly startedEvent$ = new Subject<MatchStateChangedEvent>();
     /** Emits changed state only when match has ended */
     public readonly endedEvent$ = new Subject<MatchStateChangedEvent>();
     /** Emits changed states; when match starts or ends, or upon subscription */
-    public readonly state$ = new BehaviorSubject<MatchStateChangedEvent>({ state: MatchState.Inactive });
+    public readonly state$ = new BehaviorSubject<MatchStateChangedEvent>({ state: MatchState.Inactive, matchId: "" });
     /** Emits when game mode is selected from within the lobby */
-    public readonly gameMode$ = new BehaviorSubject<MatchGameMode>({ id: "", friendlyName: "" });
+    public readonly gameMode$ = new BehaviorSubject<MatchGameMode>({ gameModeId: "", friendlyName: "" });
     /** Immediately see if the match is active */
     public get isActive(): boolean {
         return this.state$.value.state === MatchState.Active;
     }
 
     private currentStartDate?: Date;
+    private matchIdDate?: Date;
     private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(private readonly overwolfGameData: OverwolfGameDataService) {}
@@ -39,10 +48,25 @@ export class MatchService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
+        this.setupMatchId();
         this.setupStartEndEvents();
         this.setupStateEvents();
         this.setupGameMode();
+    }
+
+    private setupMatchId(): void {
+        this.overwolfGameData.infoUpdates$
+            .pipe(
+                takeUntil(this._unsubscribe$),
+                filter((infoUpdate) => infoUpdate.feature === "match_info" && !isEmpty(infoUpdate.info.match_info?.pseudo_match_id)),
+                map((infoUpdate) => infoUpdate.info.match_info?.pseudo_match_id),
+                filter((matchId) => !!matchId && uuidValidate(matchId))
+            )
+            .subscribe((matchId) => {
+                this.matchId$.next(matchId!);
+                this.matchIdDate = new Date();
+            });
     }
 
     private setupStartEndEvents(): void {
@@ -55,10 +79,22 @@ export class MatchService implements OnDestroy {
         const newStateChangeFn = (newState?: MatchState): void => {
             if (!newState || newState === this.state$.value.state) return;
             if (newState === MatchState.Active) {
-                this.currentStartDate = new Date();
-                this.startedEvent$.next({ state: newState, startDate: this.currentStartDate });
+                // Ensure that we have the matchId for the startEvent
+                this.resolveMatchId$(MATCHID_TIMEOUT)
+                    .pipe(takeUntil(this._unsubscribe$))
+                    .subscribe((matchId) => {
+                        console.debug(`[${this.constructor.name}] Match is Active; MatchId: ${matchId}`);
+                        this.currentStartDate = new Date();
+                        this.startedEvent$.next({ state: newState, startDate: this.currentStartDate, matchId });
+                    });
             } else if (newState === MatchState.Inactive) {
-                this.endedEvent$.next({ state: newState, startDate: this.currentStartDate, endDate: new Date() });
+                console.debug(`[${this.constructor.name}] Match is InActive; MatchId: ${this.state$.value.matchId}`);
+                this.endedEvent$.next({
+                    state: newState,
+                    startDate: this.currentStartDate,
+                    endDate: new Date(),
+                    matchId: this.state$.value.matchId,
+                });
             }
         };
 
@@ -110,10 +146,32 @@ export class MatchService implements OnDestroy {
                 if (!gameModeId) return;
                 const isBlacklisted = blacklistedGameModes.some((blacklist) => blacklist.test(gameModeId));
                 if (isBlacklisted) return;
-                if (gameModeId === this.gameMode$.value.id) return;
+                if (gameModeId === this.gameMode$.value.gameModeId) return;
 
                 const newGameMode = new MatchGameMode(gameModeId);
                 this.gameMode$.next(newGameMode);
             });
+    }
+
+    /**
+     * Directly returns matchId$ as long as it is within timespan.
+     * Otherwise, fallsback to a newly generated UUID.
+     * Returns one UUID and completes.
+     * @param fallbackTimeMs Max time to wait until generating our own matchId.
+     * @returns {Observable<string>} matchId
+     */
+    private resolveMatchId$(fallbackTimeMs = 1000): Observable<string> {
+        const expiredMsgFn = (matchId: string) =>
+            `[MatchId] No "psuedo_match_id" was provided within ${fallbackTimeMs / 1000}sec. Generated new MatchId: "${matchId}"`;
+        const genUUID$Fn = () => of(uuid()).pipe(tap((id) => console.error(expiredMsgFn(id))));
+
+        return this.matchId$.pipe(
+            filter(() => {
+                const absDiffMs = this.matchIdDate ? Math.abs(differenceInMilliseconds(this.matchIdDate, new Date())) : 0;
+                return absDiffMs <= fallbackTimeMs;
+            }),
+            timeoutWith(fallbackTimeMs, genUUID$Fn()),
+            take(1)
+        );
     }
 }

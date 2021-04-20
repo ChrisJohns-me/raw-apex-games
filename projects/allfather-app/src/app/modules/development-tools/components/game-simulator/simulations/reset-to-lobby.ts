@@ -1,4 +1,4 @@
-export const resetToLobby = `
+export const resetToLobby = (): string => `
 [2020-01-01 00:00:00.000 AM] {"info":{"match_info":{"victory":"false"}},"feature":"rank"}
 [2020-01-01 00:00:01.000 AM] {"info":{"match_info":{"teammate_0":"null"}},"feature":"team"}
 [2020-01-01 00:00:01.000 AM] {"info":{"match_info":{"teammate_1":"null"}},"feature":"team"}

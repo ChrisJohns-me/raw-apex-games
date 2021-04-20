@@ -1,6 +1,14 @@
-export const fullGame1Eventful = `
+import { v4 as uuid } from "uuid";
+
+// Duration: 21 minutes 17 seconds
+// Placement: 1
+// Kills: 3
+// Assists: 2
+// Damage: 731
+
+export const fullGame1Eventful = (): string => `
 [2021-03-21 02:51:19.882 AM] {"info":{"me":{"name":"MasterKriff"}},"feature":"me"}
-[2021-03-21 02:52:55.531 AM] {"info":{"match_info":{"game_mode":"#PL_TRIO_RINGCOLLAPSE"}},"feature":"match_info"}
+[2021-03-21 02:51:19.931 AM] {"info":{"match_info":{"game_mode":"#PL_TRIO_RINGCOLLAPSE"}},"feature":"match_info"}
 [2021-03-21 02:51:20.531 AM] {"info":{"match_info":{"roster_0":{"name":"MasterKriff","isTeammate":true,"team_id":20,"platform_hw":2,"platform_sw":7,"state":"alive"}}},"feature":"roster"}
 [2021-03-21 02:51:20.532 AM] {"info":{"match_info":{"teammate_0":{"name":"MasterKriff","state":"alive"}}},"feature":"team"}
 [2021-03-21 02:51:20.760 AM] {"info":{"match_info":{"roster_1":{"name":"millertime5851","isTeammate":false,"team_id":2,"platform_hw":2,"platform_sw":7}}},"feature":"roster"}
@@ -59,7 +67,7 @@ export const fullGame1Eventful = `
 [2021-03-21 02:51:49.823 AM] {"info":{"match_info":{"legendSelect_0":{"playerName":"[Ktsu] BluePlasmaa","legendName":"#character_wraith_NAME","selectionOrder":"0","lead":false}}},"feature":"team"}
 [2021-03-21 02:51:54.112 AM] {"info":{"match_info":{"legendSelect_1":{"playerName":"[GOB] Strizer","legendName":"#character_horizon_NAME","selectionOrder":"1","lead":false}}},"feature":"team"}
 [2021-03-21 02:52:05.144 AM] {"info":{"match_info":{"legendSelect_2":{"playerName":"MasterKriff","legendName":"#character_octane_NAME","selectionOrder":"2","lead":true}}},"feature":"team"}
-[2021-03-21 02:52:23.259 AM] {"info":{"match_info":{"pseudo_match_id":"bcd32653-1541-4341-aec7-2f0e73213c73"}},"feature":"match_info"}
+[2021-03-21 02:52:23.259 AM] {"info":{"match_info":{"pseudo_match_id":"${uuid()}"}},"feature":"match_info"}
 [2021-03-21 02:52:23.283 AM] {"name":"match_start","data":""}
 [2021-03-21 02:52:23.284 AM] {"info":{"me":{"totalDamageDealt":"0"}},"feature":"damage"}
 [2021-03-21 02:52:23.285 AM] {"info":{"match_info":{"team_info":{"team_state":"active"}}},"feature":"team"}

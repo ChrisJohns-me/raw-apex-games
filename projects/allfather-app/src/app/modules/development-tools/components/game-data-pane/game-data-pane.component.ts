@@ -11,11 +11,12 @@ import { MatchService } from "@allfather-app/app/modules/core/match/match.servic
 import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { GamePhase } from "@allfather-app/app/shared/models/game-phase";
-import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/match-location";
-import { MatchState } from "@allfather-app/app/shared/models/match/match-state";
+import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
+import { MatchState } from "@allfather-app/app/shared/models/match/state";
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { interval } from "rxjs";
+import { v4 as uuid } from "uuid";
 
 @Component({
     selector: "app-game-data-pane",
@@ -69,9 +70,14 @@ export class GameDataPaneComponent implements OnInit {
     public onChangeMatchStateClick(): void {
         const state = this.match.state$.value;
         if (state.state === MatchState.Active) {
-            this.match.endedEvent$.next({ startDate: state.startDate, endDate: new Date(), state: MatchState.Inactive });
+            this.match.endedEvent$.next({
+                startDate: state.startDate,
+                endDate: new Date(),
+                state: MatchState.Inactive,
+                matchId: this.match.state$.value.matchId,
+            });
         } else {
-            this.match.startedEvent$.next({ startDate: new Date(), state: MatchState.Active });
+            this.match.startedEvent$.next({ startDate: new Date(), state: MatchState.Active, matchId: uuid() });
         }
     }
 

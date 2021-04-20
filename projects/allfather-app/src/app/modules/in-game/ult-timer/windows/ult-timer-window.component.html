@@ -7,7 +7,14 @@
     positionXAnchor="left"
     positionYAnchor="bottom"
 >
-    <div class="timer-container" *ngIf="!isUltimateReady && isVisible">
+    <div
+        class="timer-container"
+        [ngClass]="{
+            'no-confidence': confidenceLevel == 'none',
+            'low-confidence': confidenceLevel == 'low'
+        }"
+        *ngIf="!isUltimateReady && isVisible"
+    >
         <p class="timer-display">
             <ng-container *ngIf="maybeReadyDate">
                 {{ maybeReadyDate | customFormatDistanceToNow: { minute: "min", second: "sec" }:"floor" }}

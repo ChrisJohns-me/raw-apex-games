@@ -2,7 +2,7 @@ import { addMilliseconds } from "date-fns";
 import { merge, Observable, ObservableInput, Subject } from "rxjs";
 import { debounceTime, filter, groupBy, map, mergeMap, share, tap } from "rxjs/operators";
 import { cleanInt, isEmpty } from "shared/utilities";
-import { MatchInflictionEvent, MatchInflictionEventAccum } from "../match/match-infliction-event";
+import { MatchInflictionEvent, MatchInflictionEventAccum } from "../match/infliction-event";
 import { isPlayerNameEqual } from "./player";
 
 export class InflictionAggregator {

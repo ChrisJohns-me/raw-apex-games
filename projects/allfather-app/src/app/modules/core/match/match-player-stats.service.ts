@@ -1,11 +1,12 @@
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
-import { MatchState } from "@allfather-app/app/shared/models/match/match-state";
+import { MatchState } from "@allfather-app/app/shared/models/match/state";
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { cleanInt, isEmpty, parseBoolean } from "shared/utilities";
+import { MatchPlayerInflictionService } from "./match-player-infliction.service";
 import { MatchPlayerService } from "./match-player.service";
 import { MatchService } from "./match.service";
 
@@ -14,7 +15,7 @@ import { MatchService } from "./match.service";
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, OverwolfGameDataService, MatchPlayerService],
+    deps: [MatchService, MatchPlayerService, MatchPlayerInflictionService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerStatsService", MatchPlayerStatsService, deps),
 })
 export class MatchPlayerStatsService implements OnDestroy {
@@ -30,8 +31,10 @@ export class MatchPlayerStatsService implements OnDestroy {
     public readonly victory$ = new BehaviorSubject<boolean>(false);
     /** @deprecated May not work; Feature is unavailable in game-UI. */
     public readonly mySpectators$ = new BehaviorSubject<number>(0);
+    /** Inferred from player infliction. Reset on match start. */
+    public readonly myKnockdowns$ = new BehaviorSubject<number>(0);
     /**
-     * Damage amount does not take into consideration victim's HP, only the raw inflicted amount.
+     * Does not take into consideration victim's HP, only the raw inflicted amount.
      * The contained damage amount will then appear to be inflated.
      * Info directly from Overwolf's me.damage_dealt data.
      */
@@ -41,8 +44,9 @@ export class MatchPlayerStatsService implements OnDestroy {
 
     constructor(
         private readonly match: MatchService,
-        private readonly overwolfGameData: OverwolfGameDataService,
-        private readonly matchPlayer: MatchPlayerService
+        private readonly matchPlayer: MatchPlayerService,
+        private readonly matchPlayerInfliction: MatchPlayerInflictionService,
+        private readonly overwolfGameData: OverwolfGameDataService
     ) {}
 
     public ngOnDestroy(): void {
@@ -50,11 +54,12 @@ export class MatchPlayerStatsService implements OnDestroy {
         this._unsubscribe$.complete();
     }
 
-    public start(): void {
+    public init(): void {
         this.setupMatchStateEvents();
         this.setupInfoTabs();
         this.setupTotalDamageDealt();
         this.setupVictory();
+        this.setupMyKnockdowns();
     }
 
     private setupMatchStateEvents(): void {
@@ -65,6 +70,7 @@ export class MatchPlayerStatsService implements OnDestroy {
             this.mySpectators$.next(0);
             this.myPlacement$.next(0);
             this.victory$.next(false);
+            this.myKnockdowns$.next(0);
         });
     }
 
@@ -122,6 +128,17 @@ export class MatchPlayerStatsService implements OnDestroy {
             .subscribe((isVictory) => {
                 this.myPlacement$.next(1);
                 this.victory$.next(isVictory);
+            });
+    }
+
+    private setupMyKnockdowns(): void {
+        this.matchPlayerInfliction.myKillfeedEvent$
+            .pipe(
+                takeUntil(this._unsubscribe$),
+                filter((myKillfeedEvent) => !!myKillfeedEvent.isKnockdown)
+            )
+            .subscribe(() => {
+                this.myKnockdowns$.next(this.myKnockdowns$.value + 1);
             });
     }
 }

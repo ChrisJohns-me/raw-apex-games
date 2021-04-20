@@ -1,5 +1,5 @@
 export class MatchGameMode {
-    constructor(public id?: string) {}
+    constructor(public gameModeId?: string) {}
 
     /**
      * Extracts a game mode's friendly name from in-game value.
@@ -7,8 +7,8 @@ export class MatchGameMode {
      * @returns "trio"
      */
     public get friendlyName(): string {
-        if (!this.id) return "";
-        let newGameMode = this.id.toLowerCase();
+        if (!this.gameModeId) return "";
+        let newGameMode = this.gameModeId.toLowerCase();
         newGameMode = newGameMode.replace(/#pl/g, "");
         newGameMode = newGameMode.replace(/mode/g, "");
         newGameMode = newGameMode.replace(/leagues/g, "");

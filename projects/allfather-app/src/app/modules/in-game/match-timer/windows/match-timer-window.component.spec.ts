@@ -1,7 +1,7 @@
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { MockUIContainerComponent } from "@allfather-app/app/modules/core/mocks/components/mock-ui-container.component";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
-import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/shared/models/match/match-state";
+import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/shared/models/match/state";
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { addMilliseconds } from "date-fns";
@@ -53,6 +53,7 @@ describe("MatchTimerWindowComponent", () => {
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date("2020-01-01T00:00:00"),
             state: MatchState.Active,
+            matchId: "test",
         };
 
         // Act
@@ -70,11 +71,13 @@ describe("MatchTimerWindowComponent", () => {
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date("2020-01-01T00:00:00"),
             state: MatchState.Active,
+            matchId: "test",
         };
         const endEvent: MatchStateChangedEvent = {
             startDate: startEvent.startDate,
             endDate: new Date("2020-01-01T00:30:00"),
             state: MatchState.Inactive,
+            matchId: "test",
         };
 
         // Act
@@ -98,6 +101,7 @@ describe("MatchTimerWindowComponent", () => {
         const startEvent: MatchStateChangedEvent = {
             startDate: startDate,
             state: MatchState.Active,
+            matchId: "test",
         };
         const midDates = [60000, 120000, 180000, 300000, 600000, 1200000];
         matchService.startedEvent$.next(startEvent);
@@ -124,11 +128,13 @@ describe("MatchTimerWindowComponent", () => {
         const startEvent: MatchStateChangedEvent = {
             startDate: startDate,
             state: MatchState.Active,
+            matchId: "test",
         };
         const endEvent: MatchStateChangedEvent = {
             startDate: startDate,
             endDate: endDate,
             state: MatchState.Inactive,
+            matchId: "test",
         };
 
         // Act
