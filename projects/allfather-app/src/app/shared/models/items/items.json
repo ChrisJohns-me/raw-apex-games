@@ -273,6 +273,16 @@
             "inGameInfoNameRegExPattern": "^mp_ability_void_ring$"
         },
         {
+            "id": "lifeline_care_package",
+            "friendlyName": "Care Package",
+            "inGameInfoNameRegExPattern": "^Care Package$"
+        },
+        {
+            "id": "lifeline_health_drone",
+            "friendlyName": "Health Drone",
+            "inGameInfoNameRegExPattern": "^Health Drone$"
+        },
+        {
             "id": "pathfinder_zipline",
             "friendlyName": "Zipline Gun",
             "inGameInfoNameRegExPattern": "^Zipline Gun$"
