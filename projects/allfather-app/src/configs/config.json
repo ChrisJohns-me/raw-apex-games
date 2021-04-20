@@ -32,8 +32,8 @@
         "ultTimer": {
             "refreshTime": 1000,
             "maxHistoryCount": 5,
-            "highConfidenceAmount": 0.9,
-            "lowConfidenceAmount": 0.9
+            "highConfidenceAmount": 0.7,
+            "lowConfidenceAmount": 0.35
         }
     },
     "general": {

@@ -59,10 +59,9 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
         else return ConfidenceLevel.NONE;
     }
     /** Confidence level of accuracy in percent */
-    public get confidenceAmount(): number {
-        return this.calcConfidenceAmount();
-    }
+    public confidenceAmount = 0;
 
+    private maxHistoryCount = this.config.featureConfigs.ultTimer.maxHistoryCount;
     private _maybeReadyDate?: Date;
 
     private get avgIncrement(): number {
@@ -115,14 +114,6 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
         this.visibleStates$.subscribe(([stateChanged, myState, locationPhase]) => {
             this.isVisible =
                 stateChanged.state === MatchState.Active && myState === PlayerState.Alive && locationPhase === MatchLocationPhase.HasLanded;
-
-            console.debug(
-                `[${this.constructor.name}] [${this.isVisible ? "Showable" : "NotShowable"}] ` +
-                    `[${this.isVisible ? "Visible" : "Hidden"}]. ` +
-                    `Match: "${this.match.state$.value.state}", ` +
-                    `Player: "${this.matchPlayer.myState$.value}", ` +
-                    `Location: "${this.matchPlayerLocation.myLocationPhase$.value}"`
-            );
         });
     }
 
@@ -132,9 +123,10 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
                 filter(([stateChanged, myState]) => stateChanged.state === MatchState.Active && myState === PlayerState.Alive),
                 switchMap(() => this.matchPlayerLegend.myUltimateCooldown$),
                 tap((percent) => this.addPercentHistory((this.ultimatePercent = percent))),
-                filter(() => this.ultimateProgressHistory.length >= 2),
-                map((percent) => this.calcReadyDate(percent, new Date())),
+                filter(() => this.ultimateProgressHistory.length > 1),
+                map((percent) => this.calcReadyDate(percent)),
                 tap((readyDate) => (this._maybeReadyDate = readyDate)),
+                tap(() => (this.confidenceAmount = this.calcConfidenceAmount())),
                 switchMap(() => timer(0, this.config.featureConfigs.ultTimer.refreshTime))
             )
             .subscribe(() => this.cdr.detectChanges());
@@ -149,7 +141,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
 
         if (increment == 0) {
             return;
-        } else if (increment > ABNORMAL_INCREASE_AMOUNT) {
+        } else if (increment > ABNORMAL_INCREASE_AMOUNT && hist.length > this.maxHistoryCount / 2) {
             console.log(
                 `[${this.constructor.name}] Abnormal ultimate increment detected of "${formatPercent(
                     increment,
@@ -163,47 +155,48 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
             console.debug(`[${this.constructor.name}] Ultimate likely used`);
             this.ultimateProgressHistory.push({ percent: newPercent, increment: lastIncrement, timestamp: new Date() });
         }
-        this.ultimateProgressHistory = this.ultimateProgressHistory.slice(-this.config.featureConfigs.ultTimer.maxHistoryCount);
+        this.ultimateProgressHistory = this.ultimateProgressHistory.slice(-this.maxHistoryCount);
     }
 
-    private calcReadyDate(percent: number, date: Date): Optional<Date> {
+    private calcReadyDate(percent: number): Optional<Date> {
+        const now = Date.now();
         const percentRemaining = 1 - percent;
         const approxTotalReadyTimeMs = this.avgUpdateRateMs / this.avgIncrement; // Estimated total time for 100% ultimate
         const approxTimeRemainingMs = percentRemaining * approxTotalReadyTimeMs;
-        const rawEstReadyDate = new Date(date.getTime() + approxTimeRemainingMs);
+        const rawEstReadyMs = now + approxTimeRemainingMs;
+        const estReadyDate = new Date(rawEstReadyMs);
 
         console.debug(
             `[${this.constructor.name}] [Calculation] ` +
-                `Total ~"${formatDistanceToNowStrict(new Date().getTime() + approxTotalReadyTimeMs, { unit: "second" })}", ` +
+                `Est Total Time ~"${formatDistanceToNowStrict(new Date().getTime() + approxTotalReadyTimeMs, { unit: "second" })}", ` +
                 `Remaining ~"${formatDistanceToNowStrict(new Date().getTime() + approxTimeRemainingMs, { unit: "second" })}", ` +
-                `Ready ~"${format(rawEstReadyDate, "yyyy:mm:dd kk:mm:ss")}", ` +
+                `Ready ~"${format(estReadyDate, "yyyy:mm:dd kk:mm:ss")}", ` +
                 `History: ${this.ultimateProgressHistory.length}, ` +
                 `Increment: ${formatPercent(this.avgIncrement, "en-US")}, ` +
-                `Rate: ${this.avgUpdateRateMs / 1000}sec` +
+                `Rate: ${this.avgUpdateRateMs / 1000}sec, ` +
                 `Confidence: ${this.confidenceLevel} (${formatPercent(this.confidenceAmount, "en-US")})`
         );
 
-        return rawEstReadyDate;
+        return estReadyDate;
     }
 
     private calcConfidenceAmount(): number {
         let confidence = 0;
         const maxReadyDate = addMilliseconds(new Date(), this.config.facts.ultimateMaxCooldownTime);
-        const maybeReadyDate = this.maybeReadyDate;
-        const maxHistoryCount = this.config.featureConfigs.ultTimer.maxHistoryCount;
         const historyCount = this.ultimateProgressHistory.length;
         const percentVariance = mathAverageVariance(this.ultimateProgressHistory.map((u) => u.increment));
+        const timeSecVariance = mathAverageVariance(this.ultimateProgressHistory.map((u) => u.timestamp.getTime() / 1000));
+
         // No estimation available
-        if (!maybeReadyDate) return 0;
-
+        if (this.isUltimateReady) return 1;
         // Cooldown is estimated to be higher than max amount possible
-        if (maybeReadyDate > maxReadyDate) confidence -= 0.5;
-
-        // The longer the history, the higher the confidence (max +0.5)
-        confidence += (historyCount / maxHistoryCount) * 0.5;
-
+        if (this.maybeReadyDate && this.maybeReadyDate > maxReadyDate) confidence = confidence - 0.5;
+        // The longer the history, the higher the confidence
+        confidence += Number((historyCount / this.maxHistoryCount).toFixed(4));
         // The more variance in the percents, lower the confidence
-        confidence -= percentVariance * 0.1;
+        confidence -= Number((percentVariance * 0.1).toFixed(4));
+        // The more variance in the timestamps, lower the confidence
+        confidence -= Number((timeSecVariance * 0.01).toFixed(4));
 
         return mathClamp(confidence, 0, 1);
     }
