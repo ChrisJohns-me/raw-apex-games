@@ -5,10 +5,13 @@ import { TriggerConditions } from "@allfather-app/app/shared/models/utilities/tr
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
 import { differenceInMilliseconds } from "date-fns";
-import { BehaviorSubject, merge, Observable, of, Subject } from "rxjs";
+import { IndexableType } from "dexie";
+import { BehaviorSubject, from, merge, Observable, of, Subject } from "rxjs";
 import { filter, map, take, takeUntil, tap, timeoutWith } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
 import { v4 as uuid, validate as uuidValidate } from "uuid";
+import { LocalDatabaseService } from "../local-database/local-database.service";
+import { MatchDataStore } from "../local-database/match-data-store";
 
 /** Time allowed to wait for Overwolf's "psuedo_match_id", before generating our own */
 const MATCHID_TIMEOUT = 5000;
@@ -18,7 +21,7 @@ const MATCHID_TIMEOUT = 5000;
  */
 @Injectable({
     providedIn: "root",
-    deps: [OverwolfGameDataService],
+    deps: [LocalDatabaseService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchService", MatchService, deps),
 })
 export class MatchService implements OnDestroy {
@@ -31,7 +34,7 @@ export class MatchService implements OnDestroy {
     /** Emits changed states; when match starts or ends, or upon subscription */
     public readonly state$ = new BehaviorSubject<MatchStateChangedEvent>({ state: MatchState.Inactive, matchId: "" });
     /** Emits when game mode is selected from within the lobby */
-    public readonly gameMode$ = new BehaviorSubject<MatchGameMode>({ gameModeId: "", friendlyName: "" });
+    public readonly gameMode$ = new BehaviorSubject<Optional<MatchGameMode>>(undefined);
     /** Immediately see if the match is active */
     public get isActive(): boolean {
         return this.state$.value.state === MatchState.Active;
@@ -41,7 +44,7 @@ export class MatchService implements OnDestroy {
     private matchIdDate?: Date;
     private readonly _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly overwolfGameData: OverwolfGameDataService) {}
+    constructor(private readonly localDatabase: LocalDatabaseService, private readonly overwolfGameData: OverwolfGameDataService) {}
 
     public ngOnDestroy(): void {
         this._unsubscribe$.next();
@@ -53,6 +56,33 @@ export class MatchService implements OnDestroy {
         this.setupStartEndEvents();
         this.setupStateEvents();
         this.setupGameMode();
+    }
+
+    /**
+     * Stores match data into local database.
+     * @returns {IndexableType} index key of storage location
+     */
+    public storeMatchData(matchData: MatchDataStore): Observable<IndexableType> {
+        const savePromise = this.localDatabase.table("matches").put(matchData);
+        return from(savePromise);
+    }
+
+    /**
+     * Retrieves a specific Match from local database.
+     * @returns {MatchDataStore}
+     */
+    public getMatchDataByMatchId(matchId: string): Observable<MatchDataStore | undefined> {
+        if (isEmpty(matchId)) throw new Error(`Cannot retrieve match data from local database; matchId is empty.`);
+        const matchPromise = this.localDatabase.matches.get({ matchId });
+        return from(matchPromise);
+    }
+
+    /**
+     * @returns All matches stored in the local database, descending order.
+     */
+    public getAllMatchData(): Observable<MatchDataStore[]> {
+        const matchPromise = this.localDatabase.matches.orderBy("endDate").reverse().toArray();
+        return from(matchPromise);
     }
 
     private setupMatchId(): void {
@@ -98,7 +128,7 @@ export class MatchService implements OnDestroy {
             }
         };
 
-        const triggers = new TriggerConditions<MatchState, [MatchState?, OWInfoUpdates2Event?, OWGameEvent?]>({
+        const triggers = new TriggerConditions<MatchState, [MatchState?, OWInfoUpdates2Event?, OWGameEvent?]>("MatchState", {
             [MatchState.Inactive]: (matchState, infoUpdate, gameEvent) => {
                 const notInactive = matchState !== MatchState.Inactive;
                 const gameModeChanged = infoUpdate?.feature === "match_info" && !!infoUpdate?.info?.match_info?.game_mode;
@@ -146,7 +176,7 @@ export class MatchService implements OnDestroy {
                 if (!gameModeId) return;
                 const isBlacklisted = blacklistedGameModes.some((blacklist) => blacklist.test(gameModeId));
                 if (isBlacklisted) return;
-                if (gameModeId === this.gameMode$.value.gameModeId) return;
+                if (gameModeId === this.gameMode$.value?.gameModeId) return;
 
                 const newGameMode = new MatchGameMode(gameModeId);
                 this.gameMode$.next(newGameMode);

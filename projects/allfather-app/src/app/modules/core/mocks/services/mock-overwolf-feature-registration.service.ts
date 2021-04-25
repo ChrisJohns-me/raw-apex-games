@@ -1,4 +1,4 @@
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, of } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
 import { OverwolfFeatureRegistrationService, OWFeatureRegistrationStatus } from "../../overwolf/overwolf-feature-registration.service";
 
@@ -10,12 +10,12 @@ export class MockOverwolfFeatureRegistrationService implements MockedClass<Overw
     public registerFeatures(
         ...args: Parameters<OverwolfFeatureRegistrationService["registerFeatures"]>
     ): ReturnType<OverwolfFeatureRegistrationService["registerFeatures"]> {
-        throw new Error("Method not implemented.");
+        return of();
     }
 
     public unregisterFeatures(
         ...args: Parameters<OverwolfFeatureRegistrationService["unregisterFeatures"]>
     ): ReturnType<OverwolfFeatureRegistrationService["unregisterFeatures"]> {
-        throw new Error("Method not implemented.");
+        return;
     }
 }

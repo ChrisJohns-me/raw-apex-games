@@ -99,7 +99,7 @@ export class ReportableDataManagerService {
             KillfeedHistoryDataFactory(this.matchActivity.killfeedEvent$),
             KnockdownsDataFactory(this.matchPlayerStats.myKnockdowns$),
             LegendDataFactory(this.matchPlayerLegend.myLegend$),
-            LocationHistoryDataFactory(this.matchPlayerLocation.myCoordinates$),
+            LocationHistoryDataFactory(this.matchPlayerLocation.myCoordinates$, this.matchPlayerLocation.myLocationPhase$),
             MapDataFactory(this.matchMap.map$),
             MatchMetaDataFactory(this.match.endedEvent$),
             MatchRosterDataFactory(this.matchRoster.matchRoster$),

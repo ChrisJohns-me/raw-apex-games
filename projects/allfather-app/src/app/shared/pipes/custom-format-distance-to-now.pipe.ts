@@ -9,7 +9,7 @@ import { formatDistanceToNowStrict } from "date-fns";
  * @returns Return the distance between the given dates in words, using strict units. This is
  *  like formatDistance, but does not use helpers like 'almost', 'over', 'less than' and the like.
  */
-@Pipe({ name: "customFormatDistanceToNow", pure: false })
+@Pipe({ name: "customFormatDistanceToNow" })
 export class CustomFormatDistanceToNowPipe implements PipeTransform {
     transform(
         value: Date,

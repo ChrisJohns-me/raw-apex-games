@@ -1,4 +1,3 @@
-import { wordsToUpperCase } from "shared/utilities/primitives/string";
 import { MatchMapCoordinates } from "./map-coordinates";
 
 type ActiveDates = Array<{
@@ -6,36 +5,27 @@ type ActiveDates = Array<{
     to?: Date; // if undefined, map is currently active
 }>;
 
-// TODO: Refactor to pull this data from the remote API.
-export enum MatchMapId {
-    KingsCanyon = "kings_canyon",
-    WorldsEdge = "worlds_edge",
-    Olympus = "olympus",
+interface MatchMapImageAxixScale {
+    xStart: number;
+    xEnd: number;
+    yStart: number;
+    yEnd: number;
 }
 
-type MatchMapConstructor = {
+export interface MatchMapConstructor {
     mapId: string;
-    layoutId?: string;
+    mapName: string;
     activeDates?: ActiveDates;
     dropshipZStart?: MatchMapCoordinates["z"];
-};
+    imageAxisScale?: MatchMapImageAxixScale;
+}
 
 export class MatchMap {
     public mapId: string;
-    public layoutId?: string; // Useful to reference map image
+    public mapName: string;
     public activeDates?: ActiveDates;
     public dropshipZStart?: MatchMapCoordinates["z"]; // Useful to cross-reference with starting location
-    /**
-     * @param keyName "kings_canyon"
-     * @returns "Kings Canyon"
-     */
-    public get friendlyName(): string {
-        if (!this.mapId) return "";
-        let newMapName = this.mapId.toLowerCase();
-        newMapName = newMapName.replace(/_/g, " ");
-        newMapName = wordsToUpperCase(newMapName);
-        return newMapName ?? "";
-    }
+    public imageAxisScale?: MatchMapImageAxixScale;
 
     public get isActive(): boolean {
         return !!this.activeDates?.some((date) => date.to == null && date.from < new Date());
@@ -43,8 +33,9 @@ export class MatchMap {
 
     constructor(ctor: MatchMapConstructor) {
         this.mapId = ctor.mapId;
-        this.layoutId = ctor.layoutId;
+        this.mapName = ctor.mapName;
         this.activeDates = ctor.activeDates;
         this.dropshipZStart = ctor.dropshipZStart;
+        this.imageAxisScale = ctor.imageAxisScale;
     }
 }

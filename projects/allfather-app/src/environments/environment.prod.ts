@@ -3,7 +3,8 @@ const localDatabase = {
 };
 
 export const environment = {
-    production: true,
+    PROD: true,
+    DEV: false,
     allowDevTools: false,
     localDatabase,
 };

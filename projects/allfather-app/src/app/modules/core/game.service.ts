@@ -38,7 +38,7 @@ export class GameService implements OnDestroy {
             if (newPhase && newPhase !== this.phase$.value) this.phase$.next(newPhase);
         };
 
-        const triggers = new TriggerConditions<GamePhase, [OWInfoUpdates2Event?, MatchState?]>({
+        const triggers = new TriggerConditions<GamePhase, [OWInfoUpdates2Event?, MatchState?]>("GamePhase", {
             [GamePhase.Lobby]: (infoUpdate, matchState) => matchState === MatchState.Inactive,
             [GamePhase.LegendSelection]: (infoUpdate) =>
                 infoUpdate?.feature === "team" && !isEmpty(findValueByKeyRegEx(infoUpdate?.info?.match_info, /^legendSelect/)),

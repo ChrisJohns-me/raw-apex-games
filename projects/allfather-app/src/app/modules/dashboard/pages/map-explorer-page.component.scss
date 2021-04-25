@@ -1,0 +1,57 @@
+@import "bootstrap/scss/bootstrap";
+
+.interactive-map-container {
+    position: relative;
+    width: 720px;
+    height: 720px;
+    border: 1px solid #202020;
+    background-color: $gray-900;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.matches-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 720px;
+}
+
+.matches-dropdown-container {
+    min-width: 600px;
+    max-height: 600px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .dropdown-item {
+        display: flex;
+        cursor: pointer;
+    }
+}
+
+.map-debug-container {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.map-full-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+
+    img {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+.d3-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}

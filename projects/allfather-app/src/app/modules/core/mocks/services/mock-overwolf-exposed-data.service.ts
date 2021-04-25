@@ -16,18 +16,18 @@ export class MockExposedOverwolfGameDataService implements MockedClass<ExposedOv
     public injectOnGameInfo(
         ...args: Parameters<ExposedOverwolfGameDataService["injectOnGameInfo"]>
     ): ReturnType<ExposedOverwolfGameDataService["injectOnGameInfo"]> {
-        throw new Error("Method not implemented.");
+        return;
     }
 
     public injectOnInfoUpdates2(
         ...args: Parameters<ExposedOverwolfGameDataService["injectOnInfoUpdates2"]>
     ): ReturnType<ExposedOverwolfGameDataService["injectOnInfoUpdates2"]> {
-        throw new Error("Method not implemented.");
+        return;
     }
 
     public injectOnNewGameEvents(
         ...args: Parameters<ExposedOverwolfGameDataService["injectOnNewGameEvents"]>
     ): ReturnType<ExposedOverwolfGameDataService["injectOnNewGameEvents"]> {
-        throw new Error("Method not implemented.");
+        return;
     }
 }

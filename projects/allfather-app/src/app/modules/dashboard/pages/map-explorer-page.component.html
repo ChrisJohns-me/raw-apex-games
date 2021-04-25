@@ -1,0 +1,216 @@
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <ul class="nav nav-pills nav-fill">
+                <li class="nav-item">
+                    <button class="nav-link" (click)="setLive()" [ngClass]="{ active: isLive }">
+                        🔴 Live Match {{ liveMap?.mapName ? "(" + liveMap?.mapName + ")" : "" }}
+                    </button>
+                </li>
+                <li class="nav-item" *ngFor="let map of mapList">
+                    <button class="nav-link" (click)="selectMap(map)" [ngClass]="{ active: !isLive && map.mapId == selectedMap?.mapId }">
+                        {{ map.mapName }}
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <!-- TODO: Breakout into own component -->
+            <div class="interactive-map-container">
+                <div class="map-full-image">
+                    <img *ngIf="selectedMap?.mapId" [src]="'../../../../assets/images/map-layouts/' + selectedMap?.mapId + '.png'" alt="" />
+                </div>
+                <div class="d3-overlay" #mapOverlayGraph></div>
+                <div class="row px-3 map-debug-container" *ngIf="ENABLE_DEBUG_TOOLS">
+                    <div class="offset-6 col-6">
+                        <label for="heatSize" class="form-label text-white m-0">Heat Sizing ({{ heatSizeRange?.value }})</label>
+                        <input type="range" class="form-range" min="0" max="50" step="0.1" id="heatSize" [formControl]="heatSizeRange" />
+                    </div>
+                    <div class="col-6">
+                        <label for="xStartRange" class="form-label text-white m-0">X Start ({{ xStartRangeForm?.value }})</label>
+                        <input
+                            type="range"
+                            class="form-range form-control-sm"
+                            min="-600"
+                            max="-300"
+                            step="0.1"
+                            id="xStartRange"
+                            [formControl]="xStartRangeForm"
+                        />
+                    </div>
+                    <div class="col-6">
+                        <label for="xEndRange" class="form-label text-white m-0">X End ({{ xEndRangeForm?.value }})</label>
+                        <input
+                            type="range"
+                            class="form-range form-control-sm"
+                            min="300"
+                            max="600"
+                            step="0.1"
+                            id="xEndRange"
+                            [formControl]="xEndRangeForm"
+                        />
+                    </div>
+                    <div class="col-6">
+                        <label for="yStartRange" class="form-label text-white m-0">Y Start ({{ yStartRangeForm?.value }})</label>
+                        <input
+                            type="range"
+                            class="form-range form-control-sm"
+                            min="-600"
+                            max="-300"
+                            step="0.1"
+                            id="yStartRange"
+                            [formControl]="yStartRangeForm"
+                        />
+                    </div>
+                    <div class="col-6">
+                        <label for="yEndRange" class="form-label text-white m-0">Y End ({{ yEndRangeForm?.value }})</label>
+                        <input
+                            type="range"
+                            class="form-range form-control-sm"
+                            min="300"
+                            max="600"
+                            step="0.1"
+                            id="yEndRange"
+                            [formControl]="yEndRangeForm"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="col">
+                    <!-- <div class="dropdown"> -->
+                    <!-- Aggregate Option -->
+                    <ng-template #aggregateOption>
+                        All Matches <strong>{{ selectedMap?.mapName ? " on " + selectedMap?.mapName : "" }}</strong>
+                    </ng-template>
+                    <!-- Match Option for selected button -->
+                    <ng-template #matchOptionSimple let-match>
+                        {{ match.placement ? "<sup>#</sup>" + match.placement : "" }}
+                        {{ match.gameModeId ? (getGameModeTypeName(match.gameModeId) | titlecase) : "" }}
+                        {{ match.eliminations ? match.eliminations + " kills," : "" }}
+                        {{ match.damage ? match.damage + " damage," : "" }}
+                        <ng-container *ngIf="match.endDate">
+                            {{
+                                durationSinceNow(match.endDate)
+                                    | dfnsFormatDurationPure: { format: ["years", "months", "weeks", "days", "hours", "minutes"] }
+                            }}
+                        </ng-container>
+                    </ng-template>
+
+                    <!-- Dropdown Button -->
+                    <!-- <button class="btn btn-secondary dropdown-toggle" type="button" id="matchDropdownButton" data-bs-toggle="dropdown">
+                            <ng-container
+                                *ngIf="selectedMatchForm.value === 'aggregate'"
+                                [ngTemplateOutlet]="aggregateOption"
+                            ></ng-container>
+                            <ng-container
+                                *ngIf="selectedMatchForm.value !== 'aggregate'"
+                                [ngTemplateOutlet]="aggregateOption"
+                                [ngTemplateOutletContext]="{ $implicit: selectedMatch }"
+                            ></ng-container>
+                        </button> -->
+                    <button type="button" class="btn btn-warning" (click)="loadMatchList()">Refresh Matches</button>
+
+                    <!-- Options -->
+                    <!-- <ul class="dropdown-menu matches-dropdown-container">
+                            <li>
+                                <button
+                                    class="dropdown-item"
+                                    [ngClass]="{ active: selectedMatchForm.value === 'aggregate' }"
+                                    (click)="selectedMatchForm.setValue('aggregate')"
+                                >
+                                    <ng-container *ngTemplateOutlet="aggregateOption"></ng-container>
+                                </button>
+                            </li>
+                            <li><hr class="dropdown-divider" /></li>
+
+                            <li *ngFor="let match of matchList">
+                                <div
+                                    class="dropdown-item"
+                                    *ngIf="match.mapId === selectedMap?.mapId"
+                                    (click)="selectedMatchForm.setValue(match)"
+                                >
+                                    <app-match-listing [matchData]="match"></app-match-listing>
+                                </div>
+                            </li>
+                        </ul> -->
+                    <!-- </div> -->
+                </div>
+            </div>
+
+            <div class="row border-top">
+                <div class="col-12 matches-container">
+                    <div class="list-group">
+                        <!-- <button
+                            class="list-group-item list-group-item-action"
+                            [ngClass]="{ active: selectedMatchForm.value === 'aggregate' }"
+                            (click)="selectedMatchForm.setValue('aggregate')"
+                        >
+                            <ng-container *ngTemplateOutlet="aggregateOption"></ng-container>
+                        </button> -->
+
+                        <ng-container *ngFor="let match of matchList">
+                            <button
+                                class="list-group-item list-group-item-action"
+                                [ngClass]="{ active: match.matchId === selectedMatch?.matchId }"
+                                *ngIf="match.mapId === selectedMap?.mapId"
+                                (click)="selectedMatchForm.setValue(match)"
+                            >
+                                <app-match-listing [matchData]="match"></app-match-listing>
+                            </button>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-2">
+                <div class="list-group">
+                    <button type="button" class="list-group-item list-group-item-action active" aria-current="true">
+                        The current button
+                    </button>
+                    <button type="button" class="list-group-item list-group-item-action">A second item</button>
+                    <button type="button" class="list-group-item list-group-item-action">A third button item</button>
+                    <button type="button" class="list-group-item list-group-item-action">A fourth button item</button>
+                    <button type="button" class="list-group-item list-group-item-action" disabled>A disabled button item</button>
+                </div>
+            </div> -->
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="form-check form-switch form-check-inline">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="followLiveLocationSwitch"
+                    [checked]="followLiveLocation"
+                    (change)="
+                        followLiveLocation = !followLiveLocation;
+                        followLiveLocation ? locationHistoryRange.disable() : locationHistoryRange.enable()
+                    "
+                    [disabled]="selectedMatchForm.value !== 'live'"
+                />
+                <label class="form-check-label" for="followLiveLocationSwitch">Follow Location</label>
+            </div>
+            <div>
+                <label for="locationHistoryRange" class="form-label">Timeline ({{ locationHistoryRange?.value }})</label>
+                <input
+                    type="range"
+                    class="form-range"
+                    min="0"
+                    [max]="coordinateData?.length"
+                    step="1"
+                    id="locationHistoryRange"
+                    [formControl]="locationHistoryRange"
+                />
+            </div>
+        </div>
+    </div>
+</div>

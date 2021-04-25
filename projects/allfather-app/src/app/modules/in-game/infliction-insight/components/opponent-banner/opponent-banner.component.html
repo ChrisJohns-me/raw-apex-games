@@ -22,7 +22,7 @@
                 *ngIf="!banner.latestInflictionAccum?.isEliminated && !banner.latestInflictionAccum?.isKnocked"
             >
                 <ng-container *ngFor="let shieldNum of [0, 1, 2, 3, 4]">
-                    <div class="player-shield-ui-box-shadow" *ngIf="banner.maybeShieldMax / 25 > shieldNum">
+                    <div class="player-shield-ui-box-shadow" *ngIf="banner.maybeMaxShield / 25 > shieldNum">
                         <div
                             class="player-shield-ui-box"
                             *ngIf="
@@ -55,7 +55,7 @@
             >
                 {{ banner.latestInflictionAccum?.isEliminated ? "Eliminated" : "Knocked" }}
                 <ng-container *ngIf="banner.latestInflictionAccum?.latestTimestamp">
-                    {{ banner.latestInflictionAccum!.latestTimestamp! | formatDistanceToNowStrict: true }}
+                    {{ banner.latestInflictionAccum!.latestTimestamp! | dfnsFormatDistanceToNowStrict: { addSuffix: true } }}
                 </ng-container>
             </div>
         </div>

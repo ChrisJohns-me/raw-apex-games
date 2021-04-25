@@ -1,7 +1,8 @@
+import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { delay, mapTo, mergeMap, retryWhen, takeUntil } from "rxjs/operators";
-import { LocalDatabaseService } from "../../../local-database/local-database.service";
 import { MatchDataStore } from "../../../local-database/match-data-store";
+import { MatchService } from "../../../match/match.service";
 import { DamageConditionOption, GameModeConditionOption, KillsConditionOption, PlacementConditionOption } from "../condition-options";
 import { ReportableDataFactoryMap } from "../reportable-data";
 import { ReportingEngine, ReportingEngineId, ReportingStatus } from "../reporting-engine";
@@ -27,7 +28,7 @@ export class LocalReportingEngine implements ReportingEngine {
     private reportableDataList: ObjectPropertyTypes<ReportableDataFactoryMap>[] = [];
     private _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly localDatabase: LocalDatabaseService) {}
+    constructor(private readonly match: MatchService) {}
 
     public setup({
         reportableDataList,
@@ -77,7 +78,7 @@ export class LocalReportingEngine implements ReportingEngine {
      * @returns boolean - successfully saved data
      */
     private saveMatchData(matchData: MatchDataStore): Observable<boolean> {
-        return this.localDatabase.storeMatch(matchData).pipe(
+        return this.match.storeMatchData(matchData).pipe(
             retryWhen((errors) =>
                 errors.pipe(
                     mergeMap((error, i) => {
@@ -100,6 +101,7 @@ export class LocalReportingEngine implements ReportingEngine {
     /**
      * Throws error if any data item is missing
      * @returns {MatchDataStore}
+     * @todo Profile Performance
      */
     private getMatchData(): MatchDataStore {
         const getDataById = <T extends ReportableDataFactoryMap, K extends keyof T, P extends T[K]>(dataId: K) =>
@@ -113,9 +115,10 @@ export class LocalReportingEngine implements ReportingEngine {
             maxPlacement: 0,
             placement: 0,
         };
-
+        const matchSummary = getDataById("matchSummary")?.value ?? emptyMatchSummary;
         const matchMeta = getDataById("matchMeta")?.value;
         const map = getDataById("map")?.value;
+
         return {
             matchId: matchMeta?.matchId ?? "",
             startDate: matchMeta?.startDate ?? new Date(),
@@ -123,17 +126,64 @@ export class LocalReportingEngine implements ReportingEngine {
             myName: getDataById("name")?.value ?? "",
             gameModeId: getDataById("gameMode")?.value?.gameModeId ?? "",
             mapId: map?.mapId ?? "",
-            mapLayoutId: map?.layoutId ?? "",
-            matchSummary: getDataById("matchSummary")?.value ?? emptyMatchSummary,
+            assists: matchSummary.assists,
+            damage: matchSummary.damage,
+            eliminations: matchSummary.eliminations,
+            knockdowns: matchSummary.knockdowns,
+            maxPlacement: matchSummary.maxPlacement,
+            placement: matchSummary.placement,
             matchRoster: getDataById("matchRoster")?.value ?? [],
             teamRoster: getDataById("teamRoster")?.value ?? [],
             legendId: getDataById("legend")?.value?.legendId ?? "",
             killfeedHistory: getDataById("killfeedHistory")?.value ?? [],
             damageEventsHistory: getDataById("damageEventsHistory")?.value ?? [],
-            locationHistory: getDataById("locationHistory")?.value ?? [],
+            locationHistory: getDataById("locationHistory")?.value.map((loc) => mapHistory(loc)) ?? [],
             weaponIdsHistory: getDataById("weaponIdsHistory")?.value ?? [],
             ultimateUsageDates: getDataById("ultimateUsageDates")?.value ?? [],
             gameEventsHistory: getDataById("gameEventsHistory")?.value ?? [],
         };
+    }
+}
+
+/** Store locationHistory.phase as number */
+function mapHistory(location: ReportableDataFactoryMap["locationHistory"]["value"][0]): MatchDataStore["locationHistory"][0] {
+    return {
+        timestamp: location.timestamp,
+        value: {
+            x: location.value.x,
+            y: location.value.y,
+            z: location.value.z,
+            phaseNum: mapLocationPhase(location.value.phase, "in"),
+        },
+    };
+}
+
+type MapLocationPhaseDirection = "in" | "out";
+type MapLocationPhaseType<T> = T extends "in" ? number : T extends "out" ? MatchLocationPhase : never;
+/**
+ * @returns mapped location phase, converted from either number or MatchLocationPhase
+ * @param direction
+ *  - "in" = into the local database (stored as number)
+ *  - "out" = out of local database (stored as typeof MatchLocationPhase)
+ */
+function mapLocationPhase<T extends MapLocationPhaseDirection>(
+    inputPhase: number | MatchLocationPhase,
+    direction: T
+): MapLocationPhaseType<T> {
+    const defaultPhase = MatchLocationPhase.HasLanded;
+    const mapping: { [key in MatchLocationPhase]: number } = {
+        [MatchLocationPhase.Dropping]: 0,
+        [MatchLocationPhase.Dropship]: 1,
+        [MatchLocationPhase.HasLanded]: 2,
+    };
+
+    if (typeof inputPhase === "number" && direction === "out") {
+        const foundMappedPhase = Object.entries(mapping).find(([, numPhase]): boolean => numPhase === inputPhase);
+        return (foundMappedPhase?.[0] ?? defaultPhase) as MapLocationPhaseType<T>;
+    } else if (typeof inputPhase === "string" && direction === "in") {
+        const foundMappedPhase = Object.entries(mapping).find(([strPhase]): boolean => strPhase === inputPhase);
+        return (foundMappedPhase?.[1] ?? mapping[defaultPhase]) as MapLocationPhaseType<T>;
+    } else {
+        return inputPhase as MapLocationPhaseType<T>;
     }
 }

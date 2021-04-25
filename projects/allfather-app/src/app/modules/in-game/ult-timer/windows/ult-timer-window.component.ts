@@ -50,7 +50,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     public get maybeReadyDate(): Date | undefined {
         if (!this._maybeReadyDate || !isValid(this._maybeReadyDate) || !isFuture(this._maybeReadyDate)) return;
         if (differenceInSeconds(this._maybeReadyDate, new Date()) < 0.5) return; // give no date if it's under x seconds
-        return this._maybeReadyDate;
+        return new Date(this._maybeReadyDate); // Force template to update
     }
     /** Confidence level of accuracy; HIGH, LOW, NONE */
     public get confidenceLevel(): ConfidenceLevel {
@@ -182,7 +182,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
 
     private calcConfidenceAmount(): number {
         let confidence = 0;
-        const maxReadyDate = addMilliseconds(new Date(), this.config.facts.ultimateMaxCooldownTime);
+        const maxReadyDate = addMilliseconds(new Date(), this.config.facts.maxUltimateCooldownTime);
         const historyCount = this.ultimateProgressHistory.length;
         const percentVariance = mathAverageVariance(this.ultimateProgressHistory.map((u) => u.increment));
         const timeSecVariance = mathAverageVariance(this.ultimateProgressHistory.map((u) => u.timestamp.getTime() / 1000));

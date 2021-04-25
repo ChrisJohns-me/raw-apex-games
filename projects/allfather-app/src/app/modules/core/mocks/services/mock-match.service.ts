@@ -1,7 +1,10 @@
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
+import { MatchGameModeType } from "@allfather-app/app/shared/models/match/game-mode";
 import { MatchState } from "@allfather-app/app/shared/models/match/state";
-import { BehaviorSubject, Subject } from "rxjs";
+import { IndexableType } from "dexie";
+import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
+import { MatchDataStore } from "../../local-database/match-data-store";
 
 export class MockMatchService implements MockedClass<MatchService> {
     public matchId$: MatchService["matchId$"] = new BehaviorSubject<ExtractSubjectType<MatchService["matchId$"]>>("");
@@ -13,7 +16,7 @@ export class MockMatchService implements MockedClass<MatchService> {
     });
     public gameMode$: MatchService["gameMode$"] = new BehaviorSubject<ExtractSubjectType<MatchService["gameMode$"]>>({
         gameModeId: "",
-        friendlyName: "",
+        baseType: MatchGameModeType.RANKED,
     });
     public get isActive(): MatchService["isActive"] {
         return this.state$.value.state === MatchState.Active;
@@ -21,5 +24,17 @@ export class MockMatchService implements MockedClass<MatchService> {
 
     public init(): void {
         throw new Error("Method not implemented.");
+    }
+
+    public storeMatchData(matchData: MatchDataStore): Observable<IndexableType> {
+        return of();
+    }
+
+    public getMatchDataByMatchId(matchId: string): Observable<MatchDataStore | undefined> {
+        return of();
+    }
+
+    public getAllMatchData(): Observable<MatchDataStore[]> {
+        return of();
     }
 }

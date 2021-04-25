@@ -2,7 +2,7 @@
     <app-bootstrap-css-injector></app-bootstrap-css-injector>
 </ng-container>
 
-<section class="titlebar" *ngIf="isDesktopWindow" (mousedown)="onTitlebarMouseDown($event)">
+<section class="titlebar" *ngIf="isDesktopWindow" (dblclick)="onTitlebarDoubleClick($event)" (mousedown)="onTitlebarMouseDown($event)">
     <div class="titlebar-icon"></div>
 
     <div class="titlebar-primary-title">
@@ -14,6 +14,8 @@
     </div>
 
     <div class="titlebar-controls">
+        <button class="btn btn-close-white" type="button" (click)="onMinimizeButtonClick()">__</button>
+        <button class="btn btn-close-white" type="button" (click)="onMaximizeButtonClick()">OO</button>
         <button class="btn btn-close btn-close-white" type="button" (click)="onCloseButtonClick()"></button>
     </div>
 </section>

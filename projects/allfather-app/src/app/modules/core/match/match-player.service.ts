@@ -49,7 +49,7 @@ export class MatchPlayerService implements OnDestroy {
             if (newState && newState !== this.myState$.value) this.myState$.next(newState);
         };
 
-        const triggers = new TriggerConditions<PlayerState, [OWInfoUpdates2Event?, OWGameEvent?, MatchState?]>({
+        const triggers = new TriggerConditions<PlayerState, [OWInfoUpdates2Event?, OWGameEvent?, MatchState?]>("PlayerState", {
             [PlayerState.Alive]: (infoUpdate, gameEvent, matchState) =>
                 matchState === MatchState.Active ||
                 gameEvent?.name === "healed_from_ko" ||

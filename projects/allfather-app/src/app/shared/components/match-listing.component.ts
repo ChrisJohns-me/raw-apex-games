@@ -1,0 +1,41 @@
+import { ConfigurationService } from "@allfather-app/app/modules/core/configuration/configuration.service";
+import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
+import { Component, Input } from "@angular/core";
+import { intervalToDuration } from "date-fns";
+import { isEmpty } from "shared/utilities";
+import { unique } from "shared/utilities/primitives/array";
+import { Legend } from "../models/legend";
+import { MatchGameMode } from "../models/match/game-mode";
+
+@Component({
+    selector: "app-match-listing",
+    styleUrls: ["./match-listing.component.scss"],
+    templateUrl: "./match-listing.component.html",
+})
+export class MatchListingComponent {
+    @Input("matchData") public match?: MatchDataStore;
+
+    public now = Date.now();
+    /** Tipping point to show date played in different formats. */
+    public relativeTime = 6 * 60 * 60 * 1000;
+
+    constructor(private readonly config: ConfigurationService) {}
+
+    public durationSinceNow = (baseDate: Date): Duration => intervalToDuration({ start: baseDate, end: new Date() });
+    public getGameModeTypeName = (gameModeId: string): Optional<string> => MatchGameMode.getBaseType(gameModeId);
+    public getLegendImageName = (legendId: string): string => Legend.getSquarePortraitFilename(legendId);
+
+    /**
+     * @returns List of Match's teammates, without "me".
+     */
+    public buildTeamRoster(match: MatchDataStore): MatchDataStore["teamRoster"] {
+        if (isEmpty(match?.teamRoster)) return [];
+        const maxTeammates = this.config.facts.maxSquadSize - 1;
+        const teamRoster = unique(match.teamRoster, (p) => p.legendId)
+            .filter((p) => !p.isMe)
+            .filter((p) => p.legendId !== match.legendId);
+        teamRoster.length = Math.min(teamRoster.length, maxTeammates);
+
+        return teamRoster;
+    }
+}

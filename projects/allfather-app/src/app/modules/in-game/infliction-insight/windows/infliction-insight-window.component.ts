@@ -236,7 +236,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
             isIndirectBanner: false,
             rosterPlayer: inflictionEvent.victim!,
             latestInflictionAccum: inflictionEvent,
-            maybeShieldMax: inflictionEvent.hasShield ? this.config.assumptions.opponentShieldDefault : 0,
+            maybeMaxShield: inflictionEvent.hasShield ? this.config.assumptions.opponentShieldDefault : 0,
             maybeShieldAmount: this.config.assumptions.opponentShieldDefault - inflictionEvent.shieldDamageSum,
             maybeHealthAmount: this.config.assumptions.opponentHealthDefault - inflictionEvent.healthDamageSum,
         };
@@ -272,7 +272,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
             isIndirectBanner: true,
             rosterPlayer: player,
             latestInflictionAccum: assumedInfliction,
-            maybeShieldMax: this.config.featureFlags.inflictionInsight.showAssumedOpponentTeammateShields
+            maybeMaxShield: this.config.featureFlags.inflictionInsight.showAssumedOpponentTeammateShields
                 ? this.config.assumptions.opponentShieldDefault
                 : 0,
             maybeShieldAmount: this.config.featureFlags.inflictionInsight.showAssumedOpponentTeammateShields
@@ -292,27 +292,27 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         if (!currBanner) return;
         if (!inflEvent?.latestTimestamp) return;
         if (inflEvent.hasShield) {
-            currBanner.maybeShieldMax = mathClamp(
+            currBanner.maybeMaxShield = mathClamp(
                 inflEvent.shieldDamageSum > this.config.assumptions.opponentShieldDefault
                     ? inflEvent.shieldDamageSum
                     : this.config.assumptions.opponentShieldDefault,
                 0,
-                this.config.facts.shieldMax
+                this.config.facts.maxShield
             );
             currBanner.maybeShieldAmount = mathClamp(
                 this.config.assumptions.opponentShieldDefault - inflEvent.shieldDamageSum,
                 0,
-                this.config.facts.shieldMax
+                this.config.facts.maxShield
             );
         } else {
-            currBanner.maybeShieldMax = mathClamp(inflEvent.shieldDamageSum, 0, this.config.facts.shieldMax);
+            currBanner.maybeMaxShield = mathClamp(inflEvent.shieldDamageSum, 0, this.config.facts.maxShield);
             currBanner.maybeShieldAmount = 0;
         }
         currBanner.latestInflictionAccum = inflEvent;
         currBanner.maybeHealthAmount = mathClamp(
             this.config.assumptions.opponentHealthDefault - inflEvent.healthDamageSum,
             0,
-            this.config.facts.healthMax
+            this.config.facts.maxHealth
         );
         currBanner.isIndirectBanner =
             (!inflEvent.shieldDamageSum || inflEvent.shieldDamageSum === 0) &&

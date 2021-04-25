@@ -35,17 +35,20 @@
                 "respawnBannerExpireTime": {
                     "type": "integer"
                 },
-                "shieldMax": {
+                "maxShield": {
                     "type": "integer"
                 },
-                "healthMax": {
+                "maxHealth": {
                     "type": "integer"
                 },
-                "ultimateMaxCooldownTime": {
+                "maxUltimateCooldownTime": {
+                    "type": "integer"
+                },
+                "maxSquadSize": {
                     "type": "integer"
                 }
             },
-            "required": ["shieldMax", "healthMax", "ultimateMaxCooldownTime"]
+            "required": ["maxShield", "maxHealth", "maxUltimateCooldownTime", "maxSquadSize"]
         },
         "featureFlags": {
             "type": "object",

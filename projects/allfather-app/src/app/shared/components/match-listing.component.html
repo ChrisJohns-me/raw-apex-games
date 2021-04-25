@@ -1,0 +1,42 @@
+<div class="row" *ngIf="match">
+    <div class="col-legend-portraits">
+        <img
+            class="legend-portrait my-legend-portrait"
+            [src]="'../../../assets/images/legend-portraits/' + getLegendImageName(match.legendId)"
+            alt=""
+        />
+        <img
+            *ngFor="let teammate of buildTeamRoster(match)"
+            class="legend-portrait teammate-legend-portrait"
+            [src]="'../../../assets/images/legend-portraits/' + getLegendImageName(teammate.legendId)"
+            alt=""
+        />
+    </div>
+    <div class="col-stats">
+        <h4 class="data-digit primary-digit mb-0">
+            <sup class="placement-sign" *ngIf="match.placement">#</sup>{{ match.placement ? match.placement : "&nbsp;" }}
+        </h4>
+        <small class="h6 text-muted">{{ match.gameModeId ? (getGameModeTypeName(match.gameModeId) | titlecase) : "" }}</small>
+    </div>
+    <div class="col-stats text-center">
+        <h5 class="data-digit mb-1">{{ match.eliminations || 0 }}</h5>
+        <small class="text-muted">kills</small>
+    </div>
+    <div class="col-stats text-center">
+        <h5 class="data-digit mb-1">{{ match.damage || 0 }}</h5>
+        <small class="text-muted">damage</small>
+    </div>
+    <div class="col text-end align-self-center">
+        <ng-container *ngIf="match.endDate && match.endDate.getTime() > now - 60 * 1000">Just now</ng-container>
+        <ng-container *ngIf="match.endDate && match.endDate.getTime() < now - 60 * 1000 && match.endDate.getTime() > now - relativeTime">
+            {{
+                durationSinceNow(match.endDate)
+                    | dfnsFormatDurationPure: { format: ["years", "months", "weeks", "days", "hours", "minutes"] }
+            }}
+            ago
+        </ng-container>
+        <ng-container *ngIf="!match.endDate || match.endDate.getTime() < now - relativeTime">
+            {{ match.endDate | dfnsFormatRelative: now }}
+        </ng-container>
+    </div>
+</div>

@@ -17,7 +17,7 @@
     >
         <p class="timer-display">
             <ng-container *ngIf="maybeReadyDate">
-                {{ maybeReadyDate | customFormatDistanceToNow: { minute: "min", second: "sec" }:"floor" }}
+                {{ maybeReadyDate | customFormatDistanceToNow: { hour: "h", minute: "min", second: "sec" }:"floor" }}
             </ng-container>
         </p>
     </div>

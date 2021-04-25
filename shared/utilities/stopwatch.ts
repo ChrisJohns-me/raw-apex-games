@@ -12,29 +12,33 @@ export class Stopwatch {
     }
 
     public start(): number {
-        this.startTime = this.performanceAPI ? performance.now() : Date.now();
+        this.startTime = this.now();
         return this.startTime;
     }
 
     public end(): number {
-        this.endTime = this.performanceAPI ? performance.now() : Date.now();
+        this.endTime = this.now();
         return this.endTime;
     }
 
     public result(roundToMs = true): number {
         if (!this.startTime) {
             throw new Error(`${this.constructor.name}: start() was never called.`);
-        } else if (this.startTime && !this.endTime) {
-            this.end();
         }
 
-        let result = this.endTime! - this.startTime;
+        const endTime = this.endTime ?? this.now();
+        let result = endTime - this.startTime;
 
         if (roundToMs && this.performanceAPI) {
             result = Math.round(result);
         }
 
         return result;
+    }
+
+    public clear(): void {
+        this.startTime = undefined;
+        this.endTime = undefined;
     }
 
     /**
@@ -62,5 +66,9 @@ export class Stopwatch {
         if (bark) {
             console.log(bark);
         }
+    }
+
+    private now(): number {
+        return this.performanceAPI ? performance.now() : Date.now();
     }
 }

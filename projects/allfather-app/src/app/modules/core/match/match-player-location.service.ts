@@ -82,7 +82,7 @@ export class MatchPlayerLocationService implements OnDestroy {
             if (newPhase && newPhase !== this.myLocationPhase$.value) this.myLocationPhase$.next(newPhase);
         };
 
-        const triggers = new TriggerConditions<MatchLocationPhase, [OWInfoUpdates2Event?, boolean?]>({
+        const triggers = new TriggerConditions<MatchLocationPhase, [OWInfoUpdates2Event?, boolean?]>("MatchLocationPhase", {
             [MatchLocationPhase.Dropship]: (infoUpdate, isMatchReset) => !!isMatchReset && !this.myStartingCoordinates$.value,
             [MatchLocationPhase.Dropping]: (infoUpdate) =>
                 this.myLocationPhase$.value === MatchLocationPhase.Dropship &&

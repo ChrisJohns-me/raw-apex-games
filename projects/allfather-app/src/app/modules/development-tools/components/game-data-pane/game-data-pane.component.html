@@ -39,11 +39,11 @@
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
                     <div class="col-6">Map</div>
-                    <div class="col-6 text-end">{{ (matchMap.map$ | async)?.friendlyName }}</div>
+                    <div class="col-6 text-end">{{ (matchMap.map$ | async)?.mapName }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-6">GameMode</div>
-                    <div class="col-6 text-end">{{ (match.gameMode$ | async)?.friendlyName }}</div>
+                    <div class="col-6">GameModeId</div>
+                    <div class="col-6 text-end">{{ (match.gameMode$ | async)?.gameModeId }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
                     <div class="col-6">MatchDuration</div>
@@ -70,8 +70,8 @@
                     <div class="col-6 text-end">{{ matchPlayer.myState$ | async }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-6">Legend</div>
-                    <div class="col-6 text-end">{{ (matchPlayerLegend.myLegend$ | async)?.friendlyName }}</div>
+                    <div class="col-6">Legend Id</div>
+                    <div class="col-6 text-end">{{ (matchPlayerLegend.myLegend$ | async)?.name }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
                     <div class="col-6">Placement</div>
@@ -170,7 +170,7 @@
                     [highlightColor]="changedHighlightColor"
                 >
                     <div class="col-6">{{ teammate.name }}</div>
-                    <div class="col-6 text-end">[{{ teammate.legend?.friendlyName }}]</div>
+                    <div class="col-6 text-end">[{{ teammate.legend?.name }}]</div>
                 </div>
             </div>
         </div>

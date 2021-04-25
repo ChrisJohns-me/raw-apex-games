@@ -1,0 +1,52 @@
+@import "bootstrap/scss/bootstrap";
+
+:host {
+    width: 100%;
+}
+
+.placeholder {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    background-color: #202020;
+}
+
+.col-legend-portraits {
+    width: 150px;
+    flex: 0 0 150px;
+
+    img {
+        &.legend-portrait {
+            display: inline-block;
+
+            &.my-legend-portrait {
+                max-width: 50px;
+                max-height: 50px;
+            }
+
+            &.teammate-legend-portrait {
+                max-width: 35px;
+                max-height: 35px;
+                opacity: 0.7;
+            }
+        }
+    }
+}
+
+.col-stats {
+    width: 60px;
+    flex: 0 0 60px;
+}
+
+.placement-sign {
+    font-weight: 100;
+    color: $gray-600;
+}
+
+.data-digit {
+    font-weight: normal;
+
+    &.primary-digit {
+        font-weight: bold;
+    }
+}

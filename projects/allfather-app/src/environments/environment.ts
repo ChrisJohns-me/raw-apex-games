@@ -6,7 +6,8 @@ const localDatabase = {
 };
 
 export const environment: typeof ProdEnvironment = {
-    production: false,
+    PROD: false,
+    DEV: true,
     allowDevTools: true,
     localDatabase,
 };

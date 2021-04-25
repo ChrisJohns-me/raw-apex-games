@@ -17,6 +17,8 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     @Input() public isContentDraggable = true;
     @Input() public isDesktopWindow = true;
     @Input() public isTitlebarDraggable = true;
+    @Input() public isMaximizable = true;
+    @Input() public isMinimizable = true;
     @Input() public position: { top: number; left: number } = { top: 0, left: 0 };
     @Input() public positionUnit: ConfigPositionUnit = "pixel";
     @Input() public positionXAnchor: ConfigPositionXAnchor = "left";
@@ -58,19 +60,30 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         this._unsubscribe$.complete();
     }
 
+    public onMinimizeButtonClick(): void {
+        if (!this.isMinimizable) return;
+        this.minimizeToggle();
+    }
+
+    public onMaximizeButtonClick(): void {
+        if (!this.isMaximizable) return;
+        this.maximizeToggle();
+    }
+
     public onCloseButtonClick(): void {
-        this.obtained$
-            ?.pipe(
-                takeUntil(this._unsubscribe$),
-                switchMap(() => this.uiWindow.close())
-            )
-            .subscribe();
+        this.close();
     }
 
     public onTitlebarMouseDown(event: Event): void {
         if (!this.isTitlebarDraggable) return;
         if (!(event instanceof MouseEvent)) return;
         this.onDrag(event);
+    }
+
+    public onTitlebarDoubleClick(event: Event): void {
+        if (!this.isMaximizable) return;
+        if (!(event instanceof MouseEvent)) return;
+        this.maximizeToggle();
     }
 
     public onContentMouseDown(event: Event): void {
@@ -86,6 +99,23 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         }
         event.preventDefault();
         this.obtained$?.pipe(takeUntil(this._unsubscribe$)).subscribe(() => this.uiWindow.dragMove());
+    }
+
+    private minimizeToggle(): void {
+        this.uiWindow.toggleMinimize().pipe(takeUntil(this._unsubscribe$)).subscribe();
+    }
+
+    private maximizeToggle(): void {
+        this.uiWindow.toggleMaximize().pipe(takeUntil(this._unsubscribe$)).subscribe();
+    }
+
+    private close(): void {
+        this.obtained$
+            ?.pipe(
+                takeUntil(this._unsubscribe$),
+                switchMap(() => this.uiWindow.close())
+            )
+            .subscribe();
     }
 
     private updatePosition(): void {

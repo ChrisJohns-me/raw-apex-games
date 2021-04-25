@@ -97,7 +97,11 @@ export class UIWindow {
         return this.obtain().pipe(mergeMap((window) => this.closeInternal(window.id)));
     }
 
-    public toggle(close = false): Observable<boolean> {
+    /**
+     * @returns {true} if restored
+     * @returns {false} if closed
+     */
+    public toggleMinimize(close = false): Observable<boolean> {
         return this.obtain().pipe(
             mergeMap((window) => this.getStateInternal(window.id)),
             mergeMap((state) => {
@@ -105,6 +109,23 @@ export class UIWindow {
                     return this.restore().pipe(map(() => true));
                 }
                 return (close ? this.close() : this.minimize()).pipe(map(() => false));
+            })
+        );
+    }
+
+    /**
+     * @returns {true} if set to maximized
+     * @returns {false} if set to non-maximized
+     */
+    public toggleMaximize(): Observable<boolean> {
+        return this.obtain().pipe(
+            mergeMap((window) => this.getStateInternal(window.id)),
+            mergeMap((state) => {
+                if (state === WindowState.Closed || state === WindowState.Maximized) {
+                    return this.restore().pipe(map(() => false));
+                } else {
+                    return this.maximize().pipe(map(() => true));
+                }
             })
         );
     }

@@ -37,6 +37,6 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     private registerUIWindows(): void {
         if (environment.allowDevTools) this.developmentToolsWindow.open().pipe(takeUntil(this._unsubscribe$)).subscribe();
 
-        // this.dashboardWindow.open().pipe(takeUntil(this._unsubscribe$)).subscribe();
+        this.dashboardWindow.open().pipe(takeUntil(this._unsubscribe$)).subscribe();
     }
 }

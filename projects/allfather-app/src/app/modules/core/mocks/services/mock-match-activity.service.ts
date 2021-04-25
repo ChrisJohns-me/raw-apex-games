@@ -14,6 +14,6 @@ export class MockMatchActivityService implements MockedClass<MatchActivityServic
     public playerLastKnownState(
         ...args: Parameters<MatchActivityService["playerLastKnownState"]>
     ): ReturnType<MatchActivityService["playerLastKnownState"]> {
-        throw new Error("Method not implemented.");
+        return;
     }
 }

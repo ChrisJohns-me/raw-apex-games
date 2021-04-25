@@ -22,11 +22,13 @@ export interface Facts {
     /** Time in ms before respawn banner expires where teammates can grab banner */
     respawnBannerExpireTime: number;
     /** Max amount of shields that is possible in the game */
-    shieldMax: number;
+    maxShield: number;
     /** Max amount of health that is possible in the game */
-    healthMax: number;
+    maxHealth: number;
     /** Largest ultimate ability cooldown time possible */
-    ultimateMaxCooldownTime: number;
+    maxUltimateCooldownTime: number;
+    /** Absolute maximum possible number of players on one squad */
+    maxSquadSize: number;
 }
 
 /**

@@ -9,7 +9,7 @@ export interface OpponentBanner {
     isIndirectBanner: boolean;
     rosterPlayer: MatchRosterPlayer;
     latestInflictionAccum?: MatchInflictionEventAccum;
-    maybeShieldMax: number;
+    maybeMaxShield: number;
     maybeShieldAmount: number;
     maybeHealthAmount: number;
 }

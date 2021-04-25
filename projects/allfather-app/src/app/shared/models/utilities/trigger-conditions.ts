@@ -4,7 +4,7 @@ type Triggers<KeyType extends string = string, ArgsType extends any[] = any[]> =
 };
 
 export class TriggerConditions<KeyType extends string = string, ArgsType extends any[] = any[]> {
-    constructor(private triggers: Triggers<KeyType, ArgsType>) {}
+    constructor(public identifier: string, private triggers: Triggers<KeyType, ArgsType>) {}
 
     public set(key: KeyType, trigger: Condition<ArgsType[]>): void {
         if (typeof trigger !== "function") return;
@@ -32,7 +32,7 @@ export class TriggerConditions<KeyType extends string = string, ArgsType extends
             if (typeof isTriggeredFn !== "function") continue;
             if (!isTriggeredFn(...args)) continue;
 
-            console.debug(`[${this.constructor.name}] Triggered (${key}) triggered by:`, ...args);
+            console.debug(`[${this.constructor.name}] [${this.identifier}] Triggered (${key}) triggered by:`, ...args);
             triggeredArr.push(key as KeyType);
             if (stopOnFirst) break;
         }
