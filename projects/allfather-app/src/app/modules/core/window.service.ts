@@ -1,5 +1,5 @@
 /**
- * @see https://brianflove.com/2018/01/11/angular-window-provider/
+ * @see https://brianflove.com/2018-01-11/angular-window-provider/
  */
 import { isPlatformBrowser } from "@angular/common";
 import { ClassProvider, FactoryProvider, InjectionToken, PLATFORM_ID } from "@angular/core";

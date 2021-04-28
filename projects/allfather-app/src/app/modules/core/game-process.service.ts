@@ -1,7 +1,8 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Injectable, OnDestroy } from "@angular/core";
-import { BehaviorSubject, Subject } from "rxjs";
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { AllfatherService } from "./allfather-service.abstract";
 import { OverwolfGameDataService } from "./overwolf";
 
 /**
@@ -12,25 +13,16 @@ import { OverwolfGameDataService } from "./overwolf";
     deps: [OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("GameProcessService", GameProcessService, deps),
 })
-export class GameProcessService implements OnDestroy {
+export class GameProcessService extends AllfatherService {
     public readonly isRunning$ = new BehaviorSubject<boolean>(false);
     public readonly isInFocus$ = new BehaviorSubject<boolean>(false);
 
-    private readonly _unsubscribe$ = new Subject<void>();
-
-    constructor(private readonly overwolfGameData: OverwolfGameDataService) {}
-
-    public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+    constructor(private readonly overwolfGameData: OverwolfGameDataService) {
+        super();
     }
 
     public init(): void {
-        this.setupGameInfoUpdated();
-    }
-
-    private setupGameInfoUpdated(): void {
-        this.overwolfGameData.gameInfo$.pipe(takeUntil(this._unsubscribe$)).subscribe((gameInfo) => {
+        this.overwolfGameData.gameInfo$.pipe(takeUntil(this.isDestroyed$)).subscribe((gameInfo) => {
             if (!gameInfo) return;
             if (gameInfo.isRunning !== this.isRunning$.value) this.isRunning$.next(gameInfo.isRunning);
             if (gameInfo.isInFocus !== this.isInFocus$.value) this.isInFocus$.next(gameInfo.isInFocus);

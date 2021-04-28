@@ -47,8 +47,8 @@
                     "height": 600
                 },
                 "min_size": {
-                    "width": 300,
-                    "height": 250
+                    "width": 750,
+                    "height": 375
                 }
             },
             "in-game-match-timer": {

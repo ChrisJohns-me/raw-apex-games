@@ -1,6 +1,7 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Injectable, OnDestroy } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { BehaviorSubject, Subject } from "rxjs";
+import { AllfatherService } from "./allfather-service.abstract";
 import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./overwolf";
 
 /**
@@ -12,7 +13,7 @@ import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event, OWRunningGam
     useFactory: (...deps: unknown[]) =>
         SingletonServiceProviderFactory("ExposedOverwolfGameDataService", ExposedOverwolfGameDataService, deps),
 })
-export class ExposedOverwolfGameDataService implements OnDestroy {
+export class ExposedOverwolfGameDataService extends AllfatherService {
     public get rawGameInfo$(): BehaviorSubject<Optional<OWRunningGameInfo>> {
         return this.overwolfGameData.gameInfo$;
     }
@@ -23,13 +24,8 @@ export class ExposedOverwolfGameDataService implements OnDestroy {
         return this.overwolfGameData.newGameEvent$;
     }
 
-    private readonly _unsubscribe$ = new Subject<void>();
-
-    constructor(private readonly overwolfGameData: OverwolfGameDataService) {}
-
-    public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+    constructor(private readonly overwolfGameData: OverwolfGameDataService) {
+        super();
     }
 
     public init(): void {

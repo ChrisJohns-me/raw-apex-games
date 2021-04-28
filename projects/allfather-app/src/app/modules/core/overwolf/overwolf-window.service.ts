@@ -24,7 +24,7 @@ export class OverwolfWindowService {
     public readonly visibility = new VisibilityDelegate();
     //#endregion
 
-    private _unsubscribe$ = new Subject<void>();
+    private isDestroyed$ = new Subject<void>();
 
     public ngOnDestroy(): void {
         this.stopWindowEventListeners();
@@ -33,8 +33,8 @@ export class OverwolfWindowService {
         this.size.onDestroy();
         this.state.onDestroy();
         this.visibility.onDestroy();
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+        this.isDestroyed$.next();
+        this.isDestroyed$.complete();
     }
 
     public init(): void {

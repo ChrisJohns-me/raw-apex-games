@@ -35,7 +35,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     private readonly uiWindow = new UIWindow();
     private _primaryTitle = "";
     private obtained$?: Observable<boolean>;
-    private _unsubscribe$ = new Subject<void>();
+    private isDestroyed$ = new Subject<void>();
     constructor(private readonly titleService: Title) {}
 
     public ngOnInit(): void {
@@ -56,8 +56,8 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+        this.isDestroyed$.next();
+        this.isDestroyed$.complete();
     }
 
     public onMinimizeButtonClick(): void {
@@ -98,21 +98,21 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
             return;
         }
         event.preventDefault();
-        this.obtained$?.pipe(takeUntil(this._unsubscribe$)).subscribe(() => this.uiWindow.dragMove());
+        this.obtained$?.pipe(takeUntil(this.isDestroyed$)).subscribe(() => this.uiWindow.dragMove());
     }
 
     private minimizeToggle(): void {
-        this.uiWindow.toggleMinimize().pipe(takeUntil(this._unsubscribe$)).subscribe();
+        this.uiWindow.toggleMinimize().pipe(takeUntil(this.isDestroyed$)).subscribe();
     }
 
     private maximizeToggle(): void {
-        this.uiWindow.toggleMaximize().pipe(takeUntil(this._unsubscribe$)).subscribe();
+        this.uiWindow.toggleMaximize().pipe(takeUntil(this.isDestroyed$)).subscribe();
     }
 
     private close(): void {
         this.obtained$
             ?.pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 switchMap(() => this.uiWindow.close())
             )
             .subscribe();
@@ -137,13 +137,13 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         // this.uiWindow
         //     .getMonitor()
         //     .pipe(
-        //         takeUntil(this._unsubscribe$),
+        //         takeUntil(this.isDestroyed$),
         //         switchMap((monitor) => {
         //             combineLatest([, this.uiWindow.getSize()]);
         //         })
         //     )
         //     .pipe(
-        //         takeUntil(this._unsubscribe$),
+        //         takeUntil(this.isDestroyed$),
         //         map((size) => {}),
         //         switchMap((newPos) => this.uiWindow.changePosition(newPos.left, newPos.top))
         //     )

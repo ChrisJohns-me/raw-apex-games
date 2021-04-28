@@ -1,6 +1,6 @@
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration/configuration.service";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
-import { Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, TrackByFunction } from "@angular/core";
 import { intervalToDuration } from "date-fns";
 import { isEmpty } from "shared/utilities";
 import { unique } from "shared/utilities/primitives/array";
@@ -11,16 +11,28 @@ import { MatchGameMode } from "../models/match/game-mode";
     selector: "app-match-listing",
     styleUrls: ["./match-listing.component.scss"],
     templateUrl: "./match-listing.component.html",
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatchListingComponent {
-    @Input("matchData") public match?: MatchDataStore;
+    @Input() public set matches(value: MatchDataStore[]) {
+        this._matches = value;
+    }
+    public get matches(): MatchDataStore[] {
+        return this._matches;
+    }
+    @Input() public selectedMatchId? = "";
+    @Input() public isSelectable = false;
+    @Output() public matchClick = new EventEmitter<MatchDataStore>();
 
     public now = Date.now();
     /** Tipping point to show date played in different formats. */
     public relativeTime = 6 * 60 * 60 * 1000;
 
+    private _matches: MatchDataStore[] = [];
+
     constructor(private readonly config: ConfigurationService) {}
 
+    public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item): string => item.matchId;
     public durationSinceNow = (baseDate: Date): Duration => intervalToDuration({ start: baseDate, end: new Date() });
     public getGameModeTypeName = (gameModeId: string): Optional<string> => MatchGameMode.getBaseType(gameModeId);
     public getLegendImageName = (legendId: string): string => Legend.getSquarePortraitFilename(legendId);

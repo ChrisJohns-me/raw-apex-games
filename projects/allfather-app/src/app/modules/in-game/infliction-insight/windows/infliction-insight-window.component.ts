@@ -63,7 +63,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         emitOnExpire: true,
     });
     private acceptingResetEvents = false;
-    private _unsubscribe$ = new Subject<void>();
+    private isDestroyed$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
@@ -88,14 +88,14 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+        this.isDestroyed$.next();
+        this.isDestroyed$.complete();
     }
 
     private setupOnMatchStart(): void {
         combineLatest([this.match.state$, this.matchPlayer.myState$, this.matchPlayerLocation.myLocationPhase$])
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter(
                     ([matchState, myState, locationPhase]) =>
                         matchState.state === MatchState.Active &&
@@ -124,7 +124,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         );
         merge(this.match.endedEvent$, deathEvents)
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 tap(() => (this.acceptingResetEvents = false)),
                 delay(this.config.general.matchEndHUDTimeout)
             )
@@ -138,7 +138,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
 
     private setupInflictionEventList(): void {
         merge(this.createMyDamageInflictionEvents$())
-            .pipe(takeUntil(this._unsubscribe$))
+            .pipe(takeUntil(this.isDestroyed$))
             .subscribe((inflAccum) => {
                 if (isEmpty(inflAccum.victim?.name)) return;
                 const foundOpponentBanner = this.opponentBannerList.find((b) =>

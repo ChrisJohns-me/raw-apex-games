@@ -5,11 +5,13 @@ type ActiveDates = Array<{
     to?: Date; // if undefined, map is currently active
 }>;
 
-interface MatchMapImageAxixScale {
-    xStart: number;
-    xEnd: number;
-    yStart: number;
-    yEnd: number;
+interface MatchMapChartingConfig {
+    imageAxisScale: {
+        xStart: number;
+        xEnd: number;
+        yStart: number;
+        yEnd: number;
+    };
 }
 
 export interface MatchMapConstructor {
@@ -17,7 +19,7 @@ export interface MatchMapConstructor {
     mapName: string;
     activeDates?: ActiveDates;
     dropshipZStart?: MatchMapCoordinates["z"];
-    imageAxisScale?: MatchMapImageAxixScale;
+    chartConfig?: MatchMapChartingConfig;
 }
 
 export class MatchMap {
@@ -25,7 +27,7 @@ export class MatchMap {
     public mapName: string;
     public activeDates?: ActiveDates;
     public dropshipZStart?: MatchMapCoordinates["z"]; // Useful to cross-reference with starting location
-    public imageAxisScale?: MatchMapImageAxixScale;
+    public chartConfig?: MatchMapChartingConfig;
 
     public get isActive(): boolean {
         return !!this.activeDates?.some((date) => date.to == null && date.from < new Date());
@@ -36,6 +38,6 @@ export class MatchMap {
         this.mapName = ctor.mapName;
         this.activeDates = ctor.activeDates;
         this.dropshipZStart = ctor.dropshipZStart;
-        this.imageAxisScale = ctor.imageAxisScale;
+        this.chartConfig = ctor.chartConfig;
     }
 }

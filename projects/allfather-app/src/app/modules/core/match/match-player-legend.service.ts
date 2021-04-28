@@ -3,10 +3,11 @@ import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { Legend } from "@allfather-app/app/shared/models/legend";
 import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Injectable, OnDestroy } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { BehaviorSubject, combineLatest, of, Subject } from "rxjs";
 import { distinctUntilChanged, filter, map, pairwise, switchMap, takeUntil, tap } from "rxjs/operators";
 import { mathClamp } from "shared/utilities";
+import { AllfatherService } from "../allfather-service.abstract";
 import { MatchLegendSelectService } from "./match-legend-select.service";
 import { MatchPlayerLocationService } from "./match-player-location.service";
 import { MatchService } from "./match.service";
@@ -16,7 +17,7 @@ import { MatchService } from "./match.service";
     deps: [MatchService, MatchLegendSelectService, MatchPlayerLocationService, OverwolfGameDataService, PlayerService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerLegendService", MatchPlayerLegendService, deps),
 })
-export class MatchPlayerLegendService implements OnDestroy {
+export class MatchPlayerLegendService extends AllfatherService {
     public readonly myLegend$ = new BehaviorSubject<Optional<Legend>>(undefined);
     /** Percent of current Ultimate Cooldown; after player has landed. */
     public readonly myUltimateCooldown$ = new Subject<number>();
@@ -27,18 +28,15 @@ export class MatchPlayerLegendService implements OnDestroy {
         playerName: string;
         legend: Legend;
     }[] = [];
-    private readonly _unsubscribe$ = new Subject<void>();
+
     constructor(
         private readonly match: MatchService,
         private readonly matchLegendSelect: MatchLegendSelectService,
         private readonly matchPlayerLocation: MatchPlayerLocationService,
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly player: PlayerService
-    ) {}
-
-    public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+    ) {
+        super();
     }
 
     public init(): void {
@@ -49,7 +47,7 @@ export class MatchPlayerLegendService implements OnDestroy {
     }
 
     private setupOnMatchEnd(): void {
-        this.match.endedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
+        this.match.endedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
             this.stagingLegends = [];
         });
     }
@@ -57,7 +55,7 @@ export class MatchPlayerLegendService implements OnDestroy {
     private setupMyLegend(): void {
         this.matchLegendSelect.legendSelected$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter((selection) => !!selection.legend),
                 tap((selection) => {
                     this.stagingLegends = this.stagingLegends.filter((sl) => sl.playerName !== selection.playerName);
@@ -77,7 +75,7 @@ export class MatchPlayerLegendService implements OnDestroy {
     private setupMyUltimateCooldown(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter(() => this.matchPlayerLocation.myLocationPhase$.value === MatchLocationPhase.HasLanded),
                 filter((infoUpdate) => infoUpdate.feature === "me" && !!infoUpdate.info.me?.ultimate_cooldown),
                 map((infoUpdate) => String(infoUpdate.info.me?.ultimate_cooldown?.ultimate_cooldown ?? "")),
@@ -93,7 +91,7 @@ export class MatchPlayerLegendService implements OnDestroy {
     private setupMyUltimateUsage(): void {
         this.myUltimateCooldown$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter(() => this.matchPlayerLocation.myLocationPhase$.value === MatchLocationPhase.HasLanded),
                 pairwise()
             )

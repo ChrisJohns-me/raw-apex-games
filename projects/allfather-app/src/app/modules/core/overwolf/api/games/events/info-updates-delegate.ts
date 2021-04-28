@@ -1,5 +1,6 @@
 import { OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
-import { Subject } from "rxjs";
+import { bindCallback, from, Subject, Subscription } from "rxjs";
+import { filter, map, switchMap } from "rxjs/operators";
 import {
     recursiveEmptyObjectsToNull,
     recursiveEmptyStringsToNull,
@@ -16,13 +17,31 @@ export class InfoUpdatesDelegate implements OverwolfEventListenerDelegate {
         INFOUPDATES2: (e: overwolf.games.events.InfoUpdates2Event): void => this.onInfoUpdates2(e),
     };
 
+    private prepopulationSubscription?: Subscription;
+
     public startEventListeners(): void {
         this.stopEventListeners();
+        this.handlePrepopulation();
         overwolf.games.events.onInfoUpdates2.addListener(this.eventListeners.INFOUPDATES2);
     }
 
     public stopEventListeners(): void {
+        this.prepopulationSubscription?.unsubscribe();
         overwolf.games.events.onInfoUpdates2.removeListener(this.eventListeners.INFOUPDATES2);
+    }
+
+    /** On startup, manually injects Overwolf `getInfo` data into the infoUpdates observable. */
+    private handlePrepopulation(): void {
+        console.debug(`[${this.constructor.name}] Handling Prepopulation`);
+        const getInfoObs = bindCallback(overwolf.games.events.getInfo);
+        this.prepopulationSubscription = getInfoObs()
+            .pipe(
+                filter((result) => !!result.success),
+                map((result) => result.res),
+                switchMap((infoResult) => from(Object.entries(infoResult) as [overwolf.gep.ApexLegends.GameInfoKey, any][])),
+                map(([key, value]) => ({ feature: key, info: { [key]: value } }))
+            )
+            .subscribe((infoUpdateEvent) => this.onInfoUpdates2(infoUpdateEvent));
     }
 
     /**

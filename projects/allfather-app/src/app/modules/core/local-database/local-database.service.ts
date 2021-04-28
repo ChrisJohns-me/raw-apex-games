@@ -8,7 +8,7 @@ import { version2 } from "./versions/version2";
 
 /**
  * @class LocalDatabaseService
- * @classdesc Container for the local database.
+ * @classdesc Container for the local database; used for long-term data storage.
  * @summary Cannot load this as a Singleton service, due to Dexie collisions.
  */
 @Injectable({ providedIn: "root" })
@@ -22,6 +22,8 @@ export class LocalDatabaseService extends Dexie {
 
         this.table("matches");
     }
+
+    public init(): void {}
 
     private handleVersions() {
         version1(this);

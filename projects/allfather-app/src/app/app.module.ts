@@ -6,6 +6,7 @@ import { AppComponent } from "./app.component";
 import { BackgroundModule } from "./modules/background/background.module";
 import { ConfigurationModule } from "./modules/core/configuration/configuration.module";
 import { OverwolfModule } from "./modules/core/overwolf/overwolf.module";
+import { WINDOW_PROVIDERS } from "./modules/core/window.service";
 import { DashboardModule } from "./modules/dashboard/dashboard.module";
 import { DevelopmentToolsModule } from "./modules/development-tools/development-tools.module";
 import { NoopDevelopmentToolsModule } from "./modules/development-tools/noop-development-tools.module";
@@ -29,6 +30,7 @@ import { PreferencesModule } from "./modules/preferences/preferences.module";
         PreferencesModule,
         UltTimerWindowModule,
     ],
+    providers: [WINDOW_PROVIDERS],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -43,7 +43,7 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         return this.rosterActionsForm.get("damageAmount")?.value;
     }
 
-    private _unsubscribe$ = new Subject<void>();
+    private isDestroyed$ = new Subject<void>();
 
     constructor(
         private cdr: ChangeDetectorRef,
@@ -57,8 +57,8 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+        this.isDestroyed$.next();
+        this.isDestroyed$.complete();
     }
 
     public onPerformFullQuickGameClick(): void {

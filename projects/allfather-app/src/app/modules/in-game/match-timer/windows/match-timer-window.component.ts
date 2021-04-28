@@ -30,7 +30,7 @@ export class MatchTimerWindowComponent implements OnInit, OnDestroy {
 
     private matchStartDate?: Date;
     private matchEndDate?: Date;
-    private _unsubscribe$ = new Subject<void>();
+    private isDestroyed$ = new Subject<void>();
 
     constructor(private readonly cdr: ChangeDetectorRef, private readonly match: MatchService) {}
 
@@ -40,14 +40,14 @@ export class MatchTimerWindowComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+        this.isDestroyed$.next();
+        this.isDestroyed$.complete();
     }
 
     private setupMatchStartEvent(): void {
         this.match.state$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter((stateChanged) => stateChanged.state === MatchState.Active),
                 tap((stateChanged) => {
                     this.matchStartDate = stateChanged.startDate;
@@ -63,7 +63,7 @@ export class MatchTimerWindowComponent implements OnInit, OnDestroy {
     private setupMatchStopEvent(): void {
         this.match.endedEvent$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 tap((stateChanged) => (this.matchEndDate = stateChanged.endDate)),
                 delay(MATCH_END_TIMEOUT),
                 tap(() => (this.showTimer = false))

@@ -27,11 +27,13 @@ export const MatchMapList: MatchMap[] = [
             },
         ],
         dropshipZStart: 234,
-        imageAxisScale: {
-            xStart: -373,
-            xEnd: 442,
-            yStart: -371,
-            yEnd: 441,
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -373,
+                xEnd: 442,
+                yStart: -371,
+                yEnd: 441,
+            },
         },
     }),
     new MatchMap({
@@ -54,11 +56,13 @@ export const MatchMapList: MatchMap[] = [
             },
         ],
         dropshipZStart: 119,
-        imageAxisScale: {
-            xStart: -520,
-            xEnd: 378,
-            yStart: -421,
-            yEnd: 480,
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -520,
+                xEnd: 378,
+                yStart: -421,
+                yEnd: 480,
+            },
         },
     }),
 ];

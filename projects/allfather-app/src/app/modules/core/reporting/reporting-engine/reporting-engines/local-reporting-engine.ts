@@ -26,7 +26,7 @@ export class LocalReportingEngine implements ReportingEngine {
     }
 
     private reportableDataList: ObjectPropertyTypes<ReportableDataFactoryMap>[] = [];
-    private _unsubscribe$ = new Subject<void>();
+    private isDestroyed$ = new Subject<void>();
 
     constructor(private readonly match: MatchService) {}
 
@@ -44,8 +44,8 @@ export class LocalReportingEngine implements ReportingEngine {
     }
 
     public teardown(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+        this.isDestroyed$.next();
+        this.isDestroyed$.complete();
     }
 
     public reset(): void {
@@ -63,7 +63,7 @@ export class LocalReportingEngine implements ReportingEngine {
         if (shouldRun) {
             const matchData = this.getMatchData();
             this.saveMatchData(matchData)
-                .pipe(takeUntil(this._unsubscribe$))
+                .pipe(takeUntil(this.isDestroyed$))
                 .subscribe((success) => {
                     this.reportingStatus$.next(success ? ReportingStatus.SUCCESS : ReportingStatus.FAIL);
                     console.log(`[${this.constructor.name}] Reporting Succeeded: ${success ? "Yes" : "No :("}`);

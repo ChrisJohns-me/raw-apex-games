@@ -6,10 +6,11 @@ import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster
 import { MatchRosterTeammate } from "@allfather-app/app/shared/models/match/roster-teammate";
 import { isPlayerNameEqual } from "@allfather-app/app/shared/models/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Injectable, OnDestroy } from "@angular/core";
-import { BehaviorSubject, Observable, Subject } from "rxjs";
+import { Injectable } from "@angular/core";
+import { BehaviorSubject, Observable } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { cleanInt, findKeyByKeyRegEx, findValueByKeyRegEx, isEmpty } from "shared/utilities";
+import { AllfatherService } from "../allfather-service.abstract";
 import { MatchLegendSelectService } from "./match-legend-select.service";
 import { MatchService } from "./match.service";
 
@@ -24,7 +25,7 @@ type RosterPlayerDisconnection = { timestamp: Date; rosterPlayer: OWMatchInfoRos
     deps: [ConfigurationService, MatchService, MatchLegendSelectService, OverwolfGameDataService, PlayerService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchRosterService", MatchRosterService, deps),
 })
-export class MatchRosterService implements OnDestroy {
+export class MatchRosterService extends AllfatherService {
     /**
      * Provides list of players in the current match.
      * Emits only at the beginning of the match, or upon subscription.
@@ -66,7 +67,6 @@ export class MatchRosterService implements OnDestroy {
 
     private stagedMatchRoster = new MatchRoster();
     private stagedTeammateRoster = new MatchRoster<MatchRosterTeammate>();
-    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly config: ConfigurationService,
@@ -75,12 +75,8 @@ export class MatchRosterService implements OnDestroy {
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly player: PlayerService
     ) {
+        super();
         this.rosterUpdate$ = this.setupRosterUpdate$();
-    }
-
-    public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
     }
 
     public init(): void {
@@ -122,7 +118,7 @@ export class MatchRosterService implements OnDestroy {
         };
 
         return this.overwolfGameData.infoUpdates$.pipe(
-            takeUntil(this._unsubscribe$),
+            takeUntil(this.isDestroyed$),
             filter((infoUpdate) => infoUpdate.feature === "roster"),
             map((infoUpdate) => infoUpdate.info.match_info),
             map((matchInfo): [number, OWMatchInfo] => {
@@ -146,7 +142,7 @@ export class MatchRosterService implements OnDestroy {
      * Resets states and emits rosters
      */
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
             this.numPlayers$.next(0);
             this.numTeams$.next(0);
             this.startingNumPlayers$.next(0);
@@ -167,7 +163,7 @@ export class MatchRosterService implements OnDestroy {
      * Resets state on match start
      */
     private setupOnMatchEnd(): void {
-        this.match.endedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
+        this.match.endedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
             this.resetStagedRosters();
         });
     }
@@ -178,7 +174,7 @@ export class MatchRosterService implements OnDestroy {
     private setupCounts(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter((infoUpdate) => infoUpdate.feature === "match_info" && !!infoUpdate.info.match_info?.tabs),
                 map((infoUpdate) => infoUpdate.info.match_info?.tabs),
                 filter((tabs) => !isEmpty(tabs))
@@ -283,7 +279,7 @@ export class MatchRosterService implements OnDestroy {
     private setupTeammateRosterSecondary(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 // Should only receive roster additions prior to the match start
                 filter(() => !this.match.isActive),
                 filter((infoUpdate) => infoUpdate.feature === "team"),
@@ -305,7 +301,7 @@ export class MatchRosterService implements OnDestroy {
      *  and adds that combined result to the Staging Teammate Roster.
      */
     private setupTeammateLegends(): void {
-        this.matchLegendSelect.legendSelected$.pipe(takeUntil(this._unsubscribe$)).subscribe((legendSelect) => {
+        this.matchLegendSelect.legendSelected$.pipe(takeUntil(this.isDestroyed$)).subscribe((legendSelect) => {
             const rosterPlayer = this.stagedMatchRoster.allPlayers.find((p) => isPlayerNameEqual(p.name, legendSelect!.playerName));
             let newRosterTeammate: MatchRosterTeammate;
 

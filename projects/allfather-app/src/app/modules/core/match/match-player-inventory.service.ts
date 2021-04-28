@@ -3,10 +3,11 @@ import { InventorySlots } from "@allfather-app/app/shared/models/inventory-slots
 import { Item } from "@allfather-app/app/shared/models/items/item";
 import { WeaponItem } from "@allfather-app/app/shared/models/items/weapon-item";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Injectable, OnDestroy } from "@angular/core";
-import { BehaviorSubject, Observable, Subject } from "rxjs";
+import { Injectable } from "@angular/core";
+import { BehaviorSubject, Observable } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { cleanInt, findKeyByKeyRegEx } from "shared/utilities";
+import { AllfatherService } from "../allfather-service.abstract";
 import { MatchService } from "./match.service";
 
 /**
@@ -17,7 +18,7 @@ import { MatchService } from "./match.service";
     deps: [MatchService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerInventoryService", MatchPlayerInventoryService, deps),
 })
-export class MatchPlayerInventoryService implements OnDestroy {
+export class MatchPlayerInventoryService extends AllfatherService {
     /** Local player's current weapon, throwable, inventory, ultimate, etc. item in use */
     public readonly myInUseItem$ = new BehaviorSubject<Optional<Item>>(undefined);
     /** Local player's current weapons */
@@ -26,18 +27,13 @@ export class MatchPlayerInventoryService implements OnDestroy {
     public readonly myInventorySlots$ = new BehaviorSubject<InventorySlots>({});
 
     private inventoryInfoUpdates$: Observable<OWInfoUpdates2Event>;
-    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(private readonly match: MatchService, private readonly overwolfGameData: OverwolfGameDataService) {
+        super();
         this.inventoryInfoUpdates$ = this.overwolfGameData.infoUpdates$.pipe(
-            takeUntil(this._unsubscribe$),
+            takeUntil(this.isDestroyed$),
             filter((infoUpdate) => infoUpdate.feature === "inventory")
         );
-    }
-
-    public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
     }
 
     public init(): void {
@@ -51,7 +47,7 @@ export class MatchPlayerInventoryService implements OnDestroy {
      * Reset states on match start
      */
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
             this.myInUseItem$.next(undefined);
             this.myWeaponSlots$.next({});
             this.myInventorySlots$.next({});

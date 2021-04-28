@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from "@angular/core";
 import "bootstrap";
 
 /**
@@ -11,6 +11,7 @@ import "bootstrap";
     template: ``,
     styleUrls: ["./bootstrap.scss"],
     encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BootstrapCSSInjectorComponent {
     constructor() {

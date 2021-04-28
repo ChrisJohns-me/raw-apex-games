@@ -3,13 +3,14 @@ import { MatchGameMode } from "@allfather-app/app/shared/models/match/game-mode"
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/shared/models/match/state";
 import { TriggerConditions } from "@allfather-app/app/shared/models/utilities/trigger-conditions";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Injectable, OnDestroy } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { differenceInMilliseconds } from "date-fns";
 import { IndexableType } from "dexie";
 import { BehaviorSubject, from, merge, Observable, of, Subject } from "rxjs";
 import { filter, map, take, takeUntil, tap, timeoutWith } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
 import { v4 as uuid, validate as uuidValidate } from "uuid";
+import { AllfatherService } from "../allfather-service.abstract";
 import { LocalDatabaseService } from "../local-database/local-database.service";
 import { MatchDataStore } from "../local-database/match-data-store";
 
@@ -24,7 +25,7 @@ const MATCHID_TIMEOUT = 5000;
     deps: [LocalDatabaseService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchService", MatchService, deps),
 })
-export class MatchService implements OnDestroy {
+export class MatchService extends AllfatherService {
     /** Provided by Overwolf's psuedo_match_id */
     public readonly matchId$ = new BehaviorSubject<string>("");
     /** Emits changed state only when match has started */
@@ -42,13 +43,9 @@ export class MatchService implements OnDestroy {
 
     private currentStartDate?: Date;
     private matchIdDate?: Date;
-    private readonly _unsubscribe$ = new Subject<void>();
 
-    constructor(private readonly localDatabase: LocalDatabaseService, private readonly overwolfGameData: OverwolfGameDataService) {}
-
-    public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+    constructor(private readonly localDatabase: LocalDatabaseService, private readonly overwolfGameData: OverwolfGameDataService) {
+        super();
     }
 
     public init(): void {
@@ -88,7 +85,7 @@ export class MatchService implements OnDestroy {
     private setupMatchId(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter((infoUpdate) => infoUpdate.feature === "match_info" && !isEmpty(infoUpdate.info.match_info?.pseudo_match_id)),
                 map((infoUpdate) => infoUpdate.info.match_info?.pseudo_match_id),
                 filter((matchId) => !!matchId && uuidValidate(matchId))
@@ -101,7 +98,7 @@ export class MatchService implements OnDestroy {
 
     private setupStartEndEvents(): void {
         merge(this.startedEvent$, this.endedEvent$)
-            .pipe(takeUntil(this._unsubscribe$))
+            .pipe(takeUntil(this.isDestroyed$))
             .subscribe((newState) => this.state$.next(newState));
     }
 
@@ -111,7 +108,7 @@ export class MatchService implements OnDestroy {
             if (newState === MatchState.Active) {
                 // Ensure that we have the matchId for the startEvent
                 this.resolveMatchId$(MATCHID_TIMEOUT)
-                    .pipe(takeUntil(this._unsubscribe$))
+                    .pipe(takeUntil(this.isDestroyed$))
                     .subscribe((matchId) => {
                         console.debug(`[${this.constructor.name}] Match is Active; MatchId: ${matchId}`);
                         this.currentStartDate = new Date();
@@ -131,7 +128,6 @@ export class MatchService implements OnDestroy {
         const triggers = new TriggerConditions<MatchState, [MatchState?, OWInfoUpdates2Event?, OWGameEvent?]>("MatchState", {
             [MatchState.Inactive]: (matchState, infoUpdate, gameEvent) => {
                 const notInactive = matchState !== MatchState.Inactive;
-                const gameModeChanged = infoUpdate?.feature === "match_info" && !!infoUpdate?.info?.match_info?.game_mode;
                 const infoStateInactive = infoUpdate?.feature === "match_state" && infoUpdate?.info?.game_info?.match_state === "inactive";
                 const teamEliminated = infoUpdate?.feature === "team" && infoUpdate.info.match_info?.team_info?.team_state === "eliminated";
                 const teamDeleted =
@@ -139,7 +135,7 @@ export class MatchService implements OnDestroy {
                     typeof infoUpdate.info.match_info?.team_info === "object" &&
                     infoUpdate.info.match_info?.team_info?.team_state == null;
                 const matchEnd = gameEvent?.name === "match_end";
-                return notInactive && (gameModeChanged || infoStateInactive || teamEliminated || teamDeleted || matchEnd);
+                return notInactive && (infoStateInactive || teamEliminated || teamDeleted || matchEnd);
             },
             [MatchState.Active]: (matchState, infoUpdate, gameEvent) => {
                 const notActive = matchState !== MatchState.Active;
@@ -151,12 +147,12 @@ export class MatchService implements OnDestroy {
             },
         });
 
-        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
+        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.isDestroyed$)).subscribe((infoUpdate) => {
             const newState = triggers.triggeredFirstKey(this.state$.value.state, infoUpdate, undefined);
             newStateChangeFn(newState);
         });
 
-        this.overwolfGameData.newGameEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe((gameEvent) => {
+        this.overwolfGameData.newGameEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe((gameEvent) => {
             const newState = triggers.triggeredFirstKey(this.state$.value.state, undefined, gameEvent);
             newStateChangeFn(newState);
         });
@@ -167,7 +163,7 @@ export class MatchService implements OnDestroy {
 
         this.overwolfGameData.infoUpdates$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter((infoUpdate) => infoUpdate.feature === "match_info"),
                 filter((infoUpdate) => !!infoUpdate.info.match_info?.game_mode),
                 map((infoUpdate) => infoUpdate.info.match_info?.game_mode)
