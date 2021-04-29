@@ -268,7 +268,6 @@ declare namespace overwolf.gep.ApexLegends {
     }
 
     interface GameInfo {
-        name?: string; // Local player name
         match_state?: "active" | "inactive";
     }
 

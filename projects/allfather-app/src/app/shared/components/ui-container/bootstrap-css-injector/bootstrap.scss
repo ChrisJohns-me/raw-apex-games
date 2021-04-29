@@ -1,1 +1,8 @@
-@import "../../../../../assets/styles/_bootstrap";
+/**
+ * Build Bootstrap CSS
+ */
+// Import
+@import "../../../../../assets/styles/bootstrap-theme";
+
+// Import bootstrap
+@import "bootstrap/scss/bootstrap";

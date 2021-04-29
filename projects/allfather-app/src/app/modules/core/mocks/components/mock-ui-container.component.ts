@@ -15,6 +15,8 @@ export class MockUIContainerComponent implements MockedClass<UIContainerComponen
     @Input() public isContentDraggable = true;
     @Input() public isDesktopWindow = true;
     @Input() public isTitlebarDraggable = true;
+    @Input() public isMaximizable = true;
+    @Input() public isMinimizable = true;
     @Input() public position: { top: number; left: number } = { top: 0, left: 0 };
     @Input() public positionUnit: ConfigPositionUnit = "pixel";
     @Input() public positionXAnchor: ConfigPositionXAnchor = "left";
@@ -32,9 +34,15 @@ export class MockUIContainerComponent implements MockedClass<UIContainerComponen
 
     constructor(private readonly titleService: Title) {}
 
+    public onMinimizeButtonClick(): void {}
+
+    public onMaximizeButtonClick(): void {}
+
     public onCloseButtonClick(): void {}
 
     public onTitlebarMouseDown(event: Event): void {}
+
+    public onTitlebarDoubleClick(event: Event): void {}
 
     public onContentMouseDown(event: Event): void {}
 }

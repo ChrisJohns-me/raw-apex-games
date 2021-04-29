@@ -1,7 +1,7 @@
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration/configuration.service";
 import { MatchInflictionEventAccum } from "@allfather-app/app/shared/models/match/infliction-event";
 import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
-import { ChangeDetectorRef, Component, Input, OnDestroy } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from "@angular/core";
 import { interval, Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
@@ -9,7 +9,7 @@ export interface OpponentBanner {
     isIndirectBanner: boolean;
     rosterPlayer: MatchRosterPlayer;
     latestInflictionAccum?: MatchInflictionEventAccum;
-    maybeShieldMax: number;
+    maybeMaxShield: number;
     maybeShieldAmount: number;
     maybeHealthAmount: number;
 }
@@ -18,7 +18,7 @@ export interface OpponentBanner {
     selector: "app-opponent-banner",
     templateUrl: "./opponent-banner.component.html",
     styleUrls: ["./opponent-banner.component.scss"],
-    // changeDetection: ChangeDetectionStrategy.OnPush, // TODO
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OpponentBannerComponent implements OnDestroy {
     @Input("bannerData") public set banner(value: Optional<OpponentBanner>) {
@@ -32,13 +32,13 @@ export class OpponentBannerComponent implements OnDestroy {
 
     private bannerData: Optional<OpponentBanner>;
     private refreshTimerSubscription?: Subscription;
-    private _unsubscribe$ = new Subject<void>();
+    private isDestroyed$ = new Subject<void>();
 
     constructor(private readonly cdr: ChangeDetectorRef, private readonly config: ConfigurationService) {}
 
     public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+        this.isDestroyed$.next();
+        this.isDestroyed$.complete();
     }
 
     private setupRefresh() {
@@ -50,7 +50,7 @@ export class OpponentBannerComponent implements OnDestroy {
         }
 
         this.refreshTimerSubscription = interval(this.config.featureConfigs.inflictionInsight.refreshTime)
-            .pipe(takeUntil(this._unsubscribe$))
+            .pipe(takeUntil(this.isDestroyed$))
             .subscribe(() => {
                 this.cdr.detectChanges();
             });

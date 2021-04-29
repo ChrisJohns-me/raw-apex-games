@@ -50,7 +50,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     public get maybeReadyDate(): Date | undefined {
         if (!this._maybeReadyDate || !isValid(this._maybeReadyDate) || !isFuture(this._maybeReadyDate)) return;
         if (differenceInSeconds(this._maybeReadyDate, new Date()) < 0.5) return; // give no date if it's under x seconds
-        return this._maybeReadyDate;
+        return new Date(this._maybeReadyDate); // Force template to update
     }
     /** Confidence level of accuracy; HIGH, LOW, NONE */
     public get confidenceLevel(): ConfidenceLevel {
@@ -76,7 +76,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     }
     private ultimateProgressHistory: UltimateProgress[] = [];
     private readonly visibleStates$: Observable<[MatchStateChangedEvent, PlayerState, Optional<MatchLocationPhase>]>;
-    private _unsubscribe$ = new Subject<void>();
+    private isDestroyed$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
@@ -87,7 +87,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
         private readonly matchPlayerLocation: MatchPlayerLocationService
     ) {
         this.visibleStates$ = combineLatest([this.match.state$, this.matchPlayer.myState$, this.matchPlayerLocation.myLocationPhase$]).pipe(
-            takeUntil(this._unsubscribe$),
+            takeUntil(this.isDestroyed$),
             distinctUntilChanged()
         );
     }
@@ -99,12 +99,12 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+        this.isDestroyed$.next();
+        this.isDestroyed$.complete();
     }
 
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
             console.debug(`[${this.constructor.name}] Ult-timer reset`);
             this.ultimateProgressHistory = [{ percent: 0, increment: 0.05, timestamp: new Date() }];
         });
@@ -182,7 +182,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
 
     private calcConfidenceAmount(): number {
         let confidence = 0;
-        const maxReadyDate = addMilliseconds(new Date(), this.config.facts.ultimateMaxCooldownTime);
+        const maxReadyDate = addMilliseconds(new Date(), this.config.facts.maxUltimateCooldownTime);
         const historyCount = this.ultimateProgressHistory.length;
         const percentVariance = mathAverageVariance(this.ultimateProgressHistory.map((u) => u.increment));
         const timeSecVariance = mathAverageVariance(this.ultimateProgressHistory.map((u) => u.timestamp.getTime() / 1000));

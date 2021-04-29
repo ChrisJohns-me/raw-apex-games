@@ -1,9 +1,10 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Injectable, OnDestroy } from "@angular/core";
-import { Subject } from "rxjs";
+import { Injectable } from "@angular/core";
+import { AllfatherService } from "../core/allfather-service.abstract";
 import { GameProcessService } from "../core/game-process.service";
 import { GameService } from "../core/game.service";
-import { GoogleFormsMatchSummaryTrackerService } from "../core/google-forms-match-summary-tracker.service";
+import { LocalDatabaseService } from "../core/local-database/local-database.service";
+import { LocalStorageService } from "../core/local-storage/local-storage.service";
 import { MatchActivityService } from "../core/match/match-activity.service";
 import { MatchLegendSelectService } from "../core/match/match-legend-select.service";
 import { MatchMapService } from "../core/match/match-map.service";
@@ -17,6 +18,7 @@ import { MatchRosterService } from "../core/match/match-roster.service";
 import { MatchService } from "../core/match/match.service";
 import { OverwolfGameDataService } from "../core/overwolf";
 import { ExposedOverwolfGameDataService } from "../core/overwolf-exposed-data.service";
+import { OverwolfExtensionService } from "../core/overwolf/overwolf-extension.service";
 import { PlayerService } from "../core/player.service";
 import { ReportableDataManagerService } from "../core/reporting/reporting-engine/reportable-data-manager";
 import { ReportingService } from "../core/reporting/reporting.service";
@@ -27,7 +29,8 @@ import { ReportingService } from "../core/reporting/reporting.service";
         ExposedOverwolfGameDataService,
         GameService,
         GameProcessService,
-        GoogleFormsMatchSummaryTrackerService,
+        LocalDatabaseService,
+        LocalStorageService,
         MatchService,
         MatchActivityService,
         MatchLegendSelectService,
@@ -39,6 +42,7 @@ import { ReportingService } from "../core/reporting/reporting.service";
         MatchPlayerLocationService,
         MatchPlayerStatsService,
         MatchRosterService,
+        OverwolfExtensionService,
         OverwolfGameDataService,
         PlayerService,
         ReportableDataManagerService,
@@ -46,14 +50,13 @@ import { ReportingService } from "../core/reporting/reporting.service";
     ],
     useFactory: (...deps: any[]) => SingletonServiceProviderFactory("BackgroundService", BackgroundService, deps),
 })
-export class BackgroundService implements OnDestroy {
-    private readonly _unsubscribe$ = new Subject<void>();
-
+export class BackgroundService extends AllfatherService {
     constructor(
         private readonly exposedOverwolfData: ExposedOverwolfGameDataService,
         private readonly game: GameService,
         private readonly gameProcess: GameProcessService,
-        private readonly googleFormsMatchSummaryTracker: GoogleFormsMatchSummaryTrackerService,
+        private readonly localDatabase: LocalDatabaseService,
+        private readonly localStorage: LocalStorageService,
         private readonly match: MatchService,
         private readonly matchActivity: MatchActivityService,
         private readonly matchLegendSelect: MatchLegendSelectService,
@@ -65,25 +68,27 @@ export class BackgroundService implements OnDestroy {
         private readonly matchPlayerLocation: MatchPlayerLocationService,
         private readonly matchPlayerStats: MatchPlayerStatsService,
         private readonly matchRoster: MatchRosterService,
+        private readonly overwolfExtensions: OverwolfExtensionService,
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly player: PlayerService,
         private readonly reportableDataManager: ReportableDataManagerService,
         private readonly reporting: ReportingService
-    ) {}
-
-    public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+    ) {
+        super();
     }
+
+    public init(): void {}
 
     public startBackgroundServices(): void {
         console.debug(`[${this.constructor.name}] Starting Background Services`);
+        this.overwolfExtensions.init();
         this.overwolfGameData.init();
 
         this.exposedOverwolfData.init();
         this.game.init();
         this.gameProcess.init();
-        this.googleFormsMatchSummaryTracker.init();
+        this.localDatabase.init();
+        this.localStorage.init();
         this.match.init();
         this.matchActivity.init();
         this.matchLegendSelect.init();

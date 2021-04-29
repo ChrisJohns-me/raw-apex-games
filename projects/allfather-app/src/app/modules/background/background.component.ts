@@ -4,6 +4,9 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/
 import { Title } from "@angular/platform-browser";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { LocalStorageKeys } from "../core/local-storage/local-storage-keys";
+import { LocalStorageService } from "../core/local-storage/local-storage.service";
+import { OverwolfExtensionService } from "../core/overwolf/overwolf-extension.service";
 import { DashboardWindowService } from "../dashboard/dashboard-window.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
 import { BackgroundService } from "./background.service";
@@ -14,29 +17,61 @@ import { BackgroundService } from "./background.service";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BackgroundComponent implements OnInit, OnDestroy {
-    private readonly _unsubscribe$ = new Subject<void>();
+    private readonly isDestroyed$ = new Subject<void>();
 
     constructor(
         private readonly backgroundService: BackgroundService,
         private readonly dashboardWindow: DashboardWindowService,
         private readonly developmentToolsWindow: DevelopmentToolsWindowService,
+        private readonly localStorage: LocalStorageService,
+        private readonly overwolfExtension: OverwolfExtensionService,
         private readonly titleService: Title
-    ) {}
+    ) {
+        this.titleService.setTitle(`${APP_NAME} - Background`);
+    }
 
     public ngOnInit(): void {
-        this.titleService.setTitle(`${APP_NAME} - Background`);
+        console.error(
+            `Overwolf Error (see: https://discuss.overwolf.com/t/apex-legends-events-completly-stop-if-overwolf-is-being-relaunched-while-game-is-already-open/495).`
+        );
+        if (this.needsRelaunch()) {
+            console.error(`Relaunching ${APP_NAME}...`);
+            this.doRelaunch();
+            return;
+        }
+
+        console.debug(`${APP_NAME} relaunched.`);
+        this.clearRelaunch();
         this.backgroundService.startBackgroundServices();
         this.registerUIWindows();
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+        this.isDestroyed$.next();
+        this.isDestroyed$.complete();
     }
 
     private registerUIWindows(): void {
-        if (environment.allowDevTools) this.developmentToolsWindow.open().pipe(takeUntil(this._unsubscribe$)).subscribe();
+        if (environment.allowDevTools) this.developmentToolsWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
 
-        // this.dashboardWindow.open().pipe(takeUntil(this._unsubscribe$)).subscribe();
+        this.dashboardWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+    }
+
+    /**
+     * @summary On any first run of the app, restart the app to hopefully force the Overwolf Game Event Provider to re-recognize the app.
+     * @see https://discuss.overwolf.com/t/apex-legends-events-completly-stop-if-overwolf-is-being-relaunched-while-game-is-already-open/495
+     */
+    private doRelaunch(): void {
+        this.localStorage.set(LocalStorageKeys.OWExtNeedsRelaunch, "true");
+        this.overwolfExtension.relaunchApp();
+    }
+
+    private needsRelaunch(): boolean {
+        return !this.localStorage.get(LocalStorageKeys.OWExtNeedsRelaunch);
+    }
+
+    private clearRelaunch(): void {
+        const hasRelaunched = !!this.localStorage.get(LocalStorageKeys.OWExtNeedsRelaunch);
+        if (hasRelaunched) this.localStorage.clearItem(LocalStorageKeys.OWExtNeedsRelaunch);
     }
 }

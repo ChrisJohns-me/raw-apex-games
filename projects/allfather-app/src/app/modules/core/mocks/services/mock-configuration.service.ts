@@ -10,6 +10,6 @@ export class MockConfigurationService implements MockedClass<ConfigurationServic
     public overwolfQuirks: ConfigurationService["overwolfQuirks"] = ConfigJSON.overwolfQuirks;
 
     public loadAppConfig(): ReturnType<ConfigurationService["loadAppConfig"]> {
-        throw new Error("Method not implemented.");
+        return new Promise(() => {});
     }
 }

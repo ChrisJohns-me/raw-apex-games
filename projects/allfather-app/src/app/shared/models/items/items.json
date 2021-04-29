@@ -295,8 +295,12 @@
         {
             "id": "rampart_turret",
             "friendlyName": "SHIELA",
-            "inGameInfoNameRegExPattern": "",
             "inGameEventNameRegExPattern": "^rampart_turret$"
+        },
+        {
+            "id": "rampart_cover_wall",
+            "friendlyName": "Amped Cover",
+            "inGameEventNameRegExPattern": "cover_wall$"
         },
         {
             "id": "bangalore_creeping_barrage",

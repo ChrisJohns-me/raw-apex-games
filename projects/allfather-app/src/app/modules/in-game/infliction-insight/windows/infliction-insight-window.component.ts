@@ -63,7 +63,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         emitOnExpire: true,
     });
     private acceptingResetEvents = false;
-    private _unsubscribe$ = new Subject<void>();
+    private isDestroyed$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
@@ -88,14 +88,14 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+        this.isDestroyed$.next();
+        this.isDestroyed$.complete();
     }
 
     private setupOnMatchStart(): void {
         combineLatest([this.match.state$, this.matchPlayer.myState$, this.matchPlayerLocation.myLocationPhase$])
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter(
                     ([matchState, myState, locationPhase]) =>
                         matchState.state === MatchState.Active &&
@@ -124,7 +124,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         );
         merge(this.match.endedEvent$, deathEvents)
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 tap(() => (this.acceptingResetEvents = false)),
                 delay(this.config.general.matchEndHUDTimeout)
             )
@@ -138,7 +138,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
 
     private setupInflictionEventList(): void {
         merge(this.createMyDamageInflictionEvents$())
-            .pipe(takeUntil(this._unsubscribe$))
+            .pipe(takeUntil(this.isDestroyed$))
             .subscribe((inflAccum) => {
                 if (isEmpty(inflAccum.victim?.name)) return;
                 const foundOpponentBanner = this.opponentBannerList.find((b) =>
@@ -236,7 +236,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
             isIndirectBanner: false,
             rosterPlayer: inflictionEvent.victim!,
             latestInflictionAccum: inflictionEvent,
-            maybeShieldMax: inflictionEvent.hasShield ? this.config.assumptions.opponentShieldDefault : 0,
+            maybeMaxShield: inflictionEvent.hasShield ? this.config.assumptions.opponentShieldDefault : 0,
             maybeShieldAmount: this.config.assumptions.opponentShieldDefault - inflictionEvent.shieldDamageSum,
             maybeHealthAmount: this.config.assumptions.opponentHealthDefault - inflictionEvent.healthDamageSum,
         };
@@ -272,7 +272,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
             isIndirectBanner: true,
             rosterPlayer: player,
             latestInflictionAccum: assumedInfliction,
-            maybeShieldMax: this.config.featureFlags.inflictionInsight.showAssumedOpponentTeammateShields
+            maybeMaxShield: this.config.featureFlags.inflictionInsight.showAssumedOpponentTeammateShields
                 ? this.config.assumptions.opponentShieldDefault
                 : 0,
             maybeShieldAmount: this.config.featureFlags.inflictionInsight.showAssumedOpponentTeammateShields
@@ -292,27 +292,27 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         if (!currBanner) return;
         if (!inflEvent?.latestTimestamp) return;
         if (inflEvent.hasShield) {
-            currBanner.maybeShieldMax = mathClamp(
+            currBanner.maybeMaxShield = mathClamp(
                 inflEvent.shieldDamageSum > this.config.assumptions.opponentShieldDefault
                     ? inflEvent.shieldDamageSum
                     : this.config.assumptions.opponentShieldDefault,
                 0,
-                this.config.facts.shieldMax
+                this.config.facts.maxShield
             );
             currBanner.maybeShieldAmount = mathClamp(
                 this.config.assumptions.opponentShieldDefault - inflEvent.shieldDamageSum,
                 0,
-                this.config.facts.shieldMax
+                this.config.facts.maxShield
             );
         } else {
-            currBanner.maybeShieldMax = mathClamp(inflEvent.shieldDamageSum, 0, this.config.facts.shieldMax);
+            currBanner.maybeMaxShield = mathClamp(inflEvent.shieldDamageSum, 0, this.config.facts.maxShield);
             currBanner.maybeShieldAmount = 0;
         }
         currBanner.latestInflictionAccum = inflEvent;
         currBanner.maybeHealthAmount = mathClamp(
             this.config.assumptions.opponentHealthDefault - inflEvent.healthDamageSum,
             0,
-            this.config.facts.healthMax
+            this.config.facts.maxHealth
         );
         currBanner.isIndirectBanner =
             (!inflEvent.shieldDamageSum || inflEvent.shieldDamageSum === 0) &&

@@ -1,0 +1,64 @@
+<table class="table table-striped table-borderless table-dark table-hover mb-0" *ngIf="matches?.length">
+    <tbody>
+        <tr
+            *ngFor="let match of matches; trackBy: matchTrackBy"
+            [ngClass]="{
+                clickable: isSelectable,
+                'table-active table-primary': !!selectedMatchId && match.matchId === selectedMatchId,
+                'table-warning': isLiveMatch
+            }"
+            (click)="matchClick.next(match)"
+        >
+            <td class="text-nowrap">
+                <div class="legend-portraits-container mt-1">
+                    <img
+                        class="legend-portrait my-legend-portrait"
+                        [src]="'../../../assets/images/legend-portraits/' + getLegendImageName(match.legendId)"
+                        alt=""
+                    />
+                    <img
+                        *ngFor="let teammate of buildTeamRoster(match)"
+                        class="legend-portrait teammate-legend-portrait"
+                        [src]="'../../../assets/images/legend-portraits/' + getLegendImageName(teammate.legendId)"
+                        alt=""
+                    />
+                </div>
+
+                <div class="match-date-container">
+                    <small class="text-muted" *ngIf="!match.endDate && isLiveMatch"
+                        ><span class="in-progress-pulse">🔴</span> In Progress</small
+                    >
+                    <small class="text-muted" *ngIf="match.endDate && match.endDate.getTime() > now - 60 * 1000">Just now</small>
+                    <small
+                        class="text-muted"
+                        *ngIf="match.endDate && match.endDate.getTime() < now - 60 * 1000 && match.endDate.getTime() > now - relativeTime"
+                    >
+                        {{
+                            durationSinceNow(match.endDate)
+                                | dfnsFormatDurationPure: { format: ["years", "months", "weeks", "days", "hours", "minutes"] }
+                        }}
+                        ago
+                    </small>
+                    <small class="text-muted" *ngIf="!match.endDate || match.endDate.getTime() < now - relativeTime">
+                        {{ match.endDate | dfnsFormatRelative: now }}
+                    </small>
+                </div>
+            </td>
+            <td class="align-middle">
+                <h4 class="data-digit-primary mb-0">
+                    {{ match.placement ? match.placement : "&nbsp;" }}<sub class="max-placement-sign" *ngIf="match.maxPlacement">/</sub>
+                    <sub class="max-placement-digit" *ngIf="match.maxPlacement">{{ match.maxPlacement }}</sub>
+                </h4>
+                <small class="h6 text-muted">{{ match.gameModeId ? (getGameModeTypeName(match.gameModeId) | titlecase) : "" }}</small>
+            </td>
+            <td class="align-middle text-center">
+                <h5 class="data-digit mb-1">{{ match.eliminations || 0 }}</h5>
+                <small class="text-muted">kills</small>
+            </td>
+            <td class="align-middle text-center">
+                <h5 class="data-digit mb-1">{{ match.damage || 0 }}</h5>
+                <small class="text-muted">damage</small>
+            </td>
+        </tr>
+    </tbody>
+</table>

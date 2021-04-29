@@ -10,14 +10,18 @@ export interface MatchDataStore {
     myName: string;
     gameModeId: string;
     mapId: string;
-    mapLayoutId: string;
+    legendId: string;
+    assists: number;
+    damage: number;
+    eliminations: number;
+    knockdowns: number;
+    maxPlacement: number;
+    placement: number;
     damageEventsHistory: TimestampedStream<DamageEvent>;
     gameEventsHistory: TimestampedStream<string>;
     killfeedHistory: TimestampedStream<MatchKillfeed>;
-    legendId: string;
-    locationHistory: TimestampedStream<Coordinates>;
+    locationHistory: TimestampedStream<LocationHistory>;
     matchRoster: Stream<MatchRosterPlayer>;
-    matchSummary: MatchSummary;
     teamRoster: TeamRosterPlayer[];
     ultimateUsageDates: Stream<Date>;
     weaponIdsHistory: TimestampedStream<WeaponIds>;
@@ -58,15 +62,17 @@ interface Coordinates {
     x: number;
     y: number;
     z: number;
+    phaseNum: LocationPhaseNum;
 }
 
-interface MatchSummary {
-    assists: number;
-    damage: number;
-    eliminations: number;
-    knockdowns: number;
-    maxPlacement: number;
-    placement: number;
+enum LocationPhaseNum {
+    Dropship,
+    Dropping,
+    HasLanded,
+}
+
+interface LocationHistory extends Coordinates {
+    phaseNum: LocationPhaseNum;
 }
 
 interface WeaponIds {

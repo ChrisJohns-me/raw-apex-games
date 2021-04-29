@@ -1,37 +1,33 @@
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Injectable, OnDestroy } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { combineLatest, of, Subject } from "rxjs";
 import { catchError, filter, switchMap, takeUntil } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
-import { LocalDatabaseService } from "../local-database/local-database.service";
+import { AllfatherService } from "../allfather-service.abstract";
 import { ReportableDataManagerService } from "./reporting-engine/reportable-data-manager";
 import { ReportingEngine, ReportingEngineId, ReportingStatus } from "./reporting-engine/reporting-engine";
 import { LocalReportingEngine } from "./reporting-engine/reporting-engines/local-reporting-engine";
+
+interface ReportingEvent {
+    engine: ReportingEngine;
+    status: ReportingStatus;
+}
 
 /**
  * @classdesc Watches for the match end event, runs all enabled reporting engines.
  */
 @Injectable({
     providedIn: "root",
-    deps: [LocalDatabaseService, MatchService, ReportableDataManagerService],
+    deps: [MatchService, ReportableDataManagerService],
     useFactory: (...deps: any[]) => SingletonServiceProviderFactory("ReportingService", ReportingService, deps),
 })
-export class ReportingService implements OnDestroy {
+export class ReportingService extends AllfatherService {
+    public reportingEvent$ = new Subject<ReportingEvent>();
     public runningReportingEngines: ReportingEngine[] = [];
-    public reportingFailedEvent$ = new Subject<void>();
 
-    private readonly _unsubscribe$ = new Subject<void>();
-
-    constructor(
-        private readonly localDatabase: LocalDatabaseService,
-        private readonly match: MatchService,
-        private readonly reportableDataManager: ReportableDataManagerService
-    ) {}
-
-    public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+    constructor(private readonly match: MatchService, private readonly reportableDataManager: ReportableDataManagerService) {
+        super();
     }
 
     public init(): void {
@@ -82,7 +78,7 @@ export class ReportingService implements OnDestroy {
     }
 
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
             // this.reportableDataItems.forEach(dataItem => dataItem.doSomething());
         });
     }
@@ -90,7 +86,7 @@ export class ReportingService implements OnDestroy {
     private setupOnMatchEnd(): void {
         this.match.endedEvent$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 switchMap(() => {
                     // Give each (started) engine it's opportunity to run.
                     this.runningReportingEngines.forEach((engine) => engine.runOpportunity());
@@ -110,12 +106,20 @@ export class ReportingService implements OnDestroy {
                     (s) => s === ReportingStatus.SUCCESS || s === ReportingStatus.FAIL || s === ReportingStatus.CRITERIA_NOT_MET
                 );
 
-                console.debug(
-                    `[${this.constructor.name}] [Reporting Engines] ` +
-                        `All Finished (${numFailed} Failed, ${numSucceeded} Succeeded, ${numSkipped} Skipped)`
-                );
+                // Emit reporting status events
+                this.runningReportingEngines.forEach((engine) => {
+                    this.reportingEvent$.next({
+                        engine: engine,
+                        status: engine.reportingStatus$.value,
+                    });
+                });
 
                 if (allFinished) {
+                    console.debug(
+                        `[${this.constructor.name}] [Reporting Engines] ` +
+                            `All Finished (${numFailed} Failed, ${numSucceeded} Succeeded, ${numSkipped} Skipped)`
+                    );
+
                     // Complete or Error; data is no longer needed.
                     this.reportableDataManager.clearAll();
                     this.runningReportingEngines.forEach((engine) => engine.reset());
@@ -128,7 +132,7 @@ export class ReportingService implements OnDestroy {
             reportableDataList: this.reportableDataManager.instantiatedDataItems,
             runConditions: [],
         };
-        const localReportingEngine = new LocalReportingEngine(this.localDatabase);
+        const localReportingEngine = new LocalReportingEngine(this.match);
         localReportingEngine.setup(setup);
         return localReportingEngine;
     }

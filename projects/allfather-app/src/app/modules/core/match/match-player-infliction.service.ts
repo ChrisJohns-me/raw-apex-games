@@ -5,10 +5,11 @@ import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { isPlayerNameEqual } from "@allfather-app/app/shared/models/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Injectable, OnDestroy } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Observable, partition, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { cleanInt, isEmpty, parseBoolean } from "shared/utilities";
+import { AllfatherService } from "../allfather-service.abstract";
 import { MatchActivityService } from "./match-activity.service";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
 import { MatchPlayerService } from "./match-player.service";
@@ -29,15 +30,13 @@ import { MatchRosterService } from "./match-roster.service";
     ],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerInflictionService", MatchPlayerInflictionService, deps),
 })
-export class MatchPlayerInflictionService implements OnDestroy {
+export class MatchPlayerInflictionService extends AllfatherService {
     /** Eliminations/knockdown event stream for the local user */
     public readonly myKillfeedEvent$: Observable<MatchInflictionEvent>;
     /** Eliminations/knockdown event stream for all players except the local user */
     public readonly notMyKillfeedEvent$: Observable<MatchInflictionEvent>;
     /** Damage event stream for the local user */
     public readonly myDamageEvent$ = new Subject<MatchInflictionEvent>();
-
-    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly matchActivity: MatchActivityService,
@@ -47,15 +46,11 @@ export class MatchPlayerInflictionService implements OnDestroy {
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly player: PlayerService
     ) {
+        super();
         [this.myKillfeedEvent$, this.notMyKillfeedEvent$] = partition(
             this.matchActivity.killfeedEvent$,
             (killfeedEvent) => !isEmpty(killfeedEvent.victim.name) && !!killfeedEvent.attacker?.isMe && !killfeedEvent.victim.isMe
         );
-    }
-
-    public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
     }
 
     public init(): void {
@@ -68,7 +63,7 @@ export class MatchPlayerInflictionService implements OnDestroy {
     private setupMyDamageEvents(): void {
         this.overwolfGameData.newGameEvent$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter((gameEvent) => gameEvent.name === "damage"),
                 map((gameEvent) => gameEvent.data as overwolf.gep.ApexLegends.GameEventDamage),
                 filter(() => {

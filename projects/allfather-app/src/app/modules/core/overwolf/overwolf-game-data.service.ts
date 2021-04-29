@@ -1,7 +1,8 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Inject, Injectable, OnDestroy } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { BehaviorSubject, interval, merge, Subject } from "rxjs";
 import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
+import { AllfatherService } from "../allfather-service.abstract";
 import { InfoUpdatesDelegate } from "./api/games/events/info-updates-delegate";
 import { NewGameEventDelegate } from "./api/games/events/new-game-event-delegate";
 import { GameInfoDelegate } from "./api/games/game-info-delegate";
@@ -10,14 +11,14 @@ import { OverwolfFeatureRegistrationService, OWFeatureRegistrationStatus } from 
 import { OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./types/overwolf-types";
 
 /**
- * @classdesc Game data and game process information directly from the Overwolf API.
+ * @classdesc Game data information directly from the Overwolf API.
  */
 @Injectable({
     providedIn: "root",
     deps: [OW_CONFIG, OverwolfFeatureRegistrationService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("OverwolfGameDataService", OverwolfGameDataService, deps),
 })
-export class OverwolfGameDataService implements OnDestroy {
+export class OverwolfGameDataService extends AllfatherService {
     //#region Delegate Outputs
     public get gameInfo$(): BehaviorSubject<Optional<OWRunningGameInfo>> {
         return this.gameInfoDelegate.gameInfo$;
@@ -40,15 +41,15 @@ export class OverwolfGameDataService implements OnDestroy {
 
     private isRunning$ = new BehaviorSubject<boolean>(false);
     private delegateEventListenersStarted = false;
-    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
         @Inject(OW_CONFIG) private readonly config: OWConfig,
         private readonly featureRegistration: OverwolfFeatureRegistrationService
     ) {
+        super();
         this.gameMonitorGameInfoDelegate.gameInfo$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 map((gameInfo) => gameInfo?.isRunning ?? false),
                 distinctUntilChanged()
             )
@@ -57,13 +58,12 @@ export class OverwolfGameDataService implements OnDestroy {
 
     public ngOnDestroy(): void {
         this.stopDelegateEventListeners();
-        this.stopGameMonitorEventListeners();
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+        this.gameMonitorGameInfoDelegate.stopEventListeners();
+        super.ngOnDestroy();
     }
 
     public init(): void {
-        this.startGameMonitorEventListeners();
+        this.gameMonitorGameInfoDelegate.startEventListeners();
         this.setupRunningCheck();
         this.setupNotRunningCheck();
     }
@@ -72,15 +72,15 @@ export class OverwolfGameDataService implements OnDestroy {
         const isRunningHealthcheck$ = interval(this.config.HEALTHCHECK_TIME).pipe(
             tap(() =>
                 console.debug(
-                    `[${this.constructor.name}] (Is Running HealthCheck)\n` +
-                        `Game Running: ${this.isRunning$.value}\n` +
-                        `Features: ${this.featureRegistration.registrationStatus$.value}`
+                    `[${this.constructor.name}] (Running HealthCheck), ` +
+                        `Game Running: "${this.isRunning$.value}", ` +
+                        `Features: "${this.featureRegistration.registrationStatus$.value}"`
                 )
             )
         );
         merge(isRunningHealthcheck$, this.isRunning$)
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter(() => this.isRunning$.value),
                 switchMap(() => this.featureRegistration.registerFeatures())
             )
@@ -99,16 +99,6 @@ export class OverwolfGameDataService implements OnDestroy {
     private setupNotRunningCheck(): void {
         this.isRunning$.pipe(filter((isRunning) => !isRunning)).subscribe(() => this.notRunning());
     }
-
-    //#region Game Monitor listeners
-    private startGameMonitorEventListeners(): void {
-        this.gameMonitorGameInfoDelegate.startEventListeners();
-    }
-
-    private stopGameMonitorEventListeners(): void {
-        this.gameMonitorGameInfoDelegate.stopEventListeners();
-    }
-    //#endregion
 
     //#region Delegate event listeners
     private startDelegateEventListeners(): void {

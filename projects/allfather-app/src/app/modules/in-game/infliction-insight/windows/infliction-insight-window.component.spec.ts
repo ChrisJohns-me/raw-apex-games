@@ -216,8 +216,8 @@ describe("InflictionInsightWindowComponent", () => {
             };
             config.assumptions.opponentShieldDefault = 76;
             config.assumptions.opponentHealthDefault = 101;
-            config.facts.shieldMax = 130;
-            config.facts.healthMax = 101;
+            config.facts.maxShield = 130;
+            config.facts.maxHealth = 101;
             matchService.startedEvent$.next(startEvent);
             matchService.state$.next(startEvent);
             matchPlayerService.myState$.next(PlayerState.Alive);
@@ -253,7 +253,7 @@ describe("InflictionInsightWindowComponent", () => {
                     isIndirectBanner: false,
                     rosterPlayer: expectedInflictionAccum.victim!,
                     latestInflictionAccum: expectedInflictionAccum,
-                    maybeShieldMax: 76,
+                    maybeMaxShield: 76,
                     maybeShieldAmount: 49,
                     maybeHealthAmount: 101,
                 },
@@ -276,8 +276,8 @@ describe("InflictionInsightWindowComponent", () => {
             };
             config.assumptions.opponentShieldDefault = 26;
             config.assumptions.opponentHealthDefault = 92;
-            config.facts.shieldMax = 151;
-            config.facts.healthMax = 142;
+            config.facts.maxShield = 151;
+            config.facts.maxHealth = 142;
             matchService.startedEvent$.next(startEvent);
             matchService.state$.next(startEvent);
             matchPlayerService.myState$.next(PlayerState.Alive);
@@ -313,7 +313,7 @@ describe("InflictionInsightWindowComponent", () => {
                     isIndirectBanner: false,
                     rosterPlayer: expectedInflictionAccum.victim!,
                     latestInflictionAccum: expectedInflictionAccum,
-                    maybeShieldMax: 0,
+                    maybeMaxShield: 0,
                     maybeShieldAmount: 26,
                     maybeHealthAmount: 0,
                 },
@@ -336,8 +336,8 @@ describe("InflictionInsightWindowComponent", () => {
             };
             config.assumptions.opponentShieldDefault = 26;
             config.assumptions.opponentHealthDefault = 92;
-            config.facts.shieldMax = 151;
-            config.facts.healthMax = 142;
+            config.facts.maxShield = 151;
+            config.facts.maxHealth = 142;
             matchService.startedEvent$.next(startEvent);
             matchService.state$.next(startEvent);
             matchPlayerService.myState$.next(PlayerState.Alive);
@@ -373,7 +373,7 @@ describe("InflictionInsightWindowComponent", () => {
                     isIndirectBanner: false,
                     rosterPlayer: expectedInflictionAccum.victim!,
                     latestInflictionAccum: expectedInflictionAccum,
-                    maybeShieldMax: 0,
+                    maybeMaxShield: 0,
                     maybeShieldAmount: 26,
                     maybeHealthAmount: 0,
                 },
@@ -390,8 +390,8 @@ describe("InflictionInsightWindowComponent", () => {
         const victim = { name: "ShieldANDHealthDamage", isMe: false };
         config.assumptions.opponentShieldDefault = 26;
         config.assumptions.opponentHealthDefault = 92;
-        config.facts.shieldMax = 151;
-        config.facts.healthMax = 142;
+        config.facts.maxShield = 151;
+        config.facts.maxHealth = 142;
         config.featureConfigs.inflictionInsight.damageResetTime = 5000;
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date("2020-01-01T00:00:00"),
@@ -438,7 +438,7 @@ describe("InflictionInsightWindowComponent", () => {
             {
                 isIndirectBanner: false,
                 rosterPlayer: victim,
-                maybeShieldMax: 26,
+                maybeMaxShield: 26,
                 maybeShieldAmount: 0,
                 maybeHealthAmount: 0,
                 latestInflictionAccum: expectedAccum,

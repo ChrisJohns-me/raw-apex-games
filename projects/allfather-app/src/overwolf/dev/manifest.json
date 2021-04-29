@@ -42,13 +42,14 @@
                 "transparent": true,
                 "override_on_update": true,
                 "show_in_taskbar": true,
+                "allow_local_file_access": true,
                 "size": {
                     "width": 1200,
                     "height": 600
                 },
                 "min_size": {
-                    "width": 300,
-                    "height": 250
+                    "width": 750,
+                    "height": 375
                 }
             },
             "development-tools": {
@@ -59,6 +60,7 @@
                 "transparent": true,
                 "override_on_update": true,
                 "show_in_taskbar": true,
+                "allow_local_file_access": true,
                 "size": {
                     "width": 1600,
                     "height": 900
@@ -76,6 +78,7 @@
                 "show_in_taskbar": true,
                 "mute": true,
                 "popup_blocker": true,
+                "allow_local_file_access": true,
                 "size": {
                     "width": 200,
                     "height": 50
@@ -97,6 +100,7 @@
                 "show_in_taskbar": true,
                 "mute": true,
                 "popup_blocker": true,
+                "allow_local_file_access": true,
                 "size": {
                     "width": 200,
                     "height": 50
@@ -122,6 +126,7 @@
                 "show_in_taskbar": true,
                 "mute": true,
                 "popup_blocker": true,
+                "allow_local_file_access": true,
                 "size": {
                     "width": 400,
                     "height": 455
@@ -143,6 +148,7 @@
                 "transparent": true,
                 "override_on_update": true,
                 "show_in_taskbar": true,
+                "allow_local_file_access": true,
                 "size": {
                     "width": 1200,
                     "height": 600

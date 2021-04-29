@@ -6,6 +6,7 @@ import { UltTimerWindowService } from "@allfather-app/app/modules/in-game/ult-ti
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { OverwolfExtensionService } from "../../core/overwolf/overwolf-extension.service";
 
 type MainTab = "simulate" | "logs";
 
@@ -24,21 +25,21 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     }
     public set ultTimerWindowEnabled(value: boolean) {
         this._ultTimerWindowEnabled = value;
-        this.inGameUltTimerWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe$)).subscribe();
+        this.inGameUltTimerWindow[value ? "open" : "close"]().pipe(takeUntil(this.isDestroyed$)).subscribe();
     }
     public get matchTimerWindowEnabled(): boolean {
         return this._matchTimerWindowEnabled;
     }
     public set matchTimerWindowEnabled(value: boolean) {
         this._matchTimerWindowEnabled = value;
-        this.matchTimerWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe$)).subscribe();
+        this.matchTimerWindow[value ? "open" : "close"]().pipe(takeUntil(this.isDestroyed$)).subscribe();
     }
     public get inflictionInsightWindowEnabled(): boolean {
         return this._inflictionInsightWindowEnabled;
     }
     public set inflictionInsightWindowEnabled(value: boolean) {
         this._inflictionInsightWindowEnabled = value;
-        this.inflictionInsightWindow[value ? "open" : "close"]().pipe(takeUntil(this._unsubscribe$)).subscribe();
+        this.inflictionInsightWindow[value ? "open" : "close"]().pipe(takeUntil(this.isDestroyed$)).subscribe();
     }
 
     public infoUpdates$: Subject<OWInfoUpdates2Event>;
@@ -47,13 +48,14 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     private _ultTimerWindowEnabled = false;
     private _matchTimerWindowEnabled = false;
     private _inflictionInsightWindowEnabled = false;
-    private _unsubscribe$ = new Subject<void>();
+    private isDestroyed$ = new Subject<void>();
 
     constructor(
+        private readonly exposedOverwolfData: ExposedOverwolfGameDataService,
         private readonly inflictionInsightWindow: InflictionInsightWindowService,
         private readonly inGameUltTimerWindow: UltTimerWindowService,
         private readonly matchTimerWindow: MatchTimerWindowService,
-        private readonly exposedOverwolfData: ExposedOverwolfGameDataService
+        private readonly overwolfExtension: OverwolfExtensionService
     ) {
         this.infoUpdates$ = this.exposedOverwolfData.rawInfoUpdates$;
         this.newGameEvent$ = this.exposedOverwolfData.rawNewGameEvent$;
@@ -67,7 +69,11 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+        this.isDestroyed$.next();
+        this.isDestroyed$.complete();
+    }
+
+    public relaunchApp(): void {
+        this.overwolfExtension.relaunchApp();
     }
 }

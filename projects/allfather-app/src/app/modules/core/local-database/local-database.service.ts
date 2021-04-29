@@ -1,53 +1,39 @@
+import { environment } from "@allfather-app/environments/environment";
 import { Injectable } from "@angular/core";
-import { from, Observable } from "rxjs";
-import { isEmpty } from "shared/utilities";
-import { AllfatherDatabase } from "./allfather-database";
+import Dexie from "dexie";
 import { MatchDataStore } from "./match-data-store";
+import { populateData } from "./versions/populate-data";
+import { version1 } from "./versions/version1";
+import { version2 } from "./versions/version2";
 
+/**
+ * @class LocalDatabaseService
+ * @classdesc Container for the local database; used for long-term data storage.
+ * @summary Cannot load this as a Singleton service, due to Dexie collisions.
+ */
 @Injectable({ providedIn: "root" })
-export class LocalDatabaseService {
-    private allfatherDB = new AllfatherDatabase();
+export class LocalDatabaseService extends Dexie {
+    public matches!: Dexie.Table<MatchDataStore, number>;
 
-    constructor() {}
+    constructor() {
+        super(environment.localDatabase.name);
+        this.handleVersions();
+        this.handleDataPopulation();
+
+        this.table("matches");
+    }
 
     public init(): void {}
 
-    /**
-     * Retrieves a specific Match from database.
-     * @returns {MatchDataStore}
-     */
-    public getStoredMatchByMatchId(matchId: string): Observable<MatchDataStore | undefined> {
-        if (isEmpty(matchId)) throw new Error(`Cannot retrieve match data from local database; matchId is empty.`);
-        const matchPromise = this.allfatherDB.transaction("readonly", this.allfatherDB.matches, () => {
-            return this.allfatherDB.matches.get({ matchId });
-        });
-
-        return from(matchPromise);
+    private handleVersions() {
+        version1(this);
+        version2(this);
     }
 
-    /**
-     * Retrieves Matches from database.
-     * @returns {MatchDataStore[]}
-     */
-    public getStoredMatches(matchIds: string[]): Observable<MatchDataStore[]> {
-        if (isEmpty(matchIds)) throw new Error(`Cannot retrieve match data from local database; matchId is empty.`);
-        const matchesPromise = this.allfatherDB.transaction("readonly", this.allfatherDB.matches, () => {
-            return this.allfatherDB.matches.where("matchId").anyOf(matchIds).toArray();
+    /** Only populates data on first run. */
+    private handleDataPopulation() {
+        this.on("populate", () => {
+            populateData(this);
         });
-
-        return from(matchesPromise);
-    }
-
-    /**
-     *
-     * @param matchData
-     * @returns {number} Index where data has been saved.
-     */
-    public storeMatch(matchData: MatchDataStore): Observable<number> {
-        const savePromise = this.allfatherDB.transaction("readwrite", this.allfatherDB.matches, () => {
-            return this.allfatherDB.matches.put(matchData);
-        });
-
-        return from(savePromise);
     }
 }

@@ -41,7 +41,8 @@ $titlebar-height: 3rem;
 
     &-controls {
         padding: 0 1rem;
-        flex: 0 0;
+        flex: 1 0;
+        text-align: right;
     }
 }
 

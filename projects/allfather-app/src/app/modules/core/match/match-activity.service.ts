@@ -5,11 +5,12 @@ import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster
 import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { isPlayerNameEqual } from "@allfather-app/app/shared/models/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Injectable, OnDestroy } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { differenceInMilliseconds } from "date-fns";
 import { BehaviorSubject, Subject } from "rxjs";
 import { delay, filter, map, takeUntil } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
+import { AllfatherService } from "../allfather-service.abstract";
 import { PlayerService } from "../player.service";
 import { MatchRosterService } from "./match-roster.service";
 import { MatchService } from "./match.service";
@@ -26,22 +27,17 @@ const KILLFEED_UNIQUE_TIMEFRAME = 3000; // Prevents duplicates from Primary & Se
     deps: [MatchService, MatchRosterService, OverwolfGameDataService, PlayerService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchActivityService", MatchActivityService, deps),
 })
-export class MatchActivityService implements OnDestroy {
+export class MatchActivityService extends AllfatherService {
     public readonly killfeedEvent$ = new Subject<MatchInflictionEvent>();
     public readonly killfeedEventHistory$ = new BehaviorSubject<MatchInflictionEvent[]>([]);
-
-    private readonly _unsubscribe$ = new Subject<void>();
 
     constructor(
         private readonly match: MatchService,
         private readonly matchRoster: MatchRosterService,
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly player: PlayerService
-    ) {}
-
-    public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+    ) {
+        super();
     }
 
     public init(): void {
@@ -86,7 +82,7 @@ export class MatchActivityService implements OnDestroy {
      * Reset state on match start
      */
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
             this.killfeedEventHistory$.next([]);
         });
     }
@@ -98,7 +94,7 @@ export class MatchActivityService implements OnDestroy {
     private setupKillfeed(): void {
         this.overwolfGameData.newGameEvent$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter((gameEvent) => gameEvent.name === "kill_feed"),
                 map((gameEvent) => gameEvent.data as OWGameEventKillFeed)
             )
@@ -137,7 +133,7 @@ export class MatchActivityService implements OnDestroy {
 
         this.overwolfGameData.newGameEvent$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter((gameEvent) => gameEvent.name === "knockdown" || gameEvent.name === "kill"),
                 filter((gameEvent) => !!gameEvent.data && typeof gameEvent.data === "object"),
                 filter((gameEvent) => !!(gameEvent.data as KillOrKnockdownData).victimName),

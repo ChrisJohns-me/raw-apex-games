@@ -9,9 +9,10 @@
     },
     "facts": {
         "respawnBannerExpireTime": 60000,
-        "shieldMax": 125,
-        "healthMax": 100,
-        "ultimateMaxCooldownTime": 360000
+        "maxShield": 125,
+        "maxHealth": 100,
+        "maxUltimateCooldownTime": 360000,
+        "maxSquadSize": 3
     },
     "featureFlags": {
         "enableMatchTimerWindow": true,

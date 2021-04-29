@@ -3,10 +3,11 @@ import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/locat
 import { MatchMapCoordinates } from "@allfather-app/app/shared/models/match/map-coordinates";
 import { TriggerConditions } from "@allfather-app/app/shared/models/utilities/trigger-conditions";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Injectable, OnDestroy } from "@angular/core";
-import { BehaviorSubject, Subject } from "rxjs";
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { cleanInt } from "shared/utilities";
+import { AllfatherService } from "../allfather-service.abstract";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
 import { MatchService } from "./match.service";
 
@@ -15,7 +16,7 @@ import { MatchService } from "./match.service";
     deps: [MatchService, OverwolfGameDataService, MatchPlayerInventoryService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerLocationService", MatchPlayerLocationService, deps),
 })
-export class MatchPlayerLocationService implements OnDestroy {
+export class MatchPlayerLocationService extends AllfatherService {
     /** Location data straight from Overwolf. Cleared on match start. */
     public readonly myCoordinates$ = new BehaviorSubject<Optional<MatchMapCoordinates>>(undefined);
     /** Based on internal triggers. Cleared on match start. */
@@ -27,17 +28,12 @@ export class MatchPlayerLocationService implements OnDestroy {
     /** Last known local player when match ends. Cleared on match start. */
     public readonly myEndingCoordinates$ = new BehaviorSubject<Optional<MatchMapCoordinates>>(undefined);
 
-    private readonly _unsubscribe$ = new Subject<void>();
-
     constructor(
         private readonly match: MatchService,
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly playerInventory: MatchPlayerInventoryService
-    ) {}
-
-    public ngOnDestroy(): void {
-        this._unsubscribe$.next();
-        this._unsubscribe$.complete();
+    ) {
+        super();
     }
 
     public init(): void {
@@ -50,7 +46,7 @@ export class MatchPlayerLocationService implements OnDestroy {
     }
 
     private setupMatchStateEvents(): void {
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
             this.myCoordinates$.next(undefined);
             this.myLocationPhase$.next(undefined);
             this.myStartingCoordinates$.next(undefined);
@@ -62,7 +58,7 @@ export class MatchPlayerLocationService implements OnDestroy {
     private setupMyCoordinates(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter((infoUpdate) => infoUpdate.feature === "location" && !!infoUpdate.info.match_info?.location),
                 map((infoUpdate) => infoUpdate.info.match_info?.location)
             )
@@ -82,7 +78,7 @@ export class MatchPlayerLocationService implements OnDestroy {
             if (newPhase && newPhase !== this.myLocationPhase$.value) this.myLocationPhase$.next(newPhase);
         };
 
-        const triggers = new TriggerConditions<MatchLocationPhase, [OWInfoUpdates2Event?, boolean?]>({
+        const triggers = new TriggerConditions<MatchLocationPhase, [OWInfoUpdates2Event?, boolean?]>("MatchLocationPhase", {
             [MatchLocationPhase.Dropship]: (infoUpdate, isMatchReset) => !!isMatchReset && !this.myStartingCoordinates$.value,
             [MatchLocationPhase.Dropping]: (infoUpdate) =>
                 this.myLocationPhase$.value === MatchLocationPhase.Dropship &&
@@ -92,12 +88,12 @@ export class MatchPlayerLocationService implements OnDestroy {
                 this.myLocationPhase$.value === MatchLocationPhase.Dropping && !!this.myLandingCoordinates$.value,
         });
 
-        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this._unsubscribe$)).subscribe((infoUpdate) => {
+        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.isDestroyed$)).subscribe((infoUpdate) => {
             const newPhase = triggers.triggeredFirstKey(infoUpdate, false);
             setNewLocationPhaseFn(newPhase);
         });
 
-        this.match.startedEvent$.pipe(takeUntil(this._unsubscribe$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
             const newPhase = triggers.triggeredFirstKey(undefined, true);
             setNewLocationPhaseFn(newPhase);
         });
@@ -106,7 +102,7 @@ export class MatchPlayerLocationService implements OnDestroy {
     private setupMyStartingCoordinates(): void {
         this.myCoordinates$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter(() => !this.myStartingCoordinates$.value),
                 filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z))
             )
@@ -116,7 +112,7 @@ export class MatchPlayerLocationService implements OnDestroy {
     private setupMyEndingCoordinates(): void {
         this.match.endedEvent$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter(() => !!this.myStartingCoordinates$.value && !this.myEndingCoordinates$.value),
                 map(() => this.myCoordinates$.value),
                 filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z)),
@@ -128,7 +124,7 @@ export class MatchPlayerLocationService implements OnDestroy {
     private setupMyLandingCoordinates(): void {
         this.playerInventory.myInUseItem$
             .pipe(
-                takeUntil(this._unsubscribe$),
+                takeUntil(this.isDestroyed$),
                 filter((inUse) => !!inUse),
                 map(() => this.myCoordinates$.value),
                 filter(() => !this.myLandingCoordinates$.value),

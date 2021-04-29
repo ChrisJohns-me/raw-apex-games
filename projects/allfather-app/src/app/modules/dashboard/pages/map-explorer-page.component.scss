@@ -1,0 +1,61 @@
+@import "../../../../assets/styles/bootstrap-theme";
+
+.interactive-map-container {
+    position: relative;
+    max-height: 720px;
+    max-width: 720px;
+    border: 1px solid #202020;
+    background-color: $gray-900;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.matches-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 720px;
+}
+
+.map-debug-container {
+    // display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.5;
+}
+
+.map-full-image {
+    & img {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    &-no-map {
+        position: relative;
+
+        .message-overlay {
+            position: absolute;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            bottom: 0;
+            top: 0;
+            right: 0;
+            left: 0;
+            color: $white;
+        }
+
+        img {
+            opacity: 0.25;
+        }
+    }
+}
+
+.d3-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}

@@ -1,0 +1,75 @@
+@import "bootstrap/scss/bootstrap";
+
+.legend-portraits-container {
+    // width: 150px;
+    // flex: 0 0 150px;
+
+    img {
+        &.legend-portrait {
+            display: inline-block;
+
+            &.my-legend-portrait {
+                max-width: 50px;
+                max-height: 50px;
+            }
+
+            &.teammate-legend-portrait {
+                max-width: 35px;
+                max-height: 35px;
+                opacity: 0.7;
+            }
+        }
+    }
+}
+
+.match-date-container {
+    font-size: small;
+}
+
+.col-stats {
+    // width: 60px;
+    // flex: 0 0 60px;
+}
+
+.placement-sign {
+    font-weight: 100;
+    color: $gray-600;
+}
+
+sub.max-placement {
+    &-sign {
+        color: $gray-600;
+        font-weight: lighter;
+        bottom: -0.075em;
+    }
+
+    &-digit {
+        font-size: 50%;
+        color: $gray-600;
+    }
+}
+
+.data-digit {
+    font-weight: normal;
+
+    &-primary {
+        font-weight: bold;
+    }
+}
+
+.table-in-progress {
+    // TODO: Color
+}
+
+.in-progress-pulse {
+    animation: pulse-opacity 1s alternate infinite;
+}
+
+@keyframes pulse-opacity {
+    from {
+        opacity: 100%;
+    }
+    to {
+        opacity: 0%;
+    }
+}
