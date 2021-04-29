@@ -1,15 +1,23 @@
 import { MatchMap } from "./map";
 
-export enum MatchMapName {
+export enum MatchMapFriendlyName {
     FiringRange = "The Firing Range",
     KingsCanyon = "Kings Canyon",
     WorldsEdge = "World's Edge",
     Olympus = "Olympus",
 }
 
+export enum MatchMapGenericId {
+    FiringRange = "firingrange",
+    KingsCanyon = "kingscanyon",
+    WorldsEdge = "worldsedge",
+    Olympus = "olympus",
+}
+
 export const MatchMapList: MatchMap[] = [
     new MatchMap({
-        mapName: MatchMapName.FiringRange,
+        mapName: MatchMapFriendlyName.FiringRange,
+        genericId: MatchMapGenericId.FiringRange,
         mapId: "mp_rr_canyonlands_staging",
         activeDates: [
             {
@@ -19,7 +27,8 @@ export const MatchMapList: MatchMap[] = [
         dropshipZStart: -Infinity,
     }),
     new MatchMap({
-        mapName: MatchMapName.KingsCanyon,
+        mapName: MatchMapFriendlyName.KingsCanyon,
+        genericId: MatchMapGenericId.KingsCanyon,
         mapId: "mp_rr_canyonlands_mu3",
         activeDates: [
             {
@@ -37,7 +46,8 @@ export const MatchMapList: MatchMap[] = [
         },
     }),
     new MatchMap({
-        mapName: MatchMapName.WorldsEdge,
+        mapName: MatchMapFriendlyName.WorldsEdge,
+        genericId: MatchMapGenericId.WorldsEdge,
         mapId: "mp_rr_desertlands_mu2",
         activeDates: [
             {
@@ -48,7 +58,8 @@ export const MatchMapList: MatchMap[] = [
         dropshipZStart: -Infinity, // Unknown
     }),
     new MatchMap({
-        mapName: MatchMapName.Olympus,
+        mapName: MatchMapFriendlyName.Olympus,
+        genericId: MatchMapGenericId.Olympus,
         mapId: "mp_rr_olympus",
         activeDates: [
             {

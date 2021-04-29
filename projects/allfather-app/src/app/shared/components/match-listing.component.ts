@@ -14,6 +14,7 @@ import { MatchGameMode } from "../models/match/game-mode";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatchListingComponent {
+    @Input() public isLiveMatch = false;
     @Input() public set matches(value: MatchDataStore[]) {
         this._matches = value;
     }

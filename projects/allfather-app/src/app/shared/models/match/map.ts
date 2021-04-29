@@ -16,6 +16,7 @@ interface MatchMapChartingConfig {
 
 export interface MatchMapConstructor {
     mapId: string;
+    genericId: string;
     mapName: string;
     activeDates?: ActiveDates;
     dropshipZStart?: MatchMapCoordinates["z"];
@@ -24,6 +25,7 @@ export interface MatchMapConstructor {
 
 export class MatchMap {
     public mapId: string;
+    public genericId: string;
     public mapName: string;
     public activeDates?: ActiveDates;
     public dropshipZStart?: MatchMapCoordinates["z"]; // Useful to cross-reference with starting location
@@ -35,6 +37,7 @@ export class MatchMap {
 
     constructor(ctor: MatchMapConstructor) {
         this.mapId = ctor.mapId;
+        this.genericId = ctor.genericId;
         this.mapName = ctor.mapName;
         this.activeDates = ctor.activeDates;
         this.dropshipZStart = ctor.dropshipZStart;

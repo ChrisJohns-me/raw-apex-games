@@ -36,10 +36,40 @@
     color: $gray-600;
 }
 
+sub.max-placement {
+    &-sign {
+        color: $gray-600;
+        font-weight: lighter;
+        bottom: -0.075em;
+    }
+
+    &-digit {
+        font-size: 50%;
+        color: $gray-600;
+    }
+}
+
 .data-digit {
     font-weight: normal;
 
     &-primary {
         font-weight: bold;
+    }
+}
+
+.table-in-progress {
+    // TODO: Color
+}
+
+.in-progress-pulse {
+    animation: pulse-opacity 1s alternate infinite;
+}
+
+@keyframes pulse-opacity {
+    from {
+        opacity: 100%;
+    }
+    to {
+        opacity: 0%;
     }
 }
