@@ -7,6 +7,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { OverwolfExtensionService } from "../../core/overwolf/overwolf-extension.service";
+import { LegendSelectAssistWindowService } from "../../legend-select-assist/windows/legend-select-assist-window.service";
 
 type MainTab = "simulate" | "logs";
 
@@ -41,6 +42,13 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
         this._inflictionInsightWindowEnabled = value;
         this.inflictionInsightWindow[value ? "open" : "close"]().pipe(takeUntil(this.isDestroyed$)).subscribe();
     }
+    public get legendSelectAssistWindowEnabled(): boolean {
+        return this._legendSelectAssistWindowEnabled;
+    }
+    public set legendSelectAssistWindowEnabled(value: boolean) {
+        this._legendSelectAssistWindowEnabled = value;
+        this.legendSelectAssistWindow[value ? "open" : "close"]().pipe(takeUntil(this.isDestroyed$)).subscribe();
+    }
 
     public infoUpdates$: Subject<OWInfoUpdates2Event>;
     public newGameEvent$: Subject<OWGameEvent>;
@@ -48,12 +56,14 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     private _ultTimerWindowEnabled = false;
     private _matchTimerWindowEnabled = false;
     private _inflictionInsightWindowEnabled = false;
+    private _legendSelectAssistWindowEnabled = false;
     private isDestroyed$ = new Subject<void>();
 
     constructor(
         private readonly exposedOverwolfData: ExposedOverwolfGameDataService,
         private readonly inflictionInsightWindow: InflictionInsightWindowService,
         private readonly inGameUltTimerWindow: UltTimerWindowService,
+        private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
         private readonly matchTimerWindow: MatchTimerWindowService,
         private readonly overwolfExtension: OverwolfExtensionService
     ) {
@@ -66,6 +76,7 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
         this.ultTimerWindowEnabled = true;
         this.matchTimerWindowEnabled = true;
         this.inflictionInsightWindowEnabled = true; // false;
+        this.legendSelectAssistWindowEnabled = true; // false;
     }
 
     public ngOnDestroy(): void {

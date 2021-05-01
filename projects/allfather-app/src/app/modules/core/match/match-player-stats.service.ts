@@ -58,6 +58,8 @@ export class MatchPlayerStatsService extends AllfatherService {
         this.setupMyKnockdowns();
     }
 
+    public getLegend(): void {}
+
     private setupMatchStateEvents(): void {
         this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
             this.myDamage$.next(0);

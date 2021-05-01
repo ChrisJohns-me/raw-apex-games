@@ -5,5 +5,6 @@ export enum WindowName {
     InGameInflictionInsight = "in-game-infliction-insight",
     InGameMatchTimer = "in-game-match-timer",
     InGameUltTimer = "in-game-ult-timer",
+    LegendSelectAssist = "legend-select-assist",
     Preferences = "preferences",
 }

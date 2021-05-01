@@ -13,6 +13,7 @@ import { NoopDevelopmentToolsModule } from "./modules/development-tools/noop-dev
 import { InflictionInsightWindowModule } from "./modules/in-game/infliction-insight/infliction-insight.module";
 import { MatchTimerWindowModule } from "./modules/in-game/match-timer/match-timer.module";
 import { UltTimerWindowModule } from "./modules/in-game/ult-timer/ult-timer.module";
+import { LegendSelectAssistWindowModule } from "./modules/legend-select-assist/legend-select-assist.module";
 import { PreferencesModule } from "./modules/preferences/preferences.module";
 
 @NgModule({
@@ -25,6 +26,7 @@ import { PreferencesModule } from "./modules/preferences/preferences.module";
         environment.allowDevTools ? DevelopmentToolsModule : NoopDevelopmentToolsModule,
         HttpClientModule,
         InflictionInsightWindowModule,
+        LegendSelectAssistWindowModule,
         MatchTimerWindowModule,
         OverwolfModule,
         PreferencesModule,

@@ -3,7 +3,7 @@ declare const performance: Performance;
 export class Stopwatch {
     private performanceAPI = false;
     private startTime: Optional<number>;
-    private endTime: Optional<number>;
+    private stopTime: Optional<number>;
 
     public constructor() {
         if (typeof performance === "object" && typeof performance.now === "function") {
@@ -16,9 +16,9 @@ export class Stopwatch {
         return this.startTime;
     }
 
-    public end(): number {
-        this.endTime = this.now();
-        return this.endTime;
+    public stop(): number {
+        this.stopTime = this.now();
+        return this.stopTime;
     }
 
     public result(roundToMs = true): number {
@@ -26,8 +26,8 @@ export class Stopwatch {
             throw new Error(`${this.constructor.name}: start() was never called.`);
         }
 
-        const endTime = this.endTime ?? this.now();
-        let result = endTime - this.startTime;
+        const stopTime = this.stopTime ?? this.now();
+        let result = stopTime - this.startTime;
 
         if (roundToMs && this.performanceAPI) {
             result = Math.round(result);
@@ -38,7 +38,7 @@ export class Stopwatch {
 
     public clear(): void {
         this.startTime = undefined;
-        this.endTime = undefined;
+        this.stopTime = undefined;
     }
 
     /**

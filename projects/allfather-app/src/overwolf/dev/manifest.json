@@ -140,6 +140,28 @@
                     "height": 455
                 }
             },
+            "legend-select-assist": {
+                "file": "index.html",
+                "in_game_only": false,
+                "resizable": false,
+                "transparent": true,
+                "show_in_taskbar": true,
+                "mute": true,
+                "popup_blocker": true,
+                "allow_local_file_access": true,
+                "size": {
+                    "width": 500,
+                    "height": 455
+                },
+                "min_size": {
+                    "width": 500,
+                    "height": 500
+                },
+                "max_size": {
+                    "width": 500,
+                    "height": 500
+                }
+            },
             "preferences": {
                 "file": "index.html",
                 "desktop_only": true,
