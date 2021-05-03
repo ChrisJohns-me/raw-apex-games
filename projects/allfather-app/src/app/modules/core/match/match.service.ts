@@ -75,11 +75,21 @@ export class MatchService extends AllfatherService {
     }
 
     /**
+     * @returns All matches by legend stored in the local database, descending order.
+     */
+    public getMatchDataByLegendId(legendId: string, limit?: number): Observable<MatchDataStore[]> {
+        const matchCollection = this.localDatabase.matches.where({ legendId: legendId });
+        const matchLimitCollection = limit && limit > 0 ? matchCollection.limit(limit) : matchCollection;
+        return from(matchLimitCollection.toArray());
+    }
+
+    /**
      * @returns All matches stored in the local database, descending order.
      */
-    public getAllMatchData(): Observable<MatchDataStore[]> {
-        const matchPromise = this.localDatabase.matches.orderBy("endDate").reverse().toArray();
-        return from(matchPromise);
+    public getAllMatchData(limit?: number): Observable<MatchDataStore[]> {
+        const matchCollection = this.localDatabase.matches.orderBy(":id").reverse();
+        const matchLimitCollection = limit && limit > 0 ? matchCollection.limit(limit) : matchCollection;
+        return from(matchLimitCollection.toArray());
     }
 
     private setupMatchId(): void {
@@ -129,13 +139,8 @@ export class MatchService extends AllfatherService {
             [MatchState.Inactive]: (matchState, infoUpdate, gameEvent) => {
                 const notInactive = matchState !== MatchState.Inactive;
                 const infoStateInactive = infoUpdate?.feature === "match_state" && infoUpdate?.info?.game_info?.match_state === "inactive";
-                const teamEliminated = infoUpdate?.feature === "team" && infoUpdate.info.match_info?.team_info?.team_state === "eliminated";
-                const teamDeleted =
-                    infoUpdate?.feature === "team" &&
-                    typeof infoUpdate.info.match_info?.team_info === "object" &&
-                    infoUpdate.info.match_info?.team_info?.team_state == null;
                 const matchEnd = gameEvent?.name === "match_end";
-                return notInactive && (infoStateInactive || teamEliminated || teamDeleted || matchEnd);
+                return notInactive && (infoStateInactive || matchEnd);
             },
             [MatchState.Active]: (matchState, infoUpdate, gameEvent) => {
                 const notActive = matchState !== MatchState.Active;

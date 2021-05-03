@@ -5,7 +5,7 @@
             "id": "empty_handed",
             "friendlyName": "Melee",
             "inGameInfoNameRegExPattern": "^(Melee|Empty Handed|)$",
-            "inGameEventNameRegExPattern": "^(Melee|Boxing Gloves Melee)$"
+            "inGameEventNameRegExPattern": "Melee$"
         },
         {
             "id": "killfeed_bleedout",

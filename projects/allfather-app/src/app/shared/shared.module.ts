@@ -8,20 +8,9 @@ import { HighlightOnChangeDirective } from "./directives/highlight-on-change.dir
 import { ResizeDirective } from "./directives/resize.directive";
 import { CustomFormatDistanceToNowPipe } from "./pipes/custom-format-distance-to-now.pipe";
 import { CustomFormatDistancePipe } from "./pipes/custom-format-distance.pipe";
-import { FormatDistanceToNowStrictPipe } from "./pipes/temp/format-distance-to-now-strict.pipe";
-import { FormatDistanceToNowStrictPurePipe } from "./pipes/temp/format-distance-to-now-strict.pure.pipe";
-import { FormatRelativePipe } from "./pipes/temp/format-relative.pipe";
-import { FormatRelativePurePipe } from "./pipes/temp/format-relative.pure.pipe";
 
 const DIRECTIVES = [HighlightOnChangeDirective, ResizeDirective];
-const PIPES = [
-    CustomFormatDistancePipe,
-    CustomFormatDistanceToNowPipe,
-    FormatDistanceToNowStrictPipe,
-    FormatDistanceToNowStrictPurePipe,
-    FormatRelativePipe,
-    FormatRelativePurePipe,
-];
+const PIPES = [CustomFormatDistancePipe, CustomFormatDistanceToNowPipe];
 const COMPONENTS = [BootstrapCSSInjectorComponent, MatchListingComponent, UIContainerComponent];
 const THIRDPARTYMODULES = [DateFnsModule];
 

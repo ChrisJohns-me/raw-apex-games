@@ -46,6 +46,10 @@ export interface FeatureFlags {
         assumeKnockdownExpires: boolean;
         assumeEliminationExpires: boolean;
     };
+    legendSelectAssist: {
+        legendStats: boolean;
+        complimentaryLegends: boolean;
+    };
 }
 
 /**
@@ -57,6 +61,24 @@ export interface FeatureConfigs {
         refreshTime: number;
         /** Time in ms before damage accumulation is reset */
         damageResetTime: number;
+    };
+    legendSelectAssist: {
+        /** How many matches are required to show stats for legends */
+        minLegendStatsMatches: number;
+        /** How many complimentary legends to show */
+        maxComplimentaryLegends: number;
+        /** How many matches are required to show complimentary legends */
+        minShowComplimentaryLegendsMatches: number;
+        /** Number of matches to use to calculate complimentary legends */
+        limitComplimentaryLegendsMatches: number;
+        /** Weight distrubution used to calculate complimentary legends */
+        complimentaryLegendsWeights: {
+            winWeight: number;
+            placementWeight: number;
+            damageWeight: number;
+            eliminationWeight: number;
+            durationWeight: number;
+        };
     };
     ultTimer: {
         /** Time in ms to force refresh the UI */

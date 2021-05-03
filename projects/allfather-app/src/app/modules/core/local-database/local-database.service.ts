@@ -5,6 +5,7 @@ import { MatchDataStore } from "./match-data-store";
 import { populateData } from "./versions/populate-data";
 import { version1 } from "./versions/version1";
 import { version2 } from "./versions/version2";
+import { version3 } from "./versions/version3";
 
 /**
  * @class LocalDatabaseService
@@ -28,6 +29,7 @@ export class LocalDatabaseService extends Dexie {
     private handleVersions() {
         version1(this);
         version2(this);
+        version3(this);
     }
 
     /** Only populates data on first run. */

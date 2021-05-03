@@ -414,7 +414,6 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
             maxPlacement: this.matchRoster.startingNumTeams$.value,
             placement: this.matchPlayerStats.myPlacement$.value,
             damageEventsHistory: [],
-            gameEventsHistory: [],
             killfeedHistory: [],
             locationHistory: [],
             matchRoster: [],

@@ -3,7 +3,6 @@ import { AssistsDataFactory } from "./reportable-data/assists";
 import { DamageDataFactory } from "./reportable-data/damage";
 import { DamageEventsHistoryDataFactory } from "./reportable-data/damage-events-history";
 import { EliminationsDataFactory } from "./reportable-data/eliminations";
-import { GameEventsHistoryDataFactory } from "./reportable-data/game-events-history";
 import { GameModeDataFactory } from "./reportable-data/game-mode";
 import { KillfeedHistoryDataFactory } from "./reportable-data/killfeed-history";
 import { KnockdownsDataFactory } from "./reportable-data/knockdowns";
@@ -27,7 +26,6 @@ export interface ReportableDataFactoryMap {
     damage: ReturnType<typeof DamageDataFactory>;
     damageEventsHistory: ReturnType<typeof DamageEventsHistoryDataFactory>;
     eliminations: ReturnType<typeof EliminationsDataFactory>;
-    gameEventsHistory: ReturnType<typeof GameEventsHistoryDataFactory>;
     gameMode: ReturnType<typeof GameModeDataFactory>;
     killfeedHistory: ReturnType<typeof KillfeedHistoryDataFactory>;
     knockdowns: ReturnType<typeof KnockdownsDataFactory>;

@@ -1,1 +1,0 @@
-waiting for Pull Request to be approved: https://github.com/joanllenas/ngx-date-fns/pull/357

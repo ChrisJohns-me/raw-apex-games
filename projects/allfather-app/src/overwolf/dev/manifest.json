@@ -151,15 +151,15 @@
                 "allow_local_file_access": true,
                 "size": {
                     "width": 500,
-                    "height": 455
+                    "height": 750
                 },
                 "min_size": {
                     "width": 500,
-                    "height": 500
+                    "height": 750
                 },
                 "max_size": {
                     "width": 500,
-                    "height": 500
+                    "height": 750
                 }
             },
             "preferences": {

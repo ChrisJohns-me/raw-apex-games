@@ -1,5 +1,24 @@
 <app-ui-container [isDesktopWindow]="false" [isContentDraggable]="true" primaryTitle="Legend Select Assist">
     <div class="testbg">
         <h1>Legend Select Assist!!!</h1>
+        <div class="row">
+            <div *ngFor="let legend of legendOpts" class="col">
+                <button type="button" (click)="selectLegend(legend)" class="btn btn-primary btn-sm">
+                    {{ legend }}
+                </button>
+            </div>
+        </div>
+
+        <div>
+            Avg Wins: {{ legendStats?.avgWins }}<br />
+            Avg Kills: {{ legendStats?.avgEliminations }}<br />
+            Avg Damage: {{ legendStats?.avgDamage }}<br />
+            Avg Duration: {{ legendStats?.avgDuration }}<br />
+            Avg Placement: {{ legendStats?.avgPlacement }}<br />
+            Recommended: <br />
+            <ng-container *ngFor="let recommended of complimentaryLegendWeights">
+                - {{ recommended.legendId }} ( {{ recommended.weightScore | percent }} )<br />
+            </ng-container>
+        </div>
     </div>
 </app-ui-container>

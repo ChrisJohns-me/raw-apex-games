@@ -9,14 +9,12 @@ import { MatchPlayerLocationService } from "../../match/match-player-location.se
 import { MatchPlayerStatsService } from "../../match/match-player-stats.service";
 import { MatchRosterService } from "../../match/match-roster.service";
 import { MatchService } from "../../match/match.service";
-import { OverwolfGameDataService } from "../../overwolf";
 import { PlayerService } from "../../player.service";
 import { ReportableDataFactoryMap } from "./reportable-data";
 import { AssistsDataFactory } from "./reportable-data/assists";
 import { DamageDataFactory } from "./reportable-data/damage";
 import { DamageEventsHistoryDataFactory } from "./reportable-data/damage-events-history";
 import { EliminationsDataFactory } from "./reportable-data/eliminations";
-import { GameEventsHistoryDataFactory } from "./reportable-data/game-events-history";
 import { GameModeDataFactory } from "./reportable-data/game-mode";
 import { KillfeedHistoryDataFactory } from "./reportable-data/killfeed-history";
 import { KnockdownsDataFactory } from "./reportable-data/knockdowns";
@@ -52,7 +50,6 @@ import { WeaponIdsHistoryDataFactory } from "./reportable-data/weapon-ids-histor
         MatchPlayerLocationService,
         MatchPlayerStatsService,
         MatchRosterService,
-        OverwolfGameDataService,
         PlayerService,
     ],
     useFactory: (...deps: any[]) => SingletonServiceProviderFactory("ReportableDataManagerService", ReportableDataManagerService, deps),
@@ -73,7 +70,6 @@ export class ReportableDataManagerService {
         private readonly matchPlayerLocation: MatchPlayerLocationService,
         private readonly matchPlayerStats: MatchPlayerStatsService,
         private readonly matchRoster: MatchRosterService,
-        private readonly overwolfGameData: OverwolfGameDataService,
         private readonly player: PlayerService
     ) {}
 
@@ -94,7 +90,6 @@ export class ReportableDataManagerService {
             DamageDataFactory(this.matchPlayerStats.myDamage$),
             DamageEventsHistoryDataFactory(this.matchPlayerInfliction.myDamageEvent$),
             EliminationsDataFactory(this.matchPlayerStats.myEliminations$),
-            GameEventsHistoryDataFactory(this.overwolfGameData.infoUpdates$, this.overwolfGameData.newGameEvent$),
             GameModeDataFactory(this.match.gameMode$),
             KillfeedHistoryDataFactory(this.matchActivity.killfeedEvent$),
             KnockdownsDataFactory(this.matchPlayerStats.myKnockdowns$),

@@ -23,12 +23,29 @@
             "showAssumedOpponentTeammateHealth": false,
             "assumeKnockdownExpires": true,
             "assumeEliminationExpires": true
+        },
+        "legendSelectAssist": {
+            "legendStats": true,
+            "complimentaryLegends": true
         }
     },
     "featureConfigs": {
         "inflictionInsight": {
             "refreshTime": 1000,
             "damageResetTime": 20000
+        },
+        "legendSelectAssist": {
+            "minLegendStatsMatches": 5,
+            "maxComplimentaryLegends": 3,
+            "minShowComplimentaryLegendsMatches": 10,
+            "limitComplimentaryLegendsMatches": 100,
+            "complimentaryLegendsWeights": {
+                "winWeight": 0.2,
+                "placementWeight": 0.2,
+                "damageWeight": 0.2,
+                "eliminationWeight": 0.2,
+                "durationWeight": 0.2
+            }
         },
         "ultTimer": {
             "refreshTime": 1000,

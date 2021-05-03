@@ -84,9 +84,27 @@
                         "assumeKnockdownExpires",
                         "assumeEliminationExpires"
                     ]
+                },
+                "legendSelectAssist": {
+                    "type": "object",
+                    "properties": {
+                        "legendStats": {
+                            "type": "boolean"
+                        },
+                        "complimentaryLegends": {
+                            "type": "boolean"
+                        }
+                    },
+                    "required": ["legendStats", "complimentaryLegends"]
                 }
             },
-            "required": ["enableMatchTimerWindow", "enableUltTimerWindow", "enableInflictionInsightWindow", "inflictionInsight"]
+            "required": [
+                "enableMatchTimerWindow",
+                "enableUltTimerWindow",
+                "enableInflictionInsightWindow",
+                "inflictionInsight",
+                "legendSelectAssist"
+            ]
         },
         "featureConfigs": {
             "type": "object",
@@ -102,6 +120,50 @@
                         }
                     },
                     "required": ["damageResetTime", "refreshTime"]
+                },
+                "legendSelectAssist": {
+                    "type": "object",
+                    "properties": {
+                        "maxComplimentaryLegends": {
+                            "type": "number"
+                        },
+                        "minShowComplimentaryLegendsMatches": {
+                            "type": "number"
+                        },
+                        "limitComplimentaryLegendsMatches": {
+                            "type": "number"
+                        },
+                        "minLegendStatsMatches": {
+                            "type": "number"
+                        },
+                        "complimentaryLegendsWeights": {
+                            "type": "object",
+                            "properties": {
+                                "winWeight": {
+                                    "type": "number"
+                                },
+                                "placementWeight": {
+                                    "type": "number"
+                                },
+                                "damageWeight": {
+                                    "type": "number"
+                                },
+                                "eliminationWeight": {
+                                    "type": "number"
+                                },
+                                "durationWeight": {
+                                    "type": "number"
+                                }
+                            },
+                            "required": ["winWeight", "placementWeight", "damageWeight", "eliminationWeight", "durationWeight"]
+                        }
+                    },
+                    "required": [
+                        "minLegendStatsMatches",
+                        "maxComplimentaryLegends",
+                        "minShowComplimentaryLegendsMatches",
+                        "complimentaryLegendsWeights"
+                    ]
                 },
                 "ultTimer": {
                     "type": "object",

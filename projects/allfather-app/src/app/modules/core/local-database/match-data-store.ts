@@ -18,7 +18,6 @@ export interface MatchDataStore {
     maxPlacement: number;
     placement: number;
     damageEventsHistory: TimestampedStream<DamageEvent>;
-    gameEventsHistory: TimestampedStream<string>;
     killfeedHistory: TimestampedStream<MatchKillfeed>;
     locationHistory: TimestampedStream<LocationHistory>;
     matchRoster: Stream<MatchRosterPlayer>;

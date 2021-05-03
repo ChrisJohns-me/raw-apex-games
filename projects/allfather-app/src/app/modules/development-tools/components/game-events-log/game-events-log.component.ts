@@ -22,7 +22,7 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
     @ViewChild("gameLog") private gameLogElement!: ElementRef;
 
     public gameLogArr: GameLog[] = [];
-    public autoTrimLog = false;
+    public autoTrimLog = true;
     public get enableLogging(): boolean {
         return this._enableLogging;
     }

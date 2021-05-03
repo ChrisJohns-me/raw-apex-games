@@ -140,7 +140,6 @@ export class LocalReportingEngine implements ReportingEngine {
             locationHistory: getDataById("locationHistory")?.value.map((loc) => mapHistory(loc)) ?? [],
             weaponIdsHistory: getDataById("weaponIdsHistory")?.value ?? [],
             ultimateUsageDates: getDataById("ultimateUsageDates")?.value ?? [],
-            gameEventsHistory: getDataById("gameEventsHistory")?.value ?? [],
         };
     }
 }
