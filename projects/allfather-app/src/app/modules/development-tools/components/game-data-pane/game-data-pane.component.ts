@@ -87,6 +87,8 @@ export class GameDataPaneComponent implements OnInit {
             phase === GamePhase.Lobby
                 ? GamePhase.LegendSelection
                 : phase === GamePhase.LegendSelection
+                ? GamePhase.PreGame
+                : phase === GamePhase.PreGame
                 ? GamePhase.InGame
                 : GamePhase.Lobby;
         this.game.phase$.next(newPhase);

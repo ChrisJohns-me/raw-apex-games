@@ -41,7 +41,7 @@ type MatchMapImageAxixScale = NonNullable<MatchMap["chartConfig"]>["imageAxisSca
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestroy {
-    public ENABLE_DEBUG_TOOLS = environment.DEV && true; // Debug tools
+    public ENABLE_DEBUG_TOOLS = environment.DEV && false; // Debug tools
     @ViewChild("mapOverlayGraph") public mapOverlayGraph?: ElementRef<HTMLDivElement>;
 
     public isLiveMatch = true;
@@ -227,7 +227,6 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
                 // Transition from Live Match to Stored Match
                 if (this.isLiveMatch) {
                     this.selectedMatch = matchList[0];
-                    this.onSelectMatchClick(this.selectedMatch);
                 }
 
                 this.refreshUI();

@@ -16,7 +16,7 @@ export class LegendSelectAssistService {
     constructor(private readonly config: ConfigurationService, private readonly match: MatchService) {}
 
     public getLegendStats(legendId: string, allowCache = true): Observable<AvgMatchStats> {
-        const limit = this.config.featureConfigs.legendSelectAssist.limitComplimentaryLegendsMatches;
+        const limit = this.config.featureConfigs.legendSelectAssist.limitLegendStatsMatches;
         const cachedResult = this.cachedLegendStats.get(legendId);
         if (allowCache && cachedResult) return of(cachedResult);
 

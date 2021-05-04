@@ -1,5 +1,5 @@
 import { Legend } from "@allfather-app/app/shared/models/legend";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 
 @Component({
     selector: "app-complimentary-legends",
@@ -8,13 +8,11 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from "@a
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ComplimentaryLegendsComponent {
-    @Input() public legendId = "";
+    @Input() public legendId?: string;
     @Input() public complimentaryLegendWeights: { legendId: string; weightScore: number }[] = [];
 
     public get legendName(): Optional<string> {
-        return Legend.getName(this.legendId);
+        return this.legendId ? Legend.getName(this.legendId) : undefined;
     }
     public getLegendImageName = (legendId: string): string => Legend.getSquarePortraitFilename(legendId);
-
-    constructor(private readonly cdr: ChangeDetectorRef) {}
 }

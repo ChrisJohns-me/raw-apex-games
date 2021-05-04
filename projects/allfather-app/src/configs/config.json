@@ -35,10 +35,11 @@
             "damageResetTime": 20000
         },
         "legendSelectAssist": {
-            "minLegendStatsMatches": 5,
+            "minLegendStatsMatches": 1,
             "maxComplimentaryLegends": 3,
             "minShowComplimentaryLegendsMatches": 10,
-            "limitComplimentaryLegendsMatches": 100,
+            "limitLegendStatsMatches": 250,
+            "limitComplimentaryLegendsMatches": 500,
             "complimentaryLegendsWeights": {
                 "winWeight": 0.25,
                 "placementWeight": 0.25,

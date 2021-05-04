@@ -5,9 +5,39 @@
     [position]="{ x: 0, y: 0 }"
     [positionAnchors]="{ x: 'right', y: 'top' }"
 >
-    <app-legend-stats [legendStats]="legendStats"></app-legend-stats>
+    <app-legend-stats
+        [legendStats]="legendStats"
+        *ngIf="isLegendStatsEnabled && (legendStats?.numMatches || 0) >= minLegendStatsMatches"
+    ></app-legend-stats>
 
-    <app-legend-icons-board [legendIconRows]="legendIconRows" (onLegendIdHover)="focusLegend($event)"></app-legend-icons-board>
+    <app-legend-icons-board
+        *ngIf="isLegendStatsEnabled || isComplimentaryLegendsEnabled"
+        [legendIconRows]="legendIconRows"
+        (onLegendIdHover)="focusLegend($event)"
+    ></app-legend-icons-board>
 
-    <app-complimentary-legends [complimentaryLegendWeights]="complimentaryLegendWeights"></app-complimentary-legends>
+    <app-complimentary-legends
+        [complimentaryLegendWeights]="complimentaryLegendWeights"
+        [legendId]="focusedLegendId"
+        *ngIf="isComplimentaryLegendsEnabled && (legendStats?.numMatches || 0) >= minShowComplimentaryLegendsMatches"
+    ></app-complimentary-legends>
+
+    <div
+        class="more-matches-container"
+        *ngIf="isComplimentaryLegendsEnabled && focusedLegendId && (legendStats?.numMatches || 0) < minShowComplimentaryLegendsMatches"
+    >
+        <h2 class="more-matches-title">
+            Play Some Games
+            <br />
+            <small>to show Legend suggestions</small>
+        </h2>
+
+        <div class="num-matches-bargraph-container">
+            <div
+                class="num-matches-bar"
+                [ngStyle]="{ 'width.%': ((legendStats?.numMatches || 0) / minShowComplimentaryLegendsMatches) * 100 }"
+            ></div>
+            <h4 class="num-matches-digit">{{ legendStats?.numMatches || 0 }} / {{ minShowComplimentaryLegendsMatches }}</h4>
+        </div>
+    </div>
 </app-ui-container>

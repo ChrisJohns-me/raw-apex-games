@@ -14,11 +14,15 @@ import { LegendSelectAssistService } from "../legend-select-assist.service";
 })
 export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     public isVisible = false;
+    public focusedLegendId?: string;
     public legendStats?: AvgMatchStats;
     public legendIconRows: LegendIconRow[] = [];
     public complimentaryLegendWeights: { legendId: string; weightScore: number }[] = [];
+    public isComplimentaryLegendsEnabled = this.config.featureFlags.legendSelectAssist.complimentaryLegends;
+    public isLegendStatsEnabled = this.config.featureFlags.legendSelectAssist.legendStats;
+    public minLegendStatsMatches = this.config.featureConfigs.legendSelectAssist.minLegendStatsMatches;
+    public minShowComplimentaryLegendsMatches = this.config.featureConfigs.legendSelectAssist.minShowComplimentaryLegendsMatches;
 
-    private numShowComplimentaryLegends = this.config.featureConfigs.legendSelectAssist.maxComplimentaryLegends;
     private legendStatsSubscription?: Subscription;
     private complimentaryLegendsSubscription?: Subscription;
     private isDestroyed$ = new Subject<void>();
@@ -41,6 +45,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     public focusLegend(legendId: string): void {
         this.showComplimentaryLegends(legendId);
         this.showLegendStats(legendId);
+        this.focusedLegendId = legendId;
     }
 
     public showLegendStats(legendId: string): void {
@@ -60,7 +65,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
             .getComplimentaryLegendWeights(legendId)
             .pipe(takeUntil(this.isDestroyed$))
             .subscribe((legendWeights) => {
-                const limitedLegendWeights = legendWeights.slice(0, this.numShowComplimentaryLegends);
+                const limitedLegendWeights = legendWeights.slice(0, this.config.featureConfigs.legendSelectAssist.maxComplimentaryLegends);
                 this.complimentaryLegendWeights = limitedLegendWeights;
                 this.cdr.detectChanges();
             });

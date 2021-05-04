@@ -73,10 +73,10 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
 
     public ngOnInit(): void {
         // Default window values
-        this.ultTimerWindowEnabled = true;
-        this.matchTimerWindowEnabled = true;
-        this.inflictionInsightWindowEnabled = true; // false;
-        this.legendSelectAssistWindowEnabled = true; // false;
+        this.ultTimerWindowEnabled = false;
+        this.matchTimerWindowEnabled = false;
+        this.inflictionInsightWindowEnabled = false;
+        this.legendSelectAssistWindowEnabled = false;
     }
 
     public ngOnDestroy(): void {

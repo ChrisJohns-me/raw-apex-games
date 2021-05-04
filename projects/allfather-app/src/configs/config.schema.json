@@ -130,6 +130,9 @@
                         "minShowComplimentaryLegendsMatches": {
                             "type": "number"
                         },
+                        "limitLegendStatsMatches": {
+                            "type": "number"
+                        },
                         "limitComplimentaryLegendsMatches": {
                             "type": "number"
                         },
@@ -184,10 +187,13 @@
                         }
                     },
                     "required": [
-                        "minLegendStatsMatches",
                         "maxComplimentaryLegends",
                         "minShowComplimentaryLegendsMatches",
-                        "complimentaryLegendsWeights"
+                        "limitLegendStatsMatches",
+                        "limitComplimentaryLegendsMatches",
+                        "minLegendStatsMatches",
+                        "complimentaryLegendsWeights",
+                        "legendRows"
                     ]
                 },
                 "ultTimer": {

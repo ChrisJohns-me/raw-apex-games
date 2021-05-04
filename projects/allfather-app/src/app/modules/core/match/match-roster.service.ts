@@ -62,11 +62,18 @@ export class MatchRosterService extends AllfatherService {
      * @returns {number} number of players that the match started out with.
      */
     public readonly startingNumPlayers$ = new BehaviorSubject<number>(0);
+    /**
+     * Preloaded match roster data.
+     * Emitted on every roster update.
+     */
+    public readonly stagedMatchRoster$ = new BehaviorSubject<MatchRoster>(new MatchRoster());
+    /**
+     * Preloaded match roster data.
+     * Emitted on every roster update, including merge events.
+     */
+    public readonly stagedTeammateRoster$ = new BehaviorSubject<MatchRoster<MatchRosterPlayer>>(new MatchRoster<MatchRosterTeammate>());
 
     private readonly rosterUpdate$: Observable<RosterUpdate>;
-
-    private stagedMatchRoster = new MatchRoster();
-    private stagedTeammateRoster = new MatchRoster<MatchRosterTeammate>();
 
     constructor(
         private readonly config: ConfigurationService,
@@ -149,10 +156,10 @@ export class MatchRosterService extends AllfatherService {
             this.startingNumTeams$.next(0);
 
             // Rosters should be ready to be emitted
-            if (this.stagedMatchRoster.allPlayers.length) this.matchRoster$.next(this.stagedMatchRoster);
+            if (this.stagedMatchRoster$.value.allPlayers.length) this.matchRoster$.next(this.stagedMatchRoster$.value);
             else console.error(`Could not emit roster; staged match roster was empty!`);
 
-            if (this.stagedTeammateRoster.allPlayers.length) this.teammateRoster$.next(this.stagedTeammateRoster);
+            if (this.stagedTeammateRoster$.value.allPlayers.length) this.teammateRoster$.next(this.stagedTeammateRoster$.value);
             else console.error(`Could not emit team roster; staged team roster was empty!`);
 
             this.resetStagedRosters();
@@ -222,7 +229,10 @@ export class MatchRosterService extends AllfatherService {
                     platformSoftware: rosterItem?.platform_sw,
                 };
 
-                this.stagedMatchRoster.addPlayer(newRosterPlayer);
+                const newStagedMatchRoster = this.stagedMatchRoster$.value;
+                newStagedMatchRoster.addPlayer(newRosterPlayer);
+
+                this.stagedMatchRoster$.next(newStagedMatchRoster);
             });
     }
 
@@ -302,7 +312,7 @@ export class MatchRosterService extends AllfatherService {
      */
     private setupTeammateLegends(): void {
         this.matchLegendSelect.legendSelected$.pipe(takeUntil(this.isDestroyed$)).subscribe((legendSelect) => {
-            const rosterPlayer = this.stagedMatchRoster.allPlayers.find((p) => isPlayerNameEqual(p.name, legendSelect!.playerName));
+            const rosterPlayer = this.stagedMatchRoster$.value.allPlayers.find((p) => isPlayerNameEqual(p.name, legendSelect!.playerName));
             let newRosterTeammate: MatchRosterTeammate;
 
             if (rosterPlayer) newRosterTeammate = { ...rosterPlayer, legend: legendSelect.legend };
@@ -313,13 +323,15 @@ export class MatchRosterService extends AllfatherService {
                     legend: legendSelect.legend,
                 };
 
-            this.stagedTeammateRoster.addPlayer(newRosterTeammate);
+            const newStagedTeammateRoster = this.stagedTeammateRoster$.value;
+            newStagedTeammateRoster.addPlayer(newRosterTeammate);
+
+            this.stagedTeammateRoster$.next(newStagedTeammateRoster);
         });
     }
 
     /**
      * Sub-method that takes in a teammate, and adds/merges them to the Staging Teammate Roster
-     *
      */
     private addTeammate(teammate: MatchRosterTeammate): void {
         const existingTeammate = this.teammateRoster$.value.allPlayers.find((p) => isPlayerNameEqual(p.name, teammate.name));
@@ -335,12 +347,14 @@ export class MatchRosterService extends AllfatherService {
                 teamId: teammate.platformSoftware ?? existingTeammate.teamId,
             };
         }
+        const newStagedTeammateRoster = this.stagedTeammateRoster$.value;
+        newStagedTeammateRoster.addPlayer(mergedTeammate);
 
-        this.stagedTeammateRoster.addPlayer(mergedTeammate);
+        this.stagedTeammateRoster$.next(newStagedTeammateRoster);
     }
 
     private resetStagedRosters(): void {
-        this.stagedMatchRoster = new MatchRoster();
-        this.stagedTeammateRoster = new MatchRoster<MatchRosterTeammate>();
+        this.stagedMatchRoster$.next(new MatchRoster());
+        this.stagedTeammateRoster$.next(new MatchRoster<MatchRosterTeammate>());
     }
 }
