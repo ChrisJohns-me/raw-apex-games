@@ -6,8 +6,9 @@
     height: 100%;
     width: 100%;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     box-sizing: border-box;
+    padding: 0 10px;
 
     &.no-confidence {
         display: none;

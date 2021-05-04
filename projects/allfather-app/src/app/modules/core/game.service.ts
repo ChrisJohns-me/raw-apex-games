@@ -34,20 +34,28 @@ export class GameService extends AllfatherService {
             if (newPhase && newPhase !== this.phase$.value) this.phase$.next(newPhase);
         };
 
-        const triggers = new TriggerConditions<GamePhase, [OWInfoUpdates2Event?, MatchState?]>("GamePhase", {
+        const triggers = new TriggerConditions<GamePhase, [OWInfoUpdates2Event?, MatchState?, GamePhase?]>("GamePhase", {
             [GamePhase.Lobby]: (infoUpdate, matchState) => matchState === MatchState.Inactive,
             [GamePhase.LegendSelection]: (infoUpdate) =>
                 infoUpdate?.feature === "team" && !isEmpty(findValueByKeyRegEx(infoUpdate?.info?.match_info, /^legendSelect/)),
+            [GamePhase.PreGame]: (infoUpdate, matchState, gamePhase) =>
+                !!infoUpdate?.info &&
+                gamePhase === GamePhase.LegendSelection &&
+                !!(
+                    infoUpdate.info.match_info?.legendSelect_0?.lead ||
+                    infoUpdate.info.match_info?.legendSelect_1?.lead ||
+                    infoUpdate.info.match_info?.legendSelect_2?.lead
+                ),
             [GamePhase.InGame]: (infoUpdate, matchState) => matchState === MatchState.Active,
         });
 
         this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.isDestroyed$)).subscribe((infoUpdate) => {
-            const newPhase = triggers.triggeredFirstKey(infoUpdate, undefined);
+            const newPhase = triggers.triggeredFirstKey(infoUpdate, undefined, this.phase$.value);
             setNewPhaseFn(newPhase);
         });
 
         this.match.state$.pipe(takeUntil(this.isDestroyed$)).subscribe((stateChanged) => {
-            const newPhase = triggers.triggeredFirstKey(undefined, stateChanged.state);
+            const newPhase = triggers.triggeredFirstKey(undefined, stateChanged.state, this.phase$.value);
             setNewPhaseFn(newPhase);
         });
     }

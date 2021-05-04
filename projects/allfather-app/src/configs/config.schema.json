@@ -156,6 +156,31 @@
                                 }
                             },
                             "required": ["winWeight", "placementWeight", "damageWeight", "eliminationWeight", "durationWeight"]
+                        },
+                        "legendRows": {
+                            "type": "array",
+                            "items": [
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "top": {
+                                            "type": "integer"
+                                        },
+                                        "right": {
+                                            "type": "integer"
+                                        },
+                                        "legendIds": {
+                                            "type": "array",
+                                            "items": [
+                                                {
+                                                    "type": "string"
+                                                }
+                                            ]
+                                        }
+                                    },
+                                    "required": ["top", "right", "legendIds"]
+                                }
+                            ]
                         }
                     },
                     "required": [

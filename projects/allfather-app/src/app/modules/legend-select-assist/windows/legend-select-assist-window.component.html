@@ -1,24 +1,13 @@
-<app-ui-container [isDesktopWindow]="false" [isContentDraggable]="true" primaryTitle="Legend Select Assist">
-    <div class="testbg">
-        <h1>Legend Select Assist!!!</h1>
-        <div class="row">
-            <div *ngFor="let legend of legendOpts" class="col">
-                <button type="button" (click)="selectLegend(legend)" class="btn btn-primary btn-sm">
-                    {{ legend }}
-                </button>
-            </div>
-        </div>
+<app-ui-container
+    [isDesktopWindow]="false"
+    [isContentDraggable]="false"
+    primaryTitle="Legend Select Assist"
+    [position]="{ x: 0, y: 0 }"
+    [positionAnchors]="{ x: 'right', y: 'top' }"
+>
+    <app-legend-stats [legendStats]="legendStats"></app-legend-stats>
 
-        <div>
-            Avg Wins: {{ legendStats?.avgWins }}<br />
-            Avg Kills: {{ legendStats?.avgEliminations }}<br />
-            Avg Damage: {{ legendStats?.avgDamage }}<br />
-            Avg Duration: {{ legendStats?.avgDuration }}<br />
-            Avg Placement: {{ legendStats?.avgPlacement }}<br />
-            Recommended: <br />
-            <ng-container *ngFor="let recommended of complimentaryLegendWeights">
-                - {{ recommended.legendId }} ( {{ recommended.weightScore | percent }} )<br />
-            </ng-container>
-        </div>
-    </div>
+    <app-legend-icons-board [legendIconRows]="legendIconRows" (onLegendIdHover)="focusLegend($event)"></app-legend-icons-board>
+
+    <app-complimentary-legends [complimentaryLegendWeights]="complimentaryLegendWeights"></app-complimentary-legends>
 </app-ui-container>

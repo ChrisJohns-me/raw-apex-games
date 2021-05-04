@@ -1,11 +1,9 @@
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration/configuration.service";
-import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { AvgMatchStats } from "@allfather-app/app/shared/models/utilities/match-stats";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { FormControl } from "@angular/forms";
-import { Subject } from "rxjs";
+import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { unique } from "shared/utilities/primitives/array";
+import { LegendIconRow } from "../legend-icon-row.interface";
 import { LegendSelectAssistService } from "../legend-select-assist.service";
 
 @Component({
@@ -16,56 +14,54 @@ import { LegendSelectAssistService } from "../legend-select-assist.service";
 })
 export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     public isVisible = false;
-    public complimentaryLegendWeights: { legendId: string; weightScore: number }[] = [];
-    public legendSelectedForm = new FormControl("Empty");
-    public legendOpts: string[] = [];
     public legendStats?: AvgMatchStats;
+    public legendIconRows: LegendIconRow[] = [];
+    public complimentaryLegendWeights: { legendId: string; weightScore: number }[] = [];
 
     private numShowComplimentaryLegends = this.config.featureConfigs.legendSelectAssist.maxComplimentaryLegends;
+    private legendStatsSubscription?: Subscription;
+    private complimentaryLegendsSubscription?: Subscription;
     private isDestroyed$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly config: ConfigurationService,
-        private readonly legendSelectAssist: LegendSelectAssistService,
-        private readonly match: MatchService
-    ) {}
-
-    public ngOnInit(): void {
-        this.loadLegendOpts();
+        private readonly legendSelectAssist: LegendSelectAssistService
+    ) {
+        this.legendIconRows = this.config.featureConfigs.legendSelectAssist.legendRows;
     }
+
+    public ngOnInit(): void {}
 
     public ngOnDestroy(): void {
         this.isDestroyed$.next();
         this.isDestroyed$.complete();
     }
 
-    // temp
-    public selectLegend(legendId: string): void {
-        this.legendSelectAssist
+    public focusLegend(legendId: string): void {
+        this.showComplimentaryLegends(legendId);
+        this.showLegendStats(legendId);
+    }
+
+    public showLegendStats(legendId: string): void {
+        this.legendStatsSubscription?.unsubscribe();
+        this.legendStatsSubscription = this.legendSelectAssist
             .getLegendStats(legendId)
             .pipe(takeUntil(this.isDestroyed$))
             .subscribe((avgStats) => {
                 this.legendStats = avgStats;
+                this.cdr.detectChanges();
             });
+    }
 
-        this.legendSelectAssist
+    public showComplimentaryLegends(legendId: string): void {
+        this.complimentaryLegendsSubscription?.unsubscribe();
+        this.complimentaryLegendsSubscription = this.legendSelectAssist
             .getComplimentaryLegendWeights(legendId)
             .pipe(takeUntil(this.isDestroyed$))
             .subscribe((legendWeights) => {
                 const limitedLegendWeights = legendWeights.slice(0, this.numShowComplimentaryLegends);
                 this.complimentaryLegendWeights = limitedLegendWeights;
-                this.cdr.detectChanges();
-            });
-    }
-
-    // temp
-    private loadLegendOpts(): void {
-        this.match
-            .getAllMatchData()
-            .pipe(takeUntil(this.isDestroyed$))
-            .subscribe((matchList) => {
-                this.legendOpts = unique(matchList, (m) => m.legendId).map((m) => m.legendId);
                 this.cdr.detectChanges();
             });
     }

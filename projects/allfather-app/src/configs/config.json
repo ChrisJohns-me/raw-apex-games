@@ -45,7 +45,43 @@
                 "damageWeight": 0.25,
                 "eliminationWeight": 0.25,
                 "durationWeight": 0
-            }
+            },
+            "legendRows": [
+                {
+                    "top": 376,
+                    "right": 322,
+                    "legendIds": [
+                        "#character_bloodhound_NAME",
+                        "#character_gibraltar_NAME",
+                        "#character_lifeline_NAME",
+                        "#character_pathfinder_NAME",
+                        "#character_wraith_NAME"
+                    ]
+                },
+                {
+                    "top": 545,
+                    "right": 215,
+                    "legendIds": [
+                        "#character_bangalore_NAME",
+                        "#character_caustic_NAME",
+                        "#character_mirage_NAME",
+                        "#character_octane_NAME",
+                        "#character_wattson_NAME",
+                        "#character_crypto_NAME"
+                    ]
+                },
+                {
+                    "top": 712,
+                    "right": 267,
+                    "legendIds": [
+                        "#character_revenant_NAME",
+                        "#character_loba_NAME",
+                        "#character_rampart_NAME",
+                        "#character_horizon_NAME",
+                        "#character_fuse_NAME"
+                    ]
+                }
+            ]
         },
         "ultTimer": {
             "refreshTime": 1000,

@@ -149,7 +149,7 @@ export class UIWindow {
 
     public changePosition(left: number, top: number): Observable<void> {
         const promise = new Promise<void>((resolve, reject) => {
-            overwolf.windows.changePosition(this.name, left, top, (result) => {
+            overwolf.windows.changePosition(this.name, Math.round(left), Math.round(top), (result) => {
                 if (result.success) {
                     resolve();
                 } else {
@@ -184,6 +184,11 @@ export class UIWindow {
         ) as Observable<MonitorDisplay>;
     }
 
+    public getPosition(): Observable<{ top: number; right: number }> {
+        return this.obtain().pipe(map((window) => ({ top: window.top, right: window.left })));
+    }
+
+    /** Internal methods */
     private obtain(): Observable<UIWindowInfo> {
         const promise = new Promise<UIWindowInfo>((resolve, reject) => {
             const process = (result: overwolf.windows.WindowResult): void => {

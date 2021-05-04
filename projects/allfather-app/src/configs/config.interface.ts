@@ -79,6 +79,14 @@ export interface FeatureConfigs {
             eliminationWeight: number;
             durationWeight: number;
         };
+        legendRows: {
+            /** Row's distance from top of screen */
+            top: number;
+            /** Row's distance from right of screen */
+            right: number;
+            /** Legends in the row, in order */
+            legendIds: string[];
+        }[];
     };
     ultTimer: {
         /** Time in ms to force refresh the UI */

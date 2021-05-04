@@ -273,6 +273,11 @@
             "inGameInfoNameRegExPattern": "^mp_ability_void_ring$"
         },
         {
+            "id": "bloodhound_sonar",
+            "friendlyName": "Eye of the Allfather",
+            "inGameInfoNameRegExPattern": "^mp_ability_area_sonar_scan$"
+        },
+        {
             "id": "lifeline_care_package",
             "friendlyName": "Care Package",
             "inGameInfoNameRegExPattern": "^Care Package$"

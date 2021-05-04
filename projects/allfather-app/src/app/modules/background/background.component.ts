@@ -1,14 +1,18 @@
 import { APP_NAME } from "@allfather-app/app/shared/models/app";
+import { GamePhase } from "@allfather-app/app/shared/models/game-phase";
 import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { switchMap, takeUntil } from "rxjs/operators";
+import { GameService } from "../core/game.service";
 import { LocalStorageKeys } from "../core/local-storage/local-storage-keys";
 import { LocalStorageService } from "../core/local-storage/local-storage.service";
+import { MatchService } from "../core/match/match.service";
 import { OverwolfExtensionService } from "../core/overwolf/overwolf-extension.service";
 import { DashboardWindowService } from "../dashboard/dashboard-window.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
+import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
 import { BackgroundService } from "./background.service";
 
 @Component({
@@ -23,7 +27,10 @@ export class BackgroundComponent implements OnInit, OnDestroy {
         private readonly backgroundService: BackgroundService,
         private readonly dashboardWindow: DashboardWindowService,
         private readonly developmentToolsWindow: DevelopmentToolsWindowService,
+        private readonly game: GameService,
+        private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
         private readonly localStorage: LocalStorageService,
+        private readonly match: MatchService,
         private readonly overwolfExtension: OverwolfExtensionService,
         private readonly titleService: Title
     ) {
@@ -55,6 +62,18 @@ export class BackgroundComponent implements OnInit, OnDestroy {
         if (environment.allowDevTools) this.developmentToolsWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
 
         this.dashboardWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+
+        this.game.phase$
+            .pipe(
+                takeUntil(this.isDestroyed$),
+                switchMap((gamePhase) => {
+                    console.debug(`[BACKGROUND] New Game Phase:`, gamePhase);
+                    return gamePhase === GamePhase.LegendSelection
+                        ? this.legendSelectAssistWindow.open()
+                        : this.legendSelectAssistWindow.close();
+                })
+            )
+            .subscribe((result) => console.debug(`LegendSelectionWindow Result`, result));
     }
 
     /**

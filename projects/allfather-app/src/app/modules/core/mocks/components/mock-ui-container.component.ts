@@ -17,7 +17,7 @@ export class MockUIContainerComponent implements MockedClass<UIContainerComponen
     @Input() public isTitlebarDraggable = true;
     @Input() public isMaximizable = true;
     @Input() public isMinimizable = true;
-    @Input() public position: { top: number; left: number } = { top: 0, left: 0 };
+    @Input() public position = { x: 0, y: 0 };
     @Input() public positionUnit: ConfigPositionUnit = "pixel";
     @Input() public positionXAnchor: ConfigPositionXAnchor = "left";
     @Input() public positionYAnchor: ConfigPositionYAnchor = "top";

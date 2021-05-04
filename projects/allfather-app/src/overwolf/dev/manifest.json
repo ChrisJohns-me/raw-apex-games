@@ -72,10 +72,11 @@
             },
             "in-game-match-timer": {
                 "file": "index.html",
-                "in_game_only": false,
+                "in_game_only": true,
                 "resizable": false,
                 "transparent": true,
-                "show_in_taskbar": true,
+                "show_in_taskbar": false,
+                "clickthrough": true,
                 "mute": true,
                 "popup_blocker": true,
                 "allow_local_file_access": true,
@@ -94,10 +95,11 @@
             },
             "in-game-ult-timer": {
                 "file": "index.html",
-                "in_game_only": false,
+                "in_game_only": true,
                 "resizable": false,
                 "transparent": true,
-                "show_in_taskbar": true,
+                "show_in_taskbar": false,
+                "clickthrough": true,
                 "mute": true,
                 "popup_blocker": true,
                 "allow_local_file_access": true,
@@ -120,10 +122,11 @@
             },
             "in-game-infliction-insight": {
                 "file": "index.html",
-                "in_game_only": false,
+                "in_game_only": true,
                 "resizable": false,
                 "transparent": true,
-                "show_in_taskbar": true,
+                "show_in_taskbar": false,
+                "clickthrough": false,
                 "mute": true,
                 "popup_blocker": true,
                 "allow_local_file_access": true,
@@ -142,24 +145,25 @@
             },
             "legend-select-assist": {
                 "file": "index.html",
-                "in_game_only": false,
+                "in_game_only": true,
                 "resizable": false,
                 "transparent": true,
-                "show_in_taskbar": true,
+                "show_in_taskbar": false,
+                "clickthrough": false,
                 "mute": true,
                 "popup_blocker": true,
                 "allow_local_file_access": true,
                 "size": {
-                    "width": 500,
-                    "height": 750
+                    "width": 1440,
+                    "height": 1440
                 },
                 "min_size": {
-                    "width": 500,
-                    "height": 750
+                    "width": 1440,
+                    "height": 1440
                 },
                 "max_size": {
-                    "width": 500,
-                    "height": 750
+                    "width": 1440,
+                    "height": 1440
                 }
             },
             "preferences": {

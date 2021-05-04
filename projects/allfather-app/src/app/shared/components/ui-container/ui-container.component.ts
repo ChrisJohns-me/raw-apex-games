@@ -4,7 +4,7 @@ import { ConfigPositionUnit, ConfigPositionXAnchor, ConfigPositionYAnchor } from
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Observable, Subject } from "rxjs";
-import { map, shareReplay, switchMap, takeUntil } from "rxjs/operators";
+import { map, shareReplay, switchMap, takeUntil, tap } from "rxjs/operators";
 
 @Component({
     selector: "app-ui-container",
@@ -19,10 +19,9 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     @Input() public isTitlebarDraggable = true;
     @Input() public isMaximizable = true;
     @Input() public isMinimizable = true;
-    @Input() public position: { top: number; left: number } = { top: 0, left: 0 };
-    @Input() public positionUnit: ConfigPositionUnit = "pixel";
-    @Input() public positionXAnchor: ConfigPositionXAnchor = "left";
-    @Input() public positionYAnchor: ConfigPositionYAnchor = "top";
+    @Input() public position = { y: 0, x: 0 };
+    @Input() public positionUnits: { x: ConfigPositionUnit; y: ConfigPositionUnit } = { x: "pixel", y: "pixel" };
+    @Input() public positionAnchors: { x: ConfigPositionXAnchor; y: ConfigPositionYAnchor } = { x: "left", y: "top" };
     @Input() public set primaryTitle(value: string) {
         this.titleService.setTitle(`${value} - ${APP_NAME}`);
         this._primaryTitle = value;
@@ -46,7 +45,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     public ngAfterViewInit(): void {
-        this.updatePosition();
+        // this.updatePosition();
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
@@ -119,34 +118,61 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     private updatePosition(): void {
-        // position.top
-        // position.left
-        // positionUnit = "pixel"
-        // positionXAnchor
-        // positionYAnchor
-        // const percentFn = (x: number, y: number) => {};
-        // const pixelFn = (x: number, y: number) => {};
-        // const logicalPixelFn = (x: number, y: number) => {};
-        // const normalizeFn = (toUnit: "pixel" | "percent", pos: { x: number; y: number }): { x: number; y: number } => {
-        //     if (this.positionUnit === "percent") {
-        //         return;
-        //     } else {
-        //         return pos;
-        //     }
-        // };
-        // this.uiWindow
-        //     .getMonitor()
-        //     .pipe(
-        //         takeUntil(this.isDestroyed$),
-        //         switchMap((monitor) => {
-        //             combineLatest([, this.uiWindow.getSize()]);
-        //         })
-        //     )
-        //     .pipe(
-        //         takeUntil(this.isDestroyed$),
-        //         map((size) => {}),
-        //         switchMap((newPos) => this.uiWindow.changePosition(newPos.left, newPos.top))
-        //     )
-        //     .subscribe();
+        const screenSize = { height: 0, width: 0 };
+        const windowSize = { height: 0, width: 0 };
+        this.uiWindow
+            .getMonitor()
+            .pipe(
+                takeUntil(this.isDestroyed$),
+                tap((monitor) => {
+                    screenSize.height = monitor.height;
+                    screenSize.width = monitor.width;
+                }),
+                switchMap(() => this.uiWindow.getSize()),
+                tap((_windowSize) => {
+                    windowSize.height = _windowSize.height;
+                    windowSize.width = _windowSize.width;
+                }),
+                map(() => xyPosToPixelsFn(this.position, screenSize, this.positionUnits.x, this.positionUnits.y)),
+                map((xyPos) => xyPosToTopLeftFn(xyPos, screenSize, windowSize, this.positionAnchors.x, this.positionAnchors.y)),
+                switchMap((newPos) => this.uiWindow.changePosition(newPos.left, newPos.top))
+            )
+            .subscribe(() => {
+                console.debug(`ChangePosition() done`);
+            });
     }
 }
+
+function xyPosToPixelsFn(
+    xyPos: { x: number; y: number },
+    screenSize: { width: number; height: number },
+    fromUnitX: ConfigPositionUnit,
+    fromUnitY: ConfigPositionUnit
+): { x: number; y: number } {
+    const pixelPosition = { ...xyPos };
+    if (fromUnitX === "percent") pixelPosition.x = xyPos.x * screenSize.height;
+    if (fromUnitY === "percent") pixelPosition.y = xyPos.y * screenSize.width;
+    return pixelPosition;
+}
+
+function xyPosToTopLeftFn(
+    xyPos: { x: number; y: number },
+    screenSize: { width: number; height: number },
+    windowSize: { width: number; height: number },
+    posXAnchor: ConfigPositionXAnchor,
+    posYAnchor: ConfigPositionYAnchor
+): { left: number; top: number } {
+    const topLeftPos = { left: xyPos.x, top: xyPos.y };
+    const windowCenterX = windowSize.width / 2;
+    const windowCenterY = windowSize.height / 2;
+    const screenCenterX = screenSize.width / 2;
+    const screenCenterY = screenSize.height / 2;
+    if (posXAnchor === "right") topLeftPos.left = screenSize.width - windowSize.width + topLeftPos.left;
+    else if (posXAnchor === "center") topLeftPos.left = screenCenterX - windowCenterX + topLeftPos.left;
+    if (posYAnchor === "bottom") topLeftPos.top = screenSize.height - windowSize.height + topLeftPos.top;
+    else if (posYAnchor === "middle") topLeftPos.top = screenCenterY - windowCenterY + topLeftPos.top;
+    return topLeftPos;
+}
+
+//     |--.--| = 4 ; centerX = 2
+//  |-----.-----| = 10 ; centerX = 5
