@@ -49,7 +49,6 @@ export class InfoUpdatesDelegate implements OverwolfEventListenerDelegate {
      * @param infoUpdates
      */
     private onInfoUpdates2(infoUpdate: overwolf.games.events.InfoUpdates2Event): void {
-        console.debug(`[${this.constructor.name}] onInfoUpdates`, infoUpdate);
         if (!infoUpdate) {
             console.warn("Unrecognized info.", infoUpdate);
             return;

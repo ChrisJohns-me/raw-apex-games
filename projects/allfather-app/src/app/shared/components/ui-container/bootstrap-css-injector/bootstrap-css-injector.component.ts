@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from "@angular/core";
-import "bootstrap";
 
 /**
  * @classdesc Injects BootstrapCSS into the root DOM
@@ -15,6 +14,6 @@ import "bootstrap";
 })
 export class BootstrapCSSInjectorComponent {
     constructor() {
-        console.debug(`[${this.constructor.name}] Injecting Bootstrap CSS...`);
+        console.debug(`[${this.constructor.name}] Injecting Bootstrap JS/CSS...`);
     }
 }

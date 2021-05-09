@@ -1,107 +1,56 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
+import { BehaviorSubject, from, Observable, of } from "rxjs";
+import { concatAll, delay, map, mergeMap, switchMap, takeUntil, tap } from "rxjs/operators";
 import { AllfatherService } from "../core/allfather-service.abstract";
-import { GameProcessService } from "../core/game-process.service";
-import { GameService } from "../core/game.service";
-import { LocalDatabaseService } from "../core/local-database/local-database.service";
-import { LocalStorageService } from "../core/local-storage/local-storage.service";
-import { MatchActivityService } from "../core/match/match-activity.service";
-import { MatchLegendSelectService } from "../core/match/match-legend-select.service";
-import { MatchMapService } from "../core/match/match-map.service";
-import { MatchPlayerInflictionService } from "../core/match/match-player-infliction.service";
-import { MatchPlayerInventoryService } from "../core/match/match-player-inventory.service";
-import { MatchPlayerLegendService } from "../core/match/match-player-legend.service";
-import { MatchPlayerLocationService } from "../core/match/match-player-location.service";
-import { MatchPlayerStatsService } from "../core/match/match-player-stats.service";
-import { MatchPlayerService } from "../core/match/match-player.service";
-import { MatchRosterService } from "../core/match/match-roster.service";
-import { MatchService } from "../core/match/match.service";
-import { OverwolfGameDataService } from "../core/overwolf";
-import { ExposedOverwolfGameDataService } from "../core/overwolf-exposed-data.service";
 import { OverwolfExtensionService } from "../core/overwolf/overwolf-extension.service";
-import { PlayerService } from "../core/player.service";
-import { ReportableDataManagerService } from "../core/reporting/reporting-engine/reportable-data-manager";
-import { ReportingService } from "../core/reporting/reporting.service";
+import { UIWindow, WindowName } from "../core/_refactor/ui-window";
+import { MainWindowService } from "../main/main-window.service";
+
+const BACKGROUND_EXIT_DELAY = 1000;
 
 @Injectable({
     providedIn: "root",
-    deps: [
-        ExposedOverwolfGameDataService,
-        GameService,
-        GameProcessService,
-        LocalDatabaseService,
-        LocalStorageService,
-        MatchService,
-        MatchActivityService,
-        MatchLegendSelectService,
-        MatchMapService,
-        MatchPlayerService,
-        MatchPlayerInflictionService,
-        MatchPlayerInventoryService,
-        MatchPlayerLegendService,
-        MatchPlayerLocationService,
-        MatchPlayerStatsService,
-        MatchRosterService,
-        OverwolfExtensionService,
-        OverwolfGameDataService,
-        PlayerService,
-        ReportableDataManagerService,
-        ReportingService,
-    ],
-    useFactory: (...deps: any[]) => SingletonServiceProviderFactory("BackgroundService", BackgroundService, deps),
+    deps: [MainWindowService, OverwolfExtensionService],
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("BackgroundService", BackgroundService, deps),
 })
 export class BackgroundService extends AllfatherService {
-    constructor(
-        private readonly exposedOverwolfData: ExposedOverwolfGameDataService,
-        private readonly game: GameService,
-        private readonly gameProcess: GameProcessService,
-        private readonly localDatabase: LocalDatabaseService,
-        private readonly localStorage: LocalStorageService,
-        private readonly match: MatchService,
-        private readonly matchActivity: MatchActivityService,
-        private readonly matchLegendSelect: MatchLegendSelectService,
-        private readonly matchMap: MatchMapService,
-        private readonly matchPlayer: MatchPlayerService,
-        private readonly matchPlayerInfliction: MatchPlayerInflictionService,
-        private readonly matchPlayerInventory: MatchPlayerInventoryService,
-        private readonly matchPlayerLegend: MatchPlayerLegendService,
-        private readonly matchPlayerLocation: MatchPlayerLocationService,
-        private readonly matchPlayerStats: MatchPlayerStatsService,
-        private readonly matchRoster: MatchRosterService,
-        private readonly overwolfExtensions: OverwolfExtensionService,
-        private readonly overwolfGameData: OverwolfGameDataService,
-        private readonly player: PlayerService,
-        private readonly reportableDataManager: ReportableDataManagerService,
-        private readonly reporting: ReportingService
-    ) {
+    public isRequestingExit$ = new BehaviorSubject<boolean>(false);
+
+    constructor(private readonly mainWindow: MainWindowService, private readonly overwolfExtensionService: OverwolfExtensionService) {
         super();
     }
 
-    public init(): void {}
+    public requestExit(): void {
+        const grabFocus$ = this.mainWindow.focus().pipe(tap(() => this.isRequestingExit$.next(true)));
+        from([this.mainWindow.restore(), grabFocus$]).pipe(takeUntil(this.isDestroyed$), concatAll()).subscribe();
+    }
 
-    public startBackgroundServices(): void {
-        console.debug(`[${this.constructor.name}] Starting Background Services`);
-        this.overwolfExtensions.init();
-        this.overwolfGameData.init();
+    public cancelExit(): void {
+        this.isRequestingExit$.next(false);
+    }
 
-        this.exposedOverwolfData.init();
-        this.game.init();
-        this.gameProcess.init();
-        this.localDatabase.init();
-        this.localStorage.init();
-        this.match.init();
-        this.matchActivity.init();
-        this.matchLegendSelect.init();
-        this.matchMap.init();
-        this.matchPlayer.init();
-        this.matchPlayerInfliction.init();
-        this.matchPlayerInventory.init();
-        this.matchPlayerLegend.init();
-        this.matchPlayerLocation.init();
-        this.matchPlayerStats.init();
-        this.matchRoster.init();
-        this.player.init();
-        this.reportableDataManager.init();
-        this.reporting.init();
+    public relaunchApp(): void {
+        this.overwolfExtensionService.relaunchApp();
+    }
+
+    public exitApp(): void {
+        const backgroundWindow = new UIWindow(WindowName.Background);
+        const closeBackgroundWindow$ = of(undefined).pipe(
+            delay(BACKGROUND_EXIT_DELAY),
+            switchMap(() => backgroundWindow.close())
+        );
+        from([this.closeAllWindows$(), closeBackgroundWindow$]).pipe(takeUntil(this.isDestroyed$), concatAll()).subscribe();
+    }
+
+    /** Closes all windows except Background */
+    private closeAllWindows$(): Observable<void> {
+        const allWindowNames = Object.values(WindowName).filter((name) => name !== WindowName.Background);
+        const allWindows$ = from(allWindowNames);
+        return allWindows$.pipe(
+            takeUntil(this.isDestroyed$),
+            map((winName) => new UIWindow(winName)),
+            mergeMap((uiWindow) => uiWindow.close())
+        );
     }
 }

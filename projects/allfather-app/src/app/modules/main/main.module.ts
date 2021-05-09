@@ -3,12 +3,12 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MapExplorerPageComponent } from "./pages/map-explorer-page.component";
-import { DashboardWindowComponent } from "./windows/dashboard-window.component";
+import { MainWindowComponent } from "./windows/main-window.component";
 
 @NgModule({
-    declarations: [DashboardWindowComponent, MapExplorerPageComponent],
+    declarations: [MainWindowComponent, MapExplorerPageComponent],
     imports: [CommonModule, ReactiveFormsModule, SharedModule],
     providers: [],
-    exports: [DashboardWindowComponent],
+    exports: [MainWindowComponent],
 })
-export class DashboardModule {}
+export class MainModule {}

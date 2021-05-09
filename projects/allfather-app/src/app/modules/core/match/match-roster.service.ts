@@ -84,9 +84,6 @@ export class MatchRosterService extends AllfatherService {
     ) {
         super();
         this.rosterUpdate$ = this.setupRosterUpdate$();
-    }
-
-    public init(): void {
         this.setupOnMatchStart();
         this.setupOnMatchEnd();
         this.setupCounts();

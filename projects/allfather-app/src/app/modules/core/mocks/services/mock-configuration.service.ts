@@ -3,6 +3,7 @@ import { ConfigurationService } from "@allfather-app/app/modules/core/configurat
 
 export class MockConfigurationService implements MockedClass<ConfigurationService> {
     public assumptions: ConfigurationService["assumptions"] = ConfigJSON.assumptions;
+    public common: ConfigurationService["common"] = ConfigJSON.common;
     public facts: ConfigurationService["facts"] = ConfigJSON.facts;
     public featureConfigs: ConfigurationService["featureConfigs"] = ConfigJSON.featureConfigs;
     public featureFlags: ConfigurationService["featureFlags"] = ConfigJSON.featureFlags;

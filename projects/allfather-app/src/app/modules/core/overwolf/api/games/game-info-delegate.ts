@@ -29,7 +29,6 @@ export class GameInfoDelegate implements OverwolfEventListenerDelegate {
      */
     private onGameInfo(gameInfo?: OWRunningGameInfo): void {
         if (!gameInfo || gameInfo.classId !== this.apexLegendsClassID) return;
-        console.debug(`[${this.constructor.name}] onGameInfo`, gameInfo);
         this.gameInfo$.next(gameInfo);
     }
 }

@@ -1,7 +1,7 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Inject, Injectable } from "@angular/core";
 import { BehaviorSubject, interval, merge, Subject } from "rxjs";
-import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
+import { delay, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { AllfatherService } from "../allfather-service.abstract";
 import { InfoUpdatesDelegate } from "./api/games/events/info-updates-delegate";
 import { NewGameEventDelegate } from "./api/games/events/new-game-event-delegate";
@@ -9,6 +9,13 @@ import { GameInfoDelegate } from "./api/games/game-info-delegate";
 import { OWConfig, OW_CONFIG } from "./overwolf-config";
 import { OverwolfFeatureRegistrationService, OWFeatureRegistrationStatus } from "./overwolf-feature-registration.service";
 import { OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./types/overwolf-types";
+
+/**
+ * @summary On any first run of the app or game, re-register the required features by unregistering before registering
+ *  to hopefully force the Overwolf Game Event Provider to re-recognize the app and game-data.
+ * @see https://discuss.overwolf.com/t/apex-legends-events-completly-stop-if-overwolf-is-being-relaunched-while-game-is-already-open/495
+ */
+const FEATURE_FIRST_REREGISTRATION_TIME = 5000;
 
 /**
  * @classdesc Game data information directly from the Overwolf API.
@@ -30,20 +37,20 @@ export class OverwolfGameDataService extends AllfatherService {
         return this.newGameEventDelegate.newGameEvent$;
     }
 
-    private readonly gameInfoDelegate = new GameInfoDelegate(this.config.APEXLEGENDSCLASSID);
+    private readonly gameInfoDelegate = new GameInfoDelegate(this.owConfig.APEXLEGENDSCLASSID);
     private readonly infoUpdatesDelegate = new InfoUpdatesDelegate();
     private readonly newGameEventDelegate = new NewGameEventDelegate();
     //#endregion
 
     //#region Game Monitor
-    private readonly gameMonitorGameInfoDelegate = new GameInfoDelegate(this.config.APEXLEGENDSCLASSID);
+    private readonly gameMonitorGameInfoDelegate = new GameInfoDelegate(this.owConfig.APEXLEGENDSCLASSID);
     //#endregion
 
     private isRunning$ = new BehaviorSubject<boolean>(false);
     private delegateEventListenersStarted = false;
 
     constructor(
-        @Inject(OW_CONFIG) private readonly config: OWConfig,
+        @Inject(OW_CONFIG) private readonly owConfig: OWConfig,
         private readonly featureRegistration: OverwolfFeatureRegistrationService
     ) {
         super();
@@ -54,6 +61,9 @@ export class OverwolfGameDataService extends AllfatherService {
                 distinctUntilChanged()
             )
             .subscribe((isRunning) => this.isRunning$.next(isRunning));
+
+        this.gameMonitorGameInfoDelegate.startEventListeners();
+        this.setupRunningCheck();
     }
 
     public ngOnDestroy(): void {
@@ -62,14 +72,8 @@ export class OverwolfGameDataService extends AllfatherService {
         super.ngOnDestroy();
     }
 
-    public init(): void {
-        this.gameMonitorGameInfoDelegate.startEventListeners();
-        this.setupRunningCheck();
-        this.setupNotRunningCheck();
-    }
-
     private setupRunningCheck(): void {
-        const isRunningHealthcheck$ = interval(this.config.HEALTHCHECK_TIME).pipe(
+        const isRunningHealthcheck$ = interval(this.owConfig.HEALTHCHECK_TIME).pipe(
             tap(() =>
                 console.debug(
                     `[${this.constructor.name}] (Running HealthCheck), ` +
@@ -78,15 +82,20 @@ export class OverwolfGameDataService extends AllfatherService {
                 )
             )
         );
-        merge(isRunningHealthcheck$, this.isRunning$)
+
+        const isRunningChanged$ = this.isRunning$.pipe(
+            switchMap(() => this.featureRegistration.unregisterFeatures()),
+            delay(FEATURE_FIRST_REREGISTRATION_TIME)
+        );
+        merge(isRunningHealthcheck$, isRunningChanged$)
             .pipe(
                 takeUntil(this.isDestroyed$),
                 filter(() => this.isRunning$.value),
-                switchMap(() => this.featureRegistration.registerFeatures())
+                switchMap(() => this.featureRegistration.setRegisteredFeatures())
             )
             .subscribe(() => {
                 if (this.featureRegistration.registrationStatus$.value !== OWFeatureRegistrationStatus.SUCCESS) {
-                    this.notRunning();
+                    console.warn(`[${this.constructor.name}] Overwolf Data Provider Service is not running. (Features not set)`);
                     return;
                 }
                 if (!this.delegateEventListenersStarted) {
@@ -94,10 +103,6 @@ export class OverwolfGameDataService extends AllfatherService {
                     console.debug(`[${this.constructor.name}] Overwolf Data Provider Service is ready.`);
                 }
             });
-    }
-
-    private setupNotRunningCheck(): void {
-        this.isRunning$.pipe(filter((isRunning) => !isRunning)).subscribe(() => this.notRunning());
     }
 
     //#region Delegate event listeners
@@ -117,10 +122,4 @@ export class OverwolfGameDataService extends AllfatherService {
         console.debug(`[${this.constructor.name}] Game Delegate Event Listeners Stopped`);
     }
     //#endregion
-
-    private notRunning() {
-        this.stopDelegateEventListeners();
-        this.featureRegistration.unregisterFeatures();
-        console.warn(`[${this.constructor.name}] Overwolf Data Provider Service is not running.`);
-    }
 }

@@ -126,7 +126,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this.isDestroyed$),
                 tap(() => (this.acceptingResetEvents = false)),
-                delay(this.config.general.matchEndHUDTimeout)
+                delay(this.config.common.matchEndHUDTimeout)
             )
             .subscribe(() => {
                 this.isVisible = false;

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MockUIContainerComponent } from "../../core/mocks/components/mock-ui-container.component";
-import { DashboardWindowComponent } from "./dashboard-window.component";
+import { MainWindowComponent } from "./main-window.component";
 
-describe("DashboardComponent", () => {
-    let component: DashboardWindowComponent;
-    let fixture: ComponentFixture<DashboardWindowComponent>;
+describe("MainComponent", () => {
+    let component: MainWindowComponent;
+    let fixture: ComponentFixture<MainWindowComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [DashboardWindowComponent, MockUIContainerComponent],
+            declarations: [MainWindowComponent, MockUIContainerComponent],
             providers: [],
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(DashboardWindowComponent);
+        fixture = TestBed.createComponent(MainWindowComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

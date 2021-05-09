@@ -51,9 +51,6 @@ export class MatchPlayerInflictionService extends AllfatherService {
             this.matchActivity.killfeedEvent$,
             (killfeedEvent) => !isEmpty(killfeedEvent.victim.name) && !!killfeedEvent.attacker?.isMe && !killfeedEvent.victim.isMe
         );
-    }
-
-    public init(): void {
         this.setupMyDamageEvents();
     }
 

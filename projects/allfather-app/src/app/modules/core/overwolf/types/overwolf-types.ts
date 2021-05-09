@@ -11,3 +11,4 @@ export type OWMatchInfoRoster = overwolf.gep.ApexLegends.MatchInfoRoster;
 export type OWMatchInfoTeammate = overwolf.gep.ApexLegends.MatchInfoTeammate;
 export type OWNewGameEvents = overwolf.gep.ApexLegends.NewGameEvents; // overwolf.games.events.NewGameEvents
 export type OWRunningGameInfo = overwolf.games.RunningGameInfo;
+export type OWSystemTrayMenuItem = overwolf.os.tray.menu_item;

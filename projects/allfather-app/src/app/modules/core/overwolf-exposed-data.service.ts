@@ -28,10 +28,6 @@ export class ExposedOverwolfGameDataService extends AllfatherService {
         super();
     }
 
-    public init(): void {
-        // ...
-    }
-
     public injectOnGameInfo(gameInfo: OWRunningGameInfo): void {
         this.overwolfGameData["gameInfoDelegate"]["onGameInfo"](gameInfo);
     }

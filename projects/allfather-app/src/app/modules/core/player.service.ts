@@ -20,9 +20,6 @@ export class PlayerService extends AllfatherService {
 
     constructor(private readonly overwolfGameData: OverwolfGameDataService) {
         super();
-    }
-
-    public init(): void {
         this.setupMyName();
     }
 

@@ -1,12 +1,11 @@
-// Themes
-@import "bootstrap/light-theme";
-// @import "bootstrap/dark-theme";
-
 // Toggle global options
 @import "bootstrap/options";
 
-// Custom variables
-@import "bootstrap/variables";
+// Theme Variables
+@import "bootstrap/theme-variables";
 
-// Import Bootstrap utilities
-@import "bootstrap/scss/bootstrap-utilities";
+// Import Bootstrap components
+@import "~bootstrap/scss/bootstrap";
+
+// Import Theme
+@import "~bootswatch/dist/darkly/bootswatch";

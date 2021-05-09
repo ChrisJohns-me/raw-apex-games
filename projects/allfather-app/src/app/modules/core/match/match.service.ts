@@ -4,7 +4,7 @@ import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/shared/mo
 import { TriggerConditions } from "@allfather-app/app/shared/models/utilities/trigger-conditions";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
-import { differenceInMilliseconds } from "date-fns";
+import { differenceInMilliseconds, isDate } from "date-fns";
 import { IndexableType } from "dexie";
 import { BehaviorSubject, from, merge, Observable, of, Subject } from "rxjs";
 import { filter, map, take, takeUntil, tap, timeoutWith } from "rxjs/operators";
@@ -46,9 +46,6 @@ export class MatchService extends AllfatherService {
 
     constructor(private readonly localDatabase: LocalDatabaseService, private readonly overwolfGameData: OverwolfGameDataService) {
         super();
-    }
-
-    public init(): void {
         this.setupMatchId();
         this.setupStartEndEvents();
         this.setupStateEvents();
@@ -57,9 +54,12 @@ export class MatchService extends AllfatherService {
 
     /**
      * Stores match data into local database.
+     * Generates a random matchId if empty.
      * @returns {IndexableType} index key of storage location
      */
     public storeMatchData(matchData: MatchDataStore): Observable<IndexableType> {
+        if (isEmpty(matchData.matchId)) matchData.matchId = uuid();
+        if (!isDate(matchData.startDate) || !isDate(matchData.endDate)) throw Error();
         const savePromise = this.localDatabase.table("matches").put(matchData);
         return from(savePromise);
     }
@@ -69,7 +69,7 @@ export class MatchService extends AllfatherService {
      * @returns {MatchDataStore}
      */
     public getMatchDataByMatchId(matchId: string): Observable<MatchDataStore | undefined> {
-        if (isEmpty(matchId)) throw new Error(`Cannot retrieve match data from local database; matchId is empty.`);
+        if (isEmpty(matchId)) throw Error(`Cannot retrieve match data from local database; matchId is empty.`);
         const matchPromise = this.localDatabase.matches.get({ matchId });
         return from(matchPromise);
     }

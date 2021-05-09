@@ -1,6 +1,7 @@
 import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { delay, mapTo, mergeMap, retryWhen, takeUntil } from "rxjs/operators";
+import { isEmpty } from "shared/utilities";
 import { MatchDataStore } from "../../../local-database/match-data-store";
 import { MatchService } from "../../../match/match.service";
 import { DamageConditionOption, GameModeConditionOption, KillsConditionOption, PlacementConditionOption } from "../condition-options";
@@ -102,6 +103,7 @@ export class LocalReportingEngine implements ReportingEngine {
      * Throws error if any data item is missing
      * @returns {MatchDataStore}
      * @todo Profile Performance
+     * @throws if data is missing or corrupt
      */
     private getMatchData(): MatchDataStore {
         const getDataById = <T extends ReportableDataFactoryMap, K extends keyof T, P extends T[K]>(dataId: K) =>
@@ -119,7 +121,7 @@ export class LocalReportingEngine implements ReportingEngine {
         const matchMeta = getDataById("matchMeta")?.value;
         const map = getDataById("map")?.value;
 
-        return {
+        const matchData = {
             matchId: matchMeta?.matchId ?? "",
             startDate: matchMeta?.startDate ?? new Date(),
             endDate: matchMeta?.endDate ?? new Date(),
@@ -141,11 +143,15 @@ export class LocalReportingEngine implements ReportingEngine {
             weaponIdsHistory: getDataById("weaponIdsHistory")?.value ?? [],
             ultimateUsageDates: getDataById("ultimateUsageDates")?.value ?? [],
         };
+
+        if (!matchData.matchRoster?.length || isEmpty(matchData.matchId)) throw Error(`Match data is missing or corrupt`);
+
+        return matchData;
     }
 }
 
 /** Store locationHistory.phase as number */
-function mapHistory(location: ReportableDataFactoryMap["locationHistory"]["value"][0]): MatchDataStore["locationHistory"][0] {
+function mapHistory(location: ReportableDataFactoryMap["locationHistory"]["value"][0]): NonNullable<MatchDataStore["locationHistory"]>[0] {
     return {
         timestamp: location.timestamp,
         value: {

@@ -1,0 +1,17 @@
+@import "~bootswatch/dist/darkly/variables";
+
+$link-hover-color: shift-color($link-color, 20%);
+
+// Accordion
+
+$accordion-color: $link-color;
+$accordion-border-color: $dropdown-border-color;
+$accordion-button-active-bg: $body-bg;
+$accordion-button-active-color: $link-color;
+
+// Nav
+
+$nav-tabs-link-active-bg: $body-bg;
+$nav-tabs-link-active-border-color: $gray-300 $gray-300 $nav-tabs-link-active-bg;
+$nav-pills-link-active-color: $white;
+$nav-pills-link-active-bg: $link-color;

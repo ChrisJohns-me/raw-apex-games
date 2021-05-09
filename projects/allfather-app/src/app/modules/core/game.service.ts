@@ -1,4 +1,5 @@
 import { GamePhase } from "@allfather-app/app/shared/models/game-phase";
+import { MatchGameModeType } from "@allfather-app/app/shared/models/match/game-mode";
 import { MatchRoster } from "@allfather-app/app/shared/models/match/roster";
 import { MatchState } from "@allfather-app/app/shared/models/match/state";
 import { TriggerConditions } from "@allfather-app/app/shared/models/utilities/trigger-conditions";
@@ -11,6 +12,7 @@ import { AllfatherService } from "./allfather-service.abstract";
 import { MatchRosterService } from "./match/match-roster.service";
 import { MatchService } from "./match/match.service";
 import { OverwolfGameDataService, OWInfoUpdates2Event } from "./overwolf";
+import { OverwolfFeatureDep, OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status.service";
 
 /** Amount of time to set GamePhase to "Pregame". */
 const PREGAME_DELAY = 5000;
@@ -20,41 +22,44 @@ const PREGAME_DELAY = 5000;
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, MatchRosterService, OverwolfGameDataService],
+    deps: [MatchService, MatchRosterService, OverwolfGameDataService, OverwolfFeatureStatusService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("GameService", GameService, deps),
 })
 export class GameService extends AllfatherService {
+    protected allFeatureDeps: OverwolfFeatureDep[] = [OverwolfFeatureDep.LegendSelect];
+
     public readonly phase$ = new BehaviorSubject<GamePhase>(GamePhase.Lobby);
 
     constructor(
         private readonly match: MatchService,
         private readonly matchRoster: MatchRosterService,
-        private readonly overwolfGameData: OverwolfGameDataService
+        private readonly overwolfGameData: OverwolfGameDataService,
+        overwolfGameDataStatus: OverwolfFeatureStatusService
     ) {
-        super();
-    }
-
-    public init(): void {
+        super(overwolfGameDataStatus);
         this.setupPhase();
     }
 
     private setupPhase(): void {
         const setNewPhaseFn = (newPhase?: GamePhase): void => {
-            if (newPhase && newPhase !== this.phase$.value) {
-                setTimeout(() => this.phase$.next(newPhase), newPhase === GamePhase.PreGame ? PREGAME_DELAY : 0);
+            if (newPhase && newPhase !== this.phase$.value && super.areAllFeatureDepsAvailable()) {
+                if (newPhase !== GamePhase.PreGame) this.phase$.next(newPhase);
+                else setTimeout(() => this.phase$.next(newPhase), PREGAME_DELAY);
             }
         };
 
-        const triggers = new TriggerConditions<GamePhase, [OWInfoUpdates2Event?, MatchState?, GamePhase?, MatchRoster?]>("GamePhase", {
+        const triggers = new TriggerConditions<GamePhase, [OWInfoUpdates2Event?, MatchState?, MatchRoster?]>("GamePhase", {
             [GamePhase.Lobby]: (infoUpdate, matchState) => matchState === MatchState.Inactive,
-            [GamePhase.LegendSelection]: (infoUpdate, matchState, gamePhase, stagedMatchRoster) =>
-                gamePhase !== GamePhase.LegendSelection &&
-                gamePhase !== GamePhase.PreGame &&
+            [GamePhase.LegendSelection]: (infoUpdate, matchState, stagedMatchRoster) =>
+                this.phase$.value !== GamePhase.LegendSelection &&
+                this.phase$.value !== GamePhase.PreGame &&
+                this.match.gameMode$.value?.baseType !== MatchGameModeType.FIRINGRANGE &&
+                this.match.gameMode$.value?.baseType !== MatchGameModeType.TRAINING &&
                 ((stagedMatchRoster?.allPlayers.length ?? 0) > 0 ||
                     (infoUpdate?.feature === "team" && !isEmpty(findValueByKeyRegEx(infoUpdate?.info?.match_info, /^legendSelect/)))),
-            [GamePhase.PreGame]: (infoUpdate, matchState, gamePhase) =>
+            [GamePhase.PreGame]: (infoUpdate) =>
                 !!infoUpdate?.info &&
-                gamePhase === GamePhase.LegendSelection &&
+                this.phase$.value === GamePhase.LegendSelection &&
                 !!(
                     infoUpdate.info.match_info?.legendSelect_0?.lead ||
                     infoUpdate.info.match_info?.legendSelect_1?.lead ||
@@ -64,17 +69,17 @@ export class GameService extends AllfatherService {
         });
 
         this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.isDestroyed$)).subscribe((infoUpdate) => {
-            const newPhase = triggers.triggeredFirstKey(infoUpdate, undefined, this.phase$.value);
+            const newPhase = triggers.triggeredFirstKey(infoUpdate, undefined, undefined);
             setNewPhaseFn(newPhase);
         });
 
         this.match.state$.pipe(takeUntil(this.isDestroyed$)).subscribe((stateChanged) => {
-            const newPhase = triggers.triggeredFirstKey(undefined, stateChanged.state, this.phase$.value);
+            const newPhase = triggers.triggeredFirstKey(undefined, stateChanged.state, undefined);
             setNewPhaseFn(newPhase);
         });
 
         this.matchRoster.stagedMatchRoster$.pipe(takeUntil(this.isDestroyed$)).subscribe((stagedMatchRoster) => {
-            const newPhase = triggers.triggeredFirstKey(undefined, undefined, this.phase$.value, stagedMatchRoster);
+            const newPhase = triggers.triggeredFirstKey(undefined, undefined, stagedMatchRoster);
             setNewPhaseFn(newPhase);
         });
     }

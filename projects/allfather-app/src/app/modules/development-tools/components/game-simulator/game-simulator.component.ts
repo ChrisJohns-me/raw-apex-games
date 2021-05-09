@@ -12,6 +12,7 @@ import { fullGame1Eventful } from "./simulations/full-game1-eventful";
 import { fullGame1Quick } from "./simulations/full-game1-quick";
 import { resetToInGame } from "./simulations/reset-to-in-game";
 import { resetToLobby } from "./simulations/reset-to-lobby";
+import { stupidGame1Full } from "./simulations/stupid-game1";
 
 interface Command {
     timestamp: Date;
@@ -64,6 +65,11 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
     public onPerformFullQuickGameClick(): void {
         const commands = this.logToCommands(fullGame1Quick());
         this.runCommands(commands);
+    }
+
+    public onPerformStupidGame1FullGameClick(speedAdjust?: number): void {
+        const commands = this.logToCommands(stupidGame1Full());
+        this.runCommands(commands, speedAdjust);
     }
 
     public onPerformFullGameClick(speedAdjust?: number): void {

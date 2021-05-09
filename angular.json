@@ -22,7 +22,7 @@
                     "builder": "ngx-build-plus:browser",
                     "options": {
                         "allowedCommonJsDependencies": ["zone.js/dist/zone-error"],
-                        "outputPath": "dist/allfatherApp",
+                        "outputPath": "dist/allfatherApp_dev",
                         "index": "projects/allfather-app/src/index.html",
                         "main": "projects/allfather-app/src/main.ts",
                         "polyfills": "projects/allfather-app/src/polyfills.ts",

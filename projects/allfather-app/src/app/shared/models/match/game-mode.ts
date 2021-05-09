@@ -1,4 +1,7 @@
 export enum MatchGameModeType {
+    TRAINING = "training",
+    FIRINGRANGE = "firingrange",
+    ARENA = "arena",
     TRIOS = "trios",
     DUOS = "duos",
     RANKED = "ranked",
@@ -20,6 +23,9 @@ export class MatchGameMode {
     //#endregion
 
     private static generateBaseType(gameModeId?: string): Optional<MatchGameModeType> {
+        if (gameModeId?.toLowerCase().includes("training")) return MatchGameModeType.TRAINING;
+        if (gameModeId?.toLowerCase().includes("firingrange")) return MatchGameModeType.FIRINGRANGE;
+        if (gameModeId?.toLowerCase().includes("arena")) return MatchGameModeType.ARENA;
         if (gameModeId?.toLowerCase().includes("rank")) return MatchGameModeType.RANKED;
         if (gameModeId?.toLowerCase().includes("trio")) return MatchGameModeType.TRIOS;
         if (gameModeId?.toLowerCase().includes("duo")) return MatchGameModeType.DUOS;

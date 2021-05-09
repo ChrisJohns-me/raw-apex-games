@@ -11,6 +11,4 @@ export class MapRotationService extends AllfatherService {
     constructor() {
         super();
     }
-
-    public init(): void {}
 }

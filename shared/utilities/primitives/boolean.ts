@@ -20,7 +20,7 @@ export function parseBoolean(value: unknown): boolean {
  * @example "foo", "0", "1", "2" == false
  * @example {"key": "value"}, {"key": undefined} == false
  */
-export function isEmpty(value?: unknown): boolean {
+export function isEmpty(value?: unknown): value is boolean {
     if (typeof value === "object") {
         if (value instanceof Date || (typeof value === "object" && Object.prototype.toString.call(value) === "[object Date]")) return false;
         else return !value || !Object.keys(value).length;

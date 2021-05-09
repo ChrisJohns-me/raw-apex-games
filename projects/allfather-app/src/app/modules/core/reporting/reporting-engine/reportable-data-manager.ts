@@ -71,9 +71,7 @@ export class ReportableDataManagerService {
         private readonly matchPlayerStats: MatchPlayerStatsService,
         private readonly matchRoster: MatchRosterService,
         private readonly player: PlayerService
-    ) {}
-
-    public init(): void {
+    ) {
         this.instantiateReportableDataItems();
     }
 

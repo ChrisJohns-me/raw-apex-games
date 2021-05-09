@@ -34,9 +34,6 @@ export class MatchPlayerInventoryService extends AllfatherService {
             takeUntil(this.isDestroyed$),
             filter((infoUpdate) => infoUpdate.feature === "inventory")
         );
-    }
-
-    public init(): void {
         this.setupOnMatchStart();
         this.setupMyInventorySlots();
         this.setupMyInUseItem();

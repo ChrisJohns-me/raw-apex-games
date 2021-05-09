@@ -1,5 +1,6 @@
 import {
     Assumptions,
+    Common,
     Configuration,
     Facts,
     FeatureConfigs,
@@ -14,6 +15,7 @@ import { tap } from "rxjs/operators";
 @Injectable({ providedIn: "root" })
 export class ConfigurationService implements Configuration {
     public assumptions!: Assumptions;
+    public common!: Common;
     public facts!: Facts;
     public featureConfigs!: FeatureConfigs;
     public featureFlags!: FeatureFlags;

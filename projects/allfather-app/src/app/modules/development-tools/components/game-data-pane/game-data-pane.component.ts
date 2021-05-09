@@ -9,6 +9,8 @@ import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
+import { OverwolfFeatureState } from "@allfather-app/app/modules/core/overwolf/dto/overwolf-feature-status-dto";
+import { FeatureStatusList, OverwolfFeatureStatusService } from "@allfather-app/app/modules/core/overwolf/overwolf-feature-status.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { GamePhase } from "@allfather-app/app/shared/models/game-phase";
 import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
@@ -27,6 +29,10 @@ import { v4 as uuid } from "uuid";
 export class GameDataPaneComponent implements OnInit {
     public Infinity = Infinity;
     public changedHighlightColor = "#ffc9c9";
+
+    public get featureStatus(): OverwolfFeatureState {
+        return this.overwolfFeatureStatusService.checkAllFeatureStatus();
+    }
 
     public get matchDuration(): Date {
         const startDate = this.match.state$.value.startDate ?? new Date();
@@ -49,6 +55,7 @@ export class GameDataPaneComponent implements OnInit {
         public readonly matchPlayerLocation: MatchPlayerLocationService,
         public readonly matchPlayerStats: MatchPlayerStatsService,
         public readonly matchRoster: MatchRosterService,
+        public readonly overwolfFeatureStatusService: OverwolfFeatureStatusService,
         public readonly player: PlayerService
     ) {}
 
@@ -133,5 +140,9 @@ export class GameDataPaneComponent implements OnInit {
             info: { me: { ultimate_cooldown: { ultimate_cooldown: this.ultimatePercentOverride } } },
             feature: "me",
         });
+    }
+
+    public lastFeatureStatusListToArray(): FeatureStatusList {
+        return this.overwolfFeatureStatusService.featureStatusList$.value;
     }
 }

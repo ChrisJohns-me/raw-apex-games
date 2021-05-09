@@ -1,4 +1,5 @@
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration/configuration.service";
+import { Legend } from "@allfather-app/app/shared/models/legend";
 import { AvgMatchStats } from "@allfather-app/app/shared/models/utilities/match-stats";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { Subject, Subscription } from "rxjs";
@@ -22,6 +23,10 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     public isLegendStatsEnabled = this.config.featureFlags.legendSelectAssist.legendStats;
     public minLegendStatsMatches = this.config.featureConfigs.legendSelectAssist.minLegendStatsMatches;
     public minShowComplimentaryLegendsMatches = this.config.featureConfigs.legendSelectAssist.minShowComplimentaryLegendsMatches;
+
+    public get focusedLegendName(): Optional<string> {
+        return this.focusedLegendId ? Legend.getName(this.focusedLegendId) : undefined;
+    }
 
     private legendStatsSubscription?: Subscription;
     private complimentaryLegendsSubscription?: Subscription;

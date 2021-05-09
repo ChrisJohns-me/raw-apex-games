@@ -7,9 +7,9 @@ export class MockOverwolfFeatureRegistrationService implements MockedClass<Overw
         ExtractSubjectType<OverwolfFeatureRegistrationService["registrationStatus$"]>
     >(OWFeatureRegistrationStatus.NOT_REGISTERED);
 
-    public registerFeatures(
-        ...args: Parameters<OverwolfFeatureRegistrationService["registerFeatures"]>
-    ): ReturnType<OverwolfFeatureRegistrationService["registerFeatures"]> {
+    public setRegisteredFeatures(
+        ...args: Parameters<OverwolfFeatureRegistrationService["setRegisteredFeatures"]>
+    ): ReturnType<OverwolfFeatureRegistrationService["setRegisteredFeatures"]> {
         return of();
     }
 

@@ -38,9 +38,6 @@ export class MatchActivityService extends AllfatherService {
         private readonly player: PlayerService
     ) {
         super();
-    }
-
-    public init(): void {
         this.setupOnMatchStart();
         this.setupKillfeed();
         this.setupKillsAndKnockdowns();

@@ -3,17 +3,16 @@ import { GamePhase } from "@allfather-app/app/shared/models/game-phase";
 import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
-import { Subject } from "rxjs";
+import { merge, Subject } from "rxjs";
 import { switchMap, takeUntil } from "rxjs/operators";
 import { GameService } from "../core/game.service";
-import { LocalStorageKeys } from "../core/local-storage/local-storage-keys";
-import { LocalStorageService } from "../core/local-storage/local-storage.service";
-import { MatchService } from "../core/match/match.service";
-import { OverwolfExtensionService } from "../core/overwolf/overwolf-extension.service";
-import { DashboardWindowService } from "../dashboard/dashboard-window.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
+import { InflictionInsightWindowService } from "../in-game/infliction-insight/windows/infliction-insight-window.service";
+import { MatchTimerWindowService } from "../in-game/match-timer/windows/match-timer-window.service";
+import { UltTimerWindowService } from "../in-game/ult-timer/windows/ult-timer-window.service";
 import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
-import { BackgroundService } from "./background.service";
+import { MainWindowService } from "../main/main-window.service";
+import { SystemTrayService } from "./system-tray.service";
 
 @Component({
     selector: "app-background",
@@ -24,33 +23,22 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     private readonly isDestroyed$ = new Subject<void>();
 
     constructor(
-        private readonly backgroundService: BackgroundService,
-        private readonly dashboardWindow: DashboardWindowService,
+        private readonly mainWindow: MainWindowService,
         private readonly developmentToolsWindow: DevelopmentToolsWindowService,
         private readonly game: GameService,
+        private readonly inflictionInsightWindow: InflictionInsightWindowService,
         private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
-        private readonly localStorage: LocalStorageService,
-        private readonly match: MatchService,
-        private readonly overwolfExtension: OverwolfExtensionService,
-        private readonly titleService: Title
+        private readonly matchTimerWindow: MatchTimerWindowService,
+        private readonly systemTray: SystemTrayService,
+        private readonly titleService: Title,
+        private readonly ultTimerWindow: UltTimerWindowService
     ) {
         this.titleService.setTitle(`${APP_NAME} - Background`);
+        this.setupSystemTray();
     }
 
     public ngOnInit(): void {
-        console.error(
-            `Overwolf Error (see: https://discuss.overwolf.com/t/apex-legends-events-completly-stop-if-overwolf-is-being-relaunched-while-game-is-already-open/495).`
-        );
-        if (this.needsRelaunch()) {
-            console.error(`Relaunching ${APP_NAME}...`);
-            this.doRelaunch();
-            return;
-        }
-
-        console.debug(`${APP_NAME} relaunched.`);
-        this.clearRelaunch();
-        this.backgroundService.startBackgroundServices();
-        this.registerUIWindows();
+        this.setupUIWindows();
     }
 
     public ngOnDestroy(): void {
@@ -58,39 +46,30 @@ export class BackgroundComponent implements OnInit, OnDestroy {
         this.isDestroyed$.complete();
     }
 
-    private registerUIWindows(): void {
+    private setupUIWindows(): void {
         if (environment.allowDevTools) this.developmentToolsWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
 
-        this.dashboardWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+        this.mainWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
 
         this.game.phase$
             .pipe(
                 takeUntil(this.isDestroyed$),
                 switchMap((gamePhase) => {
-                    console.debug(`[BACKGROUND] New Game Phase:`, gamePhase);
-                    return gamePhase === GamePhase.LegendSelection
-                        ? this.legendSelectAssistWindow.open()
-                        : this.legendSelectAssistWindow.close();
+                    const matchTimerWindow$ = gamePhase === GamePhase.InGame ? this.matchTimerWindow.open() : this.matchTimerWindow.close();
+                    const ultTimerWindow$ = gamePhase === GamePhase.InGame ? this.ultTimerWindow.open() : this.ultTimerWindow.close();
+                    const inflictionInsightWindow$ =
+                        gamePhase === GamePhase.InGame ? this.inflictionInsightWindow.open() : this.inflictionInsightWindow.close();
+                    const legendSelectAssistWindow$ =
+                        gamePhase === GamePhase.LegendSelection
+                            ? this.legendSelectAssistWindow.open()
+                            : this.legendSelectAssistWindow.close();
+                    return merge(matchTimerWindow$, ultTimerWindow$, inflictionInsightWindow$, legendSelectAssistWindow$);
                 })
             )
-            .subscribe((result) => console.debug(`LegendSelectionWindow Result`, result));
+            .subscribe();
     }
 
-    /**
-     * @summary On any first run of the app, restart the app to hopefully force the Overwolf Game Event Provider to re-recognize the app.
-     * @see https://discuss.overwolf.com/t/apex-legends-events-completly-stop-if-overwolf-is-being-relaunched-while-game-is-already-open/495
-     */
-    private doRelaunch(): void {
-        this.localStorage.set(LocalStorageKeys.OWExtNeedsRelaunch, "true");
-        this.overwolfExtension.relaunchApp();
-    }
-
-    private needsRelaunch(): boolean {
-        return !this.localStorage.get(LocalStorageKeys.OWExtNeedsRelaunch);
-    }
-
-    private clearRelaunch(): void {
-        const hasRelaunched = !!this.localStorage.get(LocalStorageKeys.OWExtNeedsRelaunch);
-        if (hasRelaunched) this.localStorage.clearItem(LocalStorageKeys.OWExtNeedsRelaunch);
+    private setupSystemTray(): void {
+        this.systemTray.initTray();
     }
 }

@@ -29,6 +29,18 @@
                 "eliminationExpireTime"
             ]
         },
+        "common": {
+            "type": "object",
+            "properties": {
+                "playerDeathHUDTimeout": {
+                    "type": "integer"
+                },
+                "matchEndHUDTimeout": {
+                    "type": "integer"
+                }
+            },
+            "required": ["playerDeathHUDTimeout", "matchEndHUDTimeout"]
+        },
         "facts": {
             "type": "object",
             "properties": {
@@ -220,14 +232,11 @@
         "general": {
             "type": "object",
             "properties": {
-                "playerDeathHUDTimeout": {
-                    "type": "integer"
-                },
-                "matchEndHUDTimeout": {
-                    "type": "integer"
+                "overwolfGameStatusUrl": {
+                    "type": "string"
                 }
             },
-            "required": ["playerDeathHUDTimeout", "matchEndHUDTimeout"]
+            "required": ["overwolfGameStatusUrl"]
         },
         "overwolfQuirks": {
             "type": "object"
@@ -263,6 +272,6 @@
             }
         }
     },
-    "required": ["featureFlags", "assumptions", "facts", "overwolfQuirks"],
+    "required": ["assumptions", "common", "featureFlags", "facts", "general", "overwolfQuirks"],
     "additionalProperties": false
 }

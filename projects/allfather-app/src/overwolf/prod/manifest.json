@@ -12,8 +12,8 @@
         "dock_button_title": "Allfather",
         "icon": "iconMouseOver.png",
         "icon_gray": "iconMouseNormal.png",
-        "launcher_icon": "icon.ico",
-        "window_icon": "windowIcon.png"
+        "launcher_icon": "LauncherIcon.ico",
+        "window_icon": "TaskbarIcon.png"
     },
     "permissions": [
         "Hotkeys",
@@ -25,7 +25,8 @@
         "Streaming",
         "Media",
         "DesktopStreaming",
-        "VideoCaptureSettings"
+        "VideoCaptureSettings",
+        "Tray"
     ],
     "data": {
         "start_window": "background",
@@ -34,7 +35,7 @@
                 "file": "index.html",
                 "is_background_page": true
             },
-            "dashboard": {
+            "main": {
                 "file": "index.html",
                 "desktop_only": true,
                 "native_window": true,
@@ -112,23 +113,6 @@
                 "max_size": {
                     "width": 400,
                     "height": 455
-                }
-            },
-            "preferences": {
-                "file": "index.html",
-                "desktop_only": true,
-                "native_window": true,
-                "resizable": true,
-                "transparent": true,
-                "override_on_update": true,
-                "show_in_taskbar": true,
-                "size": {
-                    "width": 1200,
-                    "height": 600
-                },
-                "min_size": {
-                    "width": 300,
-                    "height": 250
                 }
             }
         },

@@ -5,16 +5,16 @@ import { BrowserModule } from "@angular/platform-browser";
 import { AppComponent } from "./app.component";
 import { BackgroundModule } from "./modules/background/background.module";
 import { ConfigurationModule } from "./modules/core/configuration/configuration.module";
+import { ModalService } from "./modules/core/modal.service";
 import { OverwolfModule } from "./modules/core/overwolf/overwolf.module";
 import { WINDOW_PROVIDERS } from "./modules/core/window.service";
-import { DashboardModule } from "./modules/dashboard/dashboard.module";
 import { DevelopmentToolsModule } from "./modules/development-tools/development-tools.module";
 import { NoopDevelopmentToolsModule } from "./modules/development-tools/noop-development-tools.module";
 import { InflictionInsightWindowModule } from "./modules/in-game/infliction-insight/infliction-insight.module";
 import { MatchTimerWindowModule } from "./modules/in-game/match-timer/match-timer.module";
 import { UltTimerWindowModule } from "./modules/in-game/ult-timer/ult-timer.module";
 import { LegendSelectAssistWindowModule } from "./modules/legend-select-assist/legend-select-assist.module";
-import { PreferencesModule } from "./modules/preferences/preferences.module";
+import { MainModule } from "./modules/main/main.module";
 
 @NgModule({
     declarations: [AppComponent],
@@ -22,17 +22,16 @@ import { PreferencesModule } from "./modules/preferences/preferences.module";
         BackgroundModule,
         BrowserModule,
         ConfigurationModule,
-        DashboardModule,
+        MainModule,
         environment.allowDevTools ? DevelopmentToolsModule : NoopDevelopmentToolsModule,
         HttpClientModule,
         InflictionInsightWindowModule,
         LegendSelectAssistWindowModule,
         MatchTimerWindowModule,
         OverwolfModule,
-        PreferencesModule,
         UltTimerWindowModule,
     ],
-    providers: [WINDOW_PROVIDERS],
+    providers: [WINDOW_PROVIDERS, ModalService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

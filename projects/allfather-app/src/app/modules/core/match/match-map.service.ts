@@ -22,9 +22,6 @@ export class MatchMapService extends AllfatherService {
 
     constructor(private readonly matchPlayerLocation: MatchPlayerLocationService) {
         super();
-    }
-
-    public init(): void {
         this.setupMap();
     }
 

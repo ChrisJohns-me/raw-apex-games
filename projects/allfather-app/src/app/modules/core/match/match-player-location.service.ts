@@ -34,9 +34,6 @@ export class MatchPlayerLocationService extends AllfatherService {
         private readonly playerInventory: MatchPlayerInventoryService
     ) {
         super();
-    }
-
-    public init(): void {
         this.setupMatchStateEvents();
         this.setupMyCoordinates();
         this.setupMyLocationPhase();

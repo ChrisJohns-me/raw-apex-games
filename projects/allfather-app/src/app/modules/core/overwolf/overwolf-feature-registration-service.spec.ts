@@ -9,6 +9,7 @@ const mockOWConfig: OWConfig = {
     REQUIRED_FEATURES_RETRY_DELAY_MULTIPLIER: 1000,
     REQUIRED_FEATURES: ["test1", "test2"],
     HEALTHCHECK_TIME: 0,
+    FEATURE_HEALTHCHECK_TIME: 0,
     APEXLEGENDSCLASSID: 0,
 };
 
@@ -36,7 +37,7 @@ describe("OverwolfFeatureRegistrationService", () => {
         createOverwolfSpyObj<typeof overwolf.games.events>("overwolf.games.events", ["setRequiredFeatures"]);
 
         // Act
-        sut.registerFeatures().subscribe();
+        sut.setRegisteredFeatures().subscribe();
 
         // Assert
         expect(overwolf.games.events.setRequiredFeatures).toHaveBeenCalled();
@@ -48,7 +49,7 @@ describe("OverwolfFeatureRegistrationService", () => {
         eventsSpy.setRequiredFeatures.and.throwError("Mocked error");
 
         // Act
-        sut.registerFeatures().subscribe();
+        sut.setRegisteredFeatures().subscribe();
         tick(60000);
 
         // Assert
@@ -70,7 +71,7 @@ describe("OverwolfFeatureRegistrationService", () => {
 
             // Act
             cold("10s -b").subscribe(() => {
-                sut.registerFeatures().subscribe();
+                sut.setRegisteredFeatures().subscribe();
             });
 
             // Assert

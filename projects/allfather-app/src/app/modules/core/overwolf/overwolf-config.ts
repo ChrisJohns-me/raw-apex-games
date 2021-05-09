@@ -5,7 +5,12 @@ export interface OWConfig {
     REQUIRED_FEATURES_RETRY_COUNT: number;
     REQUIRED_FEATURES_RETRY_DELAY_MULTIPLIER: number;
     REQUIRED_FEATURES: string[];
+    /** Time to check in-game connectivity */
     HEALTHCHECK_TIME: number;
+    FEATURE_HEALTHCHECK_RETRY_COUNT: number;
+    FEATURE_HEALTHCHECK_RETRY_DELAY_MULTIPLIER: number;
+    /** Time to checks Overwolf's game event data status URL */
+    FEATURE_HEALTHCHECK_TIME: number;
     APEXLEGENDSCLASSID: number;
 }
 
@@ -30,6 +35,9 @@ export const OverwolfConfig: OWConfig = {
         "damage",
         "inventory",
     ],
-    HEALTHCHECK_TIME: 60 * 1000,
+    HEALTHCHECK_TIME: 1 * 60 * 1000,
+    FEATURE_HEALTHCHECK_RETRY_COUNT: 5,
+    FEATURE_HEALTHCHECK_RETRY_DELAY_MULTIPLIER: 5000,
+    FEATURE_HEALTHCHECK_TIME: 10 * 60 * 1000,
     APEXLEGENDSCLASSID: 21566,
 };

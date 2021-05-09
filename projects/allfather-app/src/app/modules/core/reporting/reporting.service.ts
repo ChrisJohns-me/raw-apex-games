@@ -28,9 +28,6 @@ export class ReportingService extends AllfatherService {
 
     constructor(private readonly match: MatchService, private readonly reportableDataManager: ReportableDataManagerService) {
         super();
-    }
-
-    public init(): void {
         // TODO: Get preferences, enable only those that are in user's preferences
         this.restartEngines();
 
@@ -128,6 +125,8 @@ export class ReportingService extends AllfatherService {
     }
 
     private buildLocalReportingEngine(): LocalReportingEngine {
+        const dataItems = this.reportableDataManager.instantiatedDataItems;
+        if (isEmpty(dataItems)) throw Error(`Data items list was empty when building local reporting engine`);
         const setup = {
             reportableDataList: this.reportableDataManager.instantiatedDataItems,
             runConditions: [],

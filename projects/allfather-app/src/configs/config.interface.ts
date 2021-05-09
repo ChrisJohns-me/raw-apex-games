@@ -1,5 +1,6 @@
 export interface Configuration {
     assumptions: Assumptions;
+    common: Common;
     facts: Facts;
     featureFlags: FeatureFlags;
     general: General;
@@ -16,6 +17,13 @@ export interface Assumptions {
     knockdownExpireTime: number;
     /** Time in ms before player is assumed to be respawned after elimination */
     eliminationExpireTime: number;
+}
+
+export interface Common {
+    /** Time in ms to leave relevant HUD UI elements up after player dies */
+    playerDeathHUDTimeout: number;
+    /** Time in ms to leave relevant HUD UI elements up after match ends */
+    matchEndHUDTimeout: number;
 }
 
 export interface Facts {
@@ -103,10 +111,8 @@ export interface FeatureConfigs {
 }
 
 export interface General {
-    /** Time in ms to leave relevant HUD UI elements up after player dies */
-    playerDeathHUDTimeout: number;
-    /** Time in ms to leave relevant HUD UI elements up after match ends */
-    matchEndHUDTimeout: number;
+    /** ${0} = Overwolf Game ID */
+    overwolfGameStatusUrl: string;
 }
 
 export interface OverwolfQuirks {}

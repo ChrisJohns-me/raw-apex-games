@@ -24,8 +24,6 @@ export class LocalDatabaseService extends Dexie {
         this.table("matches");
     }
 
-    public init(): void {}
-
     private handleVersions() {
         version1(this);
         version2(this);

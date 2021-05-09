@@ -5,8 +5,8 @@ import { Observable } from "rxjs";
 @Injectable({
     providedIn: "root",
 })
-export class PreferencesWindowService {
-    private readonly uiWindow = new UIWindow(WindowName.Preferences);
+export class MainWindowService {
+    private readonly uiWindow = new UIWindow(WindowName.Main);
 
     public open(): Observable<void> {
         return this.uiWindow.restore();
@@ -14,5 +14,13 @@ export class PreferencesWindowService {
 
     public close(): Observable<void> {
         return this.uiWindow.close();
+    }
+
+    public restore(): Observable<void> {
+        return this.uiWindow.restore();
+    }
+
+    public focus(): Observable<void> {
+        return this.uiWindow.bringToFront(true);
     }
 }

@@ -4,26 +4,26 @@
  * Dates should be stored as their primitive self (provides compression).
  */
 export interface MatchDataStore {
-    matchId: string;
-    startDate: Date;
-    endDate: Date;
-    myName: string;
-    gameModeId: string;
-    mapId: string;
-    legendId: string;
-    assists: number;
-    damage: number;
-    eliminations: number;
-    knockdowns: number;
-    maxPlacement: number;
-    placement: number;
-    damageEventsHistory: TimestampedStream<DamageEvent>;
-    killfeedHistory: TimestampedStream<MatchKillfeed>;
-    locationHistory: TimestampedStream<LocationHistory>;
-    matchRoster: Stream<MatchRosterPlayer>;
-    teamRoster: TeamRosterPlayer[];
-    ultimateUsageDates: Stream<Date>;
-    weaponIdsHistory: TimestampedStream<WeaponIds>;
+    matchId?: string;
+    startDate?: Date;
+    endDate?: Date;
+    myName?: string;
+    gameModeId?: string;
+    mapId?: string;
+    legendId?: string;
+    assists?: number;
+    damage?: number;
+    eliminations?: number;
+    knockdowns?: number;
+    maxPlacement?: number;
+    placement?: number;
+    damageEventsHistory?: TimestampedStream<DamageEvent>;
+    killfeedHistory?: TimestampedStream<MatchKillfeed>;
+    locationHistory?: TimestampedStream<LocationHistory>;
+    matchRoster?: Stream<MatchRosterPlayer>;
+    teamRoster?: TeamRosterPlayer[];
+    ultimateUsageDates?: Stream<Date>;
+    weaponIdsHistory?: TimestampedStream<WeaponIds>;
 }
 
 type Stream<T> = T[];

@@ -1,8 +1,9 @@
 import { AvgMatchStats, complimentaryLegendsWeights, legendAvgStats } from "@allfather-app/app/shared/models/utilities/match-stats";
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
-import { map, tap } from "rxjs/operators";
+import { filter, map, tap } from "rxjs/operators";
 import { ConfigurationService } from "../core/configuration/configuration.service";
+import { MatchDataStore } from "../core/local-database/match-data-store";
 import { MatchService } from "../core/match/match.service";
 
 type LegendId = string;
@@ -21,7 +22,8 @@ export class LegendSelectAssistService {
         if (allowCache && cachedResult) return of(cachedResult);
 
         return this.match.getMatchDataByLegendId(legendId, limit).pipe(
-            map((matchList) => legendAvgStats(matchList, legendId)),
+            filter((matchList) => !!matchList && Array.isArray(matchList)),
+            map((matchList) => legendAvgStats(matchList as MatchDataStore[], legendId)),
             tap((avgStats) => {
                 if (allowCache) this.cachedLegendStats.set(legendId, avgStats);
             })
@@ -38,8 +40,9 @@ export class LegendSelectAssistService {
         if (allowCache && cachedResult) return of(cachedResult);
 
         return this.match.getMatchDataByLegendId(legendId, limit).pipe(
+            filter((matchList) => !!matchList && Array.isArray(matchList)),
             map((matchList) => {
-                const legendWeightsMap = complimentaryLegendsWeights(legendId, matchList, this.statWeights);
+                const legendWeightsMap = complimentaryLegendsWeights(legendId, matchList as MatchDataStore[], this.statWeights);
                 const legendWeights = Array.from(legendWeightsMap)
                     .sort((a, b) => b[1].totalAvgWeight - a[1].totalAvgWeight)
                     .map((l) => ({ legendId: l[0], weightScore: l[1].totalAvgWeight }));

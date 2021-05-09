@@ -24,9 +24,6 @@ export class MatchPlayerService extends AllfatherService {
 
     constructor(private readonly match: MatchService, private readonly overwolfGameData: OverwolfGameDataService) {
         super();
-    }
-
-    public init(): void {
         this.setupOnMatchStart();
         this.setupMyState();
     }

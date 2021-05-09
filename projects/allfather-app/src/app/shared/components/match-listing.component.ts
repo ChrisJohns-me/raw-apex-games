@@ -33,10 +33,11 @@ export class MatchListingComponent {
 
     constructor(private readonly config: ConfigurationService) {}
 
-    public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item): string => item.matchId;
+    public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item) => item.matchId;
     public durationSinceNow = (baseDate: Date): Duration => intervalToDuration({ start: baseDate, end: new Date() });
     public getGameModeTypeName = (gameModeId: string): Optional<string> => MatchGameMode.getBaseType(gameModeId);
     public getLegendImageName = (legendId: string): string => Legend.getSquarePortraitFilename(legendId);
+    public isFunction = (value: unknown): boolean => typeof value === "function";
 
     /**
      * @returns List of Match's teammates, without "me".

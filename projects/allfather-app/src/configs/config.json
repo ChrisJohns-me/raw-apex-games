@@ -7,6 +7,10 @@
         "knockdownExpireTime": 10000,
         "eliminationExpireTime": 300000
     },
+    "common": {
+        "playerDeathHUDTimeout": 30000,
+        "matchEndHUDTimeout": 15000
+    },
     "facts": {
         "respawnBannerExpireTime": 60000,
         "maxShield": 125,
@@ -50,36 +54,37 @@
             "legendRows": [
                 {
                     "top": 376,
-                    "right": 322,
+                    "right": 160,
                     "legendIds": [
                         "#character_bloodhound_NAME",
                         "#character_gibraltar_NAME",
                         "#character_lifeline_NAME",
                         "#character_pathfinder_NAME",
-                        "#character_wraith_NAME"
+                        "#character_wraith_NAME",
+                        "#character_bangalore_NAME"
                     ]
                 },
                 {
                     "top": 545,
                     "right": 215,
                     "legendIds": [
-                        "#character_bangalore_NAME",
                         "#character_caustic_NAME",
                         "#character_mirage_NAME",
                         "#character_octane_NAME",
                         "#character_wattson_NAME",
-                        "#character_crypto_NAME"
+                        "#character_crypto_NAME",
+                        "#character_revenant_NAME"
                     ]
                 },
                 {
                     "top": 712,
                     "right": 267,
                     "legendIds": [
-                        "#character_revenant_NAME",
                         "#character_loba_NAME",
                         "#character_rampart_NAME",
                         "#character_horizon_NAME",
-                        "#character_fuse_NAME"
+                        "#character_fuse_NAME",
+                        "#character_valkyrie_NAME"
                     ]
                 }
             ]
@@ -92,8 +97,7 @@
         }
     },
     "general": {
-        "playerDeathHUDTimeout": 30000,
-        "matchEndHUDTimeout": 15000
+        "overwolfGameStatusUrl": "https://game-events-status.overwolf.com/${0}_prod.json"
     },
     "overwolfQuirks": {},
     "uiContainers": {

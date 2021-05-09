@@ -15,8 +15,6 @@ import { ExtensionsDelegate } from "./api/extensions-delegate";
 export class OverwolfExtensionService extends AllfatherService {
     private extensionsDelegate = new ExtensionsDelegate();
 
-    public init(): void {}
-
     public relaunchApp(): void {
         this.extensionsDelegate.relaunchApp();
     }

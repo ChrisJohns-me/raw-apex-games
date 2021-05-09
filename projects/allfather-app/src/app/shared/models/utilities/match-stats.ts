@@ -1,4 +1,5 @@
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
+import isDate from "date-fns/isDate";
 import { isEmpty, mathClamp } from "shared/utilities";
 
 // Safe-guards
@@ -90,14 +91,14 @@ export function complimentaryLegendsWeights(
         const match: MatchDataStore = legendMatchList[i];
         const matchStats: AvgMatchStats = {
             numMatches: 1,
-            avgDamage: match.damage,
+            avgDamage: match.damage ?? 0,
             avgWins: match.placement === 1 ? 1 : 0,
             avgDuration: match.endDate && match.startDate ? match.endDate.getTime() - match.startDate.getTime() : 0,
-            avgEliminations: match.eliminations,
-            avgPlacement: match.placement,
+            avgEliminations: match.eliminations ?? 0,
+            avgPlacement: match.placement ?? 0,
         };
         // Sum complimentary Legend weights
-        match.teamRoster.forEach((rosterPlayer) => {
+        match.teamRoster?.forEach((rosterPlayer) => {
             if (rosterPlayer.isMe || rosterPlayer.legendId === legendId || isEmpty(rosterPlayer.legendId)) return;
             const existingSumWeights = sumCompLegendWeights.get(rosterPlayer.legendId);
             const matchStatWeights = matchAvgStatWeights(matchStats, matchStatBounds, statWeights);
@@ -163,10 +164,14 @@ export function getMatchStatBounds(matchList: MatchDataStore[]): StatBounds {
         durationMax = 0;
     for (let i = 0; i < matchList.length; i++) {
         const match = matchList[i];
-        if (match.placement > 0) placementMin = Math.min(placementMin, match.placement);
-        damageMax = Math.max(damageMax, match.damage);
-        eliminationsMax = Math.max(eliminationsMax, match.eliminations);
-        durationMax = Math.max(durationMax, match.endDate.getTime() - match.startDate.getTime());
+        if (!match) continue;
+        if (match.placement && match.placement > 0) placementMin = Math.min(placementMin, match.placement);
+        damageMax = Math.max(damageMax, match.damage ?? 0);
+        eliminationsMax = Math.max(eliminationsMax, match.eliminations ?? 0);
+        const startDate: number = match.startDate?.getTime() ?? 0;
+        const endDate: number = match.endDate?.getTime() ?? 0;
+        const duration: number = isDate(match.startDate) && isDate(match.endDate) ? endDate - startDate : 0;
+        durationMax = Math.max(durationMax, duration);
     }
     return {
         placementMin: mathClamp(placementMin, 1, MAX_PLACEMENT),
@@ -235,12 +240,15 @@ export function matchListSumStatsGroupedBy<T>(
  * Reduce function to provide a sum of stats from a list of matches.
  */
 function reduceMatchStats(prev: Optional<SumMatchStats>, curr: MatchDataStore): SumMatchStats {
+    const currStartDate: number = curr.startDate?.getTime() ?? 0;
+    const currEndDate: number = curr.endDate?.getTime() ?? 0;
+    const currDuration: number = isDate(curr.startDate) && isDate(curr.endDate) ? currEndDate - currStartDate : 0;
     return {
         sumWins: curr.placement === 1 ? (prev?.sumWins ?? 0) + 1 : prev?.sumWins ?? 0,
-        sumPlacement: (prev?.sumPlacement ?? 0) + curr.placement,
-        sumDamage: (prev?.sumDamage ?? 0) + curr.damage,
-        sumEliminations: (prev?.sumEliminations ?? 0) + curr.eliminations,
-        sumDuration: (prev?.sumDuration ?? 0) + (curr.endDate.getTime() - curr.startDate.getTime()),
+        sumPlacement: (prev?.sumPlacement ?? 0) + (curr.placement ?? 0),
+        sumDamage: (prev?.sumDamage ?? 0) + (curr.damage ?? 0),
+        sumEliminations: (prev?.sumEliminations ?? 0) + (curr.eliminations ?? 0),
+        sumDuration: (prev?.sumDuration ?? 0) + currDuration,
         numMatches: (prev?.numMatches ?? 0) + 1,
     };
 }

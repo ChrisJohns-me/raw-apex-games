@@ -48,9 +48,6 @@ export class MatchPlayerStatsService extends AllfatherService {
         private readonly overwolfGameData: OverwolfGameDataService
     ) {
         super();
-    }
-
-    public init(): void {
         this.setupMatchStateEvents();
         this.setupInfoTabs();
         this.setupTotalDamageDealt();

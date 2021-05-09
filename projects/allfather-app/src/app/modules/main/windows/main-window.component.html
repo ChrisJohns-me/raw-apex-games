@@ -1,0 +1,36 @@
+<app-ui-container
+    primaryTitle="Main"
+    [injectBootstrapCSS]="true"
+    [isDesktopWindow]="true"
+    [isTitlebarDraggable]="true"
+    [isContentDraggable]="false"
+>
+    <!-- #region Confirm Exit Modal -->
+    <div class="modal fade" tabindex="-1" #confirmExitModal>
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Exit Allfather?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" (click)="onExitAppClick()">Exit</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #endregion -->
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h3>Map Explorer</h3>
+            </div>
+        </div>
+    </div>
+    <app-map-explorer-page></app-map-explorer-page>
+</app-ui-container>

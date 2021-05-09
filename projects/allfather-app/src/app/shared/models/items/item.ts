@@ -31,7 +31,7 @@ export class Item {
      */
     private loadById(id: string): void {
         const callbackFn = (predicateItem: ItemJSON) => predicateItem.id === id;
-        this.loadFromJSON(String(id), callbackFn);
+        this.loadFromJSON(String(id), callbackFn, "id");
     }
 
     /**
@@ -42,7 +42,7 @@ export class Item {
             if (!predicateItem.inGameEventNameRegExPattern) return false;
             return new RegExp(predicateItem.inGameEventNameRegExPattern, "i").test(inGameEventName);
         };
-        this.loadFromJSON(inGameEventName, callbackFn);
+        this.loadFromJSON(inGameEventName, callbackFn, "event name");
     }
 
     /**
@@ -53,7 +53,7 @@ export class Item {
             if (!predicateItem.inGameInfoNameRegExPattern) return false;
             return new RegExp(predicateItem.inGameInfoNameRegExPattern, "i").test(inGameInfoName);
         };
-        this.loadFromJSON(inGameInfoName, callbackFn);
+        this.loadFromJSON(inGameInfoName, callbackFn, "info name");
     }
 
     /**
@@ -64,14 +64,19 @@ export class Item {
             if (!predicateItem.inGameInventoryIdRegExPattern) return false;
             return new RegExp(predicateItem.inGameInventoryIdRegExPattern, "i").test(inGameInventoryId);
         };
-        this.loadFromJSON(inGameInventoryId, callbackFn);
+        this.loadFromJSON(inGameInventoryId, callbackFn, "inventory id");
     }
 
-    private loadFromJSON(searchItemName: string, callbackFn: (input: ItemJSON) => boolean): void {
+    /**
+     * @param callbackFn Predicate function used to find the item
+     * @param loadType Used to identify what the identifier is from
+     * @returns {boolean} Successful
+     */
+    private loadFromJSON(searchItemName: string, callbackFn: (input: ItemJSON) => boolean, loadType = ""): void {
         const foundItem = ItemListJSONData.items.find((w) => callbackFn(w));
 
         if (!foundItem) {
-            console.warn(`Unable to find inventory item with name "${searchItemName}"`);
+            console.warn(`Unable to find ${loadType} item with name "${searchItemName}"${loadType ? ", load type: " + loadType : ""}`);
             this.itemId = `unknown_${searchItemName}`;
             this.friendlyName = `unknown_${searchItemName}`;
             return;

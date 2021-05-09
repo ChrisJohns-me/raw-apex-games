@@ -21,6 +21,15 @@
                     </div>
                     <div class="col-6 text-end">{{ game.phase$ | async }}</div>
                 </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">OW GEP Status</div>
+                    <div class="col-6 text-end">
+                        <ng-container *ngIf="featureStatus === 0">Unsupported</ng-container>
+                        <ng-container *ngIf="featureStatus === 1">Good</ng-container>
+                        <ng-container *ngIf="featureStatus === 2">Partial</ng-container>
+                        <ng-container *ngIf="featureStatus === 3">Unavailable</ng-container>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -26,6 +26,10 @@ export class OverwolfWindowService {
 
     private isDestroyed$ = new Subject<void>();
 
+    constructor() {
+        this.startWindowEventListeners();
+    }
+
     public ngOnDestroy(): void {
         this.stopWindowEventListeners();
         this.instances.onDestroy();
@@ -35,10 +39,6 @@ export class OverwolfWindowService {
         this.visibility.onDestroy();
         this.isDestroyed$.next();
         this.isDestroyed$.complete();
-    }
-
-    public init(): void {
-        this.startWindowEventListeners();
     }
 
     private startWindowEventListeners(): void {

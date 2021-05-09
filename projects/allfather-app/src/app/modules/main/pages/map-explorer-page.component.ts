@@ -70,10 +70,11 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
     public get selectedMapMatchList(): MatchDataStore[] {
         return this.matchList.filter((m) => m.mapId === this.selectedMap?.mapId);
     }
-    public get displayedLocationHistory(): MatchMapCoordinates[] | undefined {
+    public get displayedLocationHistory(): MatchMapCoordinates[] {
         if (this.isLiveMatch) return this.liveMatchLocationHistory;
         else if (this.isShowingAggregateData) return this.aggregateMapLocationHistory;
-        else return this.selectedMatch?.locationHistory.map((location) => location.value);
+        else if (!this.selectedMatch?.locationHistory || !Array.isArray(this.selectedMatch?.locationHistory)) return [];
+        else return this.selectedMatch.locationHistory.map((location) => location.value);
     }
 
     // Form inputs
@@ -125,7 +126,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         });
     }
 
-    public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item): string => item.matchId;
+    public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item) => item.matchId ?? item.endDate;
     public durationSinceNow = (baseDate: Date): Duration => intervalToDuration({ start: baseDate, end: new Date() });
     public getGameModeTypeName = (gameModeId: string): Optional<string> => new MatchGameMode(gameModeId).baseType;
 
@@ -334,6 +335,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         return matchList
             .filter((m) => m.mapId === map.mapId)
             .reduce((prev, curr) => {
+                if (!curr.locationHistory || !Array.isArray(curr.locationHistory)) return prev;
                 const coordinates = curr.locationHistory.map((l) => l.value);
                 return prev.concat(coordinates);
             }, [] as MatchMapCoordinates[]);

@@ -27,9 +27,9 @@
         *ngIf="isComplimentaryLegendsEnabled && focusedLegendId && (legendStats?.numMatches || 0) < minShowComplimentaryLegendsMatches"
     >
         <h2 class="more-matches-title">
-            Play Some Games
+            <small>to show suggestions</small>
             <br />
-            <small>to show Legend suggestions</small>
+            Play Some Games <ng-container *ngIf="focusedLegendName">With {{ focusedLegendName }}</ng-container>
         </h2>
 
         <div class="num-matches-bargraph-container">

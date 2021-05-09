@@ -4,8 +4,8 @@
         {
             "id": "empty_handed",
             "friendlyName": "Melee",
-            "inGameInfoNameRegExPattern": "^(Melee|Empty Handed|)$",
-            "inGameEventNameRegExPattern": "Melee$"
+            "inGameInfoNameRegExPattern": "(melee|Empty Handed)",
+            "inGameEventNameRegExPattern": "melee"
         },
         {
             "id": "killfeed_bleedout",
@@ -128,6 +128,12 @@
             "friendlyName": "Alternator",
             "inGameInfoNameRegExPattern": "^Alternator SMG$",
             "inGameEventNameRegExPattern": "^alternator$"
+        },
+        {
+            "id": "bocek_bow",
+            "friendlyName": "Bocek Box",
+            "inGameInfoNameRegExPattern": "weapon_bow$",
+            "inGameEventNameRegExPattern": "^bow$"
         },
         {
             "id": "charge_rifle",
@@ -278,6 +284,11 @@
             "inGameInfoNameRegExPattern": "^mp_ability_area_sonar_scan$"
         },
         {
+            "id": "bloodhound_beast_of_the_hunt",
+            "friendlyName": "Beast of the Hunt",
+            "inGameInfoNameRegExPattern": "^mp_ability_hunt_mode$"
+        },
+        {
             "id": "lifeline_care_package",
             "friendlyName": "Care Package",
             "inGameInfoNameRegExPattern": "^Care Package$"
@@ -286,6 +297,11 @@
             "id": "lifeline_health_drone",
             "friendlyName": "Health Drone",
             "inGameInfoNameRegExPattern": "^Health Drone$"
+        },
+        {
+            "id": "fuse_knuckle_cluster",
+            "friendlyName": "Knuckle Cluster",
+            "inGameInfoNameRegExPattern": "^Knuckle Cluster$"
         },
         {
             "id": "pathfinder_zipline",
@@ -310,6 +326,7 @@
         {
             "id": "bangalore_creeping_barrage",
             "friendlyName": "Creeping Barrage",
+            "inGameInfoNameRegExPattern": "^Rolling Thunder$",
             "inGameEventNameRegExPattern": "Creeping Barrage"
         },
         {

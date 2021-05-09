@@ -37,9 +37,6 @@ export class MatchPlayerLegendService extends AllfatherService {
         private readonly player: PlayerService
     ) {
         super();
-    }
-
-    public init(): void {
         this.setupOnMatchEnd();
         this.setupMyLegend();
         this.setupMyUltimateCooldown();

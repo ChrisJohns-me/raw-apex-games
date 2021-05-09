@@ -21,8 +21,6 @@ export class LocalStorageService extends AllfatherService {
         this.storage = this.window.localStorage;
     }
 
-    public init(): void {}
-
     public get(key: string | LocalStorageKeys): string | null {
         return this.storage.getItem(key);
     }

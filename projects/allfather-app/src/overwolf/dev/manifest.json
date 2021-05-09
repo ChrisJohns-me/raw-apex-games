@@ -3,17 +3,17 @@
     "manifest_version": 1,
     "type": "WebApp",
     "meta": {
-        "name": "Sample App",
-        "author": "Overwolf",
+        "name": "Allfather [DEV]",
+        "author": "Chris Johns",
         "version": "0.0.1",
         "minimum-overwolf-version": "0.165.0",
         "minimum-gep-version": "0.165.0",
         "description": "(Development) Allfather, give me sight!",
-        "dock_button_title": "Allfather",
+        "dock_button_title": "Allfather [DEV]",
         "icon": "iconMouseOver.png",
         "icon_gray": "iconMouseNormal.png",
-        "launcher_icon": "icon.ico",
-        "window_icon": "windowIcon.png"
+        "launcher_icon": "LauncherIcon.ico",
+        "window_icon": "TaskbarIcon.png"
     },
     "permissions": [
         "Hotkeys",
@@ -25,7 +25,8 @@
         "Streaming",
         "Media",
         "DesktopStreaming",
-        "VideoCaptureSettings"
+        "VideoCaptureSettings",
+        "Tray"
     ],
     "data": {
         "start_window": "background",
@@ -34,7 +35,7 @@
                 "file": "index.html",
                 "is_background_page": true
             },
-            "dashboard": {
+            "main": {
                 "file": "index.html",
                 "desktop_only": true,
                 "native_window": true,
@@ -43,6 +44,7 @@
                 "override_on_update": true,
                 "show_in_taskbar": true,
                 "allow_local_file_access": true,
+                "restrict_to_game_bounds": false,
                 "size": {
                     "width": 1200,
                     "height": 600
@@ -75,7 +77,7 @@
                 "in_game_only": true,
                 "resizable": false,
                 "transparent": true,
-                "show_in_taskbar": false,
+                "show_in_taskbar": true,
                 "clickthrough": true,
                 "mute": true,
                 "popup_blocker": true,
@@ -98,7 +100,7 @@
                 "in_game_only": true,
                 "resizable": false,
                 "transparent": true,
-                "show_in_taskbar": false,
+                "show_in_taskbar": true,
                 "clickthrough": true,
                 "mute": true,
                 "popup_blocker": true,
@@ -122,10 +124,10 @@
             },
             "in-game-infliction-insight": {
                 "file": "index.html",
-                "in_game_only": true,
+                "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "show_in_taskbar": false,
+                "show_in_taskbar": true,
                 "clickthrough": false,
                 "mute": true,
                 "popup_blocker": true,
@@ -145,10 +147,10 @@
             },
             "legend-select-assist": {
                 "file": "index.html",
-                "in_game_only": true,
+                "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "show_in_taskbar": false,
+                "show_in_taskbar": true,
                 "clickthrough": false,
                 "mute": true,
                 "popup_blocker": true,
@@ -164,24 +166,6 @@
                 "max_size": {
                     "width": 1440,
                     "height": 1440
-                }
-            },
-            "preferences": {
-                "file": "index.html",
-                "desktop_only": true,
-                "native_window": true,
-                "resizable": true,
-                "transparent": true,
-                "override_on_update": true,
-                "show_in_taskbar": true,
-                "allow_local_file_access": true,
-                "size": {
-                    "width": 1200,
-                    "height": 600
-                },
-                "min_size": {
-                    "width": 300,
-                    "height": 250
                 }
             }
         },

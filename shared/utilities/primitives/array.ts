@@ -7,7 +7,7 @@
  * @example
  *  unique(dataArr, (d) => d.group)
  */
-export function unique<T>(array: T[], selector?: (item: T) => unknown): T[] {
+export function unique<T>(array: T[] = [], selector?: (item: T) => unknown): T[] {
     return array.filter(
         (value, index) =>
             array.findIndex((a) => {
