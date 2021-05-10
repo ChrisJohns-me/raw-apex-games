@@ -47,11 +47,11 @@
                 "restrict_to_game_bounds": false,
                 "size": {
                     "width": 1200,
-                    "height": 600
+                    "height": 750
                 },
                 "min_size": {
                     "width": 750,
-                    "height": 375
+                    "height": 400
                 }
             },
             "development-tools": {

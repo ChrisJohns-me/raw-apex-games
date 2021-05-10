@@ -23,11 +23,11 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     @Input() public positionUnits: { x: ConfigPositionUnit; y: ConfigPositionUnit } = { x: "pixel", y: "pixel" };
     @Input() public positionAnchors: { x: ConfigPositionXAnchor; y: ConfigPositionYAnchor } = { x: "left", y: "top" };
     @Input() public set primaryTitle(value: string) {
-        this.titleService.setTitle(`${value} - ${APP_NAME}`);
+        this.titleService.setTitle(value ? `${value} - ${APP_NAME}` : APP_NAME);
         this._primaryTitle = value;
     }
     public get primaryTitle(): string {
-        return `${APP_NAME} - ${this._primaryTitle}`;
+        return this._primaryTitle ? `${APP_NAME} - ${this._primaryTitle}` : APP_NAME;
     }
     @Input() public secondaryTitle = "";
 
@@ -35,7 +35,10 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     private _primaryTitle = "";
     private obtained$?: Observable<boolean>;
     private isDestroyed$ = new Subject<void>();
-    constructor(private readonly titleService: Title) {}
+
+    constructor(private readonly titleService: Title) {
+        this.titleService.setTitle(APP_NAME);
+    }
 
     public ngOnInit(): void {
         this.obtained$ = this.uiWindow.assureObtained().pipe(

@@ -1,7 +1,7 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, from, Observable, of } from "rxjs";
-import { concatAll, delay, map, mergeMap, switchMap, takeUntil, tap } from "rxjs/operators";
+import { catchError, concatAll, delay, map, mergeMap, switchMap, takeUntil, tap } from "rxjs/operators";
 import { AllfatherService } from "../core/allfather-service.abstract";
 import { OverwolfExtensionService } from "../core/overwolf/overwolf-extension.service";
 import { UIWindow, WindowName } from "../core/_refactor/ui-window";
@@ -50,7 +50,8 @@ export class BackgroundService extends AllfatherService {
         return allWindows$.pipe(
             takeUntil(this.isDestroyed$),
             map((winName) => new UIWindow(winName)),
-            mergeMap((uiWindow) => uiWindow.close())
+            mergeMap((uiWindow) => uiWindow.close()),
+            catchError(() => of(undefined))
         );
     }
 }

@@ -39,7 +39,6 @@
                                 "input": "projects/allfather-app/src/configs/",
                                 "output": "/"
                             },
-                            "projects/allfather-app/src/favicon.ico",
                             "projects/allfather-app/src/assets/images"
                         ],
                         "styles": ["projects/allfather-app/src/styles.scss"],
@@ -50,6 +49,7 @@
                     },
                     "configurations": {
                         "production": {
+                            "outputPath": "dist/allfatherApp",
                             "fileReplacements": [
                                 {
                                     "replace": "projects/allfather-app/src/environments/environment.ts",
@@ -65,7 +65,8 @@
                                     "glob": "**/*",
                                     "input": "projects/allfather-app/src/overwolf/prod/",
                                     "output": "/"
-                                }
+                                },
+                                "projects/allfather-app/src/assets/images"
                             ],
                             "optimization": true,
                             "outputHashing": "all",

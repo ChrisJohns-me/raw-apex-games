@@ -8,9 +8,9 @@ import {
     General,
     OverwolfQuirks,
 } from "@allfather-app/configs/config.interface";
+import * as ConfigJSONData from "@allfather-app/configs/config.json";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { tap } from "rxjs/operators";
 
 @Injectable({ providedIn: "root" })
 export class ConfigurationService implements Configuration {
@@ -29,17 +29,22 @@ export class ConfigurationService implements Configuration {
     public loadAppConfig(): Promise<any> {
         if (this.isLoaded) Promise.reject(`Configuration is already loaded`);
 
-        return this.http
-            .get<Configuration>("config.json")
-            .pipe(
-                tap((configData) => {
-                    if (configData) {
-                        this.receivedData(configData);
-                        this.isLoaded = true;
-                    }
-                })
-            )
-            .toPromise();
+        return new Promise((resolve) => {
+            const config = this.receivedData(ConfigJSONData);
+            this.isLoaded = true;
+            resolve(config);
+        });
+        // return this.http
+        //     .get<Configuration>("config.json")
+        //     .pipe(
+        //         tap((configData) => {
+        //             if (configData) {
+        //                 this.receivedData(configData);
+        //                 this.isLoaded = true;
+        //             }
+        //         })
+        //     )
+        //     .toPromise();
     }
 
     private receivedData(configData: Configuration): void {

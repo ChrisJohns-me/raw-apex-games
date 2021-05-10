@@ -330,6 +330,11 @@
             "inGameEventNameRegExPattern": "Creeping Barrage"
         },
         {
+            "id": "bangalore_smoke_launcher",
+            "friendlyName": "Smoke Launcher",
+            "inGameEventNameRegExPattern": "Smoke Launcher"
+        },
+        {
             "id": "grenade_thermite",
             "friendlyName": "Thermite Grenade",
             "inGameInfoNameRegExPattern": "^Thermite Grenade$",

@@ -51,11 +51,10 @@ export const MatchMapList: MatchMap[] = [
         mapId: "mp_rr_desertlands_mu2",
         activeDates: [
             {
-                from: new Date("April 07, 2020"),
-                to: new Date("February 1, 2021"),
+                from: new Date("May 04, 2021"),
             },
         ],
-        dropshipZStart: -Infinity, // Unknown
+        dropshipZStart: 146,
     }),
     new MatchMap({
         mapName: MatchMapFriendlyName.Olympus,

@@ -8,6 +8,7 @@ import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { OverwolfExtensionService } from "../../core/overwolf/overwolf-extension.service";
 import { LegendSelectAssistWindowService } from "../../legend-select-assist/windows/legend-select-assist-window.service";
+import { MainWindowService } from "../../main/main-window.service";
 
 type MainTab = "simulate" | "logs";
 
@@ -21,6 +22,13 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     public selectedMainTab: MainTab = "simulate";
     public mainTabOptions: MainTab[] = ["simulate", "logs"];
 
+    public get mainWindowEnabled(): boolean {
+        return this._mainWindowEnabled;
+    }
+    public set mainWindowEnabled(value: boolean) {
+        this._mainWindowEnabled = value;
+        this.mainWindow[value ? "open" : "close"]().pipe(takeUntil(this.isDestroyed$)).subscribe();
+    }
     public get ultTimerWindowEnabled(): boolean {
         return this._ultTimerWindowEnabled;
     }
@@ -53,6 +61,7 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     public infoUpdates$: Subject<OWInfoUpdates2Event>;
     public newGameEvent$: Subject<OWGameEvent>;
 
+    private _mainWindowEnabled = false;
     private _ultTimerWindowEnabled = false;
     private _matchTimerWindowEnabled = false;
     private _inflictionInsightWindowEnabled = false;
@@ -64,6 +73,7 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
         private readonly inflictionInsightWindow: InflictionInsightWindowService,
         private readonly inGameUltTimerWindow: UltTimerWindowService,
         private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
+        private readonly mainWindow: MainWindowService,
         private readonly matchTimerWindow: MatchTimerWindowService,
         private readonly overwolfExtension: OverwolfExtensionService
     ) {
@@ -73,6 +83,7 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
 
     public ngOnInit(): void {
         // Default window values
+        this.mainWindowEnabled = true;
         this.ultTimerWindowEnabled = false;
         this.matchTimerWindowEnabled = false;
         this.inflictionInsightWindowEnabled = false;

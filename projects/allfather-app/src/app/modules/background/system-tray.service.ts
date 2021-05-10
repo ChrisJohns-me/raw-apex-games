@@ -1,3 +1,4 @@
+import { APP_NAME } from "@allfather-app/app/shared/models/app";
 import { environment } from "@allfather-app/environments/environment";
 import { Injectable } from "@angular/core";
 import { Title } from "@angular/platform-browser";
@@ -74,7 +75,7 @@ const DEVTOOLS_MENUITEMS: OWSystemTrayMenuItem[] = [
 ];
 const FOOTER_MENUITEMS: OWSystemTrayMenuItem[] = [
     {
-        label: "Exit Allfather",
+        label: `Exit ${APP_NAME}`,
         id: SystemTrayItemKey.Exit,
     },
 ];

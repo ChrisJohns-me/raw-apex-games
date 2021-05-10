@@ -1,3 +1,4 @@
+import { APP_NAME } from "@allfather-app/app/shared/models/app";
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
 import { Modal } from "bootstrap";
 import { Subject } from "rxjs";
@@ -12,6 +13,7 @@ import { BackgroundService } from "../../background/background.service";
 })
 export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild("confirmExitModal") private confirmExitModal?: ElementRef;
+    public APP_NAME = APP_NAME;
 
     private isDestroyed$ = new Subject<void>();
 
