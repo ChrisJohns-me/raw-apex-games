@@ -1,9 +1,9 @@
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration/configuration.service";
 import { MatchInflictionEventAccum } from "@allfather-app/app/shared/models/match/infliction-event";
 import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from "@angular/core";
-import { interval, Subject, Subscription } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from "@angular/core";
+import { interval, Subject } from "rxjs";
+import { filter, takeUntil } from "rxjs/operators";
 
 export interface OpponentBanner {
     isIndirectBanner: boolean;
@@ -18,41 +18,31 @@ export interface OpponentBanner {
     selector: "app-opponent-banner",
     templateUrl: "./opponent-banner.component.html",
     styleUrls: ["./opponent-banner.component.scss"],
-    changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.Default,
 })
-export class OpponentBannerComponent implements OnDestroy {
-    @Input("bannerData") public set banner(value: Optional<OpponentBanner>) {
-        this.bannerData = value;
-        this.setupRefresh();
-        this.cdr.detectChanges();
-    }
-    public get banner(): Optional<OpponentBanner> {
-        return this.bannerData;
-    }
-
-    private bannerData: Optional<OpponentBanner>;
-    private refreshTimerSubscription?: Subscription;
+export class OpponentBannerComponent implements AfterViewInit, OnDestroy {
+    @Input("bannerData") public bannerData: Optional<OpponentBanner>;
     private isDestroyed$ = new Subject<void>();
 
     constructor(private readonly cdr: ChangeDetectorRef, private readonly config: ConfigurationService) {}
+
+    public ngAfterViewInit(): void {
+        this.setupRefreshTimer();
+    }
 
     public ngOnDestroy(): void {
         this.isDestroyed$.next();
         this.isDestroyed$.complete();
     }
 
-    private setupRefresh() {
-        const inflAccum = this.banner?.latestInflictionAccum;
-        const requiresRefresh = inflAccum?.isKnocked || inflAccum?.isEliminated;
-        if (!requiresRefresh) {
-            if (this.refreshTimerSubscription) this.refreshTimerSubscription = undefined;
-            return;
-        }
-
-        this.refreshTimerSubscription = interval(this.config.featureConfigs.inflictionInsight.refreshTime)
-            .pipe(takeUntil(this.isDestroyed$))
-            .subscribe(() => {
-                this.cdr.detectChanges();
-            });
+    private setupRefreshTimer() {
+        const shouldRefresh = () =>
+            !!this.bannerData?.latestInflictionAccum?.isKnocked || !!this.bannerData?.latestInflictionAccum?.isEliminated;
+        interval(this.config.featureConfigs.inflictionInsight.refreshTime)
+            .pipe(
+                takeUntil(this.isDestroyed$),
+                filter(() => shouldRefresh())
+            )
+            .subscribe(() => this.cdr.detectChanges());
     }
 }

@@ -5,7 +5,6 @@ import { BrowserModule } from "@angular/platform-browser";
 import { AppComponent } from "./app.component";
 import { BackgroundModule } from "./modules/background/background.module";
 import { ConfigurationModule } from "./modules/core/configuration/configuration.module";
-import { ModalService } from "./modules/core/modal.service";
 import { OverwolfModule } from "./modules/core/overwolf/overwolf.module";
 import { WINDOW_PROVIDERS } from "./modules/core/window.service";
 import { DevelopmentToolsModule } from "./modules/development-tools/development-tools.module";
@@ -31,7 +30,7 @@ import { MainModule } from "./modules/main/main.module";
         OverwolfModule,
         UltTimerWindowModule,
     ],
-    providers: [WINDOW_PROVIDERS, ModalService],
+    providers: [WINDOW_PROVIDERS],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

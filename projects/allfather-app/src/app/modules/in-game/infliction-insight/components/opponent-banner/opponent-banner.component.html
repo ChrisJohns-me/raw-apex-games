@@ -1,37 +1,37 @@
 <div
     class="banner-container"
-    *ngIf="banner"
+    *ngIf="bannerData"
     [ngClass]="{
-        'indirect-banner': banner.isIndirectBanner,
-        knocked: banner.latestInflictionAccum?.isKnocked,
-        'eliminated beacon-timed-out': banner.latestInflictionAccum?.isEliminated
+        'indirect-banner': bannerData.isIndirectBanner,
+        knocked: bannerData.latestInflictionAccum?.isKnocked,
+        'eliminated beacon-timed-out': bannerData.latestInflictionAccum?.isEliminated
     }"
 >
     <div class="banner">
         <div class="damage">
             <div class="damage-header">Your Damage</div>
             <div class="damage-sum">
-                {{ (banner.latestInflictionAccum?.shieldDamageSum || 0) + (banner.latestInflictionAccum?.healthDamageSum || 0) }}
+                {{ (bannerData.latestInflictionAccum?.shieldDamageSum || 0) + (bannerData.latestInflictionAccum?.healthDamageSum || 0) }}
             </div>
             <div class="damage-footer">Total</div>
         </div>
         <div class="player-ui">
-            <div class="player-name">{{ banner.rosterPlayer.name }}</div>
+            <div class="player-name">{{ bannerData.rosterPlayer.name }}</div>
             <div
                 class="player-shield-container"
-                *ngIf="!banner.latestInflictionAccum?.isEliminated && !banner.latestInflictionAccum?.isKnocked"
+                *ngIf="!bannerData.latestInflictionAccum?.isEliminated && !bannerData.latestInflictionAccum?.isKnocked"
             >
                 <ng-container *ngFor="let shieldNum of [0, 1, 2, 3, 4]">
-                    <div class="player-shield-ui-box-shadow" *ngIf="banner.maybeMaxShield / 25 > shieldNum">
+                    <div class="player-shield-ui-box-shadow" *ngIf="bannerData.maybeMaxShield / 25 > shieldNum">
                         <div
                             class="player-shield-ui-box"
                             *ngIf="
-                                !banner.latestInflictionAccum?.isKnocked &&
-                                !banner.latestInflictionAccum?.isEliminated &&
-                                banner.maybeShieldAmount > shieldNum * 25
+                                !bannerData.latestInflictionAccum?.isKnocked &&
+                                !bannerData.latestInflictionAccum?.isEliminated &&
+                                bannerData.maybeShieldAmount > shieldNum * 25
                             "
                             [style.width.%]="
-                                banner.maybeShieldAmount < 25 * (shieldNum + 1) ? ((banner.maybeShieldAmount % 25) / 25) * 100 : 100
+                                bannerData.maybeShieldAmount < 25 * (shieldNum + 1) ? ((bannerData.maybeShieldAmount % 25) / 25) * 100 : 100
                             "
                         ></div>
                     </div>
@@ -39,23 +39,23 @@
             </div>
             <div
                 class="player-health-container"
-                *ngIf="!banner.latestInflictionAccum?.isEliminated && !banner.latestInflictionAccum?.isKnocked"
+                *ngIf="!bannerData.latestInflictionAccum?.isEliminated && !bannerData.latestInflictionAccum?.isKnocked"
             >
                 <div class="player-health-ui-box-shadow">
                     <div
                         class="player-health-ui-box"
-                        *ngIf="!banner.latestInflictionAccum?.isKnocked && !banner.latestInflictionAccum?.isEliminated"
-                        [style.width.%]="banner.maybeHealthAmount"
+                        *ngIf="!bannerData.latestInflictionAccum?.isKnocked && !bannerData.latestInflictionAccum?.isEliminated"
+                        [style.width.%]="bannerData.maybeHealthAmount"
                     ></div>
                 </div>
             </div>
             <div
                 class="player-status-container"
-                *ngIf="banner.latestInflictionAccum?.isKnocked || banner.latestInflictionAccum?.isEliminated"
+                *ngIf="bannerData.latestInflictionAccum?.isKnocked || bannerData.latestInflictionAccum?.isEliminated"
             >
-                {{ banner.latestInflictionAccum?.isEliminated ? "Eliminated" : "Knocked" }}
-                <ng-container *ngIf="banner.latestInflictionAccum?.latestTimestamp">
-                    {{ banner.latestInflictionAccum!.latestTimestamp! | dfnsFormatDistanceToNowStrict: { addSuffix: true } }}
+                {{ bannerData.latestInflictionAccum?.isEliminated ? "Eliminated" : "Knocked" }}
+                <ng-container *ngIf="bannerData.latestInflictionAccum?.latestTimestamp">
+                    {{ bannerData.latestInflictionAccum!.latestTimestamp! | dfnsFormatDistanceToNowStrict: { addSuffix: true } }}
                 </ng-container>
             </div>
         </div>
