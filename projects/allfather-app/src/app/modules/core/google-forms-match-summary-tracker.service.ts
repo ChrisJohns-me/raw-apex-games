@@ -130,7 +130,6 @@
 //         switchMap(() => this.reportMatchSummary(this.unreportedMatchSummary))
 //     )
 //     .subscribe((result) => {
-//         console.debug("Match Summary Tracked:", result.success);
 //         delete this.unreportedMatchSummary;
 //     });
 // }

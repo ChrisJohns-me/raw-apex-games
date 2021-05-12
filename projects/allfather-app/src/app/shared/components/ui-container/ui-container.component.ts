@@ -140,9 +140,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
                 map((xyPos) => xyPosToTopLeftFn(xyPos, screenSize, windowSize, this.positionAnchors.x, this.positionAnchors.y)),
                 switchMap((newPos) => this.uiWindow.changePosition(newPos.left, newPos.top))
             )
-            .subscribe(() => {
-                console.debug(`ChangePosition() done`);
-            });
+            .subscribe();
     }
 }
 

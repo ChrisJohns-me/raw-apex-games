@@ -3,13 +3,20 @@
         <div class="col-12 col-lg-8 col-md-10">
             <ul class="nav nav-pills nav-fill">
                 <li class="nav-item">
-                    <button class="nav-link" (click)="onLiveMatchClick()" [ngClass]="{ active: isLiveMatch }">🔴 Live</button>
+                    <button class="nav-link" (click)="onLiveMatchClick()" [ngClass]="{ active: isLiveMatchFocused }">
+                        <span
+                            class="spinner-grow spinner-grow-sm"
+                            [ngClass]="{ 'text-danger': !isLiveMatchFocused }"
+                            *ngIf="isLiveMatchStarted"
+                        ></span>
+                        <strong>Live Map</strong>
+                    </button>
                 </li>
                 <li class="nav-item" *ngFor="let map of mapList">
                     <button
                         class="nav-link"
                         (click)="onSelectMapClick(map)"
-                        [ngClass]="{ active: !isLiveMatch && map.mapId == displayedMap?.mapId }"
+                        [ngClass]="{ active: !isLiveMatchFocused && map.mapId == displayedMap?.mapId }"
                     >
                         {{ map.mapName }}
                     </button>
@@ -20,8 +27,8 @@
 </div>
 
 <div class="container-fluid">
-    <div class="row">
-        <div class="col">
+    <div class="row justify-content-center">
+        <div class="col col-xl-auto">
             <!-- TODO: Maybe Breakout into own component -->
             <div class="interactive-map-container ms-auto">
                 <div class="map-full-image map-full-image-no-map" *ngIf="!displayedMap?.mapId">
@@ -61,10 +68,10 @@
                 </div>
             </div>
 
-            <div class="form-check form-switch form-check-inline">
+            <!-- <div class="form-check form-switch form-check-inline">
                 <input class="form-check-input" type="checkbox" id="followLiveLocationSwitch" [formControl]="followLiveLocationForm" />
                 <label class="form-check-label" for="followLiveLocationSwitch">Follow Live Location</label>
-            </div>
+            </div> -->
             <!-- <div>
                 <label for="locationHistoryRange" class="form-label">Timeline ({{ locationHistoryRange?.value }})</label>
                 <input
@@ -79,22 +86,27 @@
             </div> -->
         </div>
         <div class="col-7 col-md-6 col-lg-5 col-xl-4 col-xxl-3">
-            <table class="table table-dark table-hover mb-0">
+            <!-- Showing All Text -->
+            <table class="table table-dark mb-0" *ngIf="isLiveMatchFocused">
                 <tbody>
-                    <!-- Aggregate Option -->
+                    <tr>
+                        <td class="text-muted">Showing {{ matchList.length }} {{ matchList.length == 1 ? "Match" : "Matches" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Aggregate Option -->
+            <table class="table table-dark table-hover mb-0" *ngIf="!isLiveMatchFocused && displayedMap">
+                <tbody>
                     <tr
-                        *ngIf="!isLiveMatch && displayedMap && matchList.length"
                         (click)="onSelectMapClick(displayedMap)"
                         class="clickable"
                         [ngClass]="{ 'table-active table-primary': selectedMapMatchList && !selectedMatch }"
                     >
                         <td>
-                            Show All Matches on <strong>{{ displayedMap!.mapName }}</strong>
+                            {{ selectedMapMatchList.length }} {{ selectedMapMatchList.length == 1 ? "Match" : "Matches" }} on
+                            <strong>{{ displayedMap.mapName }}</strong>
                         </td>
-                    </tr>
-                    <!-- Showing All Text -->
-                    <tr *ngIf="isLiveMatch && !isLiveMatchStarted && matchList.length && !selectedMatch">
-                        <td class="text-muted">Showing All Matches</td>
                     </tr>
                 </tbody>
             </table>
@@ -103,28 +115,38 @@
             <div class="matches-container">
                 <!-- Current Live Match -->
                 <app-match-listing
-                    *ngIf="isLiveMatch && isLiveMatchStarted"
-                    [isLiveMatch]="isLiveMatch"
+                    *ngIf="isLiveMatchStarted"
+                    [isLiveMatch]="true"
                     [matches]="[liveMatch!]"
                     [isSelectable]="true"
                     [selectedMatchId]="liveMatch?.matchId"
                     (matchClick)="onLiveMatchClick()"
                 ></app-match-listing>
 
+                <!-- All Saved Matches -->
                 <app-match-listing
-                    *ngIf="!isLiveMatch"
-                    [matches]="selectedMapMatchList"
+                    [matches]="matchList"
                     [isSelectable]="true"
                     [selectedMatchId]="selectedMatch?.matchId"
                     (matchClick)="onSelectMatchClick($event)"
                 ></app-match-listing>
 
-                <app-match-listing
+                <!-- Selected Map -->
+                <!-- <app-match-listing
+                    *ngIf="!isLiveMatch"
+                    [matches]="selectedMapMatchList"
+                    [isSelectable]="true"
+                    [selectedMatchId]="selectedMatch?.matchId"
+                    (matchClick)="onSelectMatchClick($event)"
+                ></app-match-listing> -->
+
+                <!-- Removing... -->
+                <!-- <app-match-listing
                     *ngIf="isLiveMatch"
                     [matches]="matchList"
                     [isSelectable]="true"
                     (matchClick)="onSelectMatchClick($event)"
-                ></app-match-listing>
+                ></app-match-listing> -->
             </div>
         </div>
     </div>

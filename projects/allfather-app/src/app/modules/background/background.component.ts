@@ -1,6 +1,5 @@
 import { APP_NAME } from "@allfather-app/app/shared/models/app";
 import { GamePhase } from "@allfather-app/app/shared/models/game-phase";
-import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { merge, Subject } from "rxjs";
@@ -11,7 +10,7 @@ import { InflictionInsightWindowService } from "../in-game/infliction-insight/wi
 import { MatchTimerWindowService } from "../in-game/match-timer/windows/match-timer-window.service";
 import { UltTimerWindowService } from "../in-game/ult-timer/windows/ult-timer-window.service";
 import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
-import { MainWindowService } from "../main/main-window.service";
+import { MainWindowService } from "../main/windows/main-window.service";
 import { SystemTrayService } from "./system-tray.service";
 
 @Component({
@@ -47,7 +46,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     }
 
     private setupUIWindows(): void {
-        if (environment.allowDevTools) this.developmentToolsWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+        // if (environment.allowDevTools) this.developmentToolsWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
 
         this.mainWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
 

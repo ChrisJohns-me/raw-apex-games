@@ -1,33 +1,56 @@
-<app-ui-container [injectBootstrapCSS]="true" [isDesktopWindow]="true" [isTitlebarDraggable]="true" [isContentDraggable]="false">
-    <!-- #region Confirm Exit Modal -->
-    <div class="modal fade" tabindex="-1" #confirmExitModal>
-        <div class="modal-dialog modal-dialog-centered modal-sm">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Exit {{ APP_NAME }}?</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        Game data will not be tracked.<br />
-                        Are you sure?
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" (click)="onExitAppClick()">Exit</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                </div>
+<!-- #region Confirm Exit Modal -->
+<div class="modal fade" tabindex="-1" #confirmExitModal>
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Exit {{ APP_NAME }}?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Game data will not be tracked.<br />
+                    Are you sure?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" (click)="onExitAppClick()">Exit</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
             </div>
         </div>
     </div>
-    <!-- #endregion -->
+</div>
+<!-- #endregion -->
 
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h3>Map Explorer</h3>
+<ng-container *ngIf="isLoading; then mainWindowLoading; else mainWindowContent"></ng-container>
+
+<ng-template #mainWindowLoading>
+    <app-ui-container
+        [injectBootstrapCSS]="true"
+        [primaryTitle]="'Allfather - Loading...'"
+        [isMaximizable]="false"
+        [isMinimizable]="false"
+        [isDesktopWindow]="false"
+        [isTitlebarDraggable]="true"
+        [isContentDraggable]="true"
+    >
+        <div class="loading-splash-bg" id="loading-container">
+            <div class="loading-splash-container">
+                <img class="badge-logo mt-5" src="../../../../assets/images/allfather_badge_logo_lg.webp" alt="Allfather Logo" />
+                <h1 class="loading-title mt-5 text-muted">Loading...</h1>
             </div>
         </div>
-    </div>
-    <app-map-explorer-page></app-map-explorer-page>
-</app-ui-container>
+    </app-ui-container>
+</ng-template>
+
+<ng-template #mainWindowContent>
+    <app-ui-container [injectBootstrapCSS]="true" [isDesktopWindow]="true" [isTitlebarDraggable]="true" [isContentDraggable]="false">
+        <app-navbar (navPage)="goToPage($event)"></app-navbar>
+        <ng-container [ngSwitch]="activePage">
+            <app-charting-page *ngSwitchCase="MainPage.Charting"></app-charting-page>
+            <app-map-explorer-page *ngSwitchCase="MainPage.MapExplorer"></app-map-explorer-page>
+            <app-preferences-page *ngSwitchCase="MainPage.Preferences"></app-preferences-page>
+
+            <app-dashboard-page *ngSwitchDefault></app-dashboard-page>
+        </ng-container>
+    </app-ui-container>
+</ng-template>

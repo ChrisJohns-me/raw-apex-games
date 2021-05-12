@@ -1,6 +1,40 @@
 @import "~bootswatch/dist/darkly/variables";
+@import "~bootstrap/scss/bootstrap-utilities";
 
-$link-hover-color: shift-color($link-color, 20%);
+$white: #fff;
+$gray-100: #f8f9fa;
+$gray-200: #ebebeb;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #888;
+$gray-700: #444;
+$gray-800: #303030;
+$gray-900: #222;
+$black: #000;
+
+$blue: #007bff;
+$indigo: #6610f2;
+$purple: #6f42c1;
+$pink: #e83e8c;
+$red: #d73333;
+$orange: #fd7e14;
+$yellow: #ffc107;
+$green: #28a745;
+$teal: #20c997;
+$cyan: #17a2b8;
+
+$primary: lighten(saturate(adjust-hue($red, 1), 50), 15);
+$secondary: #616d89;
+$success: lighten(desaturate(adjust-hue($green, -3), 10), 10);
+$info: lighten(desaturate(adjust-hue($cyan, -1), 20), 5);
+$warning: darken(desaturate($orange, 5), 1);
+$danger: lighten(saturate(adjust-hue($red, -354), 20), 10);
+$light: $gray-500;
+$dark: $gray-800;
+
+$link-color: $red;
+$link-hover-color: darken($link-color, 5);
 
 // Accordion
 
@@ -11,7 +45,14 @@ $accordion-button-active-color: $link-color;
 
 // Nav
 
+$nav-link-padding-x: 2rem;
+$nav-link-disabled-color: $gray-500;
+$nav-tabs-border-color: $gray-700;
+$nav-tabs-link-hover-border-color: $nav-tabs-border-color $nav-tabs-border-color transparent;
+$nav-tabs-link-active-color: $white;
 $nav-tabs-link-active-bg: $body-bg;
 $nav-tabs-link-active-border-color: $gray-300 $gray-300 $nav-tabs-link-active-bg;
+$nav-link-color: $link-color;
+$nav-link-hover-color: $link-hover-color;
 $nav-pills-link-active-color: $white;
 $nav-pills-link-active-bg: $link-color;

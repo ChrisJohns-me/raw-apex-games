@@ -41,7 +41,6 @@
                 "native_window": true,
                 "resizable": true,
                 "transparent": true,
-                "override_on_update": true,
                 "show_in_taskbar": true,
                 "allow_local_file_access": true,
                 "restrict_to_game_bounds": false,

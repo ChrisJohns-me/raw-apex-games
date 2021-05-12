@@ -1,4 +1,4 @@
-import { ConfigurationService } from "@allfather-app/app/modules/core/configuration/configuration.service";
+import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchInflictionEventAccum } from "@allfather-app/app/shared/models/match/infliction-event";
 import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from "@angular/core";

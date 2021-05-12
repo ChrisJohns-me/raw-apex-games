@@ -3,6 +3,7 @@ export interface Configuration {
     common: Common;
     facts: Facts;
     featureFlags: FeatureFlags;
+    featureConfigs: FeatureConfigs;
     general: General;
     overwolfQuirks: OverwolfQuirks;
 }

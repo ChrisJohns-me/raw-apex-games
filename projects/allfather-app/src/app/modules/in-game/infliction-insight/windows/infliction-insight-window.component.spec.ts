@@ -1,4 +1,4 @@
-import { ConfigurationService } from "@allfather-app/app/modules/core/configuration/configuration.service";
+import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchActivityService } from "@allfather-app/app/modules/core/match/match-activity.service";
 import { MatchPlayerInflictionService } from "@allfather-app/app/modules/core/match/match-player-infliction.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";

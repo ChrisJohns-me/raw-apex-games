@@ -1,10 +1,14 @@
 import { UIWindow, WindowName, WindowState } from "@allfather-app/app/modules/core/_refactor/ui-window";
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { map, tap } from "rxjs/operators";
 
 @Injectable({
     providedIn: "root",
+    deps: [],
+    useFactory: (...deps: unknown[]) =>
+        SingletonServiceProviderFactory("LegendSelectAssistWindowService", LegendSelectAssistWindowService, deps),
 })
 export class LegendSelectAssistWindowService {
     private readonly uiWindow = new UIWindow(WindowName.LegendSelectAssist);

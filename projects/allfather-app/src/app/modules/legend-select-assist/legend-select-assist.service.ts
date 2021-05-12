@@ -2,7 +2,7 @@ import { AvgMatchStats, complimentaryLegendsWeights, legendAvgStats } from "@all
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { filter, map, tap } from "rxjs/operators";
-import { ConfigurationService } from "../core/configuration/configuration.service";
+import { ConfigurationService } from "../core/configuration.service";
 import { MatchDataStore } from "../core/local-database/match-data-store";
 import { MatchService } from "../core/match/match.service";
 

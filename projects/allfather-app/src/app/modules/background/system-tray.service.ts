@@ -1,15 +1,12 @@
 import { APP_NAME } from "@allfather-app/app/shared/models/app";
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { environment } from "@allfather-app/environments/environment";
 import { Injectable } from "@angular/core";
-import { Title } from "@angular/platform-browser";
 import { of } from "rxjs";
 import { catchError, takeUntil } from "rxjs/operators";
 import { exhaustiveEnumSwitch } from "shared/utilities/switch";
 import { AllfatherService } from "../core/allfather-service.abstract";
-import { GameService } from "../core/game.service";
-import { LocalStorageService } from "../core/local-storage/local-storage.service";
 import { OWSystemTrayMenuItem } from "../core/overwolf";
-import { OverwolfExtensionService } from "../core/overwolf/overwolf-extension.service";
 import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service";
 import { WindowName } from "../core/_refactor/ui-window";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
@@ -17,7 +14,8 @@ import { InflictionInsightWindowService } from "../in-game/infliction-insight/wi
 import { MatchTimerWindowService } from "../in-game/match-timer/windows/match-timer-window.service";
 import { UltTimerWindowService } from "../in-game/ult-timer/windows/ult-timer-window.service";
 import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
-import { MainWindowService } from "../main/main-window.service";
+import { MainPage } from "../main/pages/main-page";
+import { MainWindowService } from "../main/windows/main-window.service";
 import { BackgroundService } from "./background.service";
 
 export enum SystemTrayItemKey {
@@ -28,6 +26,7 @@ export enum SystemTrayItemKey {
     InGameUltTimer = "in-game-ult-timer",
     LegendSelectAssist = "legend-select-assist",
     MapExplorer = "mapexplorer",
+    Charting = "charting",
     Preferences = "preferences",
     Exit = "exit",
 }
@@ -82,6 +81,17 @@ const FOOTER_MENUITEMS: OWSystemTrayMenuItem[] = [
 
 @Injectable({
     providedIn: "root",
+    deps: [
+        BackgroundService,
+        DevelopmentToolsWindowService,
+        InflictionInsightWindowService,
+        LegendSelectAssistWindowService,
+        MainWindowService,
+        MatchTimerWindowService,
+        OverwolfSystemTrayService,
+        UltTimerWindowService,
+    ],
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("SystemTrayService", SystemTrayService, deps),
 })
 export class SystemTrayService extends AllfatherService {
     private menuItems: OWSystemTrayMenuItem[] = [];
@@ -89,15 +99,11 @@ export class SystemTrayService extends AllfatherService {
     constructor(
         private readonly backgroundService: BackgroundService,
         private readonly developmentToolsWindow: DevelopmentToolsWindowService,
-        private readonly game: GameService,
         private readonly inflictionInsightWindow: InflictionInsightWindowService,
         private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
-        private readonly localStorage: LocalStorageService,
         private readonly mainWindow: MainWindowService,
         private readonly matchTimerWindow: MatchTimerWindowService,
-        private readonly overwolfExtension: OverwolfExtensionService,
         private readonly overwolfSystemTray: OverwolfSystemTrayService,
-        private readonly titleService: Title,
         private readonly ultTimerWindow: UltTimerWindowService
     ) {
         super();
@@ -138,7 +144,7 @@ export class SystemTrayService extends AllfatherService {
     private onMenuItemClicked(menuItem: SystemTrayItemKey): void {
         switch (menuItem) {
             case SystemTrayItemKey.Main:
-                this.mainWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+                this.mainWindow.open(MainPage.Dashboard).pipe(takeUntil(this.isDestroyed$)).subscribe();
                 break;
             case SystemTrayItemKey.DevelopmentTools:
                 this.developmentToolsWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
@@ -156,10 +162,13 @@ export class SystemTrayService extends AllfatherService {
                 this.legendSelectAssistWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
                 break;
             case SystemTrayItemKey.MapExplorer:
-                // this.mainWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+                this.mainWindow.open(MainPage.MapExplorer).pipe(takeUntil(this.isDestroyed$)).subscribe();
+                break;
+            case SystemTrayItemKey.Charting:
+                this.mainWindow.open(MainPage.Charting).pipe(takeUntil(this.isDestroyed$)).subscribe();
                 break;
             case SystemTrayItemKey.Preferences:
-                // this.mainWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+                this.mainWindow.open(MainPage.Preferences).pipe(takeUntil(this.isDestroyed$)).subscribe();
                 break;
             case SystemTrayItemKey.Exit:
                 this.backgroundService.requestExit();

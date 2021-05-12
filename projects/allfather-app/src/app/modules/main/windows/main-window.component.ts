@@ -1,9 +1,22 @@
 import { APP_NAME } from "@allfather-app/app/shared/models/app";
-import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+} from "@angular/core";
 import { Modal } from "bootstrap";
 import { Subject } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
+import { exhaustiveEnumSwitch } from "shared/utilities/switch";
 import { BackgroundService } from "../../background/background.service";
+import { ConfigLoadStatus, ConfigurationService } from "../../core/configuration.service";
+import { MainPage } from "../pages/main-page";
+import { MainWindowService } from "./main-window.service";
 
 @Component({
     selector: "app-main-window",
@@ -13,15 +26,25 @@ import { BackgroundService } from "../../background/background.service";
 })
 export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild("confirmExitModal") private confirmExitModal?: ElementRef;
+    public MainPage = MainPage;
     public APP_NAME = APP_NAME;
+    public activePage: MainPage = MainPage.Dashboard;
+    public isLoading = true;
 
     private isDestroyed$ = new Subject<void>();
 
-    constructor(private readonly backgroundService: BackgroundService) {}
+    constructor(
+        private readonly backgroundService: BackgroundService,
+        private readonly cdr: ChangeDetectorRef,
+        private readonly config: ConfigurationService,
+        private readonly mainWindow: MainWindowService
+    ) {}
 
     public ngOnInit(): void {}
 
     public ngAfterViewInit(): void {
+        this.setupLoading();
+        this.setupPageRouting();
         this.setupRequestingExit();
     }
 
@@ -30,8 +53,39 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         this.isDestroyed$.complete();
     }
 
+    public goToPage(page: MainPage): void {
+        this.mainWindow.goToPage(page);
+    }
+
     public onExitAppClick(): void {
         this.backgroundService.exitApp();
+    }
+
+    private setupLoading(): void {
+        this.config.loadStatus$.pipe(takeUntil(this.isDestroyed$)).subscribe((configLoadStatus) => {
+            switch (configLoadStatus) {
+                case ConfigLoadStatus.Failed:
+                    break;
+                case ConfigLoadStatus.NotStarted:
+                case ConfigLoadStatus.Loading:
+                    this.isLoading = true;
+                    break;
+                case ConfigLoadStatus.Loaded:
+                case ConfigLoadStatus.LoadedFallback:
+                    this.isLoading = false;
+                    break;
+                default:
+                    exhaustiveEnumSwitch(configLoadStatus);
+            }
+            this.cdr.detectChanges();
+        });
+    }
+
+    private setupPageRouting(): void {
+        this.mainWindow.mainPage.pipe(takeUntil(this.isDestroyed$)).subscribe((page) => {
+            this.activePage = page;
+            this.cdr.detectChanges();
+        });
     }
 
     private setupRequestingExit(): void {

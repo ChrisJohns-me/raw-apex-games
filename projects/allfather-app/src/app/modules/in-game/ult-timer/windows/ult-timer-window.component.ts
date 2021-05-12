@@ -1,4 +1,4 @@
-import { ConfigurationService } from "@allfather-app/app/modules/core/configuration/configuration.service";
+import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
@@ -105,7 +105,6 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
 
     private setupOnMatchStart(): void {
         this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
-            console.debug(`[${this.constructor.name}] Ult-timer reset`);
             this.ultimateProgressHistory = [{ percent: 0, increment: 0.05, timestamp: new Date() }];
         });
     }
@@ -142,7 +141,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
         if (increment == 0) {
             return;
         } else if (increment > ABNORMAL_INCREASE_AMOUNT && hist.length > this.maxHistoryCount / 2) {
-            console.log(
+            console.warn(
                 `[${this.constructor.name}] Abnormal ultimate increment detected of "${formatPercent(
                     increment,
                     "en-US"

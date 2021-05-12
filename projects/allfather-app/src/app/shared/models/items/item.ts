@@ -1,4 +1,4 @@
-import * as ItemListJSONData from "./items.json";
+import ItemListJSONData from "./items.json";
 
 type ItemJSON = typeof ItemListJSONData["items"][number];
 type ItemConstructor = {

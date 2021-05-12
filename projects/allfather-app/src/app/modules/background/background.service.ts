@@ -5,7 +5,7 @@ import { catchError, concatAll, delay, map, mergeMap, switchMap, takeUntil, tap 
 import { AllfatherService } from "../core/allfather-service.abstract";
 import { OverwolfExtensionService } from "../core/overwolf/overwolf-extension.service";
 import { UIWindow, WindowName } from "../core/_refactor/ui-window";
-import { MainWindowService } from "../main/main-window.service";
+import { MainWindowService } from "../main/windows/main-window.service";
 
 const BACKGROUND_EXIT_DELAY = 1000;
 

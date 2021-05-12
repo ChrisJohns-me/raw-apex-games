@@ -1,4 +1,4 @@
-@import "bootstrap/scss/bootstrap";
+@import "window-styles";
 
 .legend-portraits-container {
     // width: 150px;
@@ -22,7 +22,7 @@
     }
 }
 
-.match-date-container {
+.match-details-container {
     font-size: small;
 }
 
@@ -38,14 +38,12 @@
 
 sub.max-placement {
     &-sign {
-        color: $gray-600;
         font-weight: lighter;
         bottom: -0.075em;
     }
 
     &-digit {
         font-size: 50%;
-        color: $gray-600;
     }
 }
 
@@ -57,12 +55,16 @@ sub.max-placement {
     }
 }
 
+.table-active .text-muted {
+    color: $white !important;
+}
+
 .table-in-progress {
     // TODO: Color
 }
 
 .in-progress-pulse {
-    animation: pulse-opacity 1s alternate infinite;
+    animation: pulse-opacity 0.75s alternate infinite ease-in;
 }
 
 @keyframes pulse-opacity {
@@ -70,6 +72,6 @@ sub.max-placement {
         opacity: 100%;
     }
     to {
-        opacity: 0%;
+        opacity: 25%;
     }
 }

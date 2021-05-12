@@ -8,7 +8,7 @@ import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { OverwolfExtensionService } from "../../core/overwolf/overwolf-extension.service";
 import { LegendSelectAssistWindowService } from "../../legend-select-assist/windows/legend-select-assist-window.service";
-import { MainWindowService } from "../../main/main-window.service";
+import { MainWindowService } from "../../main/windows/main-window.service";
 
 type MainTab = "simulate" | "logs";
 

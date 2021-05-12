@@ -1,0 +1,14 @@
+<nav class="navbar navbar-expand">
+    <div class="container-fluid">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item" *ngFor="let navPage of navPages">
+                <a href class="nav-link" [ngClass]="{ active: currentPage == navPage.page }" (click)="goToPage(navPage.page)">
+                    {{ navPage.title }}
+                </a>
+            </li>
+        </ul>
+        <form class="d-flex">
+            <a href class="nav-link" (click)="goToPage(MainPage.Preferences)">Preferences</a>
+        </form>
+    </div>
+</nav>

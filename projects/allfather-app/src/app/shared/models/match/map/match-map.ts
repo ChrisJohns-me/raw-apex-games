@@ -1,4 +1,5 @@
 import { MatchMapCoordinates } from "./map-coordinates";
+import { MatchMapFriendlyName, MatchMapGenericId } from "./map.enum";
 
 type ActiveDates = Array<{
     from: Date; // Useful to also cross-reference with the current date
@@ -16,17 +17,17 @@ interface MatchMapChartingConfig {
 
 export interface MatchMapConstructor {
     mapId: string;
-    genericId: string;
-    mapName: string;
+    genericId: MatchMapGenericId;
+    mapName: MatchMapFriendlyName;
     activeDates?: ActiveDates;
     dropshipZStart?: MatchMapCoordinates["z"];
     chartConfig?: MatchMapChartingConfig;
 }
 
-export class MatchMap {
+export class MatchMap implements MatchMapConstructor {
     public mapId: string;
-    public genericId: string;
-    public mapName: string;
+    public genericId: MatchMapGenericId;
+    public mapName: MatchMapFriendlyName;
     public activeDates?: ActiveDates;
     public dropshipZStart?: MatchMapCoordinates["z"]; // Useful to cross-reference with starting location
     public chartConfig?: MatchMapChartingConfig;

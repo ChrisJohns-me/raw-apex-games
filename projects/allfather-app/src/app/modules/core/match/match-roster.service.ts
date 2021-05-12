@@ -1,4 +1,4 @@
-import { ConfigurationService } from "@allfather-app/app/modules/core/configuration/configuration.service";
+import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoRoster, OWMatchInfoTeammate } from "@allfather-app/app/modules/core/overwolf";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { MatchRoster } from "@allfather-app/app/shared/models/match/roster";

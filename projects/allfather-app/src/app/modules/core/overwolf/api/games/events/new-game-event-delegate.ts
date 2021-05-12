@@ -31,7 +31,6 @@ export class NewGameEventDelegate implements OverwolfEventListenerDelegate {
      * @param newGameEventList
      */
     private onNewGameEvents(newGameEventList: overwolf.games.events.NewGameEvents): void {
-        console.debug(`[${this.constructor.name}] onNewEvents`, JSON.stringify(newGameEventList));
         const events = newGameEventList?.events;
         if (!events || !Array.isArray(events)) {
             console.warn("Unrecognized event.", events);

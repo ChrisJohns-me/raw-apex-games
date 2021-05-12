@@ -6,12 +6,12 @@
                 [ngClass]="{
                     clickable: isSelectable,
                     'table-active table-primary': !!selectedMatchId && match.matchId === selectedMatchId,
-                    'table-warning': isLiveMatch
+                    'table-danger': isLiveMatch
                 }"
                 (click)="matchClick.next(match)"
             >
-                <td class="text-nowrap">
-                    <div class="legend-portraits-container mt-1" *ngIf="match.legendId">
+                <td class="py-2 pt-3 text-nowrap">
+                    <div class="legend-portraits-container" *ngIf="match.legendId">
                         <img
                             class="legend-portrait my-legend-portrait"
                             [src]="'../../../assets/images/legend-portraits/' + getLegendImageName(match.legendId)"
@@ -24,11 +24,11 @@
                             alt=""
                         />
                     </div>
-
-                    <div class="match-date-container">
-                        <small class="text-muted" *ngIf="!match.endDate && isLiveMatch"
-                            ><span class="in-progress-pulse">🔴</span> In Progress</small
-                        >
+                    <div class="match-details-container" *ngIf="match.mapId && getMatchMapName(match.mapId); let matchMapName">
+                        <span *ngIf="matchMapName">{{ matchMapName }}</span>
+                        <span *ngIf="!matchMapName"><em>Map Unknown</em></span>
+                        <br />
+                        <span class="small strong text-muted in-progress-pulse" *ngIf="!match.endDate && isLiveMatch">In Progress</span>
                         <small
                             class="text-muted"
                             *ngIf="match.endDate && isFunction(match.endDate) && match.endDate.getTime() > now - 60 * 1000"
@@ -57,12 +57,15 @@
                         </small>
                     </div>
                 </td>
-                <td class="align-middle">
-                    <h4 class="data-digit-primary mb-0">
-                        {{ match.placement ? match.placement : "&nbsp;" }}<sub class="max-placement-sign" *ngIf="match.maxPlacement">/</sub>
-                        <sub class="max-placement-digit" *ngIf="match.maxPlacement">{{ match.maxPlacement }}</sub>
+                <td class="align-middle text-center">
+                    <div *ngIf="!match.placement && !match.maxPlacement">N/A</div>
+
+                    <h4 class="data-digit-primary mb-0" *ngIf="match.placement || match.maxPlacement">
+                        {{ match.placement ? match.placement : "-" }}
+                        <sub class="max-placement-sign text-muted" *ngIf="match.maxPlacement">/</sub>
+                        <sub class="max-placement-digit text-muted" *ngIf="match.maxPlacement">{{ match.maxPlacement }}</sub>
                     </h4>
-                    <small class="h6 text-muted">{{ match.gameModeId ? (getGameModeTypeName(match.gameModeId) | titlecase) : "" }}</small>
+                    <small class="text-muted">{{ match.gameModeId ? (getGameModeTypeName(match.gameModeId) | titlecase) : "N/A" }}</small>
                 </td>
                 <td class="align-middle text-center">
                     <h5 class="data-digit mb-1">{{ match.eliminations || 0 }}</h5>

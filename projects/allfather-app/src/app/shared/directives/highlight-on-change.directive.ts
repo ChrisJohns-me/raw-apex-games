@@ -1,7 +1,5 @@
 import { AfterViewInit, Directive, ElementRef, HostListener, Input } from "@angular/core";
 
-// <div appHighlightOnChange>{{ textVariableStr }}</div>
-// <div appHighlightOnChange></div>
 @Directive({
     selector: "[appHighlightOnChange]",
 })

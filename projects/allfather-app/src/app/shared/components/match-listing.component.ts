@@ -1,4 +1,4 @@
-import { ConfigurationService } from "@allfather-app/app/modules/core/configuration/configuration.service";
+import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, TrackByFunction } from "@angular/core";
 import { intervalToDuration } from "date-fns";
@@ -6,6 +6,7 @@ import { isEmpty } from "shared/utilities";
 import { unique } from "shared/utilities/primitives/array";
 import { Legend } from "../models/legend";
 import { MatchGameMode } from "../models/match/game-mode";
+import { MatchMapList } from "../models/match/map/map-list";
 
 @Component({
     selector: "app-match-listing",
@@ -36,6 +37,7 @@ export class MatchListingComponent {
     public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item) => item.matchId;
     public durationSinceNow = (baseDate: Date): Duration => intervalToDuration({ start: baseDate, end: new Date() });
     public getGameModeTypeName = (gameModeId: string): Optional<string> => MatchGameMode.getBaseType(gameModeId);
+    public getMatchMapName = (matchMapId: string): Optional<string> => MatchMapList.find((m) => m.mapId === matchMapId)?.mapName;
     public getLegendImageName = (legendId: string): string => Legend.getSquarePortraitFilename(legendId);
     public isFunction = (value: unknown): boolean => typeof value === "function";
 

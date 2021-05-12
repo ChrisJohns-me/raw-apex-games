@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs";
-import { UIWindow, UIWindowInfo } from "./modules/core/_refactor/ui-window";
+import { UIWindow, UIWindowInfo, WindowName } from "./modules/core/_refactor/ui-window";
 
 @Component({
     selector: "app-root",
@@ -8,6 +8,7 @@ import { UIWindow, UIWindowInfo } from "./modules/core/_refactor/ui-window";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
+    public WindowName = WindowName;
     public uiWindowInfo?: Observable<UIWindowInfo>;
 
     public ngOnInit(): void {

@@ -4,7 +4,6 @@ import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { AppComponent } from "./app.component";
 import { BackgroundModule } from "./modules/background/background.module";
-import { ConfigurationModule } from "./modules/core/configuration/configuration.module";
 import { OverwolfModule } from "./modules/core/overwolf/overwolf.module";
 import { WINDOW_PROVIDERS } from "./modules/core/window.service";
 import { DevelopmentToolsModule } from "./modules/development-tools/development-tools.module";
@@ -20,7 +19,6 @@ import { MainModule } from "./modules/main/main.module";
     imports: [
         BackgroundModule,
         BrowserModule,
-        ConfigurationModule,
         MainModule,
         environment.allowDevTools ? DevelopmentToolsModule : NoopDevelopmentToolsModule,
         HttpClientModule,

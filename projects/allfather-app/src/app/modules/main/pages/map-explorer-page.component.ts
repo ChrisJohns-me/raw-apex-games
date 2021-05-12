@@ -1,7 +1,8 @@
 import { MatchGameMode } from "@allfather-app/app/shared/models/match/game-mode";
-import { MatchMap } from "@allfather-app/app/shared/models/match/map";
-import { MatchMapCoordinates } from "@allfather-app/app/shared/models/match/map-coordinates";
-import { MatchMapFriendlyName, MatchMapList } from "@allfather-app/app/shared/models/match/map-list";
+import { MatchMapCoordinates } from "@allfather-app/app/shared/models/match/map/map-coordinates";
+import { MatchMapList } from "@allfather-app/app/shared/models/match/map/map-list";
+import { MatchMapFriendlyName } from "@allfather-app/app/shared/models/match/map/map.enum";
+import { MatchMap } from "@allfather-app/app/shared/models/match/map/match-map";
 import { environment } from "@allfather-app/environments/environment";
 import {
     AfterViewInit,
@@ -44,7 +45,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
     public ENABLE_DEBUG_TOOLS = environment.DEV && false; // Debug tools
     @ViewChild("mapOverlayGraph") public mapOverlayGraph?: ElementRef<HTMLDivElement>;
 
-    public isLiveMatch = true;
+    public isLiveMatchFocused = true;
     public liveMatch?: MatchDataStore;
     public isLoadingMatchList = false;
     public mapList: MatchMap[];
@@ -62,7 +63,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         this.refreshUI();
     }
     public get displayedMap(): Optional<MatchMap> {
-        return this.isLiveMatch ? this.matchMap.map$.value : this.selectedMap;
+        return this.isLiveMatchFocused ? this.matchMap.map$.value : this.selectedMap;
     }
     public get isShowingAggregateData(): boolean {
         return !!this.selectedMap && !this.selectedMatch;
@@ -71,7 +72,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         return this.matchList.filter((m) => m.mapId === this.selectedMap?.mapId);
     }
     public get displayedLocationHistory(): MatchMapCoordinates[] {
-        if (this.isLiveMatch) return this.liveMatchLocationHistory;
+        if (this.isLiveMatchFocused) return this.liveMatchLocationHistory;
         else if (this.isShowingAggregateData) return this.aggregateMapLocationHistory;
         else if (!this.selectedMatch?.locationHistory || !Array.isArray(this.selectedMatch?.locationHistory)) return [];
         else return this.selectedMatch.locationHistory.map((location) => location.value);
@@ -201,7 +202,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         // Match started event
         this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
             this.liveMatchLocationHistory = [];
-            if (this.isLiveMatch) {
+            if (this.isLiveMatchFocused) {
                 this.setLiveMatch();
                 this.setShowAggregateMapData(false);
                 this.drawGraph();
@@ -226,7 +227,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
                 this.matchList = matchList;
 
                 // Transition from Live Match to Stored Match
-                if (this.isLiveMatch) {
+                if (this.isLiveMatchFocused) {
                     this.selectedMatch = matchList[0];
                 }
 
@@ -239,7 +240,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
             this.liveMatchLocationHistory.push(coordinates);
             this.locationHistoryRange.setValue(this.liveMatchLocationHistory.length, { emitEvent: false });
 
-            if (this.isLiveMatch && this.followLiveLocationForm.value) {
+            if (this.isLiveMatchFocused && this.followLiveLocationForm.value) {
                 this.drawGraph();
                 this.refreshUI();
             }
@@ -249,7 +250,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         this.matchMap.map$.pipe(takeUntil(this.isDestroyed$)).subscribe((matchMap) => {
             if (!matchMap || isEmpty(matchMap)) return;
             // this.liveMap = matchMap;
-            if (this.isLiveMatch) {
+            if (this.isLiveMatchFocused) {
                 this.setLiveMatch();
                 this.setShowAggregateMapData(false);
                 this.drawGraph();
@@ -284,7 +285,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
 
     //#region Intermediate Functions
     private setLiveMatch(isLive = true): void {
-        this.isLiveMatch = isLive;
+        this.isLiveMatchFocused = isLive;
         this.followLiveLocationForm.setValue(isLive, { emitEvent: false });
     }
 
@@ -344,7 +345,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
     private drawGraph(customImageAxisScale?: MatchMapImageAxixScale, customHeatSize?: number): void {
         if (!this.mapOverlayGraph?.nativeElement) return void console.error(`Map graph element was not found.`);
 
-        const matchMap = this.isLiveMatch ? this.matchMap.map$.value : this.selectedMap;
+        const matchMap = this.isLiveMatchFocused ? this.matchMap.map$.value : this.selectedMap;
         const maxHistory = this.locationHistoryRange?.value;
         const coordinates = this.displayedLocationHistory?.slice(0, maxHistory) ?? [];
 

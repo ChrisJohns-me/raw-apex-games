@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, Observable, of, Subject, throwError, timer } from "rxjs";
 import { catchError, delay, map, mergeMap, retryWhen, switchMap, takeUntil, tap } from "rxjs/operators";
-import { ConfigurationService } from "../configuration/configuration.service";
+import { ConfigurationService } from "../configuration.service";
 import { OverwolfFeatureState, OverwolfGameDataStatusDTO } from "./dto/overwolf-feature-status-dto";
 import { OWConfig, OW_CONFIG } from "./overwolf-config";
 
@@ -64,7 +64,6 @@ export class OverwolfFeatureStatusService implements OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        console.debug(`Destroying ${this.constructor.name}`);
         this.isDestroyed$.next();
         this.isDestroyed$.complete();
     }
