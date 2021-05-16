@@ -45,6 +45,7 @@ $accordion-button-active-color: $link-color;
 
 // Nav
 
+$navbar-dark-active-color: $link-color;
 $nav-link-padding-x: 2rem;
 $nav-link-disabled-color: $gray-500;
 $nav-tabs-border-color: $gray-700;
@@ -52,7 +53,7 @@ $nav-tabs-link-hover-border-color: $nav-tabs-border-color $nav-tabs-border-color
 $nav-tabs-link-active-color: $white;
 $nav-tabs-link-active-bg: $body-bg;
 $nav-tabs-link-active-border-color: $gray-300 $gray-300 $nav-tabs-link-active-bg;
-$nav-link-color: $link-color;
+$nav-link-color: $white;
 $nav-link-hover-color: $link-hover-color;
-$nav-pills-link-active-color: $white;
+$nav-pills-link-active-color: $link-hover-color;
 $nav-pills-link-active-bg: $link-color;

@@ -1,7 +1,7 @@
 import {
     OpponentBanner,
     OpponentBannerComponent,
-} from "@allfather-app/app/modules/in-game/infliction-insight/components/opponent-banner/opponent-banner.component";
+} from "@allfather-app/app/modules/HUD/infliction-insight/components/opponent-banner/opponent-banner.component";
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 
 @Component({

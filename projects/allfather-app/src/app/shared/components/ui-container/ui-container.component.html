@@ -14,9 +14,16 @@
     </div>
 
     <div class="titlebar-controls">
-        <button class="btn btn-close-white" type="button" (click)="onMinimizeButtonClick()">__</button>
-        <button class="btn btn-close-white" type="button" (click)="onMaximizeButtonClick()">OO</button>
-        <button class="btn btn-close btn-close-white" type="button" (click)="onCloseButtonClick()"></button>
+        <button class="btn px-1" type="button" (click)="onMinimizeButtonClick()">
+            <icon [path]="mdiWindowMinimize"></icon>
+        </button>
+        <button class="btn px-1" type="button" (click)="onMaximizeButtonClick()">
+            <icon [path]="mdiWindowMaximize" *ngIf="state !== WindowState.Maximized"></icon>
+            <icon [path]="mdiWindowRestore" *ngIf="state === WindowState.Maximized"></icon>
+        </button>
+        <button class="btn px-1" type="button" (click)="onCloseButtonClick()">
+            <icon [path]="mdiWindowClose"></icon>
+        </button>
     </div>
 </section>
 

@@ -45,10 +45,11 @@
             "limitLegendStatsMatches": 250,
             "limitComplimentaryLegendsMatches": 500,
             "complimentaryLegendsWeights": {
-                "winWeight": 0.25,
-                "placementWeight": 0.25,
-                "damageWeight": 0.25,
-                "eliminationWeight": 0.25,
+                "winWeight": 0.2,
+                "placementWeight": 0.2,
+                "damageWeight": 0.2,
+                "eliminationWeight": 0.2,
+                "knockdownWeight": 0.2,
                 "durationWeight": 0
             },
             "legendRows": [

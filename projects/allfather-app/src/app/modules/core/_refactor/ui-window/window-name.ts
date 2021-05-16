@@ -2,8 +2,8 @@ export enum WindowName {
     Background = "background",
     Main = "main",
     DevelopmentTools = "development-tools",
-    InGameInflictionInsight = "in-game-infliction-insight",
-    InGameMatchTimer = "in-game-match-timer",
-    InGameUltTimer = "in-game-ult-timer",
+    HUDInflictionInsight = "hud-infliction-insight",
+    HUDMatchTimer = "hud-match-timer",
+    HUDUltTimer = "hud-ult-timer",
     LegendSelectAssist = "legend-select-assist",
 }

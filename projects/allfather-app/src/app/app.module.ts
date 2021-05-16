@@ -8,9 +8,9 @@ import { OverwolfModule } from "./modules/core/overwolf/overwolf.module";
 import { WINDOW_PROVIDERS } from "./modules/core/window.service";
 import { DevelopmentToolsModule } from "./modules/development-tools/development-tools.module";
 import { NoopDevelopmentToolsModule } from "./modules/development-tools/noop-development-tools.module";
-import { InflictionInsightWindowModule } from "./modules/in-game/infliction-insight/infliction-insight.module";
-import { MatchTimerWindowModule } from "./modules/in-game/match-timer/match-timer.module";
-import { UltTimerWindowModule } from "./modules/in-game/ult-timer/ult-timer.module";
+import { InflictionInsightWindowModule } from "./modules/HUD/infliction-insight/infliction-insight.module";
+import { MatchTimerWindowModule } from "./modules/HUD/match-timer/match-timer.module";
+import { UltTimerWindowModule } from "./modules/HUD/ult-timer/ult-timer.module";
 import { LegendSelectAssistWindowModule } from "./modules/legend-select-assist/legend-select-assist.module";
 import { MainModule } from "./modules/main/main.module";
 

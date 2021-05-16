@@ -4,9 +4,9 @@
 
         <app-development-tools-window *ngSwitchCase="WindowName.DevelopmentTools"></app-development-tools-window>
         <app-main-window *ngSwitchCase="WindowName.Main"></app-main-window>
-        <app-in-game-match-timer-window *ngSwitchCase="WindowName.InGameMatchTimer"></app-in-game-match-timer-window>
-        <app-in-game-ult-timer-window *ngSwitchCase="WindowName.InGameUltTimer"></app-in-game-ult-timer-window>
-        <app-in-game-infliction-insight-window *ngSwitchCase="WindowName.InGameInflictionInsight"></app-in-game-infliction-insight-window>
+        <app-hud-match-timer-window *ngSwitchCase="WindowName.HUDMatchTimer"></app-hud-match-timer-window>
+        <app-hud-ult-timer-window *ngSwitchCase="WindowName.HUDUltTimer"></app-hud-ult-timer-window>
+        <app-hud-infliction-insight-window *ngSwitchCase="WindowName.HUDInflictionInsight"></app-hud-infliction-insight-window>
         <app-legend-select-assist-window *ngSwitchCase="WindowName.LegendSelectAssist"></app-legend-select-assist-window>
 
         <div *ngSwitchDefault>Could not match window with name: {{ winInfo.name }}</div>

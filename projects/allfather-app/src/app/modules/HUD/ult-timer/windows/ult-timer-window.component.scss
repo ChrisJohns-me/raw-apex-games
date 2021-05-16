@@ -1,0 +1,28 @@
+@import "hud-styles";
+
+.timer-container {
+    display: inline-flex;
+    color: white;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    padding: 0 10px;
+
+    &.no-confidence {
+        display: none;
+        opacity: 0;
+    }
+
+    &.low-confidence {
+        opacity: 0.25;
+    }
+}
+
+.timer-display {
+    font-family: "Quantico", sans-serif;
+    font-size: 1.5rem;
+    margin: 0;
+    padding: 0;
+}

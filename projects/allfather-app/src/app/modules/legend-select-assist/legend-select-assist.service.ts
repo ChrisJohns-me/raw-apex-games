@@ -1,4 +1,4 @@
-import { AvgMatchStats, complimentaryLegendsWeights, legendAvgStats } from "@allfather-app/app/shared/models/utilities/match-stats";
+import { AvgMatchStats, complimentaryLegendsWeights, legendAvgStats } from "@allfather-app/app/common/utilities/match-stats";
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { filter, map, tap } from "rxjs/operators";

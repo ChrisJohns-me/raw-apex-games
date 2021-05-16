@@ -1,0 +1,77 @@
+<table class="table table-striped table-borderless table-dark table-hover mb-0" *ngIf="matches?.length">
+    <tbody>
+        <ng-container *ngFor="let match of matches; trackBy: matchTrackBy">
+            <tr
+                *ngIf="match && match.matchId"
+                [ngClass]="{
+                    clickable: isSelectable,
+                    'table-active table-primary': !!selectedMatchId && match.matchId === selectedMatchId,
+                    'table-danger': isLiveMatch
+                }"
+                (click)="matchClick.next(match)"
+            >
+                <td class="py-2 pt-3 text-nowrap">
+                    <div class="legend-portraits-container">
+                        <img
+                            *ngFor="let teammate of buildTeamRoster(match)"
+                            class="legend-portrait teammate-legend-portrait"
+                            [ngClass]="{ 'my-legend-portrait': teammate.isMe, 'teammate-legend-portrait': !teammate.isMe }"
+                            [src]="'../../../assets/images/legend-portraits/' + getLegendImageName(teammate.legendId)"
+                            alt=""
+                        />
+                    </div>
+                    <div class="match-details-container" *ngIf="match.mapId && getMatchMapName(match.mapId); let matchMapName">
+                        <span *ngIf="matchMapName">{{ matchMapName }}</span>
+                        <span *ngIf="!matchMapName"><em>Map Unknown</em></span>
+                        <br />
+                        <span class="small strong text-muted in-progress-pulse" *ngIf="!match.endDate && isLiveMatch">In Progress</span>
+                        <small
+                            class="text-muted"
+                            *ngIf="match.endDate && isFunction(match.endDate) && match.endDate.getTime() > now - 60 * 1000"
+                            >Just now</small
+                        >
+                        <small
+                            class="text-muted"
+                            *ngIf="
+                                match.endDate &&
+                                isFunction(match.endDate) &&
+                                match.endDate.getTime() < now - 60 * 1000 &&
+                                match.endDate.getTime() > now - relativeTime
+                            "
+                        >
+                            {{
+                                durationSinceNow(match.endDate)
+                                    | dfnsFormatDurationPure: { format: ["years", "months", "weeks", "days", "hours", "minutes"] }
+                            }}
+                            ago
+                        </small>
+                        <small
+                            class="text-muted"
+                            *ngIf="!match.endDate || !isFunction(match.endDate) || match.endDate.getTime() < now - relativeTime"
+                        >
+                            {{ match.endDate | dfnsFormatRelative: now }}
+                        </small>
+                    </div>
+                </td>
+                <td class="align-middle text-center">
+                    <div *ngIf="!match.placement && !match.maxPlacement">N/A</div>
+
+                    <h4 class="data-digit-primary mb-0" *ngIf="match.placement || match.maxPlacement">
+                        {{ match.placement ? match.placement : "-" }}
+                        <sub class="max-placement-sign text-muted" *ngIf="match.maxPlacement">/</sub>
+                        <sub class="max-placement-digit text-muted" *ngIf="match.maxPlacement">{{ match.maxPlacement }}</sub>
+                    </h4>
+                    <small class="text-muted">{{ match.gameModeId ? (getGameModeTypeName(match.gameModeId) | titlecase) : "N/A" }}</small>
+                </td>
+                <td class="align-middle text-center">
+                    <h5 class="data-digit mb-1">{{ match.eliminations || 0 }}</h5>
+                    <small class="text-muted">kills</small>
+                </td>
+                <td class="align-middle text-center">
+                    <h5 class="data-digit mb-1">{{ match.damage || 0 }}</h5>
+                    <small class="text-muted">damage</small>
+                </td>
+            </tr>
+        </ng-container>
+    </tbody>
+</table>

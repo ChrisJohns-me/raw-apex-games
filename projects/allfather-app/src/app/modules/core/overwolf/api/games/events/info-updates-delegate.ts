@@ -14,7 +14,7 @@ export class InfoUpdatesDelegate implements OverwolfEventListenerDelegate {
     public readonly infoUpdates$ = new Subject<OWInfoUpdates2Event>();
 
     public eventListeners = {
-        INFOUPDATES2: (e: overwolf.games.events.InfoUpdates2Event): void => this.onInfoUpdates2(e),
+        INFOUPDATES2: this.onInfoUpdates2,
     };
 
     private prepopulationSubscription?: Subscription;
@@ -22,12 +22,12 @@ export class InfoUpdatesDelegate implements OverwolfEventListenerDelegate {
     public startEventListeners(): void {
         this.stopEventListeners();
         this.handlePrepopulation();
-        overwolf.games.events.onInfoUpdates2.addListener(this.eventListeners.INFOUPDATES2);
+        overwolf.games.events.onInfoUpdates2.addListener(this.eventListeners.INFOUPDATES2.bind(this));
     }
 
     public stopEventListeners(): void {
         this.prepopulationSubscription?.unsubscribe();
-        overwolf.games.events.onInfoUpdates2.removeListener(this.eventListeners.INFOUPDATES2);
+        overwolf.games.events.onInfoUpdates2.removeListener(this.eventListeners.INFOUPDATES2.bind(this));
     }
 
     /** On startup, manually injects Overwolf `getInfo` data into the infoUpdates observable. */
@@ -41,7 +41,7 @@ export class InfoUpdatesDelegate implements OverwolfEventListenerDelegate {
                 switchMap((infoResult) => from(Object.entries(infoResult) as [overwolf.gep.ApexLegends.GameInfoKey, any][])),
                 map(([key, value]) => ({ feature: key, info: { [key]: value } }))
             )
-            .subscribe((infoUpdateEvent) => this.onInfoUpdates2(infoUpdateEvent));
+            .subscribe(this.onInfoUpdates2.bind(this));
     }
 
     /**

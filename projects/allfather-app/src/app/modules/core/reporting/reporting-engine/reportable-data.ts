@@ -29,7 +29,7 @@ export interface ReportableDataFactoryMap {
     gameMode: ReturnType<typeof GameModeDataFactory>;
     killfeedHistory: ReturnType<typeof KillfeedHistoryDataFactory>;
     knockdowns: ReturnType<typeof KnockdownsDataFactory>;
-    legend: ReturnType<typeof LegendDataFactory>;
+    legendId: ReturnType<typeof LegendDataFactory>;
     locationHistory: ReturnType<typeof LocationHistoryDataFactory>;
     map: ReturnType<typeof MapDataFactory>;
     matchMeta: ReturnType<typeof MatchMetaDataFactory>;

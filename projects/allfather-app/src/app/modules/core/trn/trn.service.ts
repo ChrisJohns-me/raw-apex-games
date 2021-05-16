@@ -1,5 +1,5 @@
-import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
-import { PlatformHardware, PlatformSoftware } from "@allfather-app/app/shared/models/platform";
+import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
+import { PlatformHardware, PlatformSoftware } from "@allfather-app/app/common/platform";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";

@@ -1,5 +1,5 @@
+import { PlayerState } from "@allfather-app/app/common/player-state";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
-import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { BehaviorSubject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
 

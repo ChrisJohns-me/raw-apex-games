@@ -5,7 +5,7 @@ import { ReportableDataSnapshot } from "../reportable-data";
 type LegendDataOutput = ExtractSubjectType<MatchPlayerLegendService["myLegend$"]>;
 export function LegendDataFactory(myLegendObs: MatchPlayerLegendService["myLegend$"]): ReportableDataSnapshot<LegendDataOutput> {
     return new ReportableDataSnapshot({
-        dataId: "legend",
+        dataId: "legendId",
         source$: myLegendObs,
         persist: true,
     });

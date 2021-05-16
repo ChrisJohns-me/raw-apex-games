@@ -1,4 +1,4 @@
-import { MatchInflictionEvent } from "@allfather-app/app/shared/models/match/infliction-event";
+import { MatchInflictionEvent } from "@allfather-app/app/common/match/infliction-event";
 import { map } from "rxjs/operators";
 import { MatchActivityService } from "../../../match/match-activity.service";
 import { ReportableDataTimestampedStream } from "../reportable-data";

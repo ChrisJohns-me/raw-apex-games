@@ -1,5 +1,5 @@
+import { APP_NAME } from "@allfather-app/app/common/app";
 import { UIContainerComponent } from "@allfather-app/app/shared/components/ui-container/ui-container.component";
-import { APP_NAME } from "@allfather-app/app/shared/models/app";
 import { ConfigPositionUnit, ConfigPositionXAnchor, ConfigPositionYAnchor } from "@allfather-app/configs/config.interface";
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { Title } from "@angular/platform-browser";

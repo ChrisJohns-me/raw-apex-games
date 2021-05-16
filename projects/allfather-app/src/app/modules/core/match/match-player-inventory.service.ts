@@ -1,7 +1,7 @@
+import { InventorySlots } from "@allfather-app/app/common/inventory-slots";
+import { Item } from "@allfather-app/app/common/items/item";
+import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
 import { OverwolfGameDataService, OWInfoUpdates2Event, OWMatchInfoMeInventory } from "@allfather-app/app/modules/core/overwolf";
-import { InventorySlots } from "@allfather-app/app/shared/models/inventory-slots";
-import { Item } from "@allfather-app/app/shared/models/items/item";
-import { WeaponItem } from "@allfather-app/app/shared/models/items/weapon-item";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
@@ -109,7 +109,7 @@ export class MatchPlayerInventoryService extends AllfatherService {
                 const slotUpdate = infoSlotValue ? { item: new WeaponItem({ fromInGameInfoName: infoSlotValue }) } : undefined;
 
                 const newWeaponSlotItems: InventorySlots<Item> = {
-                    ...this.myInventorySlots$.value,
+                    ...this.myWeaponSlots$.value,
                     [newSlotId]: slotUpdate,
                 };
 

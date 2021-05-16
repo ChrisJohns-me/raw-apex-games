@@ -1,6 +1,6 @@
+import { MatchRoster } from "@allfather-app/app/common/match/roster";
+import { MatchRosterTeammate } from "@allfather-app/app/common/match/roster-teammate";
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
-import { MatchRoster } from "@allfather-app/app/shared/models/match/roster";
-import { MatchRosterTeammate } from "@allfather-app/app/shared/models/match/roster-teammate";
 import { BehaviorSubject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
 

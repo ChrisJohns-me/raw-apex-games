@@ -1,4 +1,4 @@
-import { createOverwolfSpyObj } from "@allfather-app/app/shared/testing/helpers";
+import { createOverwolfSpyObj } from "@allfather-app/app/common/testing-helpers";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { TestScheduler } from "rxjs/testing";
 import { OWConfig, OW_CONFIG } from "./overwolf-config";

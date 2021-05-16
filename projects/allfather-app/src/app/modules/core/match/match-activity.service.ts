@@ -1,9 +1,9 @@
+import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
+import { MatchInflictionEvent } from "@allfather-app/app/common/match/infliction-event";
+import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
+import { PlayerState } from "@allfather-app/app/common/player-state";
+import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { OverwolfGameDataService, OWGameEventKillFeed } from "@allfather-app/app/modules/core/overwolf";
-import { WeaponItem } from "@allfather-app/app/shared/models/items/weapon-item";
-import { MatchInflictionEvent } from "@allfather-app/app/shared/models/match/infliction-event";
-import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
-import { PlayerState } from "@allfather-app/app/shared/models/player-state";
-import { isPlayerNameEqual } from "@allfather-app/app/shared/models/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { differenceInMilliseconds } from "date-fns";
@@ -155,7 +155,8 @@ export class MatchActivityService extends AllfatherService {
                     isElimination: isVictimEliminated,
                     weapon,
                 };
-                if (this.addUniqueKillfeedEvent(newMatchInflictionEvent)) {
+                const eventAdded = this.addUniqueKillfeedEvent(newMatchInflictionEvent);
+                if (eventAdded) {
                     console.warn(
                         `"${gameEvent.name}" killfeed action was not emitted by primary source (name: kill_feed);` +
                             ` but was found in secondary source (name: ${gameEvent.name}).`,

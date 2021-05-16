@@ -1,11 +1,11 @@
+import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
-import { SharedModule } from "../../shared/shared.module";
 import { BackgroundComponent } from "./background.component";
 import { SystemTrayService } from "./system-tray.service";
 
 @NgModule({
     declarations: [BackgroundComponent],
-    imports: [SharedModule],
+    imports: [CommonModule],
     providers: [SystemTrayService],
     exports: [BackgroundComponent],
 })

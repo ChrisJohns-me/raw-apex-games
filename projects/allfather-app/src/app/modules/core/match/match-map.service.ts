@@ -1,5 +1,5 @@
-import { MatchMapList } from "@allfather-app/app/shared/models/match/map/map-list";
-import { MatchMap } from "@allfather-app/app/shared/models/match/map/match-map";
+import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
+import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";

@@ -12,18 +12,18 @@ import { OverwolfEventListenerDelegate } from "../../overwolf-delegate";
 
 export class NewGameEventDelegate implements OverwolfEventListenerDelegate {
     public eventListeners = {
-        NEWGAMEEVENT: (e: overwolf.games.events.NewGameEvents): void => this.onNewGameEvents(e),
+        NEWGAMEEVENT: this.onNewGameEvents,
     };
 
     public readonly newGameEvent$ = new Subject<OWGameEvent>();
 
     public startEventListeners(): void {
         this.stopEventListeners();
-        overwolf.games.events.onNewEvents.addListener((e) => this.eventListeners.NEWGAMEEVENT(e));
+        overwolf.games.events.onNewEvents.addListener(this.eventListeners.NEWGAMEEVENT.bind(this));
     }
 
     public stopEventListeners(): void {
-        overwolf.games.events.onNewEvents.removeListener(this.eventListeners.NEWGAMEEVENT);
+        overwolf.games.events.onNewEvents.removeListener(this.eventListeners.NEWGAMEEVENT.bind(this));
     }
 
     /**

@@ -1,8 +1,8 @@
-import { MatchGameMode } from "@allfather-app/app/shared/models/match/game-mode";
-import { MatchMapCoordinates } from "@allfather-app/app/shared/models/match/map/map-coordinates";
-import { MatchMapList } from "@allfather-app/app/shared/models/match/map/map-list";
-import { MatchMapFriendlyName } from "@allfather-app/app/shared/models/match/map/map.enum";
-import { MatchMap } from "@allfather-app/app/shared/models/match/map/match-map";
+import { MatchGameMode } from "@allfather-app/app/common/match/game-mode";
+import { MatchMapCoordinates } from "@allfather-app/app/common/match/map/map-coordinates";
+import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
+import { MatchMapFriendlyName } from "@allfather-app/app/common/match/map/map.enum";
+import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { environment } from "@allfather-app/environments/environment";
 import {
     AfterViewInit,
@@ -33,7 +33,7 @@ import { PlayerService } from "../../core/player.service";
 import { ReportingEngineId, ReportingStatus } from "../../core/reporting/reporting-engine/reporting-engine";
 import { ReportingService } from "../../core/reporting/reporting.service";
 
-type MatchMapImageAxixScale = NonNullable<MatchMap["chartConfig"]>["imageAxisScale"];
+type MatchMapImageAxisScale = NonNullable<MatchMap["chartConfig"]>["imageAxisScale"];
 
 @Component({
     selector: "app-map-explorer-page",
@@ -43,7 +43,7 @@ type MatchMapImageAxixScale = NonNullable<MatchMap["chartConfig"]>["imageAxisSca
 })
 export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     public ENABLE_DEBUG_TOOLS = environment.DEV && false; // Debug tools
-    @ViewChild("mapOverlayGraph") public mapOverlayGraph?: ElementRef<HTMLDivElement>;
+    @ViewChild("mapOverlayGraph") public mapOverlayGraphRef?: ElementRef<HTMLDivElement>;
 
     public isLiveMatchFocused = true;
     public liveMatch?: MatchDataStore;
@@ -136,10 +136,12 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         this.setupLiveMatchListeners();
         this.setLiveMatch();
         this.setupEventListeners();
-        this.getMatchList().subscribe((matchList) => {
-            this.matchList = matchList;
-            this.refreshUI();
-        });
+        this.getMatchList()
+            .pipe(takeUntil(this.isDestroyed$))
+            .subscribe((matchList) => {
+                this.matchList = matchList;
+                this.refreshUI();
+            });
         if (this.ENABLE_DEBUG_TOOLS) this.setupDebug();
     }
 
@@ -317,19 +319,16 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
 
     //#region Low Order Functions
     private initGraph(): void {
-        if (!this.mapOverlayGraph?.nativeElement) return void console.error(`Map graph element was not found.`);
+        if (!this.mapOverlayGraphRef?.nativeElement) return;
         this.graphSvg = d3
-            .select(this.mapOverlayGraph.nativeElement)
+            .select(this.mapOverlayGraphRef.nativeElement)
             .append("svg")
             .attr("viewBox", `0 0 ${this.graphResolutionX} ${this.graphResolutionY}`) as any;
     }
 
     private getMatchList(): Observable<MatchDataStore[]> {
         this.isLoadingMatchList = true;
-        return this.match.getAllMatchData().pipe(
-            takeUntil(this.isDestroyed$),
-            finalize(() => (this.isLoadingMatchList = false))
-        );
+        return this.match.getAllMatchData().pipe(finalize(() => (this.isLoadingMatchList = false)));
     }
 
     private extractAggregateMapLocationHistory(matchList: MatchDataStore[], map: MatchMap): MatchMapCoordinates[] {
@@ -342,8 +341,8 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
             }, [] as MatchMapCoordinates[]);
     }
 
-    private drawGraph(customImageAxisScale?: MatchMapImageAxixScale, customHeatSize?: number): void {
-        if (!this.mapOverlayGraph?.nativeElement) return void console.error(`Map graph element was not found.`);
+    private drawGraph(customImageAxisScale?: MatchMapImageAxisScale, customHeatSize?: number): void {
+        if (!this.mapOverlayGraphRef?.nativeElement) return void console.error(`Map graph element was not found.`);
 
         const matchMap = this.isLiveMatchFocused ? this.matchMap.map$.value : this.selectedMap;
         const maxHistory = this.locationHistoryRange?.value;
@@ -393,13 +392,11 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
     }
 
     private generateLiveMatch(): MatchDataStore {
-        const teamRoster: MatchDataStore["teamRoster"] = this.matchRoster.teammateRoster$.value.allPlayers
-            .filter((p) => !p.isMe)
-            .map((p) => ({
-                isMe: p.isMe,
-                legendId: p.legend?.legendId ?? "",
-                name: p.name,
-            }));
+        const teamRoster: MatchDataStore["teamRoster"] = this.matchRoster.teammateRoster$.value.allPlayers.map((p) => ({
+            isMe: p.isMe,
+            legendId: p.legend?.legendId ?? "",
+            name: p.name,
+        }));
 
         return {
             matchId: this.match.matchId$.value,
@@ -408,7 +405,6 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
             myName: this.player.myName$.value!,
             gameModeId: this.match.gameMode$.value?.gameModeId ?? "",
             mapId: this.matchMap.map$.value?.mapId ?? "",
-            legendId: this.matchPlayerLegend.myLegend$.value?.legendId ?? "",
             assists: this.matchPlayerStats.myAssists$.value,
             damage: this.matchPlayerStats.myDamage$.value,
             eliminations: this.matchPlayerStats.myEliminations$.value,

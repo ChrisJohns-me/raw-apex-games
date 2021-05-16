@@ -1,4 +1,4 @@
-import { isPlayerNameEqual } from "@allfather-app/app/shared/models/utilities/player";
+import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";

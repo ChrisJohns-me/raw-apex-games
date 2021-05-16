@@ -1,8 +1,8 @@
+import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { OWGameEvent } from "@allfather-app/app/modules/core/overwolf";
 import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
@@ -10,6 +10,7 @@ import { Subject } from "rxjs";
 import { JSONTryParse } from "shared/utilities";
 import { fullGame1Eventful } from "./simulations/full-game1-eventful";
 import { fullGame1Quick } from "./simulations/full-game1-quick";
+import { fullGame2_2k } from "./simulations/full-game2-2k";
 import { resetToInGame } from "./simulations/reset-to-in-game";
 import { resetToLobby } from "./simulations/reset-to-lobby";
 import { stupidGame1Full } from "./simulations/stupid-game1";
@@ -72,8 +73,12 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         this.runCommands(commands, speedAdjust);
     }
 
-    public onPerformFullGameClick(speedAdjust?: number): void {
+    public onPerformFullGame1Click(speedAdjust?: number): void {
         const commands = this.logToCommands(fullGame1Eventful());
+        this.runCommands(commands, speedAdjust);
+    }
+    public onPerformFullGame2Click(speedAdjust?: number): void {
+        const commands = this.logToCommands(fullGame2_2k());
         this.runCommands(commands, speedAdjust);
     }
 

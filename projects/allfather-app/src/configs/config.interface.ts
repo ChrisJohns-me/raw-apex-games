@@ -88,6 +88,7 @@ export interface FeatureConfigs {
             placementWeight: number;
             damageWeight: number;
             eliminationWeight: number;
+            knockdownWeight: number;
             durationWeight: number;
         };
         legendRows: {

@@ -1,4 +1,5 @@
-import { APP_NAME } from "@allfather-app/app/shared/models/app";
+import { APP_NAME } from "@allfather-app/app/common/app";
+import { fadeInOutAnimation } from "@allfather-app/app/shared/animations/fade-in-out.animation";
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -11,18 +12,21 @@ import {
 } from "@angular/core";
 import { Modal } from "bootstrap";
 import { Subject } from "rxjs";
-import { filter, takeUntil } from "rxjs/operators";
+import { delay, filter, takeUntil } from "rxjs/operators";
 import { exhaustiveEnumSwitch } from "shared/utilities/switch";
 import { BackgroundService } from "../../background/background.service";
 import { ConfigLoadStatus, ConfigurationService } from "../../core/configuration.service";
 import { MainPage } from "../pages/main-page";
 import { MainWindowService } from "./main-window.service";
 
+const LOADING_DELAY = 2000;
+
 @Component({
     selector: "app-main-window",
     templateUrl: "./main-window.component.html",
     styleUrls: ["./main-window.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
+    animations: [fadeInOutAnimation],
 })
 export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild("confirmExitModal") private confirmExitModal?: ElementRef;
@@ -62,7 +66,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private setupLoading(): void {
-        this.config.loadStatus$.pipe(takeUntil(this.isDestroyed$)).subscribe((configLoadStatus) => {
+        this.config.loadStatus$.pipe(takeUntil(this.isDestroyed$), delay(LOADING_DELAY)).subscribe((configLoadStatus) => {
             switch (configLoadStatus) {
                 case ConfigLoadStatus.Failed:
                     break;

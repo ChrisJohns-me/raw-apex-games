@@ -1,4 +1,4 @@
-import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
+import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { delay, mapTo, mergeMap, retryWhen, takeUntil } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
@@ -136,7 +136,7 @@ export class LocalReportingEngine implements ReportingEngine {
             placement: matchSummary.placement,
             matchRoster: getDataById("matchRoster")?.value ?? [],
             teamRoster: getDataById("teamRoster")?.value ?? [],
-            legendId: getDataById("legend")?.value?.legendId ?? "",
+            legendId: getDataById("legendId")?.value?.legendId ?? "",
             killfeedHistory: getDataById("killfeedHistory")?.value ?? [],
             damageEventsHistory: getDataById("damageEventsHistory")?.value ?? [],
             locationHistory: getDataById("locationHistory")?.value.map((loc) => mapHistory(loc)) ?? [],

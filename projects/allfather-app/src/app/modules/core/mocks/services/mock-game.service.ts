@@ -1,5 +1,5 @@
+import { GamePhase } from "@allfather-app/app/common/game-phase";
 import { GameService } from "@allfather-app/app/modules/core/game.service";
-import { GamePhase } from "@allfather-app/app/shared/models/game-phase";
 import { BehaviorSubject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
 

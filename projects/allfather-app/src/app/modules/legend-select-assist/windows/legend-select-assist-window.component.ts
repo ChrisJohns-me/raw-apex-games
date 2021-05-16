@@ -1,6 +1,6 @@
+import { Legend } from "@allfather-app/app/common/legend";
+import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
-import { Legend } from "@allfather-app/app/shared/models/legend";
-import { AvgMatchStats } from "@allfather-app/app/shared/models/utilities/match-stats";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";

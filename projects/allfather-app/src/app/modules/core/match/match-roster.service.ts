@@ -1,10 +1,10 @@
+import { MatchRoster } from "@allfather-app/app/common/match/roster";
+import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
+import { MatchRosterTeammate } from "@allfather-app/app/common/match/roster-teammate";
+import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoRoster, OWMatchInfoTeammate } from "@allfather-app/app/modules/core/overwolf";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { MatchRoster } from "@allfather-app/app/shared/models/match/roster";
-import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
-import { MatchRosterTeammate } from "@allfather-app/app/shared/models/match/roster-teammate";
-import { isPlayerNameEqual } from "@allfather-app/app/shared/models/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
@@ -219,7 +219,7 @@ export class MatchRosterService extends AllfatherService {
             .subscribe(({ rosterId, rosterItem }) => {
                 const newRosterPlayer: MatchRosterPlayer = {
                     name: rosterItem!.name,
-                    isMe: rosterItem!.name === this.player.myName$.value,
+                    isMe: isPlayerNameEqual(rosterItem!.name, this.player.myName$.value),
                     rosterId: rosterId,
                     teamId: rosterItem!.team_id,
                     platformHardware: rosterItem?.platform_hw,
@@ -266,7 +266,7 @@ export class MatchRosterService extends AllfatherService {
 
                 const newRosterTeammate: MatchRosterTeammate = {
                     name: rosterItem.name,
-                    isMe: rosterItem!.name === this.player.myName$.value,
+                    isMe: isPlayerNameEqual(rosterItem!.name, this.player.myName$.value),
                     rosterId: rosterId,
                     teamId: rosterItem.team_id,
                     platformHardware: rosterItem.platform_hw,
@@ -297,7 +297,7 @@ export class MatchRosterService extends AllfatherService {
             .subscribe((teammate) => {
                 const newRosterTeammate: MatchRosterTeammate = {
                     name: teammate!.name,
-                    isMe: teammate!.name === this.player.myName$.value,
+                    isMe: isPlayerNameEqual(teammate!.name, this.player.myName$.value),
                 };
                 this.addTeammate(newRosterTeammate);
             });
@@ -313,12 +313,13 @@ export class MatchRosterService extends AllfatherService {
             let newRosterTeammate: MatchRosterTeammate;
 
             if (rosterPlayer) newRosterTeammate = { ...rosterPlayer, legend: legendSelect.legend };
-            else
+            else {
                 newRosterTeammate = {
                     name: legendSelect!.playerName,
-                    isMe: legendSelect!.playerName === this.player.myName$.value,
+                    isMe: isPlayerNameEqual(legendSelect!.playerName, this.player.myName$.value),
                     legend: legendSelect.legend,
                 };
+            }
 
             const newStagedTeammateRoster = this.stagedTeammateRoster$.value;
             newStagedTeammateRoster.addPlayer(newRosterTeammate);
@@ -336,7 +337,7 @@ export class MatchRosterService extends AllfatherService {
         if (existingTeammate) {
             mergedTeammate = {
                 name: teammate.name,
-                isMe: teammate.name === this.player.myName$.value,
+                isMe: isPlayerNameEqual(teammate.name, this.player.myName$.value),
                 legend: teammate.legend ?? existingTeammate.legend,
                 platformHardware: teammate.platformHardware ?? existingTeammate.platformHardware,
                 platformSoftware: teammate.platformSoftware ?? existingTeammate.platformSoftware,

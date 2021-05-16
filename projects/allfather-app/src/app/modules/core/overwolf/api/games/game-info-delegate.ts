@@ -6,8 +6,8 @@ export class GameInfoDelegate implements OverwolfEventListenerDelegate {
     public readonly gameInfo$ = new BehaviorSubject<Optional<OWRunningGameInfo>>(undefined);
 
     public eventListeners = {
-        GAMELAUNCHED: (e: overwolf.games.RunningGameInfo): void => this.onGameInfo(e),
-        RUNNINGGAMEINFO: (e: overwolf.games.RunningGameInfo): void => this.onGameInfo(e),
+        GAMELAUNCHED: this.onGameInfo,
+        RUNNINGGAMEINFO: this.onGameInfo,
         GAMEINFOUPDATED: (e: overwolf.games.GameInfoUpdatedEvent): void => this.onGameInfo(e?.gameInfo),
     };
 
@@ -15,12 +15,12 @@ export class GameInfoDelegate implements OverwolfEventListenerDelegate {
 
     public startEventListeners(): void {
         this.stopEventListeners();
-        overwolf.games.getRunningGameInfo(this.eventListeners.RUNNINGGAMEINFO);
-        overwolf.games.onGameInfoUpdated.addListener(this.eventListeners.GAMEINFOUPDATED);
+        overwolf.games.getRunningGameInfo(this.eventListeners.RUNNINGGAMEINFO.bind(this));
+        overwolf.games.onGameInfoUpdated.addListener(this.eventListeners.GAMEINFOUPDATED.bind(this));
     }
 
     public stopEventListeners(): void {
-        overwolf.games.onGameInfoUpdated.removeListener(this.eventListeners.GAMEINFOUPDATED);
+        overwolf.games.onGameInfoUpdated.removeListener(this.eventListeners.GAMEINFOUPDATED.bind(this));
     }
 
     /**

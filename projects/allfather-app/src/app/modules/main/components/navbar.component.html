@@ -1,14 +1,23 @@
-<nav class="navbar navbar-expand">
+<nav class="navbar navbar-expand navbar-dark bg-dark">
     <div class="container-fluid">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <ul class="navbar-nav">
             <li class="nav-item" *ngFor="let navPage of navPages">
                 <a href class="nav-link" [ngClass]="{ active: currentPage == navPage.page }" (click)="goToPage(navPage.page)">
+                    <icon [path]="navPage.icon"></icon>
                     {{ navPage.title }}
                 </a>
             </li>
         </ul>
-        <form class="d-flex">
-            <a href class="nav-link" (click)="goToPage(MainPage.Preferences)">Preferences</a>
-        </form>
+        <div class="navbar-nav">
+            <div class="nav-item">
+                <a
+                    href
+                    class="nav-link"
+                    [ngClass]="{ active: currentPage == MainPage.Preferences }"
+                    (click)="goToPage(MainPage.Preferences)"
+                    >Preferences</a
+                >
+            </div>
+        </div>
     </div>
 </nav>

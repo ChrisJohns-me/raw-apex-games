@@ -2,7 +2,7 @@ import { UIWindow, WindowName, WindowState } from "@allfather-app/app/modules/co
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { map, tap } from "rxjs/operators";
+import { map } from "rxjs/operators";
 
 @Injectable({
     providedIn: "root",
@@ -14,10 +14,7 @@ export class LegendSelectAssistWindowService {
     private readonly uiWindow = new UIWindow(WindowName.LegendSelectAssist);
 
     public isOpen(): Observable<boolean> {
-        return this.uiWindow.getState().pipe(
-            map((state) => state !== WindowState.Closed && state !== WindowState.Hidden),
-            tap((result) => console.log(result))
-        );
+        return this.uiWindow.getState().pipe(map((state) => state !== WindowState.Closed && state !== WindowState.Hidden));
     }
 
     public open(): Observable<void> {

@@ -1,5 +1,5 @@
+import { createOverwolfObj, createOverwolfSpyObj } from "@allfather-app/app/common/testing-helpers";
 import { InfoUpdatesDelegate } from "@allfather-app/app/modules/core/overwolf";
-import { createOverwolfObj, createOverwolfSpyObj } from "@allfather-app/app/shared/testing/helpers";
 import { TestScheduler } from "rxjs/testing";
 
 type InfoUpdates2Event = overwolf.games.events.InfoUpdates2Event;

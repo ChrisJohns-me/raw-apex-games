@@ -1,3 +1,7 @@
+import { GamePhase } from "@allfather-app/app/common/game-phase";
+import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
+import { MatchState } from "@allfather-app/app/common/match/state";
+import { PlayerState } from "@allfather-app/app/common/player-state";
 import { GameProcessService } from "@allfather-app/app/modules/core/game-process.service";
 import { GameService } from "@allfather-app/app/modules/core/game.service";
 import { MatchMapService } from "@allfather-app/app/modules/core/match/match-map.service";
@@ -12,10 +16,6 @@ import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/
 import { OverwolfFeatureState } from "@allfather-app/app/modules/core/overwolf/dto/overwolf-feature-status-dto";
 import { FeatureStatusList, OverwolfFeatureStatusService } from "@allfather-app/app/modules/core/overwolf/overwolf-feature-status.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { GamePhase } from "@allfather-app/app/shared/models/game-phase";
-import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
-import { MatchState } from "@allfather-app/app/shared/models/match/state";
-import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { interval } from "rxjs";
 import { v4 as uuid } from "uuid";

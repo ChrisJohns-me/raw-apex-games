@@ -1,4 +1,4 @@
-import { Legend } from "@allfather-app/app/shared/models/legend";
+import { Legend } from "@allfather-app/app/common/legend";
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 
 @Component({

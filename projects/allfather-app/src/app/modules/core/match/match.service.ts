@@ -1,7 +1,7 @@
+import { MatchGameMode } from "@allfather-app/app/common/match/game-mode";
+import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
+import { TriggerConditions } from "@allfather-app/app/common/utilities/trigger-conditions";
 import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
-import { MatchGameMode } from "@allfather-app/app/shared/models/match/game-mode";
-import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/shared/models/match/state";
-import { TriggerConditions } from "@allfather-app/app/shared/models/utilities/trigger-conditions";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { differenceInMilliseconds, isDate } from "date-fns";

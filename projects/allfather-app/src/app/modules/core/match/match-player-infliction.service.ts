@@ -1,9 +1,9 @@
+import { MatchInflictionEvent } from "@allfather-app/app/common/match/infliction-event";
+import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
+import { PlayerState } from "@allfather-app/app/common/player-state";
+import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { MatchInflictionEvent } from "@allfather-app/app/shared/models/match/infliction-event";
-import { MatchRosterPlayer } from "@allfather-app/app/shared/models/match/roster-player";
-import { PlayerState } from "@allfather-app/app/shared/models/player-state";
-import { isPlayerNameEqual } from "@allfather-app/app/shared/models/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { Observable, partition, Subject } from "rxjs";

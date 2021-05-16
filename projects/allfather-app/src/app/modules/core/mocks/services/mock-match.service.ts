@@ -1,6 +1,6 @@
+import { MatchGameModeType } from "@allfather-app/app/common/match/game-mode";
+import { MatchState } from "@allfather-app/app/common/match/state";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { MatchGameModeType } from "@allfather-app/app/shared/models/match/game-mode";
-import { MatchState } from "@allfather-app/app/shared/models/match/state";
 import { IndexableType } from "dexie";
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";

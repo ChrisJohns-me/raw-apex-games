@@ -1,5 +1,5 @@
+import { createOverwolfObj, createOverwolfSpyObj } from "@allfather-app/app/common/testing-helpers";
 import { OWGameEvent } from "@allfather-app/app/modules/core/overwolf/types/overwolf-types";
-import { createOverwolfObj, createOverwolfSpyObj } from "@allfather-app/app/shared/testing/helpers";
 import { TestScheduler } from "rxjs/testing";
 import { NewGameEventDelegate } from "./new-game-event-delegate";
 

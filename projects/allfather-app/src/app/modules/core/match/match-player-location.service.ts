@@ -1,7 +1,7 @@
+import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
+import { MatchMapCoordinates } from "@allfather-app/app/common/match/map/map-coordinates";
+import { TriggerConditions } from "@allfather-app/app/common/utilities/trigger-conditions";
 import { OverwolfGameDataService, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
-import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
-import { MatchMapCoordinates } from "@allfather-app/app/shared/models/match/map/map-coordinates";
-import { TriggerConditions } from "@allfather-app/app/shared/models/utilities/trigger-conditions";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";

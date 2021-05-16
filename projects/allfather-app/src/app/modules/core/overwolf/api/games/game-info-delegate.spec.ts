@@ -1,4 +1,4 @@
-import { createOverwolfObj } from "@allfather-app/app/shared/testing/helpers";
+import { createOverwolfObj } from "@allfather-app/app/common/testing-helpers";
 import { TestScheduler } from "rxjs/testing";
 import { GameInfoDelegate } from "./game-info-delegate";
 

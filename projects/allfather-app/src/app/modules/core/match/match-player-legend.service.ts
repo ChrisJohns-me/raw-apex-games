@@ -1,7 +1,8 @@
+import { Legend } from "@allfather-app/app/common/legend";
+import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
+import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { Legend } from "@allfather-app/app/shared/models/legend";
-import { MatchLocationPhase } from "@allfather-app/app/shared/models/match/location";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, combineLatest, of, Subject } from "rxjs";
@@ -55,12 +56,12 @@ export class MatchPlayerLegendService extends AllfatherService {
                 takeUntil(this.isDestroyed$),
                 filter((selection) => !!selection.legend),
                 tap((selection) => {
-                    this.stagingLegends = this.stagingLegends.filter((sl) => sl.playerName !== selection.playerName);
+                    this.stagingLegends = this.stagingLegends.filter((sl) => !isPlayerNameEqual(sl.playerName, selection.playerName));
                     this.stagingLegends.push(selection);
                 }),
                 map(() => this.stagingLegends),
                 switchMap((stageList) => combineLatest([of(stageList), this.player.myName$])),
-                map(([stageList, myName]) => stageList.find((ls) => ls.playerName === myName)),
+                map(([stageList, myName]) => stageList.find((ls) => isPlayerNameEqual(ls.playerName, myName))),
                 filter((myLegendSelected) => !!myLegendSelected),
                 distinctUntilChanged()
             )

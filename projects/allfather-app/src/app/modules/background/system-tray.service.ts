@@ -1,4 +1,4 @@
-import { APP_NAME } from "@allfather-app/app/shared/models/app";
+import { APP_NAME } from "@allfather-app/app/common/app";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { environment } from "@allfather-app/environments/environment";
 import { Injectable } from "@angular/core";
@@ -7,12 +7,13 @@ import { catchError, takeUntil } from "rxjs/operators";
 import { exhaustiveEnumSwitch } from "shared/utilities/switch";
 import { AllfatherService } from "../core/allfather-service.abstract";
 import { OWSystemTrayMenuItem } from "../core/overwolf";
+import { OverwolfExtensionService } from "../core/overwolf/overwolf-extension.service";
 import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service";
 import { WindowName } from "../core/_refactor/ui-window";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
-import { InflictionInsightWindowService } from "../in-game/infliction-insight/windows/infliction-insight-window.service";
-import { MatchTimerWindowService } from "../in-game/match-timer/windows/match-timer-window.service";
-import { UltTimerWindowService } from "../in-game/ult-timer/windows/ult-timer-window.service";
+import { InflictionInsightWindowService } from "../HUD/infliction-insight/windows/infliction-insight-window.service";
+import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
+import { UltTimerWindowService } from "../HUD/ult-timer/windows/ult-timer-window.service";
 import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
 import { MainPage } from "../main/pages/main-page";
 import { MainWindowService } from "../main/windows/main-window.service";
@@ -21,14 +22,16 @@ import { BackgroundService } from "./background.service";
 export enum SystemTrayItemKey {
     Main = "main",
     DevelopmentTools = "development-tools",
-    InGameInflictionInsight = "in-game-infliction-insight",
-    InGameMatchTimer = "in-game-match-timer",
-    InGameUltTimer = "in-game-ult-timer",
+    HUDInflictionInsight = "hud-infliction-insight",
+    HUDMatchTimer = "hud-match-timer",
+    HUDUltTimer = "hud-ult-timer",
     LegendSelectAssist = "legend-select-assist",
     MapExplorer = "mapexplorer",
     Charting = "charting",
     Preferences = "preferences",
-    Exit = "exit",
+    UpdateApp = "update-app",
+    RestartApp = "restart-app",
+    ExitApp = "exit-app",
 }
 
 const MENUITEMS: OWSystemTrayMenuItem[] = [
@@ -74,8 +77,17 @@ const DEVTOOLS_MENUITEMS: OWSystemTrayMenuItem[] = [
 ];
 const FOOTER_MENUITEMS: OWSystemTrayMenuItem[] = [
     {
+        label: `Restart ${APP_NAME}`,
+        id: SystemTrayItemKey.RestartApp,
+    },
+    {
+        label: `Check for updates`,
+        id: SystemTrayItemKey.UpdateApp,
+        enabled: false,
+    },
+    {
         label: `Exit ${APP_NAME}`,
-        id: SystemTrayItemKey.Exit,
+        id: SystemTrayItemKey.ExitApp,
     },
 ];
 
@@ -88,6 +100,7 @@ const FOOTER_MENUITEMS: OWSystemTrayMenuItem[] = [
         LegendSelectAssistWindowService,
         MainWindowService,
         MatchTimerWindowService,
+        OverwolfExtensionService,
         OverwolfSystemTrayService,
         UltTimerWindowService,
     ],
@@ -103,6 +116,7 @@ export class SystemTrayService extends AllfatherService {
         private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
         private readonly mainWindow: MainWindowService,
         private readonly matchTimerWindow: MatchTimerWindowService,
+        private readonly overwolfExtension: OverwolfExtensionService,
         private readonly overwolfSystemTray: OverwolfSystemTrayService,
         private readonly ultTimerWindow: UltTimerWindowService
     ) {
@@ -113,10 +127,12 @@ export class SystemTrayService extends AllfatherService {
         if (environment.allowDevTools) this.menuItems.push(SEPARATOR, ...DEVTOOLS_MENUITEMS);
         this.menuItems.push(SEPARATOR, ...FOOTER_MENUITEMS);
 
-        this.overwolfSystemTray.systemTrayIconClicked$.pipe(takeUntil(this.isDestroyed$)).subscribe(this.onSystemTrayIconClicked);
+        this.overwolfSystemTray.systemTrayIconClicked$
+            .pipe(takeUntil(this.isDestroyed$))
+            .subscribe(this.onSystemTrayIconClicked.bind(this));
         this.overwolfSystemTray.systemTrayIconDoubleClicked$
             .pipe(takeUntil(this.isDestroyed$))
-            .subscribe(this.onSystemTrayIconDoubleClicked);
+            .subscribe(this.onSystemTrayIconDoubleClicked.bind(this));
         this.overwolfSystemTray.menuItemClicked$
             .pipe(takeUntil(this.isDestroyed$))
             .subscribe((e) => this.onMenuItemClicked(e as SystemTrayItemKey));
@@ -138,7 +154,7 @@ export class SystemTrayService extends AllfatherService {
     private onSystemTrayIconClicked(): void {}
 
     private onSystemTrayIconDoubleClicked(): void {
-        this.mainWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+        this.mainWindow.restore().pipe(takeUntil(this.isDestroyed$)).subscribe();
     }
 
     private onMenuItemClicked(menuItem: SystemTrayItemKey): void {
@@ -149,13 +165,13 @@ export class SystemTrayService extends AllfatherService {
             case SystemTrayItemKey.DevelopmentTools:
                 this.developmentToolsWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
                 break;
-            case SystemTrayItemKey.InGameInflictionInsight:
+            case SystemTrayItemKey.HUDInflictionInsight:
                 this.inflictionInsightWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
                 break;
-            case SystemTrayItemKey.InGameMatchTimer:
+            case SystemTrayItemKey.HUDMatchTimer:
                 this.matchTimerWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
                 break;
-            case SystemTrayItemKey.InGameUltTimer:
+            case SystemTrayItemKey.HUDUltTimer:
                 this.ultTimerWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
                 break;
             case SystemTrayItemKey.LegendSelectAssist:
@@ -170,7 +186,13 @@ export class SystemTrayService extends AllfatherService {
             case SystemTrayItemKey.Preferences:
                 this.mainWindow.open(MainPage.Preferences).pipe(takeUntil(this.isDestroyed$)).subscribe();
                 break;
-            case SystemTrayItemKey.Exit:
+            case SystemTrayItemKey.RestartApp:
+                this.overwolfExtension.relaunchApp();
+                break;
+            case SystemTrayItemKey.UpdateApp:
+                console.error("DOES NOT EXIST");
+                break;
+            case SystemTrayItemKey.ExitApp:
                 this.backgroundService.requestExit();
                 break;
             default:

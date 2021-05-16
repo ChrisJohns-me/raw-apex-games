@@ -1,4 +1,4 @@
-import { WeaponItem } from "@allfather-app/app/shared/models/items/weapon-item";
+import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
 import { map } from "rxjs/operators";
 import { MatchPlayerInventoryService } from "../../../match/match-player-inventory.service";
 import { ReportableDataTimestampedStream } from "../reportable-data";

@@ -21,30 +21,28 @@
 </div>
 <!-- #endregion -->
 
-<ng-container *ngIf="isLoading; then mainWindowLoading; else mainWindowContent"></ng-container>
-
-<ng-template #mainWindowLoading>
-    <app-ui-container
-        [injectBootstrapCSS]="true"
-        [primaryTitle]="'Allfather - Loading...'"
-        [isMaximizable]="false"
-        [isMinimizable]="false"
-        [isDesktopWindow]="false"
-        [isTitlebarDraggable]="true"
-        [isContentDraggable]="true"
-    >
-        <div class="loading-splash-bg" id="loading-container">
-            <div class="loading-splash-container">
-                <img class="badge-logo mt-5" src="../../../../assets/images/allfather_badge_logo_lg.webp" alt="Allfather Logo" />
-                <h1 class="loading-title mt-5 text-muted">Loading...</h1>
-            </div>
+<app-ui-container
+    @fadeInOut
+    *ngIf="isLoading"
+    [injectBootstrapCSS]="true"
+    [primaryTitle]="'Allfather - Loading...'"
+    [isMaximizable]="false"
+    [isMinimizable]="false"
+    [isDesktopWindow]="false"
+    [isTitlebarDraggable]="true"
+    [isContentDraggable]="true"
+>
+    <div class="loading-splash-bg" id="loading-container">
+        <div class="loading-splash-container">
+            <img class="badge-logo mt-5" src="../../../../assets/images/allfather_badge_logo_lg.webp" alt="Allfather Logo" />
+            <h1 class="loading-title mt-5 text-muted">Loading...</h1>
         </div>
-    </app-ui-container>
-</ng-template>
+    </div>
+</app-ui-container>
 
-<ng-template #mainWindowContent>
+<div *ngIf="!isLoading">
     <app-ui-container [injectBootstrapCSS]="true" [isDesktopWindow]="true" [isTitlebarDraggable]="true" [isContentDraggable]="false">
-        <app-navbar (navPage)="goToPage($event)"></app-navbar>
+        <app-navbar (navPage)="goToPage($event)" [currentPage]="activePage"></app-navbar>
         <ng-container [ngSwitch]="activePage">
             <app-charting-page *ngSwitchCase="MainPage.Charting"></app-charting-page>
             <app-map-explorer-page *ngSwitchCase="MainPage.MapExplorer"></app-map-explorer-page>
@@ -53,4 +51,4 @@
             <app-dashboard-page *ngSwitchDefault></app-dashboard-page>
         </ng-container>
     </app-ui-container>
-</ng-template>
+</div>

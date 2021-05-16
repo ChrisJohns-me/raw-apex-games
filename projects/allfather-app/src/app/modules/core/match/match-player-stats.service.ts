@@ -1,6 +1,6 @@
+import { MatchState } from "@allfather-app/app/common/match/state";
+import { PlayerState } from "@allfather-app/app/common/player-state";
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
-import { MatchState } from "@allfather-app/app/shared/models/match/state";
-import { PlayerState } from "@allfather-app/app/shared/models/player-state";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";

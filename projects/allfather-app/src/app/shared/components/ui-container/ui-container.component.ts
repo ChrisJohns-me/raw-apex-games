@@ -1,10 +1,21 @@
-import { UIWindow } from "@allfather-app/app/modules/core/_refactor/ui-window";
-import { APP_NAME } from "@allfather-app/app/shared/models/app";
+import { APP_NAME } from "@allfather-app/app/common/app";
+import { UIWindow, WindowState } from "@allfather-app/app/modules/core/_refactor/ui-window";
 import { ConfigPositionUnit, ConfigPositionXAnchor, ConfigPositionYAnchor } from "@allfather-app/configs/config.interface";
-import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from "@angular/core";
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    Input,
+    OnChanges,
+    OnDestroy,
+    OnInit,
+    SimpleChanges,
+} from "@angular/core";
 import { Title } from "@angular/platform-browser";
+import { mdiWindowClose, mdiWindowMaximize, mdiWindowMinimize, mdiWindowRestore } from "@mdi/js";
 import { Observable, Subject } from "rxjs";
-import { map, shareReplay, switchMap, takeUntil, tap } from "rxjs/operators";
+import { finalize, map, shareReplay, switchMap, takeUntil, tap } from "rxjs/operators";
 
 @Component({
     selector: "app-ui-container",
@@ -31,12 +42,20 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
     @Input() public secondaryTitle = "";
 
+    public state: WindowState = WindowState.Normal;
+
+    public WindowState = WindowState;
+    public mdiWindowMinimize = mdiWindowMinimize;
+    public mdiWindowMaximize = mdiWindowMaximize;
+    public mdiWindowRestore = mdiWindowRestore;
+    public mdiWindowClose = mdiWindowClose;
+
     private readonly uiWindow = new UIWindow();
     private _primaryTitle = "";
     private obtained$?: Observable<boolean>;
     private isDestroyed$ = new Subject<void>();
 
-    constructor(private readonly titleService: Title) {
+    constructor(private readonly cdr: ChangeDetectorRef, private readonly titleService: Title) {
         this.titleService.setTitle(APP_NAME);
     }
 
@@ -49,6 +68,12 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
 
     public ngAfterViewInit(): void {
         // this.updatePosition();
+        this.getState()
+            .pipe(
+                takeUntil(this.isDestroyed$),
+                finalize(() => this.cdr.detectChanges())
+            )
+            .subscribe();
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
@@ -94,6 +119,10 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         this.onDrag(event);
     }
 
+    private getState(): Observable<WindowState> {
+        return this.uiWindow.getState().pipe(tap((winState) => (this.state = winState)));
+    }
+
     private onDrag(event: MouseEvent): void {
         const target = event.target as HTMLInputElement;
         if (target?.tagName === "INPUT") {
@@ -104,11 +133,25 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     private minimizeToggle(): void {
-        this.uiWindow.toggleMinimize().pipe(takeUntil(this.isDestroyed$)).subscribe();
+        this.uiWindow
+            .toggleMinimize()
+            .pipe(
+                takeUntil(this.isDestroyed$),
+                switchMap(() => this.getState()),
+                finalize(() => this.cdr.detectChanges())
+            )
+            .subscribe();
     }
 
     private maximizeToggle(): void {
-        this.uiWindow.toggleMaximize().pipe(takeUntil(this.isDestroyed$)).subscribe();
+        this.uiWindow
+            .toggleMaximize()
+            .pipe(
+                takeUntil(this.isDestroyed$),
+                switchMap(() => this.getState()),
+                finalize(() => this.cdr.detectChanges())
+            )
+            .subscribe();
     }
 
     private close(): void {
@@ -138,7 +181,8 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
                 }),
                 map(() => xyPosToPixelsFn(this.position, screenSize, this.positionUnits.x, this.positionUnits.y)),
                 map((xyPos) => xyPosToTopLeftFn(xyPos, screenSize, windowSize, this.positionAnchors.x, this.positionAnchors.y)),
-                switchMap((newPos) => this.uiWindow.changePosition(newPos.left, newPos.top))
+                switchMap((newPos) => this.uiWindow.changePosition(newPos.left, newPos.top)),
+                finalize(() => this.cdr.detectChanges())
             )
             .subscribe();
     }
@@ -174,6 +218,3 @@ function xyPosToTopLeftFn(
     else if (posYAnchor === "middle") topLeftPos.top = screenCenterY - windowCenterY + topLeftPos.top;
     return topLeftPos;
 }
-
-//     |--.--| = 4 ; centerX = 2
-//  |-----.-----| = 10 ; centerX = 5

@@ -166,11 +166,21 @@
                                 "eliminationWeight": {
                                     "type": "number"
                                 },
+                                "knockdownWeight": {
+                                    "type": "number"
+                                },
                                 "durationWeight": {
                                     "type": "number"
                                 }
                             },
-                            "required": ["winWeight", "placementWeight", "damageWeight", "eliminationWeight", "durationWeight"]
+                            "required": [
+                                "winWeight",
+                                "placementWeight",
+                                "damageWeight",
+                                "eliminationWeight",
+                                "knockdownWeight",
+                                "durationWeight"
+                            ]
                         },
                         "legendRows": {
                             "type": "array",

@@ -91,7 +91,7 @@ export class VisibilityDelegate {
     }
 
     /**
-     * For in-game windows, calling this function will always bring the window to the front.
+     * For in-game HUD windows, calling this function will always bring the window to the front.
      * For desktop/native windows, the behavior depends on the game mode AND the grabFocus param:
      *  * Fullscreen game + grabFocus:false - The window will stay in the background behind the game.
      *  * Fullscreen game + grabFocus:true - The window will move to the foreground and take the focus. The game window will be minimized (use with caution, usually it's a bad UX).

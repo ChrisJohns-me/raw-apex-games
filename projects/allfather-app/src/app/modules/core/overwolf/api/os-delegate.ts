@@ -7,8 +7,8 @@ export class OSDelegate {
     public readonly menuItemClicked$ = new Subject<string>();
 
     public eventListeners = {
-        TRAYICONCLICKED: (): void => this.onTrayIconClicked(),
-        TRAYICONDOUBLECLICKED: (): void => this.onTrayIconDoubleClicked(),
+        TRAYICONCLICKED: this.onTrayIconClicked,
+        TRAYICONDOUBLECLICKED: this.onTrayIconDoubleClicked,
         MENUITEMCLICKED: (e: overwolf.os.tray.onMenuItemClickedEvent): void => this.onMenuItemClicked(e),
     };
 
@@ -30,15 +30,15 @@ export class OSDelegate {
 
     public startEventListeners(): void {
         this.stopEventListeners();
-        overwolf.os.tray.onMenuItemClicked.addListener(this.eventListeners.MENUITEMCLICKED);
-        overwolf.os.tray.onTrayIconClicked.addListener(this.eventListeners.TRAYICONCLICKED);
-        overwolf.os.tray.onTrayIconDoubleClicked.addListener(this.eventListeners.TRAYICONDOUBLECLICKED);
+        overwolf.os.tray.onMenuItemClicked.addListener(this.eventListeners.MENUITEMCLICKED.bind(this));
+        overwolf.os.tray.onTrayIconClicked.addListener(this.eventListeners.TRAYICONCLICKED.bind(this));
+        overwolf.os.tray.onTrayIconDoubleClicked.addListener(this.eventListeners.TRAYICONDOUBLECLICKED.bind(this));
     }
 
     public stopEventListeners(): void {
-        overwolf.os.tray.onMenuItemClicked.removeListener(this.eventListeners.MENUITEMCLICKED);
-        overwolf.os.tray.onTrayIconClicked.removeListener(this.eventListeners.TRAYICONCLICKED);
-        overwolf.os.tray.onTrayIconDoubleClicked.removeListener(this.eventListeners.TRAYICONDOUBLECLICKED);
+        overwolf.os.tray.onMenuItemClicked.removeListener(this.eventListeners.MENUITEMCLICKED.bind(this));
+        overwolf.os.tray.onTrayIconClicked.removeListener(this.eventListeners.TRAYICONCLICKED.bind(this));
+        overwolf.os.tray.onTrayIconDoubleClicked.removeListener(this.eventListeners.TRAYICONDOUBLECLICKED.bind(this));
     }
 
     /**
