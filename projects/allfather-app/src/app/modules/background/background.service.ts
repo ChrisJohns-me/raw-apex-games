@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, from, Observable, of } from "rxjs";
 import { catchError, concatAll, delay, map, mergeMap, switchMap, takeUntil, tap } from "rxjs/operators";
 import { AllfatherService } from "../core/allfather-service.abstract";
-import { OverwolfExtensionService } from "../core/overwolf/overwolf-extension.service";
+import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
 import { UIWindow, WindowName } from "../core/_refactor/ui-window";
 import { MainWindowService } from "../main/windows/main-window.service";
 
@@ -11,13 +11,13 @@ const BACKGROUND_EXIT_DELAY = 1000;
 
 @Injectable({
     providedIn: "root",
-    deps: [MainWindowService, OverwolfExtensionService],
+    deps: [MainWindowService, OverwolfExtensionsService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("BackgroundService", BackgroundService, deps),
 })
 export class BackgroundService extends AllfatherService {
     public isRequestingExit$ = new BehaviorSubject<boolean>(false);
 
-    constructor(private readonly mainWindow: MainWindowService, private readonly overwolfExtensionService: OverwolfExtensionService) {
+    constructor(private readonly mainWindow: MainWindowService, private readonly overwolfExtensions: OverwolfExtensionsService) {
         super();
     }
 
@@ -31,7 +31,7 @@ export class BackgroundService extends AllfatherService {
     }
 
     public relaunchApp(): void {
-        this.overwolfExtensionService.relaunchApp();
+        this.overwolfExtensions.relaunchApp();
     }
 
     public exitApp(): void {

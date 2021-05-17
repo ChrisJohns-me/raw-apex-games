@@ -37,9 +37,12 @@
                 },
                 "matchEndHUDTimeout": {
                     "type": "integer"
+                },
+                "locationDataThrottleTime": {
+                    "type": "integer"
                 }
             },
-            "required": ["playerDeathHUDTimeout", "matchEndHUDTimeout"]
+            "required": ["playerDeathHUDTimeout", "matchEndHUDTimeout", "locationDataThrottleTime"]
         },
         "facts": {
             "type": "object",

@@ -6,7 +6,7 @@ import { UltTimerWindowService } from "@allfather-app/app/modules/HUD/ult-timer/
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { OverwolfExtensionService } from "../../core/overwolf/overwolf-extension.service";
+import { OverwolfExtensionsService } from "../../core/overwolf/overwolf-extensions.service";
 import { LegendSelectAssistWindowService } from "../../legend-select-assist/windows/legend-select-assist-window.service";
 import { MainWindowService } from "../../main/windows/main-window.service";
 
@@ -75,7 +75,7 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
         private readonly hudMatchTimerWindow: MatchTimerWindowService,
         private readonly hudUltTimerWindow: UltTimerWindowService,
         private readonly mainWindow: MainWindowService,
-        private readonly overwolfExtension: OverwolfExtensionService
+        private readonly overwolfExtensions: OverwolfExtensionsService
     ) {
         this.infoUpdates$ = this.exposedOverwolfData.rawInfoUpdates$;
         this.newGameEvent$ = this.exposedOverwolfData.rawNewGameEvent$;
@@ -96,6 +96,6 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     }
 
     public relaunchApp(): void {
-        this.overwolfExtension.relaunchApp();
+        this.overwolfExtensions.relaunchApp();
     }
 }

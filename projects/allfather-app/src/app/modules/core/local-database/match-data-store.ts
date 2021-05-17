@@ -64,7 +64,7 @@ interface Coordinates {
     phaseNum: LocationPhaseNum;
 }
 
-enum LocationPhaseNum {
+export enum LocationPhaseNum {
     Dropship,
     Dropping,
     HasLanded,

@@ -72,6 +72,15 @@ export class DailyAverageGraphComponent implements OnChanges {
         elements: {
             bar: {},
         },
+        interaction: {
+            intersect: false,
+        },
+        plugins: {
+            tooltip: {
+                xAlign: "center",
+                yAlign: "center",
+            },
+        },
         scales: {
             x: {
                 axis: "x",
@@ -158,12 +167,7 @@ export class DailyAverageGraphComponent implements OnChanges {
         this.datasets = [
             { data: eliminationData, label: "Avg Kills", yAxisID: "y", backgroundColor: getCSSVar("--bs-red") },
             { data: knockdownData, label: "Avg Knocks", yAxisID: "y", backgroundColor: getCSSVar("--bs-cyan") },
-            {
-                data: placementScoreData,
-                label: "Avg Placement",
-                yAxisID: "yPlacement",
-                backgroundColor: getCSSVar("--bs-yellow"),
-            },
+            { data: placementScoreData, label: "Avg Placement", yAxisID: "yPlacement", backgroundColor: getCSSVar("--bs-yellow") },
             { data: damageData, label: "Avg Damage", yAxisID: "yDamage", backgroundColor: getCSSVar("--bs-green") },
         ];
     }

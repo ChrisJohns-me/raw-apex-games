@@ -46,7 +46,7 @@
         <ng-container [ngSwitch]="activePage">
             <app-charting-page *ngSwitchCase="MainPage.Charting"></app-charting-page>
             <app-map-explorer-page *ngSwitchCase="MainPage.MapExplorer"></app-map-explorer-page>
-            <app-preferences-page *ngSwitchCase="MainPage.Preferences"></app-preferences-page>
+            <app-settings-page *ngSwitchCase="MainPage.Settings"></app-settings-page>
 
             <app-dashboard-page *ngSwitchDefault></app-dashboard-page>
         </ng-container>

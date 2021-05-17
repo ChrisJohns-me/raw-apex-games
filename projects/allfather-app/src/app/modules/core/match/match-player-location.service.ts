@@ -5,15 +5,16 @@ import { OverwolfGameDataService, OWInfoUpdates2Event } from "@allfather-app/app
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
-import { filter, map, takeUntil } from "rxjs/operators";
+import { filter, map, takeUntil, throttleTime } from "rxjs/operators";
 import { cleanInt } from "shared/utilities";
 import { AllfatherService } from "../allfather-service.abstract";
+import { ConfigurationService } from "../configuration.service";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
 import { MatchService } from "./match.service";
 
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, OverwolfGameDataService, MatchPlayerInventoryService],
+    deps: [ConfigurationService, MatchService, OverwolfGameDataService, MatchPlayerInventoryService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerLocationService", MatchPlayerLocationService, deps),
 })
 export class MatchPlayerLocationService extends AllfatherService {
@@ -29,6 +30,7 @@ export class MatchPlayerLocationService extends AllfatherService {
     public readonly myEndingCoordinates$ = new BehaviorSubject<Optional<MatchMapCoordinates>>(undefined);
 
     constructor(
+        private readonly config: ConfigurationService,
         private readonly match: MatchService,
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly playerInventory: MatchPlayerInventoryService
@@ -52,11 +54,15 @@ export class MatchPlayerLocationService extends AllfatherService {
         });
     }
 
+    /**
+     * Throttled by configuration value
+     */
     private setupMyCoordinates(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
                 takeUntil(this.isDestroyed$),
                 filter((infoUpdate) => infoUpdate.feature === "location" && !!infoUpdate.info.match_info?.location),
+                throttleTime(this.config.common.locationDataThrottleTime),
                 map((infoUpdate) => infoUpdate.info.match_info?.location)
             )
             .subscribe((coord) => {

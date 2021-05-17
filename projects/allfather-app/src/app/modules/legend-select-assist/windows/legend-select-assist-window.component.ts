@@ -51,6 +51,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
         this.showComplimentaryLegends(legendId);
         this.showLegendStats(legendId);
         this.focusedLegendId = legendId;
+        this.cdr.detectChanges();
     }
 
     public showLegendStats(legendId: string): void {

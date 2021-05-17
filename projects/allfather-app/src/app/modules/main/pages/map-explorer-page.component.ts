@@ -1,4 +1,5 @@
 import { MatchGameMode } from "@allfather-app/app/common/match/game-mode";
+import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchMapCoordinates } from "@allfather-app/app/common/match/map/map-coordinates";
 import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
 import { MatchMapFriendlyName } from "@allfather-app/app/common/match/map/map.enum";
@@ -22,7 +23,7 @@ import { combineLatest, merge, Observable, Subject } from "rxjs";
 import { distinctUntilChanged, filter, finalize, switchMap, takeUntil, throttleTime } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
 import { unique } from "shared/utilities/primitives/array";
-import { MatchDataStore } from "../../core/local-database/match-data-store";
+import { LocationPhaseNum, MatchDataStore } from "../../core/local-database/match-data-store";
 import { MatchMapService } from "../../core/match/match-map.service";
 import { MatchPlayerLegendService } from "../../core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "../../core/match/match-player-location.service";
@@ -75,7 +76,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         if (this.isLiveMatchFocused) return this.liveMatchLocationHistory;
         else if (this.isShowingAggregateData) return this.aggregateMapLocationHistory;
         else if (!this.selectedMatch?.locationHistory || !Array.isArray(this.selectedMatch?.locationHistory)) return [];
-        else return this.selectedMatch.locationHistory.map((location) => location.value);
+        else return this.selectedMatch.locationHistory.filter((l) => l.value.phaseNum === LocationPhaseNum.HasLanded).map((l) => l.value);
     }
 
     // Form inputs
@@ -239,6 +240,8 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         // New player coordinates
         this.matchPlayerLocation.myCoordinates$.pipe(takeUntil(this.isDestroyed$)).subscribe((coordinates) => {
             if (!coordinates) return;
+            if (this.matchPlayerLocation.myLocationPhase$.value !== MatchLocationPhase.HasLanded) return;
+
             this.liveMatchLocationHistory.push(coordinates);
             this.locationHistoryRange.setValue(this.liveMatchLocationHistory.length, { emitEvent: false });
 
@@ -336,7 +339,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
             .filter((m) => m.mapId === map.mapId)
             .reduce((prev, curr) => {
                 if (!curr.locationHistory || !Array.isArray(curr.locationHistory)) return prev;
-                const coordinates = curr.locationHistory.map((l) => l.value);
+                const coordinates = curr.locationHistory.filter((l) => l.value.phaseNum === LocationPhaseNum.HasLanded).map((l) => l.value);
                 return prev.concat(coordinates);
             }, [] as MatchMapCoordinates[]);
     }

@@ -28,7 +28,7 @@ export class ReportingService extends AllfatherService {
 
     constructor(private readonly match: MatchService, private readonly reportableDataManager: ReportableDataManagerService) {
         super();
-        // TODO: Get preferences, enable only those that are in user's preferences
+        // TODO: Get settings, enable only those that are in user's settings
         this.restartEngines();
 
         this.setupOnMatchStart();

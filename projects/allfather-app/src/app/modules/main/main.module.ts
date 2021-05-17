@@ -7,7 +7,7 @@ import { NavbarComponent } from "./components/navbar.component";
 import { ChartingPageComponent } from "./pages/charting-page.component";
 import { DashboardPageComponent } from "./pages/dashboard-page.component";
 import { MapExplorerPageComponent } from "./pages/map-explorer-page.component";
-import { PreferencesPageComponent } from "./pages/preferences-page.component";
+import { SettingsPageComponent } from "./pages/settings-page.component";
 import { MainWindowComponent } from "./windows/main-window.component";
 
 @NgModule({
@@ -18,7 +18,7 @@ import { MainWindowComponent } from "./windows/main-window.component";
         MainWindowComponent,
         MapExplorerPageComponent,
         NavbarComponent,
-        PreferencesPageComponent,
+        SettingsPageComponent,
     ],
     imports: [CommonModule, ReactiveFormsModule, SharedModule],
     providers: [],

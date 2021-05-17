@@ -7,7 +7,7 @@ import { catchError, takeUntil } from "rxjs/operators";
 import { exhaustiveEnumSwitch } from "shared/utilities/switch";
 import { AllfatherService } from "../core/allfather-service.abstract";
 import { OWSystemTrayMenuItem } from "../core/overwolf";
-import { OverwolfExtensionService } from "../core/overwolf/overwolf-extension.service";
+import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
 import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service";
 import { WindowName } from "../core/_refactor/ui-window";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
@@ -28,7 +28,7 @@ export enum SystemTrayItemKey {
     LegendSelectAssist = "legend-select-assist",
     MapExplorer = "mapexplorer",
     Charting = "charting",
-    Preferences = "preferences",
+    Settings = "settings",
     UpdateApp = "update-app",
     RestartApp = "restart-app",
     ExitApp = "exit-app",
@@ -44,8 +44,8 @@ const MENUITEMS: OWSystemTrayMenuItem[] = [
         id: SystemTrayItemKey.MapExplorer,
     },
     {
-        label: "Preferences",
-        id: SystemTrayItemKey.Preferences,
+        label: "Settings",
+        id: SystemTrayItemKey.Settings,
     },
 ];
 const DEVTOOLS_MENUITEMS: OWSystemTrayMenuItem[] = [
@@ -100,7 +100,7 @@ const FOOTER_MENUITEMS: OWSystemTrayMenuItem[] = [
         LegendSelectAssistWindowService,
         MainWindowService,
         MatchTimerWindowService,
-        OverwolfExtensionService,
+        OverwolfExtensionsService,
         OverwolfSystemTrayService,
         UltTimerWindowService,
     ],
@@ -116,7 +116,7 @@ export class SystemTrayService extends AllfatherService {
         private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
         private readonly mainWindow: MainWindowService,
         private readonly matchTimerWindow: MatchTimerWindowService,
-        private readonly overwolfExtension: OverwolfExtensionService,
+        private readonly overwolfExtensions: OverwolfExtensionsService,
         private readonly overwolfSystemTray: OverwolfSystemTrayService,
         private readonly ultTimerWindow: UltTimerWindowService
     ) {
@@ -183,11 +183,11 @@ export class SystemTrayService extends AllfatherService {
             case SystemTrayItemKey.Charting:
                 this.mainWindow.open(MainPage.Charting).pipe(takeUntil(this.isDestroyed$)).subscribe();
                 break;
-            case SystemTrayItemKey.Preferences:
-                this.mainWindow.open(MainPage.Preferences).pipe(takeUntil(this.isDestroyed$)).subscribe();
+            case SystemTrayItemKey.Settings:
+                this.mainWindow.open(MainPage.Settings).pipe(takeUntil(this.isDestroyed$)).subscribe();
                 break;
             case SystemTrayItemKey.RestartApp:
-                this.overwolfExtension.relaunchApp();
+                this.overwolfExtensions.relaunchApp();
                 break;
             case SystemTrayItemKey.UpdateApp:
                 console.error("DOES NOT EXIST");

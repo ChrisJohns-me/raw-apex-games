@@ -25,6 +25,8 @@ export interface Common {
     playerDeathHUDTimeout: number;
     /** Time in ms to leave relevant HUD UI elements up after match ends */
     matchEndHUDTimeout: number;
+    /** Time in ms to throttle location data. Changing this affects past heatmap graphs. */
+    locationDataThrottleTime: number;
 }
 
 export interface Facts {
