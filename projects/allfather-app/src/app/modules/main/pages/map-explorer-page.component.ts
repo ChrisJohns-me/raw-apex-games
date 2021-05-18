@@ -331,7 +331,7 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
 
     private getMatchList(): Observable<MatchDataStore[]> {
         this.isLoadingMatchList = true;
-        return this.match.getAllMatchData().pipe(finalize(() => (this.isLoadingMatchList = false)));
+        return this.match.getAllMatchData$().pipe(finalize(() => (this.isLoadingMatchList = false)));
     }
 
     private extractAggregateMapLocationHistory(matchList: MatchDataStore[], map: MatchMap): MatchMapCoordinates[] {

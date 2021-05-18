@@ -6,7 +6,7 @@ import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-se
 import { Injectable } from "@angular/core";
 import { differenceInMilliseconds, isDate } from "date-fns";
 import { IndexableType } from "dexie";
-import { BehaviorSubject, from, merge, Observable, of, Subject } from "rxjs";
+import { BehaviorSubject, defer, from, merge, Observable, of, Subject, throwError } from "rxjs";
 import { filter, map, take, takeUntil, tap, timeoutWith } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
 import { v4 as uuid, validate as uuidValidate } from "uuid";
@@ -57,39 +57,38 @@ export class MatchService extends AllfatherService {
      * Generates a random matchId if empty.
      * @returns {IndexableType} index key of storage location
      */
-    public storeMatchData(matchData: MatchDataStore): Observable<IndexableType> {
+    public storeMatchData$(matchData: MatchDataStore): Observable<IndexableType> {
         if (isEmpty(matchData.matchId)) matchData.matchId = uuid();
-        if (!isDate(matchData.startDate) || !isDate(matchData.endDate)) throw Error();
-        const savePromise = this.localDatabase.table("matches").put(matchData);
-        return from(savePromise);
+        if (!isDate(matchData.startDate) || !isDate(matchData.endDate))
+            return throwError(`Unable to store match data; start or end date is empty.`);
+        return defer(() => from(this.localDatabase.table("matches").put(matchData)));
     }
 
     /**
      * Retrieves a specific Match from local database.
      * @returns {MatchDataStore}
      */
-    public getMatchDataByMatchId(matchId: string): Observable<MatchDataStore | undefined> {
-        if (isEmpty(matchId)) throw Error(`Cannot retrieve match data from local database; matchId is empty.`);
-        const matchPromise = this.localDatabase.matches.get({ matchId });
-        return from(matchPromise);
+    public getMatchDataByMatchId$(matchId: string): Observable<Optional<MatchDataStore>> {
+        if (isEmpty(matchId)) return throwError(`Cannot retrieve match data from local database; matchId is empty.`);
+        return defer(() => from(this.localDatabase.matches.get({ matchId })));
     }
 
     /**
      * @returns All matches by legend stored in the local database, descending order.
      */
-    public getMatchDataByLegendId(legendId: string, limit?: number): Observable<MatchDataStore[]> {
+    public getMatchDataByLegendId$(legendId: string, limit?: number): Observable<MatchDataStore[]> {
         const matchCollection = this.localDatabase.matches.where({ legendId: legendId });
         const matchLimitCollection = limit && limit > 0 ? matchCollection.limit(limit) : matchCollection;
-        return from(matchLimitCollection.toArray());
+        return defer(() => from(matchLimitCollection.toArray()));
     }
 
     /**
      * @returns All matches stored in the local database, descending order.
      */
-    public getAllMatchData(limit?: number): Observable<MatchDataStore[]> {
+    public getAllMatchData$(limit?: number): Observable<MatchDataStore[]> {
         const matchCollection = this.localDatabase.matches.orderBy(":id").reverse();
         const matchLimitCollection = limit && limit > 0 ? matchCollection.limit(limit) : matchCollection;
-        return from(matchLimitCollection.toArray());
+        return defer(() => from(matchLimitCollection.toArray()));
     }
 
     private setupMatchId(): void {

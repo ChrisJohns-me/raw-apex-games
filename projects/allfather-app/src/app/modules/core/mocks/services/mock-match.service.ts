@@ -26,15 +26,15 @@ export class MockMatchService implements MockedClass<MatchService> {
         throw new Error("Method not implemented.");
     }
 
-    public storeMatchData(matchData: MatchDataStore): Observable<IndexableType> {
+    public storeMatchData$(matchData: MatchDataStore): Observable<IndexableType> {
         return of();
     }
 
-    public getMatchDataByMatchId(matchId: string): Observable<MatchDataStore | undefined> {
+    public getMatchDataByMatchId$(matchId: string): Observable<MatchDataStore | undefined> {
         return of();
     }
 
-    public getAllMatchData(): Observable<MatchDataStore[]> {
+    public getAllMatchData$(): Observable<MatchDataStore[]> {
         return of();
     }
 }

@@ -95,6 +95,11 @@ describe("BooleanUtilities", () => {
             const actual = isEmpty(undefined);
             expect(actual).toBeTrue();
         });
+
+        it("should return true for NaN", () => {
+            const actual = isEmpty(NaN);
+            expect(actual).toBeTrue();
+        });
         //#endregion
 
         //#region False cases

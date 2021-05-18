@@ -1,7 +1,12 @@
-/**
+/*
  * To prevent object stores from becoming stale,
  *  all database interfaces should be explicit (ie. no imported interfaces).
  * Dates should be stored as their primitive self (provides compression).
+ */
+
+/**
+ * @interface MatchDataStore
+ * @description Match data object store, saved within the local database.
  */
 export interface MatchDataStore {
     matchId?: string;

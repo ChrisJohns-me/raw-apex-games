@@ -14,9 +14,9 @@ export function parseBoolean(value: unknown): boolean {
 }
 
 /**
- * @summary Check if input is empty, null, undefined, or not a number
+ * @summary Check if input is empty, null, undefined, or NaN.
  * @example "", null, undefined, {}, [] == true
- * @example 0, 1, 2 == false
+ * @example 0, 1, 2, Infinity == false
  * @example "foo", "0", "1", "2" == false
  * @example {"key": "value"}, {"key": undefined} == false
  */

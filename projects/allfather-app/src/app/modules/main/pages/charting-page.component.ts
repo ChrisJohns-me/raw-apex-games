@@ -58,7 +58,7 @@ export class ChartingPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private getMatchList(): Observable<MatchDataStore[]> {
         this.isLoadingMatchList = true;
-        return this.match.getAllMatchData().pipe(
+        return this.match.getAllMatchData$().pipe(
             takeUntil(this.isDestroyed$),
             finalize(() => (this.isLoadingMatchList = false))
         );

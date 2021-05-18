@@ -8,17 +8,17 @@
                         <td class="align-middle"><h5 class="m-2">In-Game HUD</h5></td>
                         <td class="align-middle text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" />
+                                <input class="form-check-input" type="checkbox" [formControl]="enableAllInGameHUD" />
                             </div>
                         </td>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody [formGroup]="inGameHUDFormGroup">
                     <tr>
                         <td class="ps-5">Match Timer</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" />
+                                <input class="form-check-input" type="checkbox" [formControlName]="SettingKey.EnableInGameMatchTimerHUD" />
                             </div>
                         </td>
                     </tr>
@@ -26,7 +26,11 @@
                         <td class="ps-5">Ultimate Timer</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" />
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    [formControlName]="SettingKey.EnableInGameUltimateTimerHUD"
+                                />
                             </div>
                         </td>
                     </tr>
@@ -34,7 +38,11 @@
                         <td class="ps-5">Infliction Insight</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" />
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    [formControlName]="SettingKey.EnableInGameInflictionInsightHUD"
+                                />
                             </div>
                         </td>
                     </tr>
@@ -58,17 +66,21 @@
                         <td class="align-middle"><h5 class="m-2">Legend Selection Screen</h5></td>
                         <td class="align-middle text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" />
+                                <input class="form-check-input" type="checkbox" [formControl]="enableAllLegendSelectHUD" />
                             </div>
                         </td>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody [formGroup]="legendSelectHUDFormGroup">
                     <tr>
                         <td class="ps-5">Legend Statistics</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" />
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    [formControlName]="SettingKey.EnableLegendSelectLegendStatsHUD"
+                                />
                             </div>
                         </td>
                     </tr>
@@ -76,7 +88,11 @@
                         <td class="ps-5">Legend Suggestions</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
-                                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" />
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    [formControlName]="SettingKey.EnableLegendSelectLegendSuggestionsHUD"
+                                />
                             </div>
                         </td>
                     </tr>

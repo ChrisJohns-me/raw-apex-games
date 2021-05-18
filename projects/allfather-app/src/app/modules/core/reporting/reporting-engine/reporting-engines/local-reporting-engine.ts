@@ -79,7 +79,7 @@ export class LocalReportingEngine implements ReportingEngine {
      * @returns boolean - successfully saved data
      */
     private saveMatchData(matchData: MatchDataStore): Observable<boolean> {
-        return this.match.storeMatchData(matchData).pipe(
+        return this.match.storeMatchData$(matchData).pipe(
             retryWhen((errors) =>
                 errors.pipe(
                     mergeMap((error, i) => {

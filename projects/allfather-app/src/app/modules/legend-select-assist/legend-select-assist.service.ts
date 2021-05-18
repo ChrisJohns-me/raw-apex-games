@@ -21,7 +21,7 @@ export class LegendSelectAssistService {
         const cachedResult = this.cachedLegendStats.get(legendId);
         if (allowCache && cachedResult) return of(cachedResult);
 
-        return this.match.getMatchDataByLegendId(legendId, limit).pipe(
+        return this.match.getMatchDataByLegendId$(legendId, limit).pipe(
             filter((matchList) => !!matchList && Array.isArray(matchList)),
             map((matchList) => legendAvgStats(matchList as MatchDataStore[], legendId)),
             tap((avgStats) => {
@@ -39,7 +39,7 @@ export class LegendSelectAssistService {
         const cachedResult = this.cachedComplimentaryLegendWeights.get(legendId);
         if (allowCache && cachedResult) return of(cachedResult);
 
-        return this.match.getMatchDataByLegendId(legendId, limit).pipe(
+        return this.match.getMatchDataByLegendId$(legendId, limit).pipe(
             filter((matchList) => !!matchList && Array.isArray(matchList)),
             map((matchList) => {
                 const legendWeightsMap = complimentaryLegendsWeights(legendId, matchList as MatchDataStore[], this.statWeights);

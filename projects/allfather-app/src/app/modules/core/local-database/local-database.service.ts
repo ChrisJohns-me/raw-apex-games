@@ -1,7 +1,10 @@
 import { Injectable } from "@angular/core";
 import Dexie from "dexie";
 import { exportDB } from "dexie-export-import";
-import { from, Observable } from "rxjs";
+/** @see https://dexie.org/docs/Observable/Dexie.Observable */
+import "dexie-observable";
+import { IDatabaseChange } from "dexie-observable/api";
+import { defer, from, Observable, Subject } from "rxjs";
 import { MatchDataStore } from "./match-data-store";
 import { SettingsDataStore } from "./settings-data-store";
 import { populateData } from "./versions/populate-data";
@@ -19,8 +22,10 @@ const DATABASE_NAME = "AllfatherApp";
  */
 @Injectable({ providedIn: "root" })
 export class LocalDatabaseService extends Dexie {
+    public onChanges$ = new Subject<IDatabaseChange[]>();
+
     public matches!: Dexie.Table<MatchDataStore, number>; // number = index
-    public settings!: Dexie.Table<SettingsDataStore<boolean | number | string>, string>; // string = index
+    public settings!: Dexie.Table<SettingsDataStore, string>; // string = index
 
     constructor() {
         super(DATABASE_NAME);
@@ -29,10 +34,12 @@ export class LocalDatabaseService extends Dexie {
 
         this.table("matches");
         this.table("settings").mapToClass(SettingsDataStore);
+
+        this.setupOnChanges();
     }
 
     public exportDatabaseBlob$(): Observable<Blob> {
-        return from(exportDB(this, { prettyJson: true }));
+        return defer(() => from(exportDB(this, { prettyJson: true })));
     }
 
     private handleVersions() {
@@ -46,6 +53,12 @@ export class LocalDatabaseService extends Dexie {
     private handleDataPopulation() {
         this.on("populate", () => {
             populateData(this);
+        });
+    }
+
+    private setupOnChanges(): void {
+        this.on("changes", (changes) => {
+            this.onChanges$.next(changes);
         });
     }
 }

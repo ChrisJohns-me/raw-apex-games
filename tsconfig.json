@@ -19,7 +19,7 @@
     "strict": true,
     "target": "es2015",
     "lib": [
-      "es2018",
+      "es2019",
       "dom"
     ],
     "typeRoots": [
