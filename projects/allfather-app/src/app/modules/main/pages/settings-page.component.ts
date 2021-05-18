@@ -153,12 +153,12 @@ export class SettingsPageComponent implements OnInit, AfterViewInit, OnDestroy {
             this.settingsForm
                 .get([SettingKey.EnableAllInGameHUD])
                 ?.patchValue(settingsObj[SettingKey.EnableAllInGameHUD], { emitEvent: false });
-            this.inGameHUDFormGroup.patchValue(settingsObj.enableAllInGameHUD, { emitEvent: false });
-
             this.settingsForm
                 .get([SettingKey.EnableAllLegendSelectHUD])
                 ?.patchValue(settingsObj[SettingKey.EnableAllLegendSelectHUD], { emitEvent: false });
-            this.legendSelectHUDFormGroup.patchValue(settingsObj.enableAllLegendSelectHUD, { emitEvent: false });
+
+            this.inGameHUDFormGroup.patchValue(settingsObj, { emitEvent: false });
+            this.legendSelectHUDFormGroup.patchValue(settingsObj, { emitEvent: false });
         };
 
         this.settingsService
