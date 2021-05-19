@@ -72,7 +72,7 @@
             },
             "hud-match-timer": {
                 "file": "index.html",
-                "in_game_only": true,
+                "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
                 "show_in_taskbar": true,
@@ -95,7 +95,7 @@
             },
             "hud-ult-timer": {
                 "file": "index.html",
-                "in_game_only": true,
+                "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
                 "show_in_taskbar": true,

@@ -61,7 +61,7 @@ export class MatchService extends AllfatherService {
         if (isEmpty(matchData.matchId)) matchData.matchId = uuid();
         if (!isDate(matchData.startDate) || !isDate(matchData.endDate))
             return throwError(`Unable to store match data; start or end date is empty.`);
-        return defer(() => from(this.localDatabase.table("matches").put(matchData)));
+        return defer(() => from(this.localDatabase.matches.put(matchData)));
     }
 
     /**

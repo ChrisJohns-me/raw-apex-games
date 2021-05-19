@@ -1,6 +1,6 @@
-import { DefaultSettings, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
+import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
 import { environment } from "@allfather-app/environments/environment";
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { mdiAttachment } from "@mdi/js";
 import format from "date-fns/format";
@@ -11,7 +11,6 @@ import { finalize, map, switchMap, takeUntil } from "rxjs/operators";
 import { FileService } from "../../core/file.service";
 import { LocalDatabaseService } from "../../core/local-database/local-database.service";
 import { SettingsDataStore } from "../../core/local-database/settings-data-store";
-import { OverwolfExtensionsService } from "../../core/overwolf/overwolf-extensions.service";
 import { SettingsService } from "../../core/settings.service";
 
 @Component({
@@ -20,7 +19,7 @@ import { SettingsService } from "../../core/settings.service";
     styleUrls: ["./settings-page.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SettingsPageComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SettingsPageComponent implements OnInit, OnDestroy {
     public SettingKey = SettingKey;
     public mdiAttachment = mdiAttachment;
     public settingsForm = this.formBuilder.group({
@@ -32,8 +31,8 @@ export class SettingsPageComponent implements OnInit, AfterViewInit, OnDestroy {
         }),
         [SettingKey.EnableAllLegendSelectHUD]: false,
         legendSelectHUDFormGroup: this.formBuilder.group({
-            [SettingKey.EnableLegendSelectLegendStatsHUD]: [false],
-            [SettingKey.EnableLegendSelectLegendSuggestionsHUD]: [false],
+            [SettingKey.EnableLegendSelectLegendStats]: [false],
+            [SettingKey.EnableLegendSelectLegendSuggestions]: [false],
         }),
     });
     public get [SettingKey.EnableAllInGameHUD](): FormControl {
@@ -49,13 +48,6 @@ export class SettingsPageComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.settingsForm.get("legendSelectHUDFormGroup") as FormGroup;
     }
 
-    public get isLoading(): boolean {
-        return this._isLoading;
-    }
-    public set isLoading(value: boolean) {
-        this._isLoading = value;
-        this.refreshAllFormStates();
-    }
     public get isSaving(): boolean {
         return this._isSaving;
     }
@@ -68,7 +60,6 @@ export class SettingsPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private dbExportFilename = `${environment.DEV ? "DEV_" : ""}allfather_db_${format(new Date(), "yyyy_dd_mm")}.json`;
     private dbExportDirectory = "db_export";
-    private _isLoading = false;
     private _isSaving = false;
     private isDestroyed$ = new Subject<void>();
 
@@ -76,18 +67,13 @@ export class SettingsPageComponent implements OnInit, AfterViewInit, OnDestroy {
         private readonly fileService: FileService,
         private readonly formBuilder: FormBuilder,
         private readonly localDatabase: LocalDatabaseService,
-        private readonly overwolfExtensions: OverwolfExtensionsService,
         private readonly settingsService: SettingsService
     ) {}
 
     public ngOnInit(): void {
         this.setupInGameHUDForm();
         this.setupLegendSelectHUDForm();
-        this.loadAllSettings();
-    }
-
-    public ngAfterViewInit(): void {
-        this.watchForChanges();
+        this.setupSettingsListener();
     }
 
     public ngOnDestroy(): void {
@@ -135,44 +121,30 @@ export class SettingsPageComponent implements OnInit, AfterViewInit, OnDestroy {
             });
     }
 
-    private watchForChanges(): void {
-        this.settingsService
-            .listenSettingsChanges$()
-            .pipe(takeUntil(this.isDestroyed$))
-            .subscribe(() => {
-                this.loadAllSettings();
-            });
-    }
-
-    private loadAllSettings(): void {
-        console.log("Loading settings");
-        this.isLoading = true;
-
-        const applyAllSettingsFn = (settings: SettingsDataStore[]): void => {
-            const settingsObj = Object.fromEntries(settings.map((s) => [s.key, s.value]));
+    private setupSettingsListener(): void {
+        const applyAllSettingsFn = (settings: AllSettings): void => {
             this.settingsForm
                 .get([SettingKey.EnableAllInGameHUD])
-                ?.patchValue(settingsObj[SettingKey.EnableAllInGameHUD], { emitEvent: false });
+                ?.patchValue(settings[SettingKey.EnableAllInGameHUD], { emitEvent: false });
             this.settingsForm
                 .get([SettingKey.EnableAllLegendSelectHUD])
-                ?.patchValue(settingsObj[SettingKey.EnableAllLegendSelectHUD], { emitEvent: false });
+                ?.patchValue(settings[SettingKey.EnableAllLegendSelectHUD], { emitEvent: false });
 
-            this.inGameHUDFormGroup.patchValue(settingsObj, { emitEvent: false });
-            this.legendSelectHUDFormGroup.patchValue(settingsObj, { emitEvent: false });
+            this.inGameHUDFormGroup.patchValue(settings, { emitEvent: false });
+            this.legendSelectHUDFormGroup.patchValue(settings, { emitEvent: false });
         };
 
         this.settingsService
-            .getAllSettings$()
+            .streamAllSettings$()
             .pipe(takeUntil(this.isDestroyed$))
             .subscribe((allSettings) => {
-                const allValidSettings = allSettings.filter((setting) => !!setting.key && (!!setting.value || setting.value === false));
-                applyAllSettingsFn(allValidSettings);
-                this.isLoading = false;
+                applyAllSettingsFn(allSettings);
+                this.refreshAllFormStates();
             });
     }
 
     private refreshAllFormStates(): void {
-        if (this.isLoading || this.isSaving) {
+        if (this.isSaving) {
             this.settingsForm.get([SettingKey.EnableAllInGameHUD])?.disable({ emitEvent: false });
             this.settingsForm.get([SettingKey.EnableAllLegendSelectHUD])?.disable({ emitEvent: false });
         } else {
@@ -204,7 +176,7 @@ export class SettingsPageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private refreshInGameFormHUDState(): void {
-        if (this.settingsForm.get([SettingKey.EnableAllInGameHUD])?.value && !this.isSaving && !this.isLoading)
+        if (this.settingsForm.get([SettingKey.EnableAllInGameHUD])?.value && !this.isSaving)
             this.inGameHUDFormGroup.enable({ emitEvent: false });
         else this.inGameHUDFormGroup.disable({ emitEvent: false });
     }
@@ -230,7 +202,7 @@ export class SettingsPageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private refreshLegendSelectHUDFormState(): void {
-        if (this.settingsForm.get([SettingKey.EnableAllLegendSelectHUD])?.value && !this.isSaving && !this.isLoading)
+        if (this.settingsForm.get([SettingKey.EnableAllLegendSelectHUD])?.value && !this.isSaving)
             this.legendSelectHUDFormGroup.enable({ emitEvent: false });
         else {
             this.legendSelectHUDFormGroup.disable({ emitEvent: false });
@@ -248,10 +220,10 @@ export class SettingsPageComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (!Object.values(SettingKey).includes(key)) {
                     return void console.warn(`Setting not saved. Unknown Settings Key "${key}".`);
                 }
-                if (typeof newValue !== typeof DefaultSettings[key]) {
+                if (typeof newValue !== typeof DefaultSetting[key]) {
                     return void console.error(
                         `Setting not saved. Setting key "${key}" type mismatch. ` +
-                            `${typeof newValue} != ${typeof DefaultSettings[key as SettingKey]}`
+                            `${typeof newValue} != ${typeof DefaultSetting[key as SettingKey]}`
                     );
                 }
 

@@ -1,10 +1,9 @@
-import { DefaultSettings, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
+import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { IndexableType } from "dexie";
-import { defer, from, Observable, throwError } from "rxjs";
-import { map } from "rxjs/operators";
-import { isEmpty } from "shared/utilities";
+import { defer, from, merge, Observable, of, throwError } from "rxjs";
+import { filter, map, switchMap } from "rxjs/operators";
 import { AllfatherService } from "./allfather-service.abstract";
 import { LocalDatabaseService } from "./local-database/local-database.service";
 import { SettingsDataStore } from "./local-database/settings-data-store";
@@ -32,7 +31,7 @@ export class SettingsService extends AllfatherService {
             if (!settingValidation.isValid) invalidResult = settingValidation;
         });
         if (invalidResult) return throwError(invalidResult.invalidReason);
-        return defer(() => from(this.localDatabase.table("settings").bulkPut(settings)));
+        return defer(() => from(this.localDatabase.settings.bulkPut(settings)));
     }
 
     /**
@@ -44,63 +43,80 @@ export class SettingsService extends AllfatherService {
     public storeSetting$(setting: SettingsDataStore): Observable<IndexableType> {
         const settingValidation = this.validateSetting(setting.key, setting.value);
         if (!settingValidation.isValid) return throwError(settingValidation.invalidReason);
-        return defer(() => from(this.localDatabase.table("settings").put(setting)));
+        return defer(() => from(this.localDatabase.settings.put(setting)));
     }
 
     /**
-     * Provides the settings value from the key in the local database.
-     * Provides default value if not found.
+     * Provides the settings object by key in the local database.
+     * Provides default value if not found; undefined if default is not found.
      */
-    public getSettingValueOrDefaultByKey$(key: SettingKey): Observable<SettingsDataStore["value"]> {
-        return this.getSettingByKey$(key).pipe(
+    public getSetting$<T extends SettingValue>(key: SettingKey): Observable<Optional<SettingsDataStore<T>>> {
+        if (!Object.values(SettingKey).includes(key))
+            return throwError(`Cannot retrieve settings value from local database; Setting Key "${key}" is not found in known settings.`);
+        return defer(() => from(this.localDatabase.settings.get({ key }))).pipe(
             map((savedSetting) => {
-                if (!isEmpty(savedSetting?.value)) return savedSetting?.value;
-                else if (!(key in DefaultSettings)) throw `Settings Key "${key}" is not found in default settings.`;
-                else return DefaultSettings[key];
+                if (savedSetting?.value != null) {
+                    return savedSetting as SettingsDataStore<T>;
+                } else if (!(key in DefaultSetting)) {
+                    console.error(`Settings Key "${key}" is not found in default settings.`);
+                    return undefined;
+                } else {
+                    return {
+                        key: key,
+                        value: DefaultSetting[key],
+                    } as SettingsDataStore<T>;
+                }
             })
         );
     }
 
     /**
-     * Provides the whole settings object from the key in the local database.
+     * Streams settings object by key in the local database.
+     * Provides default value if not found; undefined if default is not found.
      */
-    public getSettingByKey$(key: SettingKey): Observable<Optional<SettingsDataStore>> {
-        if (!Object.values(SettingKey).includes(key))
-            return throwError(`Cannot retrieve settings value from local database; Setting Key "${key}" is not found in known settings.`);
-        return defer(() => from(this.localDatabase.settings.get({ key })));
+    public streamSetting$<T extends SettingValue>(key: SettingKey): Observable<Optional<SettingsDataStore<T>>> {
+        const settingChanged$ = this.localDatabase.onChanges$.pipe(
+            map((changes) => changes.find((c) => c.table === this.localDatabase.settings.name && c.key === key)),
+            map((change) => (change as any)?.obj),
+            filter((value) => value != null)
+        );
+
+        return merge(this.getSetting$<T>(key), settingChanged$);
     }
 
     /**
-     * @returns All settings stored in the local database.
+     * @returns Key value of all settings stored in the local database.
      */
-    public getAllSettings$(): Observable<SettingsDataStore[]> {
+    public getAllSettings$(): Observable<AllSettings> {
         const settingsCollection = this.localDatabase.settings;
-        return defer(() => from(settingsCollection.toArray()));
+        return defer(() => from(settingsCollection.toArray())).pipe(
+            map((settingsArr) => Object.fromEntries(settingsArr.map((s) => [s.key, s.value])))
+        );
     }
 
     /**
-     * @returns Array of keys on changes
+     * @returns Stream of key value of all settings stored in the local database.
      */
-    public listenSettingsChanges$(): Observable<SettingKey[]> {
-        return this.localDatabase.onChanges$.pipe(
-            map((changes) => {
-                const settingKeysChanged = changes
-                    .filter((change) => Object.values(SettingKey).includes(change.key))
-                    .map((change) => change.key);
-                return settingKeysChanged;
-            })
+    public streamAllSettings$(): Observable<AllSettings> {
+        const settingsChanged$ = this.localDatabase.onChanges$.pipe(
+            filter((changes) => changes.some((c) => c.table === this.localDatabase.settings.name))
+        );
+
+        return merge(of(null), settingsChanged$).pipe(
+            switchMap(() => this.getAllSettings$()),
+            map((currSettings) => ({ ...DefaultSetting, ...currSettings })) // Merge settings
         );
     }
 
     private validateSetting(key?: SettingKey, value?: SettingValue): { isValid: boolean; invalidReason?: string } {
-        if (!key || isEmpty(key)) return { isValid: false, invalidReason: `Key is empty; contains a value of:\n${JSON.stringify(value)}` };
-        if (value !== false && isEmpty(value)) return { isValid: false, invalidReason: `"${key}" has an empty value` };
+        if (key == null) return { isValid: false, invalidReason: `Key is empty; contains a value of:\n${JSON.stringify(value)}` };
+        if (value == null) return { isValid: false, invalidReason: `"${key}" has an empty value` };
 
         if (!Object.values(SettingKey).includes(key)) {
             return { isValid: false, invalidReason: `Key "${key}" is not found in known settings.` };
         }
         const valueType = typeof value;
-        const defaultValueType = typeof DefaultSettings[key];
+        const defaultValueType = typeof DefaultSetting[key];
         if (valueType !== defaultValueType) {
             return { isValid: false, invalidReason: `key "${key}" type mismatch. ` + `${valueType} != ${defaultValueType}` };
         }

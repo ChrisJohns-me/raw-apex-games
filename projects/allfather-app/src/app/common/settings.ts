@@ -1,4 +1,5 @@
 export type SettingValue = Primitive;
+export type AllSettings = { [key in SettingKey]: SettingValue };
 
 export enum SettingKey {
     EnableAllInGameHUD = "enableAllInGameHUD",
@@ -6,16 +7,16 @@ export enum SettingKey {
     EnableInGameUltimateTimerHUD = "enableInGameUltimateTimerHUD",
     EnableInGameInflictionInsightHUD = "enableInGameInflictionInsightHUD",
     EnableAllLegendSelectHUD = "enableAllLegendSelectHUD",
-    EnableLegendSelectLegendStatsHUD = "enableLegendSelectLegendStatsHUD",
-    EnableLegendSelectLegendSuggestionsHUD = "enableLegendSelectLegendSuggestionsHUD",
+    EnableLegendSelectLegendStats = "enableLegendSelectLegendStats",
+    EnableLegendSelectLegendSuggestions = "enableLegendSelectLegendSuggestions",
 }
 
-export const DefaultSettings: { [P in SettingKey]: SettingValue } = {
+export const DefaultSetting: { [P in SettingKey]: SettingValue } = {
     enableAllInGameHUD: true,
     enableInGameMatchTimerHUD: true,
     enableInGameUltimateTimerHUD: true,
     enableInGameInflictionInsightHUD: true,
     enableAllLegendSelectHUD: true,
-    enableLegendSelectLegendStatsHUD: true,
-    enableLegendSelectLegendSuggestionsHUD: true,
+    enableLegendSelectLegendStats: true,
+    enableLegendSelectLegendSuggestions: true,
 };
