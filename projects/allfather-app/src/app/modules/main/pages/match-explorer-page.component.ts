@@ -37,12 +37,12 @@ import { ReportingService } from "../../core/reporting/reporting.service";
 type MatchMapImageAxisScale = NonNullable<MatchMap["chartConfig"]>["imageAxisScale"];
 
 @Component({
-    selector: "app-map-explorer-page",
-    templateUrl: "./map-explorer-page.component.html",
-    styleUrls: ["./map-explorer-page.component.scss"],
+    selector: "app-match-explorer-page",
+    templateUrl: "./match-explorer-page.component.html",
+    styleUrls: ["./match-explorer-page.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     public ENABLE_DEBUG_TOOLS = environment.DEV && false; // Debug tools
     @ViewChild("mapOverlayGraph") public mapOverlayGraphRef?: ElementRef<HTMLDivElement>;
 

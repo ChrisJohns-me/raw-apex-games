@@ -6,7 +6,7 @@ import { DailyAverageGraphComponent } from "./components/charting/daily-average-
 import { NavbarComponent } from "./components/navbar.component";
 import { ChartingPageComponent } from "./pages/charting-page.component";
 import { DashboardPageComponent } from "./pages/dashboard-page.component";
-import { MapExplorerPageComponent } from "./pages/map-explorer-page.component";
+import { MatchExplorerPageComponent } from "./pages/match-explorer-page.component";
 import { SettingsPageComponent } from "./pages/settings-page.component";
 import { MainWindowComponent } from "./windows/main-window.component";
 
@@ -16,7 +16,7 @@ import { MainWindowComponent } from "./windows/main-window.component";
         DashboardPageComponent,
         DailyAverageGraphComponent,
         MainWindowComponent,
-        MapExplorerPageComponent,
+        MatchExplorerPageComponent,
         NavbarComponent,
         SettingsPageComponent,
     ],

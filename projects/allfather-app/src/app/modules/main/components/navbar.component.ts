@@ -15,7 +15,7 @@ export class NavbarComponent {
     public MainPage = MainPage;
     public navPages = [
         { title: "Dashboard", icon: mdiViewDashboard, page: MainPage.Dashboard },
-        { title: "Map Explorer", icon: mdiMap, page: MainPage.MapExplorer },
+        { title: "Match Explorer", icon: mdiMap, page: MainPage.MatchExplorer },
         { title: "Charts", icon: mdiChartAreaspline, page: MainPage.Charting },
     ];
 

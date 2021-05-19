@@ -26,7 +26,7 @@ export enum SystemTrayItemKey {
     HUDMatchTimer = "hud-match-timer",
     HUDUltTimer = "hud-ult-timer",
     LegendSelectAssist = "legend-select-assist",
-    MapExplorer = "mapexplorer",
+    MatchExplorer = "matchexplorer",
     Charting = "charting",
     Settings = "settings",
     UpdateApp = "update-app",
@@ -40,8 +40,8 @@ const MENUITEMS: OWSystemTrayMenuItem[] = [
         id: SystemTrayItemKey.Main,
     },
     {
-        label: "Map Explorer",
-        id: SystemTrayItemKey.MapExplorer,
+        label: "Match Explorer",
+        id: SystemTrayItemKey.MatchExplorer,
     },
     {
         label: "Settings",
@@ -177,8 +177,8 @@ export class SystemTrayService extends AllfatherService {
             case SystemTrayItemKey.LegendSelectAssist:
                 this.legendSelectAssistWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
                 break;
-            case SystemTrayItemKey.MapExplorer:
-                this.mainWindow.open(MainPage.MapExplorer).pipe(takeUntil(this.isDestroyed$)).subscribe();
+            case SystemTrayItemKey.MatchExplorer:
+                this.mainWindow.open(MainPage.MatchExplorer).pipe(takeUntil(this.isDestroyed$)).subscribe();
                 break;
             case SystemTrayItemKey.Charting:
                 this.mainWindow.open(MainPage.Charting).pipe(takeUntil(this.isDestroyed$)).subscribe();

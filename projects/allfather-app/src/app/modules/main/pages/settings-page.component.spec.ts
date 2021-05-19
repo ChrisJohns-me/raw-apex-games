@@ -9,15 +9,15 @@ import { MockMatchPlayerLocationService } from "../../core/mocks/services/mock-m
 import { MockMatchService } from "../../core/mocks/services/mock-match.service";
 import { MockReportingService } from "../../core/mocks/services/mock-reporting.service";
 import { ReportingService } from "../../core/reporting/reporting.service";
-import { MapExplorerPageComponent } from "./map-explorer-page.component";
+import { MatchExplorerPageComponent } from "./match-explorer-page.component";
 
-describe("MapExplorerPageComponent", () => {
-    let component: MapExplorerPageComponent;
-    let fixture: ComponentFixture<MapExplorerPageComponent>;
+describe("MatchExplorerPageComponent", () => {
+    let component: MatchExplorerPageComponent;
+    let fixture: ComponentFixture<MatchExplorerPageComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [MapExplorerPageComponent, FormatDistanceToNowStrictPipe, FormatDistanceToNowStrictPurePipe],
+            declarations: [MatchExplorerPageComponent, FormatDistanceToNowStrictPipe, FormatDistanceToNowStrictPurePipe],
             providers: [
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: MatchMapService, useClass: MockMatchMapService },
@@ -28,7 +28,7 @@ describe("MapExplorerPageComponent", () => {
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(MapExplorerPageComponent);
+        fixture = TestBed.createComponent(MatchExplorerPageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

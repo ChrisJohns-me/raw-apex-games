@@ -1,6 +1,6 @@
 export enum MainPage {
     Charting = "charting",
     Dashboard = "dashboard",
-    MapExplorer = "mapexplorer",
+    MatchExplorer = "matchexplorer",
     Settings = "settings",
 }
