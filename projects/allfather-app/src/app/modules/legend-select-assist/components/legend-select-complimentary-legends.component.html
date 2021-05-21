@@ -1,0 +1,7 @@
+<div class="complimentary-legends-container" *ngIf="complimentaryLegendWeights.length">
+    <h1 class="complimentary-legends-title">
+        Your Suggested Legends <ng-container *ngIf="legendName?.length">With {{ legendName }}</ng-container>
+    </h1>
+
+    <app-complimentary-legends [legendId]="legendId" [complimentaryLegendWeights]="complimentaryLegendWeights"></app-complimentary-legends>
+</div>

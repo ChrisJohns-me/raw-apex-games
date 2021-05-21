@@ -33,24 +33,58 @@
         "windows": {
             "background": {
                 "file": "index.html",
-                "is_background_page": true
+                "is_background_page": true,
+                "dev_tools_window_style": true
             },
             "main": {
                 "file": "index.html",
                 "desktop_only": true,
                 "native_window": true,
-                "resizable": true,
+                "in_game_only": false,
                 "transparent": true,
+                "resizable": true,
                 "show_in_taskbar": true,
-                "allow_local_file_access": true,
+
                 "restrict_to_game_bounds": false,
+                "keep_window_location": false,
+                "allow_local_file_access": true,
+                "block_top_window_navigation": true,
                 "size": {
                     "width": 1200,
                     "height": 750
                 },
                 "min_size": {
-                    "width": 750,
+                    "width": 768,
                     "height": 400
+                },
+                "max_size": {
+                    "width": 1440,
+                    "height": 900
+                }
+            },
+            "main-ingame": {
+                "file": "index.html",
+                "desktop_only": false,
+                "in_game_only": true,
+                "transparent": true,
+                "resizable": true,
+                "show_in_taskbar": false,
+
+                "keep_window_location": true,
+                "allow_local_file_access": true,
+                "restrict_to_game_bounds": true,
+                "block_top_window_navigation": true,
+                "size": {
+                    "width": 1200,
+                    "height": 750
+                },
+                "min_size": {
+                    "width": 768,
+                    "height": 400
+                },
+                "max_size": {
+                    "width": 1440,
+                    "height": 900
                 }
             },
             "development-tools": {
@@ -75,6 +109,7 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
+                "disable_blur": true,
                 "show_in_taskbar": true,
                 "clickthrough": true,
                 "mute": true,
@@ -98,6 +133,7 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
+                "disable_blur": true,
                 "show_in_taskbar": true,
                 "clickthrough": true,
                 "mute": true,
@@ -125,6 +161,7 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
+                "disable_blur": true,
                 "show_in_taskbar": true,
                 "clickthrough": false,
                 "mute": true,
@@ -148,6 +185,7 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
+                "disable_blur": true,
                 "show_in_taskbar": true,
                 "clickthrough": false,
                 "mute": true,

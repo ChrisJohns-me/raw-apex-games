@@ -1,0 +1,55 @@
+@import "hud-styles";
+$skewX: -30deg;
+
+.tilt {
+    transform: skewX($skewX);
+
+    .untilt {
+        transform: skewX(-$skewX);
+    }
+}
+
+.legend-icon-row {
+    display: flex;
+    width: 100%;
+    align-content: flex-start;
+    justify-content: center;
+}
+
+.legend-icon-hitbox {
+    width: 100%;
+    margin: 0.5%;
+    border: 0.15rem solid #67708a88;
+
+    &:hover:not(.transparent-background) {
+        border-color: white;
+    }
+}
+
+.legend-portrait {
+    &-container {
+        position: relative;
+        clip-path: polygon(30% 0%, 130% 0%, 70% 100%, -30% 100%);
+        height: 100%;
+        width: 100%;
+    }
+
+    &-image {
+        height: 100%;
+        width: 100%;
+    }
+
+    &-name-tag {
+        position: absolute;
+        background-color: white;
+        color: black;
+        bottom: 0;
+        right: 0;
+        left: -50%;
+        font-family: "Quantico";
+        text-align: center;
+        text-transform: uppercase;
+        font-size: calc(2px + 0.7vw);
+        font-weight: 700;
+    }
+}

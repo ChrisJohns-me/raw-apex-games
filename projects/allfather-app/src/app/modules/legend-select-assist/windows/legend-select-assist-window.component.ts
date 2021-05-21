@@ -5,9 +5,9 @@ import { ConfigurationService } from "@allfather-app/app/modules/core/configurat
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { PlayerStatsService } from "../../core/player-stats.service";
 import { SettingsService } from "../../core/settings.service";
-import { LegendIconRow } from "../legend-icon-row.interface";
-import { LegendSelectAssistService } from "../legend-select-assist.service";
+import { LegendIconRow } from "../legend-select-icon-row.interface";
 
 @Component({
     selector: "app-legend-select-assist-window",
@@ -45,7 +45,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly config: ConfigurationService,
-        private readonly legendSelectAssist: LegendSelectAssistService,
+        private readonly playerStats: PlayerStatsService,
         private readonly settingsService: SettingsService
     ) {}
 
@@ -58,7 +58,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
         this.isDestroyed$.complete();
     }
 
-    public focusLegend(legendId: string): void {
+    public hoverLegend(legendId: string): void {
         this.showComplimentaryLegends(legendId);
         this.showLegendStats(legendId);
         this.focusedLegendId = legendId;
@@ -67,8 +67,10 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
 
     public showLegendStats(legendId: string): void {
         this.legendStatsSubscription?.unsubscribe();
-        this.legendStatsSubscription = this.legendSelectAssist
-            .getLegendStats(legendId)
+        const limit = this.config.featureConfigs.legendSelectAssist.limitLegendStatsMatches;
+
+        this.legendStatsSubscription = this.playerStats
+            .getLegendStats$(legendId, limit)
             .pipe(takeUntil(this.isDestroyed$))
             .subscribe((avgStats) => {
                 this.legendStats = avgStats;
@@ -78,8 +80,10 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
 
     public showComplimentaryLegends(legendId: string): void {
         this.complimentaryLegendsSubscription?.unsubscribe();
-        this.complimentaryLegendsSubscription = this.legendSelectAssist
-            .getComplimentaryLegendWeights(legendId)
+        const limit = this.config.featureConfigs.legendSelectAssist.limitComplimentaryLegendsMatches;
+
+        this.complimentaryLegendsSubscription = this.playerStats
+            .getLegendComplimentaryLegendWeights$(legendId, limit)
             .pipe(takeUntil(this.isDestroyed$))
             .subscribe((legendWeights) => {
                 const limitedLegendWeights = legendWeights.slice(0, this.config.featureConfigs.legendSelectAssist.maxComplimentaryLegends);

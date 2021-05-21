@@ -11,15 +11,16 @@ import {
     ViewChild,
 } from "@angular/core";
 import { Modal } from "bootstrap";
-import { Subject } from "rxjs";
-import { delay, filter, takeUntil } from "rxjs/operators";
+import { interval, Subject } from "rxjs";
+import { delayWhen, filter, takeUntil } from "rxjs/operators";
 import { exhaustiveEnumSwitch } from "shared/utilities/switch";
 import { BackgroundService } from "../../background/background.service";
 import { ConfigLoadStatus, ConfigurationService } from "../../core/configuration.service";
 import { MainPage } from "../pages/main-page";
 import { MainWindowService } from "./main-window.service";
 
-const LOADING_DELAY = 2000;
+const STARTING_LOAD_DELAY = 2000;
+const CAPTION_DISPLAY_CHANCE = 0.1;
 
 @Component({
     selector: "app-main-window",
@@ -33,7 +34,9 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     public MainPage = MainPage;
     public APP_NAME = APP_NAME;
     public activePage: MainPage = MainPage.Dashboard;
-    public isLoading = true;
+    public isLoading = false;
+    public isAppStarting = false;
+    public randomCaption = this.captionGenerator();
 
     private isDestroyed$ = new Subject<void>();
 
@@ -44,7 +47,12 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         private readonly mainWindow: MainWindowService
     ) {}
 
-    public ngOnInit(): void {}
+    public ngOnInit(): void {
+        this.mainWindow.isStarting$.pipe(takeUntil(this.isDestroyed$)).subscribe((isStarting) => {
+            this.isAppStarting = isStarting;
+            this.cdr.detectChanges();
+        });
+    }
 
     public ngAfterViewInit(): void {
         this.setupLoading();
@@ -66,23 +74,29 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private setupLoading(): void {
-        this.config.loadStatus$.pipe(takeUntil(this.isDestroyed$), delay(LOADING_DELAY)).subscribe((configLoadStatus) => {
-            switch (configLoadStatus) {
-                case ConfigLoadStatus.Failed:
-                    break;
-                case ConfigLoadStatus.NotStarted:
-                case ConfigLoadStatus.Loading:
-                    this.isLoading = true;
-                    break;
-                case ConfigLoadStatus.Loaded:
-                case ConfigLoadStatus.LoadedFallback:
-                    this.isLoading = false;
-                    break;
-                default:
-                    exhaustiveEnumSwitch(configLoadStatus);
-            }
-            this.cdr.detectChanges();
-        });
+        this.config.loadStatus$
+            .pipe(
+                takeUntil(this.isDestroyed$),
+                delayWhen(() => interval(this.mainWindow.isStarting$ ? STARTING_LOAD_DELAY : 0))
+            )
+            .subscribe((configLoadStatus) => {
+                switch (configLoadStatus) {
+                    case ConfigLoadStatus.Failed:
+                        break;
+                    case ConfigLoadStatus.NotStarted:
+                    case ConfigLoadStatus.Loading:
+                        this.isLoading = true;
+                        break;
+                    case ConfigLoadStatus.Loaded:
+                    case ConfigLoadStatus.LoadedFallback:
+                        this.isLoading = false;
+                        break;
+                    default:
+                        exhaustiveEnumSwitch(configLoadStatus);
+                }
+                this.mainWindow.setIsStarting(false);
+                this.cdr.detectChanges();
+            });
     }
 
     private setupPageRouting(): void {
@@ -106,5 +120,29 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (confirmModal) confirmModal.show();
                 else this.backgroundService.exitApp();
             });
+    }
+
+    private captionGenerator(): string {
+        const shouldShowNum = Math.random();
+        const captionPickNum = Math.random();
+
+        const captions = [
+            "Allfather give me sight",
+            "The gustr of wind calls our victory",
+            "Fate will be on our side, félagi fighter",
+            "Today will be our day, fight ríkr",
+            "The Allfather will gift us today",
+            "Allfather bless me with sight",
+            "I will shed bloð and honor the Allfather",
+            "Trust in the Allfather",
+            "Prove your strength before the gods",
+            "The hunt begins",
+            "The true test is before the Allfather",
+            "The Allfather graces your victory",
+        ];
+        const captionIndex = Math.floor(captions.length * captionPickNum);
+        const caption = shouldShowNum <= CAPTION_DISPLAY_CHANCE ? captions[captionIndex] : "";
+        if (caption) console.error(caption);
+        return caption;
     }
 }

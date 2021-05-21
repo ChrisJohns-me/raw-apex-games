@@ -38,6 +38,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     private setupUIWindows(): void {
         // if (environment.allowDevTools) this.developmentToolsWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
 
+        this.mainWindow.setIsStarting(true);
         this.mainWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
     }
 

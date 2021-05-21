@@ -10,6 +10,7 @@ export class Legend {
      * @returns "bangalore"
      */
     public static getName(legendId?: string): Optional<string> {
+        if (!legendId) return;
         const findRegEx = /character_(\w+)_name/;
         const regExMatches = legendId?.toLowerCase().match(findRegEx);
 

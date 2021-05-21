@@ -75,13 +75,13 @@ export class SettingsService extends AllfatherService {
      * Provides default value if not found; undefined if default is not found.
      */
     public streamSetting$<T extends SettingValue>(key: SettingKey): Observable<Optional<SettingsDataStore<T>>> {
-        const settingChanged$ = this.localDatabase.onChanges$.pipe(
+        const settingChange$ = this.localDatabase.onChanges$.pipe(
             map((changes) => changes.find((c) => c.table === this.localDatabase.settings.name && c.key === key)),
             map((change) => (change as any)?.obj),
             filter((value) => value != null)
         );
 
-        return merge(this.getSetting$<T>(key), settingChanged$);
+        return merge(this.getSetting$<T>(key), settingChange$);
     }
 
     /**

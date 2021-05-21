@@ -10,17 +10,17 @@
         *ngIf="isLegendStatsEnabled && (legendStats?.numMatches || 0) >= minLegendStatsMatches"
     ></app-legend-stats>
 
-    <app-legend-icons-board
+    <app-legend-select-icons-board
         *ngIf="isLegendStatsEnabled || isComplimentaryLegendsEnabled"
         [legendIconRows]="legendIconRows"
-        (onLegendIdHover)="focusLegend($event)"
-    ></app-legend-icons-board>
+        (onLegendHover)="hoverLegend($event)"
+    ></app-legend-select-icons-board>
 
-    <app-complimentary-legends
+    <app-legend-select-complimentary-legends
         [complimentaryLegendWeights]="complimentaryLegendWeights"
         [legendId]="focusedLegendId"
         *ngIf="isComplimentaryLegendsEnabled && (legendStats?.numMatches || 0) >= minShowComplimentaryLegendsMatches"
-    ></app-complimentary-legends>
+    ></app-legend-select-complimentary-legends>
 
     <div
         class="more-matches-container"

@@ -1,1 +1,36 @@
 @import "window-styles";
+
+.card-title {
+    margin: 0;
+}
+
+.stat-group {
+    color: white;
+    font-family: "Quantico", sans-serif;
+    text-transform: uppercase;
+    text-align: center;
+
+    .stat-digit {
+        font-size: 2rem;
+        line-height: 2.25rem;
+        margin: 0;
+    }
+
+    .stat-title {
+        font-size: 0.65rem;
+        line-height: 0.65rem;
+        margin: 0;
+    }
+}
+
+.complimentary-legends {
+    display: block;
+    transform: scale(0.5) translate(-45%, -25%);
+    height: 100px;
+}
+
+@include media-breakpoint-up(sm) {
+    .complimentary-legends {
+        transform: scale(0.5) translate(-32%, -25%);
+    }
+}

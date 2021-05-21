@@ -37,10 +37,8 @@
             },
             "main": {
                 "file": "index.html",
-                "desktop_only": true,
-                "native_window": true,
+                "desktop_only": false,
                 "resizable": true,
-                "transparent": true,
                 "show_in_taskbar": true,
                 "allow_local_file_access": true,
                 "restrict_to_game_bounds": false,
@@ -49,8 +47,12 @@
                     "height": 750
                 },
                 "min_size": {
-                    "width": 750,
+                    "width": 768,
                     "height": 400
+                },
+                "max_size": {
+                    "width": 1440,
+                    "height": 900
                 }
             },
             "hud-match-timer": {
@@ -64,16 +66,16 @@
                 "popup_blocker": true,
                 "allow_local_file_access": true,
                 "size": {
-                    "width": 200,
-                    "height": 50
+                    "width": 1200,
+                    "height": 750
                 },
                 "min_size": {
-                    "width": 200,
-                    "height": 50
+                    "width": 768,
+                    "height": 400
                 },
                 "max_size": {
-                    "width": 200,
-                    "height": 50
+                    "width": 1440,
+                    "height": 900
                 }
             },
             "hud-ult-timer": {

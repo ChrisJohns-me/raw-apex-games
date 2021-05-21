@@ -62,3 +62,23 @@ $nav-pills-link-active-bg: $link-color;
 
 $form-check-input-checked-bg-color: $info;
 $form-check-input-checked-border-color: $info;
+
+// Type
+
+$headings-font-family: "Quantico";
+
+$h1-font-size: $font-size-base * 2;
+$h2-font-size: $font-size-base * 1.75;
+$h3-font-size: $font-size-base * 1.5;
+$h4-font-size: $font-size-base * 1;
+$h5-font-size: $font-size-base * 0.9;
+$h6-font-size: $font-size-base * 0.75;
+
+$display-font-sizes: (
+    1: 3.5rem,
+    2: 3rem,
+    3: 2.5rem,
+    4: 2rem,
+    5: 1.75rem,
+    6: 1.5rem,
+) !default;

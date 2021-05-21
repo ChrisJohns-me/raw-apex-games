@@ -1,1 +1,94 @@
-<p>dashboard</p>
+<div class="container-lg mt-4">
+    <div class="row">
+        <div class="col pe-4">
+            <app-legend-icons-board
+                [legendIconRows]="legendIdsRows"
+                (onLegendHover)="hoverLegend($event)"
+                (onLegendUnhover)="unhoverLegend()"
+            ></app-legend-icons-board>
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="col text-center">
+                    <h2 *ngIf="getLegendName(focusedLegendId); let legendName">{{ legendName | uppercase }}</h2>
+                    <h2 *ngIf="!focusedLegendId && playerName">{{ playerName }}</h2>
+                </div>
+            </div>
+
+            <!-- #region Your Stats / Legend Stats -->
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title">
+                                YOUR STATS
+                                <span *ngIf="getLegendName(focusedLegendId); let legendName">({{ legendName | uppercase }})</span>
+                            </h6>
+                        </div>
+                        <div class="card-content">
+                            <div class="row my-3" *ngIf="legendStats || myStats; let stats">
+                                <div class="col-6 col-lg-3 stat-group my-2" *ngIf="stats.avgWins >= 0 && stats.avgWins < 1">
+                                    <h1 class="stat-digit">{{ stats.avgWins | percent }}</h1>
+                                    <h5 class="stat-title mt-1">Win Rate</h5>
+                                </div>
+                                <div
+                                    class="col-6 col-lg-3 stat-group my-2"
+                                    *ngIf="stats.avgEliminations >= 0 && stats.avgEliminations <= 100"
+                                >
+                                    <h1 class="stat-digit">{{ stats.avgEliminations | number: "1.0-3" }}</h1>
+                                    <h5 class="stat-title mt-1">Kill Rate</h5>
+                                </div>
+                                <div class="col-6 col-lg-3 stat-group my-2" *ngIf="stats.avgKnockdowns >= 0 && stats.avgKnockdowns <= 100">
+                                    <h1 class="stat-digit">{{ stats.avgKnockdowns | number: "1.0-3" }}</h1>
+                                    <h5 class="stat-title mt-1">Knockdown Rate</h5>
+                                </div>
+                                <div class="col-6 col-lg-3 stat-group my-2" *ngIf="stats.avgDamage >= 0 && stats.avgDamage <= 50000">
+                                    <h1 class="stat-digit">{{ stats.avgDamage | number: "1.0-0" }}</h1>
+                                    <h5 class="stat-title mt-1">Avg Damage</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion -->
+            <!-- #region Suggestions -->
+            <div class="row">
+                <div class="col-6 pe-0">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title">
+                                SUGGESTED SQUAD
+                                <span *ngIf="getLegendName(focusedLegendId); let legendName">({{ legendName | uppercase }})</span>
+                            </h6>
+                        </div>
+                        <div class="card-content">
+                            <app-complimentary-legends
+                                class="complimentary-legends"
+                                *ngIf="
+                                    legendComplimentaryLegendWeights ? legendComplimentaryLegendWeights : myComplimentaryLegendWeights;
+                                    let legendWeights
+                                "
+                                [complimentaryLegendWeights]="legendWeights"
+                            ></app-complimentary-legends>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 ps-0">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title">
+                                SUGGESTED WEAPONS
+                                <span *ngIf="getLegendName(focusedLegendId); let legendName">({{ legendName | uppercase }})</span>
+                            </h6>
+                        </div>
+                        <div class="card-content">
+                            <!-- Weapons -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion -->
+        </div>
+    </div>
+</div>

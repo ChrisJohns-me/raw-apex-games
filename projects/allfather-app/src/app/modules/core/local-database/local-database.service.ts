@@ -42,6 +42,13 @@ export class LocalDatabaseService extends Dexie {
         return defer(() => from(exportDB(this, { prettyJson: true })));
     }
 
+    /**
+     * Checks and repairs any corrupt/invalid data in the database
+     */
+    public performRepair(): void {
+        // new RepairMatchesDataStore(this);
+    }
+
     private handleVersions() {
         version1(this);
         version2(this);

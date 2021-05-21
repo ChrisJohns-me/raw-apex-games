@@ -1,0 +1,16 @@
+<div class="legend-icon-row" *ngFor="let legendRow of legendIconRows">
+    <div
+        class="legend-icon-hitbox tilt"
+        *ngFor="let legendId of legendRow"
+        (mouseover)="onLegendHover.next(legendId)"
+        (mouseleave)="onLegendUnhover.next(legendId)"
+        (click)="onLegendClick.next(legendId)"
+    >
+        <div class="legend-portrait-container untilt">
+            <img class="legend-portrait-image" [src]="'../../../assets/images/legend-portraits/' + getLegendImageName(legendId)" alt="" />
+            <div class="legend-portrait-name-tag">
+                {{ getLegendName(legendId) }}
+            </div>
+        </div>
+    </div>
+</div>

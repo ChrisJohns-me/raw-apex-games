@@ -22,3 +22,24 @@
         }
     }
 }
+
+.caption-text {
+    position: absolute;
+    bottom: 2rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    animation: caption-text-anim 2s normal 1 ease-out;
+    opacity: 0;
+}
+
+@keyframes caption-text-anim {
+    from {
+        opacity: 100%;
+        transform: translateX(0%);
+    }
+    to {
+        opacity: 0%;
+        transform: translateX(1%);
+    }
+}

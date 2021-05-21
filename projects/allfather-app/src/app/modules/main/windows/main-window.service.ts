@@ -11,6 +11,8 @@ import { MainPage } from "../pages/main-page";
 })
 export class MainWindowService {
     public mainPage = new BehaviorSubject<MainPage>(MainPage.Dashboard);
+    /** App is still initializing; ie. booting up the app */
+    public isStarting$ = new BehaviorSubject<boolean>(false);
 
     private readonly uiWindow = new UIWindow(WindowName.Main);
 
@@ -35,5 +37,10 @@ export class MainWindowService {
 
     public goToPage(page: MainPage): void {
         this.mainPage.next(page);
+    }
+
+    /** Set state of if app is still initializing; ie. booting up the app */
+    public setIsStarting(value: boolean): void {
+        this.isStarting$.next(value);
     }
 }

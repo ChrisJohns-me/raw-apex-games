@@ -20,10 +20,9 @@
     </div>
 </div>
 <!-- #endregion -->
-
 <app-ui-container
     @fadeInOut
-    *ngIf="isLoading"
+    *ngIf="isLoading || isAppStarting"
     [injectBootstrapCSS]="true"
     [primaryTitle]="'Allfather - Loading...'"
     [isMaximizable]="false"
@@ -35,9 +34,10 @@
     <div class="loading-splash-bg" id="loading-container">
         <div class="loading-splash-container">
             <img class="badge-logo mt-5" src="../../../../assets/images/allfather_badge_logo_lg.webp" alt="Allfather Logo" />
-            <h1 class="loading-title mt-5 text-muted">Loading...</h1>
+            <!-- <h1 class="loading-title mt-5 text-muted">Loading...</h1> -->
         </div>
     </div>
+    <div class="caption-text">{{ randomCaption }}</div>
 </app-ui-container>
 
 <div *ngIf="!isLoading">

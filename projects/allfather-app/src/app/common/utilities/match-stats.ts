@@ -68,10 +68,11 @@ interface StatBounds {
 }
 
 /**
- * List all complimentary Legends (greatest to least), respective to the given Legend.
+ * List all complimentary Legends (greatest to least).
+ * Respective to the given Legend (optionally).
  */
-export function complimentaryLegends(legendId: string, matchList: MatchDataStore[], statWeights: StatWeights): string[] {
-    const avgCompLegendWeights = complimentaryLegendsWeights(legendId, matchList, statWeights);
+export function listComplimentaryLegends(matchList: MatchDataStore[], statWeights: StatWeights, legendId?: string): string[] {
+    const avgCompLegendWeights = complimentaryLegendsWeights(matchList, statWeights);
     const avgCompLegend = Array.from(avgCompLegendWeights)
         .sort((a, b) => b[1].totalAvgWeight - a[1].totalAvgWeight)
         .map((l) => l[0]);
@@ -79,23 +80,26 @@ export function complimentaryLegends(legendId: string, matchList: MatchDataStore
 }
 
 /**
- * Map all Legends with complimentary avg stat weights, respective to the given Legend.
+ * Map all Legends with complimentary avg stat weights.
+ * Respective to the given Legend (optionally).
  * @returns {Map<LegendId, AvgStatWeights>}
  */
 export function complimentaryLegendsWeights(
-    legendId: string,
     matchList: MatchDataStore[],
-    statWeights: StatWeights
+    statWeights: StatWeights,
+    legendId?: string
 ): Map<string, AvgStatWeights> {
     type LegendId = string;
-    const legendMatchList = matchList.filter((m) => m.teamRoster?.find((tr) => !!tr.isMe && tr.legendId === legendId));
+    const filteredMatchList = legendId
+        ? matchList.filter((m) => m.teamRoster?.find((tr) => !!tr.isMe && tr.legendId === legendId))
+        : matchList;
     const matchStatBounds = getMatchStatBounds(matchList);
     const numLegendMatches = new Map<LegendId, number>(); // number of matches with each Legend
     const sumCompLegendWeights = new Map<LegendId, SumStatWeights>(); // summed weights with each Legend
     const avgCompLegendWeights = new Map<LegendId, AvgStatWeights>(); // avg weights with each Legend
 
-    for (let i = 0; i < legendMatchList.length; i++) {
-        const match: MatchDataStore = legendMatchList[i];
+    for (let i = 0; i < filteredMatchList.length; i++) {
+        const match: MatchDataStore = filteredMatchList[i];
         const matchStats: AvgMatchStats = {
             numMatches: 1,
             avgDamage: match.damage ?? 0,
@@ -127,8 +131,20 @@ export function complimentaryLegendsWeights(
         avgCompLegendWeights.set(legendId, avgLegendStats);
     }
 
-    console.log(`Loaded Complimentary Legends for "${legendId}":`, avgCompLegendWeights);
+    console.log(`Loaded Complimentary Legends for "${legendId ?? "all legends"}":`, avgCompLegendWeights);
     return avgCompLegendWeights;
+}
+
+/**
+ * All stats from a list of matches.
+ * @example avgStats(matchList)
+ * @returns
+ *  { numMatches: 99, avgWins: 0.042, avgPlacement: 7, avgDamage: 420, avgEliminations: 1.02, avgKnockdowns: 2.34 }
+ */
+export function avgStats(matchList: MatchDataStore[]): AvgMatchStats {
+    const sumStats = matchList.reduce(reduceMatchStats, {} as SumMatchStats);
+    const avgStats = calcAvgStats(sumStats);
+    return avgStats;
 }
 
 /**

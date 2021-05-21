@@ -1,1 +1,3 @@
-export enum LocalStorageKeys {}
+export enum LocalStorageKeys {
+    LastKnownPlayerName = "lastKnownPlayerName",
+}
