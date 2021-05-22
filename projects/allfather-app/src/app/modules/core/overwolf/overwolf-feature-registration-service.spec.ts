@@ -1,4 +1,4 @@
-import { createOverwolfSpyObj } from "@allfather-app/app/common/testing-helpers";
+import { createOverwolfSpyObj, supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { TestScheduler } from "rxjs/testing";
 import { OWConfig, OW_CONFIG } from "./overwolf-config";
@@ -9,6 +9,8 @@ const mockOWConfig: OWConfig = {
     REQUIRED_FEATURES_RETRY_DELAY_MULTIPLIER: 1000,
     REQUIRED_FEATURES: ["test1", "test2"],
     HEALTHCHECK_TIME: 0,
+    FEATURE_HEALTHCHECK_RETRY_COUNT: 3,
+    FEATURE_HEALTHCHECK_RETRY_DELAY_MULTIPLIER: 1000,
     FEATURE_HEALTHCHECK_TIME: 0,
     APEXLEGENDSCLASSID: 0,
 };
@@ -30,6 +32,7 @@ describe("OverwolfFeatureRegistrationService", () => {
             expect(actual).toEqual(expected);
         });
         sut = TestBed.inject(OverwolfFeatureRegistrationService);
+        supressConsoleLog();
     });
 
     it("calls Overwolf's 'setRequiredFeatures'", () => {

@@ -49,7 +49,7 @@ export const MatchMapList: MatchMap[] = [
         mapId: "mp_rr_olympus",
         activeDates: [
             {
-                from: new Date("January 05, 2021"),
+                from: new Date("January 04, 2021"),
             },
         ],
         dropshipZStart: 119,

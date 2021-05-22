@@ -1,6 +1,7 @@
 import { MatchActivityService } from "@allfather-app/app/modules/core/match/match-activity.service";
 import { BehaviorSubject, Subject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 
 export class MockMatchActivityService implements MockedClass<MatchActivityService> {
     public killfeedEvent$: MatchActivityService["killfeedEvent$"] = new Subject();
@@ -8,12 +9,17 @@ export class MockMatchActivityService implements MockedClass<MatchActivityServic
         ExtractSubjectType<MatchActivityService["killfeedEventHistory$"]>
     >([]);
 
-    public init(): void {
-        throw new Error("Method not implemented.");
-    }
     public playerLastKnownState(
         ...args: Parameters<MatchActivityService["playerLastKnownState"]>
     ): ReturnType<MatchActivityService["playerLastKnownState"]> {
         return;
+    }
+
+    public isFeatureDepAvailable(featureName: OverwolfFeatureDep): boolean {
+        return true;
+    }
+
+    public areAllFeatureDepsAvailable(): boolean {
+        return true;
     }
 }

@@ -1,34 +1,31 @@
-import { FormatDistanceToNowStrictPipe } from "@allfather-app/app/shared/pipes/temp/format-distance-to-now-strict.pipe";
-import { FormatDistanceToNowStrictPurePipe } from "@allfather-app/app/shared/pipes/temp/format-distance-to-now-strict.pure.pipe";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MatchMapService } from "../../core/match/match-map.service";
-import { MatchPlayerLocationService } from "../../core/match/match-player-location.service";
-import { MatchService } from "../../core/match/match.service";
-import { MockMatchMapService } from "../../core/mocks/services/mock-match-map.service";
-import { MockMatchPlayerLocationService } from "../../core/mocks/services/mock-match-player-location.service";
-import { MockMatchService } from "../../core/mocks/services/mock-match.service";
-import { MockReportingService } from "../../core/mocks/services/mock-reporting.service";
-import { ReportingService } from "../../core/reporting/reporting.service";
-import { MatchExplorerPageComponent } from "./match-explorer-page.component";
+import { FormBuilder } from "@angular/forms";
+import { FileService } from "../../core/file.service";
+import { LocalDatabaseService } from "../../core/local-database/local-database.service";
+import { MockFileService } from "../../core/mocks/services/mock-file.service";
+import { MockLocalDatabaseService } from "../../core/mocks/services/mock-local-database.service";
+import { MockSettingsService } from "../../core/mocks/services/mock-settings.service";
+import { SettingsService } from "../../core/settings.service";
+import { SettingsPageComponent } from "./settings-page.component";
 
-describe("MatchExplorerPageComponent", () => {
-    let component: MatchExplorerPageComponent;
-    let fixture: ComponentFixture<MatchExplorerPageComponent>;
+describe("SettingsPageComponent", () => {
+    let component: SettingsPageComponent;
+    let fixture: ComponentFixture<SettingsPageComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [MatchExplorerPageComponent, FormatDistanceToNowStrictPipe, FormatDistanceToNowStrictPurePipe],
+            declarations: [SettingsPageComponent],
             providers: [
-                { provide: MatchService, useClass: MockMatchService },
-                { provide: MatchMapService, useClass: MockMatchMapService },
-                { provide: MatchPlayerLocationService, useClass: MockMatchPlayerLocationService },
-                { provide: ReportingService, useClass: MockReportingService },
+                { provide: FileService, useClass: MockFileService },
+                { provide: FormBuilder, useClass: FormBuilder },
+                { provide: LocalDatabaseService, useClass: MockLocalDatabaseService },
+                { provide: SettingsService, useClass: MockSettingsService },
             ],
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(MatchExplorerPageComponent);
+        fixture = TestBed.createComponent(SettingsPageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

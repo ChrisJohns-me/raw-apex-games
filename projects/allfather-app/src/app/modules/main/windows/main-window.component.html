@@ -41,7 +41,13 @@
 </app-ui-container>
 
 <div *ngIf="!isLoading">
-    <app-ui-container [injectBootstrapCSS]="true" [isDesktopWindow]="true" [isTitlebarDraggable]="true" [isContentDraggable]="false">
+    <app-ui-container
+        [primaryTitle]="'Allfather'"
+        [injectBootstrapCSS]="true"
+        [isDesktopWindow]="true"
+        [isTitlebarDraggable]="true"
+        [isContentDraggable]="false"
+    >
         <app-navbar (navPage)="goToPage($event)" [currentPage]="activePage"></app-navbar>
         <ng-container [ngSwitch]="activePage">
             <app-charting-page *ngSwitchCase="MainPage.Charting"></app-charting-page>

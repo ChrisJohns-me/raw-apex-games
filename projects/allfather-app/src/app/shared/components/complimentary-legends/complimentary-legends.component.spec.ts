@@ -1,5 +1,5 @@
+import { LegendIconsBoardComponent } from "@allfather-app/app/modules/main/components/dashboard/legend-icons-board.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { LegendIconsBoardComponent } from "./legend-icons-board.component";
 
 describe("LegendIconsBoardComponent", () => {
     let sut: LegendIconsBoardComponent;

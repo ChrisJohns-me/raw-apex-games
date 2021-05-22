@@ -1,6 +1,7 @@
 import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
 import { BehaviorSubject, Subject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 
 export class MockMatchPlayerLegendService implements MockedClass<MatchPlayerLegendService> {
     public myLegend$: MatchPlayerLegendService["myLegend$"] = new BehaviorSubject<
@@ -9,7 +10,11 @@ export class MockMatchPlayerLegendService implements MockedClass<MatchPlayerLege
     public myUltimateCooldown$: MatchPlayerLegendService["myUltimateCooldown$"] = new Subject();
     public myUltimateUsage$: MatchPlayerLegendService["myUltimateUsage$"] = new Subject();
 
-    public init(): void {
-        throw new Error("Method not implemented.");
+    public isFeatureDepAvailable(featureName: OverwolfFeatureDep): boolean {
+        return true;
+    }
+
+    public areAllFeatureDepsAvailable(): boolean {
+        return true;
     }
 }

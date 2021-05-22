@@ -80,11 +80,11 @@ const FOOTER_MENUITEMS: OWSystemTrayMenuItem[] = [
         label: `Restart ${APP_NAME}`,
         id: SystemTrayItemKey.RestartApp,
     },
-    {
-        label: `Check for updates`,
-        id: SystemTrayItemKey.UpdateApp,
-        enabled: false,
-    },
+    // {
+    //     label: `Check for updates`,
+    //     id: SystemTrayItemKey.UpdateApp,
+    //     enabled: false,
+    // },
     {
         label: `Exit ${APP_NAME}`,
         id: SystemTrayItemKey.ExitApp,

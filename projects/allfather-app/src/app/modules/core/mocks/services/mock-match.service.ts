@@ -5,6 +5,7 @@ import { IndexableType } from "dexie";
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
 import { MatchDataStore } from "../../local-database/match-data-store";
+import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 
 export class MockMatchService implements MockedClass<MatchService> {
     public matchId$: MatchService["matchId$"] = new BehaviorSubject<ExtractSubjectType<MatchService["matchId$"]>>("");
@@ -22,19 +23,27 @@ export class MockMatchService implements MockedClass<MatchService> {
         return this.state$.value.state === MatchState.Active;
     }
 
-    public init(): void {
-        throw new Error("Method not implemented.");
-    }
-
     public storeMatchData$(matchData: MatchDataStore): Observable<IndexableType> {
         return of();
     }
 
-    public getMatchDataByMatchId$(matchId: string): Observable<MatchDataStore | undefined> {
+    public getMatchDataByMatchId$(matchId: string): Observable<Optional<MatchDataStore>> {
         return of();
     }
 
-    public getAllMatchData$(): Observable<MatchDataStore[]> {
+    public getMatchDataByLegendId$(legendId: string, limit?: number): Observable<MatchDataStore[]> {
         return of();
+    }
+
+    public getAllMatchData$(limit?: number): Observable<MatchDataStore[]> {
+        return of();
+    }
+
+    public isFeatureDepAvailable(featureName: OverwolfFeatureDep): boolean {
+        return true;
+    }
+
+    public areAllFeatureDepsAvailable(): boolean {
+        return true;
     }
 }

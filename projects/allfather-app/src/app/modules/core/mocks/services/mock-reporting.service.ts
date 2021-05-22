@@ -1,15 +1,12 @@
 import { Subject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 import { ReportingEngineId } from "../../reporting/reporting-engine/reporting-engine";
 import { ReportingService } from "../../reporting/reporting.service";
 
 export class MockReportingService implements MockedClass<ReportingService> {
     public reportingEvent$: ReportingService["reportingEvent$"] = new Subject<ExtractSubjectType<ReportingService["reportingEvent$"]>>();
     public runningReportingEngines: ReportingService["runningReportingEngines"] = [];
-
-    public init(): void {
-        throw new Error("Method not implemented.");
-    }
 
     public restartEngines(engineIds?: ReportingEngineId | ReportingEngineId[]): ReturnType<ReportingService["restartEngines"]> {
         return;
@@ -25,5 +22,13 @@ export class MockReportingService implements MockedClass<ReportingService> {
 
     public stopEngine(engineId: ReportingEngineId): ReturnType<ReportingService["stopEngine"]> {
         return;
+    }
+
+    public isFeatureDepAvailable(featureName: OverwolfFeatureDep): boolean {
+        return true;
+    }
+
+    public areAllFeatureDepsAvailable(): boolean {
+        return true;
     }
 }

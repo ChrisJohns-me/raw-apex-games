@@ -1,13 +1,19 @@
-import { FormatDistanceToNowStrictPipe } from "@allfather-app/app/shared/pipes/temp/format-distance-to-now-strict.pipe";
-import { FormatDistanceToNowStrictPurePipe } from "@allfather-app/app/shared/pipes/temp/format-distance-to-now-strict.pure.pipe";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatchMapService } from "../../core/match/match-map.service";
+import { MatchPlayerLegendService } from "../../core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "../../core/match/match-player-location.service";
+import { MatchPlayerStatsService } from "../../core/match/match-player-stats.service";
+import { MatchRosterService } from "../../core/match/match-roster.service";
 import { MatchService } from "../../core/match/match.service";
 import { MockMatchMapService } from "../../core/mocks/services/mock-match-map.service";
+import { MockMatchPlayerLegendService } from "../../core/mocks/services/mock-match-player-legend.service";
 import { MockMatchPlayerLocationService } from "../../core/mocks/services/mock-match-player-location.service";
+import { MockMatchPlayerStatsService } from "../../core/mocks/services/mock-match-player-stats.service";
+import { MockMatchRosterService } from "../../core/mocks/services/mock-match-roster.service";
 import { MockMatchService } from "../../core/mocks/services/mock-match.service";
+import { MockPlayerService } from "../../core/mocks/services/mock-player.service";
 import { MockReportingService } from "../../core/mocks/services/mock-reporting.service";
+import { PlayerService } from "../../core/player.service";
 import { ReportingService } from "../../core/reporting/reporting.service";
 import { MatchExplorerPageComponent } from "./match-explorer-page.component";
 
@@ -17,11 +23,15 @@ describe("MatchExplorerPageComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [MatchExplorerPageComponent, FormatDistanceToNowStrictPipe, FormatDistanceToNowStrictPurePipe],
+            declarations: [MatchExplorerPageComponent],
             providers: [
-                { provide: MatchService, useClass: MockMatchService },
                 { provide: MatchMapService, useClass: MockMatchMapService },
+                { provide: MatchPlayerLegendService, useClass: MockMatchPlayerLegendService },
                 { provide: MatchPlayerLocationService, useClass: MockMatchPlayerLocationService },
+                { provide: MatchPlayerStatsService, useClass: MockMatchPlayerStatsService },
+                { provide: MatchRosterService, useClass: MockMatchRosterService },
+                { provide: MatchService, useClass: MockMatchService },
+                { provide: PlayerService, useClass: MockPlayerService },
                 { provide: ReportingService, useClass: MockReportingService },
             ],
         }).compileComponents();

@@ -19,8 +19,10 @@ import { MockMatchPlayerService } from "@allfather-app/app/modules/core/mocks/se
 import { MockMatchRosterService } from "@allfather-app/app/modules/core/mocks/services/mock-match-roster.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
 import { MockExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-exposed-data.service";
+import { MockOverwolfFeatureStatusService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-feature-status.service";
 import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-player.service";
 import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
+import { OverwolfFeatureStatusService } from "@allfather-app/app/modules/core/overwolf/overwolf-feature-status.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { GameDataPaneComponent } from "./game-data-pane.component";
@@ -33,17 +35,18 @@ describe("GameDataPaneComponent", () => {
         await TestBed.configureTestingModule({
             declarations: [GameDataPaneComponent],
             providers: [
-                { provide: GameService, useClass: MockGameService },
                 { provide: ExposedOverwolfGameDataService, useClass: MockExposedOverwolfGameDataService },
                 { provide: GameProcessService, useClass: MockGameProcessService },
-                { provide: MatchService, useClass: MockMatchService },
+                { provide: GameService, useClass: MockGameService },
                 { provide: MatchMapService, useClass: MockMatchMapService },
-                { provide: MatchPlayerService, useClass: MockMatchPlayerService },
                 { provide: MatchPlayerInventoryService, useClass: MockMatchPlayerInventoryService },
                 { provide: MatchPlayerLegendService, useClass: MockMatchPlayerLegendService },
                 { provide: MatchPlayerLocationService, useClass: MockMatchPlayerLocationService },
+                { provide: MatchPlayerService, useClass: MockMatchPlayerService },
                 { provide: MatchPlayerStatsService, useClass: MockMatchPlayerStatsService },
                 { provide: MatchRosterService, useClass: MockMatchRosterService },
+                { provide: MatchService, useClass: MockMatchService },
+                { provide: OverwolfFeatureStatusService, useClass: MockOverwolfFeatureStatusService },
                 { provide: PlayerService, useClass: MockPlayerService },
             ],
         }).compileComponents();

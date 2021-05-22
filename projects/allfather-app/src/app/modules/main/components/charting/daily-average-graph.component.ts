@@ -1,6 +1,6 @@
 import { getMatchStatBounds, matchListAvgStatsGroupedBy } from "@allfather-app/app/common/utilities/match-stats";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, ViewChild } from "@angular/core";
+import { ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, ViewChild } from "@angular/core";
 import {
     ArcElement,
     BarController,
@@ -117,7 +117,7 @@ export class DailyAverageGraphComponent implements OnChanges {
     private dataLabels: string[] = [];
     private datasets: ChartDataset[] = [];
 
-    constructor(private readonly cdr: ChangeDetectorRef) {}
+    constructor() {}
 
     public ngOnChanges(): void {
         this.loadChartData();

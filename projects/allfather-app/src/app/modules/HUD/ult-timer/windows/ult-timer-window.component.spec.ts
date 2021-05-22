@@ -1,6 +1,7 @@
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchState } from "@allfather-app/app/common/match/state";
 import { PlayerState } from "@allfather-app/app/common/player-state";
+import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
@@ -19,7 +20,8 @@ import { differenceInMilliseconds } from "date-fns";
 import { of } from "rxjs";
 import { filter, mapTo, take, tap } from "rxjs/operators";
 import { TestScheduler } from "rxjs/testing";
-import * as seedrandom from "seedrandom";
+import seedrandom from "seedrandom";
+// import * as seedrandom from "seedrandom";
 import { UltTimerWindowComponent } from "./ult-timer-window.component";
 
 const percentsArr = [...Array(21).keys()].map((n) => n * 0.05); // 0 to 1 in 0.05 increments
@@ -51,6 +53,7 @@ describe("UltTimerWindowComponent", () => {
         scheduler = new TestScheduler((actual, expected) => {
             expect(actual).toEqual(expected);
         });
+        supressConsoleLog();
         scheduler.maxFrames = 5000;
         fixture = TestBed.createComponent(UltTimerWindowComponent);
         sut = fixture.componentInstance;

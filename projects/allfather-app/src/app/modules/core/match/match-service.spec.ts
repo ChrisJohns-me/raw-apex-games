@@ -2,6 +2,8 @@ import { MockOverwolfGameDataService } from "@allfather-app/app/modules/core/moc
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { TestBed } from "@angular/core/testing";
 import { TestScheduler } from "rxjs/testing";
+import { LocalDatabaseService } from "../local-database/local-database.service";
+import { MockLocalDatabaseService } from "../mocks/services/mock-local-database.service";
 import { MatchService } from "./match.service";
 
 describe("MatchService", () => {
@@ -10,7 +12,10 @@ describe("MatchService", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            providers: [MatchService, { provide: OverwolfGameDataService, useClass: MockOverwolfGameDataService }],
+            providers: [
+                { provide: OverwolfGameDataService, useClass: MockOverwolfGameDataService },
+                { provide: LocalDatabaseService, useClass: MockLocalDatabaseService },
+            ],
         });
     });
 

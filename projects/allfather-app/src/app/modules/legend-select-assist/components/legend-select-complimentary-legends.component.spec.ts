@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { LegendIconsBoardComponent } from "./legend-icons-board.component";
+import { LegendIconsBoardComponent } from "../../main/components/dashboard/legend-icons-board.component";
 
 describe("LegendIconsBoardComponent", () => {
     let sut: LegendIconsBoardComponent;

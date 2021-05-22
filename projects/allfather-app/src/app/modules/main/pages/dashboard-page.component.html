@@ -35,11 +35,11 @@
                                     class="col-6 col-lg-3 stat-group my-2"
                                     *ngIf="stats.avgEliminations >= 0 && stats.avgEliminations <= 100"
                                 >
-                                    <h1 class="stat-digit">{{ stats.avgEliminations | number: "1.0-3" }}</h1>
+                                    <h1 class="stat-digit">{{ stats.avgEliminations | number: "1.0-2" }}</h1>
                                     <h5 class="stat-title mt-1">Kill Rate</h5>
                                 </div>
                                 <div class="col-6 col-lg-3 stat-group my-2" *ngIf="stats.avgKnockdowns >= 0 && stats.avgKnockdowns <= 100">
-                                    <h1 class="stat-digit">{{ stats.avgKnockdowns | number: "1.0-3" }}</h1>
+                                    <h1 class="stat-digit">{{ stats.avgKnockdowns | number: "1.0-2" }}</h1>
                                     <h5 class="stat-title mt-1">Knockdown Rate</h5>
                                 </div>
                                 <div class="col-6 col-lg-3 stat-group my-2" *ngIf="stats.avgDamage >= 0 && stats.avgDamage <= 50000">

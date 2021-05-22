@@ -1,6 +1,7 @@
 import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
 import { BehaviorSubject, Subject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 
 export class MockExposedOverwolfGameDataService implements MockedClass<ExposedOverwolfGameDataService> {
     public rawGameInfo$: ExposedOverwolfGameDataService["rawGameInfo$"] = new BehaviorSubject<
@@ -8,10 +9,6 @@ export class MockExposedOverwolfGameDataService implements MockedClass<ExposedOv
     >(undefined);
     public rawInfoUpdates$: ExposedOverwolfGameDataService["rawInfoUpdates$"] = new Subject();
     public rawNewGameEvent$: ExposedOverwolfGameDataService["rawNewGameEvent$"] = new Subject();
-
-    public init(): void {
-        throw new Error("Method not implemented.");
-    }
 
     public injectOnGameInfo(
         ...args: Parameters<ExposedOverwolfGameDataService["injectOnGameInfo"]>
@@ -29,5 +26,13 @@ export class MockExposedOverwolfGameDataService implements MockedClass<ExposedOv
         ...args: Parameters<ExposedOverwolfGameDataService["injectOnNewGameEvents"]>
     ): ReturnType<ExposedOverwolfGameDataService["injectOnNewGameEvents"]> {
         return;
+    }
+
+    public isFeatureDepAvailable(featureName: OverwolfFeatureDep): boolean {
+        return true;
+    }
+
+    public areAllFeatureDepsAvailable(): boolean {
+        return true;
     }
 }

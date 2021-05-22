@@ -41,14 +41,10 @@ describe("GameInfoDelegate", () => {
                 removeListener: () => {},
             },
         });
+
         const addListenerSpy = spyOn(overwolf.games.onGameInfoUpdated, "addListener");
         const removeListenerSpy = spyOn(overwolf.games.onGameInfoUpdated, "removeListener");
         sut = new GameInfoDelegate(123456);
-
-        let actualCallbackFn: (...args: any[]) => void;
-        addListenerSpy.and.callFake((callback) => {
-            actualCallbackFn = callback;
-        });
 
         // Act
         sut.startEventListeners();
@@ -56,6 +52,5 @@ describe("GameInfoDelegate", () => {
         // Assert
         expect(addListenerSpy).toHaveBeenCalled();
         expect(removeListenerSpy).toHaveBeenCalled();
-        expect(removeListenerSpy).toHaveBeenCalledOnceWith(actualCallbackFn!);
     });
 });

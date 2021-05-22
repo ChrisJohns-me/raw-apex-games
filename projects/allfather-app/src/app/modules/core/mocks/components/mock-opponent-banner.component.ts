@@ -11,7 +11,5 @@ import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MockOpponentBannerComponent implements MockedClass<OpponentBannerComponent> {
-    @Input("bannerData") public banner: Optional<OpponentBanner>;
-    public primaryTitle = "";
-    public secondaryTitle = "";
+    @Input("bannerData") public bannerData: Optional<OpponentBanner>;
 }

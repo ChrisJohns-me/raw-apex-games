@@ -1,6 +1,7 @@
 import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/match-player-stats.service";
 import { BehaviorSubject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 
 export class MockMatchPlayerStatsService implements MockedClass<MatchPlayerStatsService> {
     public myEliminations$: MatchPlayerStatsService["myEliminations$"] = new BehaviorSubject<
@@ -28,7 +29,11 @@ export class MockMatchPlayerStatsService implements MockedClass<MatchPlayerStats
         ExtractSubjectType<MatchPlayerStatsService["myKnockdowns$"]>
     >(0);
 
-    public init(): void {
-        throw new Error("Method not implemented.");
+    public isFeatureDepAvailable(featureName: OverwolfFeatureDep): boolean {
+        return true;
+    }
+
+    public areAllFeatureDepsAvailable(): boolean {
+        return true;
     }
 }
