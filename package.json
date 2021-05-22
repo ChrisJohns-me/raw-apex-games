@@ -5,7 +5,7 @@
         "node": ">= 14.0.0"
     },
     "scripts": {
-        "test": "npm run app:test -- --watch=false && npm run web:test -- --watch=false && npm run shared:test -- --single-run",
+        "test": "npm run app:test -- --no-watch && npm run web:test -- --no-watch && npm run shared:test -- --single-run",
         "shared:test": "karma start ./shared/karma.conf.js",
         "app:test": "ng test --project=allfatherApp",
         "app:e2e": "ng e2e --project=allfatherApp",
