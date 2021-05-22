@@ -15,12 +15,12 @@ jobs:
 
             - name: Test Shared
               run: |
-                  npm shared:test -- --watch=false --browsers=ChromeHeadless --single-run
+                  npm run shared:test -- --watch=false --browsers=ChromeHeadless --single-run
 
             - name: Test App
               run: |
-                  npm app:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+                  npm run app:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
 
             - name: Test Web
               run: |
-                  npm web:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+                  npm run web:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
