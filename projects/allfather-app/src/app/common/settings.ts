@@ -1,4 +1,4 @@
-export type SettingValue = Primitive;
+export type SettingValue = BasicPrimitive;
 export type AllSettings = { [key in SettingKey]: SettingValue };
 
 export enum SettingKey {

@@ -2,6 +2,7 @@
 
 // import { Injectable } from "@angular/core";
 // import * as localForage from "localforage";
+// import localForage from "localforage";
 // import { forkJoin, from, Observable, of } from "rxjs";
 // import { map, mergeMap } from "rxjs/operators";
 

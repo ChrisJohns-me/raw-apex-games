@@ -39,7 +39,8 @@
                                 "input": "projects/allfather-app/src/configs/",
                                 "output": "/"
                             },
-                            "projects/allfather-app/src/assets/images"
+                            "projects/allfather-app/src/assets/images",
+                            "projects/allfather-app/src/assets/fonts"
                         ],
                         "styles": ["projects/allfather-app/src/styles.scss"],
                         "stylePreprocessorOptions": {
@@ -66,7 +67,8 @@
                                     "input": "projects/allfather-app/src/overwolf/prod/",
                                     "output": "/"
                                 },
-                                "projects/allfather-app/src/assets/images"
+                                "projects/allfather-app/src/assets/images",
+                                "projects/allfather-app/src/assets/fonts"
                             ],
                             "optimization": true,
                             "outputHashing": "all",
@@ -90,23 +92,6 @@
                         }
                     }
                 },
-                "serve": {
-                    "builder": "ngx-build-plus:dev-server",
-                    "options": {
-                        "browserTarget": "allfatherApp:build"
-                    },
-                    "configurations": {
-                        "production": {
-                            "browserTarget": "allfatherApp:build:production"
-                        }
-                    }
-                },
-                "extract-i18n": {
-                    "builder": "@angular-devkit/build-angular:extract-i18n",
-                    "options": {
-                        "browserTarget": "allfatherApp:build"
-                    }
-                },
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
@@ -114,7 +99,7 @@
                         "polyfills": "projects/allfather-app/src/polyfills.ts",
                         "tsConfig": "projects/allfather-app/tsconfig.spec.json",
                         "karmaConfig": "projects/allfather-app/karma.conf.js",
-                        "assets": ["projects/allfather-app/src/favicon.ico", "projects/allfather-app/src/assets/images"],
+                        "assets": ["projects/allfather-app/src/assets/images", "projects/allfather-app/src/assets/fonts"],
                         "styles": ["projects/allfather-app/src/styles.scss"],
                         "stylePreprocessorOptions": {
                             "includePaths": ["projects/allfather-app/src/assets/styles/"]
@@ -170,7 +155,7 @@
                         "polyfills": "projects/allfather-web/src/polyfills.ts",
                         "tsConfig": "projects/allfather-web/tsconfig.app.json",
                         "aot": true,
-                        "assets": ["projects/allfather-web/src/favicon.ico", "projects/allfather-web/src/assets/images"],
+                        "assets": ["projects/allfather-web/src/assets/images", "projects/allfather-web/src/assets/fonts"],
                         "styles": ["projects/allfather-web/src/styles.scss"],
                         "scripts": []
                     },
@@ -204,23 +189,6 @@
                         }
                     }
                 },
-                "serve": {
-                    "builder": "@angular-devkit/build-angular:dev-server",
-                    "options": {
-                        "browserTarget": "allfatherWeb:build"
-                    },
-                    "configurations": {
-                        "production": {
-                            "browserTarget": "allfatherWeb:build:production"
-                        }
-                    }
-                },
-                "extract-i18n": {
-                    "builder": "@angular-devkit/build-angular:extract-i18n",
-                    "options": {
-                        "browserTarget": "allfatherWeb:build"
-                    }
-                },
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
@@ -228,7 +196,7 @@
                         "polyfills": "projects/allfather-web/src/polyfills.ts",
                         "tsConfig": "projects/allfather-web/tsconfig.spec.json",
                         "karmaConfig": "projects/allfather-web/karma.conf.js",
-                        "assets": ["projects/allfather-web/src/favicon.ico", "projects/allfather-web/src/assets/images"],
+                        "assets": ["projects/allfather-web/src/assets/images", "projects/allfather-web/src/assets/fonts"],
                         "styles": ["projects/allfather-web/src/styles.scss"],
                         "scripts": []
                     }

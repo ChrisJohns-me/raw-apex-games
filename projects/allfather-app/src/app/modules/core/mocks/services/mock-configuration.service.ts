@@ -1,4 +1,4 @@
-import * as ConfigJSON from "@allfather-app/app/../configs/config.json";
+import ConfigJSON from "@allfather-app/app/../configs/config.json";
 import { ConfigLoadStatus, ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { BehaviorSubject, Observable, of } from "rxjs";
 

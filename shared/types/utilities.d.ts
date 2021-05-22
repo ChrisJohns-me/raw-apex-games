@@ -27,4 +27,4 @@ type MockedClass<T> = Omit<
     | "ngAfterViewInit"
 >;
 
-type Primitive = string | number | bigint | boolean;
+type BasicPrimitive = string | number | bigint | boolean;
