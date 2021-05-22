@@ -11,8 +11,8 @@ jobs:
                   node-version: 14.x
 
             - name: Setup
-              run: npm ci
+              run: npm ci --verbose
 
             - name: Test App
               run: |
-                  npm test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+                  npm test -- --no-watch --no-progress --browsers=ChromeHeadlessCI --verbose
