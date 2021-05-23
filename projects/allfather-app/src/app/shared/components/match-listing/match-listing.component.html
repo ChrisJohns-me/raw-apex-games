@@ -57,18 +57,18 @@
                     <div *ngIf="!match.placement && !match.maxPlacement">N/A</div>
 
                     <h4 class="data-digit-primary mb-0" *ngIf="match.placement || match.maxPlacement">
-                        {{ match.placement ? match.placement : "-" }}
+                        {{ match.placement ?? "-" }}
                         <sub class="max-placement-sign text-muted" *ngIf="match.maxPlacement">/</sub>
                         <sub class="max-placement-digit text-muted" *ngIf="match.maxPlacement">{{ match.maxPlacement }}</sub>
                     </h4>
                     <small class="text-muted">{{ match.gameModeId ? (getGameModeTypeName(match.gameModeId) | titlecase) : "N/A" }}</small>
                 </td>
                 <td class="align-middle text-center">
-                    <h5 class="data-digit mb-1">{{ match.eliminations || 0 }}</h5>
+                    <h5 class="data-digit mb-1">{{ match.eliminations ?? 0 }}</h5>
                     <small class="text-muted">kills</small>
                 </td>
                 <td class="align-middle text-center">
-                    <h5 class="data-digit mb-1">{{ match.damage || 0 }}</h5>
+                    <h5 class="data-digit mb-1">{{ match.damage ?? 0 }}</h5>
                     <small class="text-muted">damage</small>
                 </td>
             </tr>

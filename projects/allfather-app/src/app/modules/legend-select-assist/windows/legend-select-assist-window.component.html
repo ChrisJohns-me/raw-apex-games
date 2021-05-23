@@ -7,7 +7,7 @@
 >
     <app-legend-stats
         [legendStats]="legendStats"
-        *ngIf="isLegendStatsEnabled && (legendStats?.numMatches || 0) >= minLegendStatsMatches"
+        *ngIf="isLegendStatsEnabled && (legendStats?.numMatches ?? 0) >= minLegendStatsMatches"
     ></app-legend-stats>
 
     <app-legend-select-icons-board
@@ -19,12 +19,12 @@
     <app-legend-select-complimentary-legends
         [complimentaryLegendWeights]="complimentaryLegendWeights"
         [legendId]="focusedLegendId"
-        *ngIf="isComplimentaryLegendsEnabled && (legendStats?.numMatches || 0) >= minShowComplimentaryLegendsMatches"
+        *ngIf="isComplimentaryLegendsEnabled && (legendStats?.numMatches ?? 0) >= minShowComplimentaryLegendsMatches"
     ></app-legend-select-complimentary-legends>
 
     <div
         class="more-matches-container"
-        *ngIf="isComplimentaryLegendsEnabled && focusedLegendId && (legendStats?.numMatches || 0) < minShowComplimentaryLegendsMatches"
+        *ngIf="isComplimentaryLegendsEnabled && focusedLegendId && (legendStats?.numMatches ?? 0) < minShowComplimentaryLegendsMatches"
     >
         <h2 class="more-matches-title">
             <small>to show suggestions</small>
@@ -35,9 +35,9 @@
         <div class="num-matches-bargraph-container">
             <div
                 class="num-matches-bar"
-                [ngStyle]="{ 'width.%': ((legendStats?.numMatches || 0) / minShowComplimentaryLegendsMatches) * 100 }"
+                [ngStyle]="{ 'width.%': ((legendStats?.numMatches ?? 0) / minShowComplimentaryLegendsMatches) * 100 }"
             ></div>
-            <h4 class="num-matches-digit">{{ legendStats?.numMatches || 0 }} / {{ minShowComplimentaryLegendsMatches }}</h4>
+            <h4 class="num-matches-digit">{{ legendStats?.numMatches ?? 0 }} / {{ minShowComplimentaryLegendsMatches }}</h4>
         </div>
     </div>
 </app-ui-container>

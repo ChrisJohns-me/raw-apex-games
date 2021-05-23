@@ -37,7 +37,15 @@ export class DashboardPageComponent implements OnInit {
         return this.focusedLegendId ? Legend.getName(this.focusedLegendId) : undefined;
     }
     public playerName?: string;
-    public getLegendName = (legendId?: string): Optional<string> => Legend.getName(legendId);
+    public emptyStats: AvgMatchStats = {
+        avgDamage: 0,
+        avgDuration: 0,
+        avgEliminations: 0,
+        avgKnockdowns: 0,
+        avgPlacement: 0,
+        avgWins: 0,
+        numMatches: 0,
+    };
 
     private legendStatsSubscription?: Subscription;
     private complimentaryLegendsSubscription?: Subscription;
@@ -71,6 +79,10 @@ export class DashboardPageComponent implements OnInit {
                 this.refreshMyStats();
                 this.refreshMyComplimentaryLegends();
             });
+    }
+
+    public getLegendName(legendId?: string): Optional<string> {
+        return Legend.getName(legendId);
     }
 
     public hoverLegend(legendId: string): void {

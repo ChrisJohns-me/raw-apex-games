@@ -1,9 +1,8 @@
-<div class="legend-icon-row" *ngFor="let legendRow of legendIconRows">
+<div class="legend-icon-row" *ngFor="let legendRow of legendIconRows" (mouseleave)="onLegendUnhover.next()">
     <div
         class="legend-icon-hitbox tilt"
         *ngFor="let legendId of legendRow"
         (mouseover)="onLegendHover.next(legendId)"
-        (mouseleave)="onLegendUnhover.next(legendId)"
         (click)="onLegendClick.next(legendId)"
     >
         <div class="legend-portrait-container untilt">

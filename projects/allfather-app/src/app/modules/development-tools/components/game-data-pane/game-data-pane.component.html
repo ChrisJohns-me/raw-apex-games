@@ -151,8 +151,8 @@
                     <div class="col-12">Inventory</div>
                     <div class="col-12 text-end">
                         <div *ngFor="let slotItem of matchPlayerInventory.myInventorySlots$ | async | keyvalue">
-                            {{ slotItem.value?.item?.friendlyName ? slotItem.value?.item?.friendlyName : slotItem.value?.item?.itemId }}
-                            {{ slotItem.value?.amount || 0 > 0 ? "[" + slotItem.value?.amount + "]" : "" }}
+                            {{ slotItem.value?.item?.friendlyName ?? slotItem.value?.item?.itemId }}
+                            {{ slotItem.value?.amount ?? 0 > 0 ? "[" + slotItem.value?.amount + "]" : "" }}
                         </div>
                     </div>
                 </div>

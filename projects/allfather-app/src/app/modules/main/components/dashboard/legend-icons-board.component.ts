@@ -12,7 +12,7 @@ type LegendIdsRow = string[];
 export class LegendIconsBoardComponent {
     @Input() public legendIconRows: LegendIdsRow[] = [];
     @Output() public onLegendHover = new EventEmitter<string>();
-    @Output() public onLegendUnhover = new EventEmitter<string>();
+    @Output() public onLegendUnhover = new EventEmitter<void>();
     @Output() public onLegendClick = new EventEmitter<string>();
 
     public getLegendImageName = (legendId?: string): string => Legend.getSquarePortraitFilename(legendId);

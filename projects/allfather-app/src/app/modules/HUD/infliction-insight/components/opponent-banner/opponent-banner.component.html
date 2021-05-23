@@ -11,7 +11,7 @@
         <div class="damage">
             <div class="damage-header">Your Damage</div>
             <div class="damage-sum">
-                {{ (bannerData.latestInflictionAccum?.shieldDamageSum || 0) + (bannerData.latestInflictionAccum?.healthDamageSum || 0) }}
+                {{ (bannerData.latestInflictionAccum?.shieldDamageSum ?? 0) + (bannerData.latestInflictionAccum?.healthDamageSum ?? 0) }}
             </div>
             <div class="damage-footer">Total</div>
         </div>
