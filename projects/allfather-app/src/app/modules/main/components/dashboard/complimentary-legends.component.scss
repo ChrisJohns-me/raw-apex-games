@@ -2,7 +2,6 @@
 
 .legend-portraits-container {
     display: flex;
-    width: 500px;
     margin-left: auto;
     margin-right: auto;
     align-items: center;
@@ -17,6 +16,8 @@
     font-size: 1.75rem;
     color: white;
     font-family: "Quantico", sans-serif;
+    font-size: calc(0.25rem + 1vw);
+    line-height: calc(0.25rem + 1vw);
 }
 
 .selected-border {
@@ -35,6 +36,5 @@
 }
 
 .legend-portrait {
-    width: 100px;
-    height: 100px;
+    max-height: 65px;
 }

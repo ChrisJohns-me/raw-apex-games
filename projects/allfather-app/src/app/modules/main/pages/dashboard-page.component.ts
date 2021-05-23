@@ -63,31 +63,18 @@ export class DashboardPageComponent implements OnInit {
         private readonly playerStats: PlayerStatsService
     ) {}
 
+    public getLegendName = (legendId?: string): Optional<string> => Legend.getName(legendId);
+
     public ngOnInit(): void {
         this.setupPlayerName();
         this.refreshMyStats();
         this.refreshMyComplimentaryLegends();
-
-        this.localDatabase.onChanges$
-            .pipe(
-                takeUntil(this.isDestroyed$),
-                map((changes) => changes.find((c) => c.table === this.localDatabase.matches.name)),
-                map((change) => (change as any)?.obj),
-                filter((value) => value != null)
-            )
-            .subscribe(() => {
-                this.refreshMyStats();
-                this.refreshMyComplimentaryLegends();
-            });
-    }
-
-    public getLegendName(legendId?: string): Optional<string> {
-        return Legend.getName(legendId);
+        this.watchLocalDatabase();
     }
 
     public hoverLegend(legendId: string): void {
-        this.showComplimentaryLegends(legendId);
         this.showLegendStats(legendId);
+        this.showComplimentaryLegends(legendId);
         this.focusedLegendId = legendId;
         this.cdr.detectChanges();
     }
@@ -132,9 +119,9 @@ export class DashboardPageComponent implements OnInit {
             });
     }
 
-    public refreshMyComplimentaryLegends(): void {
+    private refreshMyComplimentaryLegends(): void {
         this.playerStats
-            .getPlayerComplimentaryLegendWeights$()
+            .getPlayerComplimentaryLegendWeights$(undefined, true)
             .pipe(takeUntil(this.isDestroyed$))
             .subscribe((legendWeights) => {
                 const limitedLegendWeights = legendWeights.slice(0, NUM_MY_SUGGESTED_LEGENDS);
@@ -156,5 +143,20 @@ export class DashboardPageComponent implements OnInit {
             this.playerName = myName;
             this.cdr.detectChanges();
         });
+    }
+
+    private watchLocalDatabase(): void {
+        this.localDatabase.onChanges$
+            .pipe(
+                takeUntil(this.isDestroyed$),
+                map((changes) => changes.find((c) => c.table === this.localDatabase.matches.name)),
+                map((change) => (change as any)?.obj),
+                filter((value) => value != null)
+            )
+            .subscribe(() => {
+                this.refreshMyStats();
+                this.refreshMyComplimentaryLegends();
+                this.playerStats.clearLegendCache();
+            });
     }
 }

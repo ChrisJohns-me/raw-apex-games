@@ -2,7 +2,6 @@ import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { DateFnsModule } from "ngx-date-fns";
-import { ComplimentaryLegendsComponent } from "./components/complimentary-legends/complimentary-legends.component";
 import { IconComponent } from "./components/icon/icon.component";
 import { MatchListingComponent } from "./components/match-listing/match-listing.component";
 import { BootstrapCSSInjectorComponent } from "./components/ui-container/bootstrap-css-injector/bootstrap-css-injector.component";
@@ -15,13 +14,7 @@ import { CustomFormatDistancePipe } from "./pipes/custom-format-distance.pipe";
 
 const DIRECTIVES = [HighlightOnChangeDirective, HrefDirective, ResizeDirective];
 const PIPES = [CustomFormatDistancePipe, CustomFormatDistanceToNowPipe];
-const COMPONENTS = [
-    BootstrapCSSInjectorComponent,
-    ComplimentaryLegendsComponent,
-    MatchListingComponent,
-    IconComponent,
-    UIContainerComponent,
-];
+const COMPONENTS = [BootstrapCSSInjectorComponent, MatchListingComponent, IconComponent, UIContainerComponent];
 const THIRDPARTYMODULES = [DateFnsModule];
 
 /**

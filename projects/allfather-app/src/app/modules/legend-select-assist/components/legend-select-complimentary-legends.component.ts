@@ -14,4 +14,6 @@ export class LegendSelectComplimentaryLegendsComponent {
     public get legendName(): Optional<string> {
         return this.legendId ? Legend.getName(this.legendId) : undefined;
     }
+
+    public getLegendImageName = (legendId: string): string => Legend.getSquarePortraitFilename(legendId);
 }

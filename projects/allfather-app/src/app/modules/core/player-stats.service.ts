@@ -3,6 +3,7 @@ import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-se
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 import { filter, map, tap } from "rxjs/operators";
+import { Stopwatch } from "shared/utilities";
 import { ConfigurationService } from "./configuration.service";
 import { MatchDataStore } from "./local-database/match-data-store";
 import { MatchService } from "./match/match.service";
@@ -20,18 +21,32 @@ export class PlayerStatsService {
     private cachedLegendComplimentaryLegendWeights = new Map<LegendId, { legendId: string; weightScore: number }[]>();
     private cachedPlayerStats?: AvgMatchStats;
     private cachedLegendStats = new Map<LegendId, AvgMatchStats>();
-
+    private watchdogTime = 500;
     constructor(private readonly config: ConfigurationService, private readonly match: MatchService) {}
+
+    public clearPlayerCache(): void {
+        this.cachedPlayerComplimentaryLegendWeights = undefined;
+        this.cachedPlayerStats = undefined;
+    }
+
+    public clearLegendCache(): void {
+        this.cachedLegendComplimentaryLegendWeights = new Map();
+        this.cachedLegendStats = new Map();
+    }
 
     public getPlayerStats$(limit?: number, breakCache = false): Observable<AvgMatchStats> {
         const cachedResult = this.cachedPlayerStats;
         if (!breakCache && cachedResult) return of(cachedResult);
 
+        const stopwatch = new Stopwatch();
+        stopwatch.start();
         return this.match.getAllMatchData$(limit).pipe(
             filter((matchList) => !!matchList && Array.isArray(matchList)),
             map((matchList) => avgStats(matchList as MatchDataStore[])),
             tap((avgStats) => {
                 this.cachedPlayerStats = avgStats;
+                stopwatch.stop();
+                stopwatch.watchdog(this.watchdogTime, (time) => `"Player Stats Calculation (limit ${limit})" took ${time}ms`);
             })
         );
     }
@@ -40,11 +55,15 @@ export class PlayerStatsService {
         const cachedResult = this.cachedLegendStats.get(legendId);
         if (!breakCache && cachedResult) return of(cachedResult);
 
+        const stopwatch = new Stopwatch();
+        stopwatch.start();
         return this.match.getMatchDataByLegendId$(legendId, limit).pipe(
             filter((matchList) => !!matchList && Array.isArray(matchList)),
             map((matchList) => legendAvgStats(matchList as MatchDataStore[], legendId)),
             tap((avgStats) => {
                 this.cachedLegendStats.set(legendId, avgStats);
+                stopwatch.stop();
+                stopwatch.watchdog(this.watchdogTime, (time) => `"Legend Stats '${legendId}' (limit ${limit})" took ${time}ms`);
             })
         );
     }
@@ -60,6 +79,8 @@ export class PlayerStatsService {
         const cachedResult = this.cachedPlayerComplimentaryLegendWeights;
         if (!breakCache && cachedResult && cachedResult.length) return of(cachedResult);
 
+        const stopwatch = new Stopwatch();
+        stopwatch.start();
         return this.match.getAllMatchData$(limit).pipe(
             filter((matchList) => !!matchList && Array.isArray(matchList)),
             map((matchList) => {
@@ -71,6 +92,8 @@ export class PlayerStatsService {
             }),
             tap((legendWeights) => {
                 this.cachedPlayerComplimentaryLegendWeights = legendWeights;
+                stopwatch.stop();
+                stopwatch.watchdog(this.watchdogTime, (time) => `"Player Complimentary Legends (limit ${limit})" took ${time}ms`);
             })
         );
     }
@@ -87,6 +110,8 @@ export class PlayerStatsService {
         const cachedResult = this.cachedLegendComplimentaryLegendWeights.get(legendId);
         if (!breakCache && cachedResult) return of(cachedResult);
 
+        const stopwatch = new Stopwatch();
+        stopwatch.start();
         return this.match.getMatchDataByLegendId$(legendId, limit).pipe(
             filter((matchList) => !!matchList && Array.isArray(matchList)),
             map((matchList) => {
@@ -98,6 +123,11 @@ export class PlayerStatsService {
             }),
             tap((legendWeights) => {
                 this.cachedLegendComplimentaryLegendWeights.set(legendId, legendWeights);
+                stopwatch.stop();
+                stopwatch.watchdog(
+                    this.watchdogTime,
+                    (time) => `"Legend '${legendId}' Complimentary Legends (limit ${limit})" took ${time}ms`
+                );
             })
         );
     }

@@ -2,6 +2,10 @@ import { of } from "rxjs";
 import { PlayerStatsService } from "../../player-stats.service";
 
 export class MockPlayerStatsService implements MockedClass<PlayerStatsService> {
+    public clearPlayerCache(): void {}
+
+    public clearLegendCache(): void {}
+
     public getPlayerStats$(limit?: number, breakCache = false): ReturnType<PlayerStatsService["getPlayerStats$"]> {
         return of();
     }

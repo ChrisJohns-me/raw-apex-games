@@ -50,6 +50,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     ) {}
 
     public ngOnInit(): void {
+        this.playerStats.clearLegendCache();
         this.setupSettingsListener();
     }
 

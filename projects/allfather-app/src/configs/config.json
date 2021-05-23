@@ -9,8 +9,7 @@
     },
     "common": {
         "playerDeathHUDTimeout": 30000,
-        "matchEndHUDTimeout": 15000,
-        "locationDataThrottleTime": 5000
+        "matchEndHUDTimeout": 15000
     },
     "facts": {
         "respawnBannerExpireTime": 60000,

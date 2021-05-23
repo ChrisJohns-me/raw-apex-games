@@ -15,7 +15,7 @@ import { OverwolfGameDataService, OWInfoUpdates2Event } from "./overwolf";
 import { OverwolfFeatureDep, OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status.service";
 
 /** Amount of time to set GamePhase to "Pregame". */
-const PREGAME_DELAY = 5000;
+const PREGAME_DELAY = 4500;
 
 /**
  * @classdesc Provides general information about the game and it's meta state
