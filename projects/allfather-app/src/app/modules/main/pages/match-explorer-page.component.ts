@@ -17,7 +17,7 @@ import {
     ViewChild,
 } from "@angular/core";
 import { FormControl } from "@angular/forms";
-import * as d3 from "d3"; // TODO: maybe: import d3 from "d3";
+import * as d3 from "d3";
 import { intervalToDuration } from "date-fns";
 import { combineLatest, merge, Observable, Subject } from "rxjs";
 import { distinctUntilChanged, filter, finalize, switchMap, takeUntil, throttleTime } from "rxjs/operators";

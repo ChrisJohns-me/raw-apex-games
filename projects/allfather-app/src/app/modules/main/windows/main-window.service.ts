@@ -1,7 +1,8 @@
 import { UIWindow, WindowName } from "@allfather-app/app/modules/core/_refactor/ui-window";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
+import { Injectable, OnDestroy } from "@angular/core";
+import { BehaviorSubject, from, Observable, Subject } from "rxjs";
+import { concatAll, takeUntil, tap } from "rxjs/operators";
 import { MainPage } from "../pages/main-page";
 
 @Injectable({
@@ -9,12 +10,19 @@ import { MainPage } from "../pages/main-page";
     deps: [],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MainWindowService", MainWindowService, deps),
 })
-export class MainWindowService {
+export class MainWindowService implements OnDestroy {
     public mainPage = new BehaviorSubject<MainPage>(MainPage.Dashboard);
     /** App is still initializing; ie. booting up the app */
     public isStarting$ = new BehaviorSubject<boolean>(false);
+    public isRequestingExit$ = new BehaviorSubject<boolean>(false);
 
     private readonly uiWindow = new UIWindow(WindowName.Main);
+    private isDestroyed$ = new Subject<void>();
+
+    public ngOnDestroy(): void {
+        this.isDestroyed$.next();
+        this.isDestroyed$.complete();
+    }
 
     public open(page?: MainPage): Observable<void> {
         if (page) this.goToPage(page);
@@ -42,5 +50,14 @@ export class MainWindowService {
     /** Set state of if app is still initializing; ie. booting up the app */
     public setIsStarting(value: boolean): void {
         this.isStarting$.next(value);
+    }
+
+    public requestExit(): void {
+        const grabFocus$ = this.focus().pipe(tap(() => this.isRequestingExit$.next(true)));
+        from([this.restore(), grabFocus$]).pipe(takeUntil(this.isDestroyed$), concatAll()).subscribe();
+    }
+
+    public cancelExit(): void {
+        this.isRequestingExit$.next(false);
     }
 }

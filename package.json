@@ -16,6 +16,9 @@
         "web:build-dev": "ng build --watch --project=allfatherWeb",
         "web:build-prod": "ng build --project=allfatherWeb --configuration production"
     },
+    "browserslist": [
+        "chrome >= 83"
+    ],
     "private": true,
     "dependencies": {
         "@angular/animations": "^12.0.1",

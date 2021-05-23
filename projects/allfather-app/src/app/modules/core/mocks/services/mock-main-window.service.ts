@@ -3,6 +3,7 @@ import { MainWindowService } from "@allfather-app/app/modules/main/windows/main-
 import { BehaviorSubject, of } from "rxjs";
 
 export class MockMainWindowService implements MockedClass<MainWindowService> {
+    public isRequestingExit$: MainWindowService["isRequestingExit$"] = new BehaviorSubject<boolean>(false);
     public mainPage: MainWindowService["mainPage"] = new BehaviorSubject<MainPage>(MainPage.Dashboard);
     public isStarting$: MainWindowService["isStarting$"] = new BehaviorSubject<boolean>(false);
     public open(page?: MainPage): ReturnType<MainWindowService["open"]> {
@@ -19,4 +20,6 @@ export class MockMainWindowService implements MockedClass<MainWindowService> {
     }
     public goToPage(page: MainPage): ReturnType<MainWindowService["goToPage"]> {}
     public setIsStarting(value: boolean): ReturnType<MainWindowService["setIsStarting"]> {}
+    public requestExit(): void {}
+    public cancelExit(): void {}
 }

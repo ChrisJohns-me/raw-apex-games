@@ -17,7 +17,6 @@ import { UltTimerWindowService } from "../HUD/ult-timer/windows/ult-timer-window
 import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
 import { MainPage } from "../main/pages/main-page";
 import { MainWindowService } from "../main/windows/main-window.service";
-import { BackgroundService } from "./background.service";
 
 export enum SystemTrayItemKey {
     Main = "main",
@@ -94,7 +93,6 @@ const FOOTER_MENUITEMS: OWSystemTrayMenuItem[] = [
 @Injectable({
     providedIn: "root",
     deps: [
-        BackgroundService,
         DevelopmentToolsWindowService,
         InflictionInsightWindowService,
         LegendSelectAssistWindowService,
@@ -110,7 +108,6 @@ export class SystemTrayService extends AllfatherService {
     private menuItems: OWSystemTrayMenuItem[] = [];
 
     constructor(
-        private readonly backgroundService: BackgroundService,
         private readonly developmentToolsWindow: DevelopmentToolsWindowService,
         private readonly inflictionInsightWindow: InflictionInsightWindowService,
         private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
@@ -193,7 +190,7 @@ export class SystemTrayService extends AllfatherService {
                 console.error("DOES NOT EXIST");
                 break;
             case SystemTrayItemKey.ExitApp:
-                this.backgroundService.requestExit();
+                this.mainWindow.requestExit();
                 break;
             default:
                 exhaustiveEnumSwitch(menuItem);

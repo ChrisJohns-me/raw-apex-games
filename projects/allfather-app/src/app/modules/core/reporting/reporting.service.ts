@@ -1,6 +1,6 @@
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy } from "@angular/core";
 import { combineLatest, of, Subject } from "rxjs";
 import { catchError, filter, switchMap, takeUntil } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
@@ -22,7 +22,7 @@ interface ReportingEvent {
     deps: [MatchService, ReportableDataManagerService],
     useFactory: (...deps: any[]) => SingletonServiceProviderFactory("ReportingService", ReportingService, deps),
 })
-export class ReportingService extends AllfatherService {
+export class ReportingService extends AllfatherService implements OnDestroy {
     public reportingEvent$ = new Subject<ReportingEvent>();
     public runningReportingEngines: ReportingEngine[] = [];
 
@@ -33,6 +33,11 @@ export class ReportingService extends AllfatherService {
 
         this.setupOnMatchStart();
         this.setupOnMatchEnd();
+    }
+
+    public ngOnDestroy(): void {
+        this.stopEngines();
+        super.ngOnDestroy();
     }
 
     public restartEngines(engineIds?: ReportingEngineId | ReportingEngineId[]): void {

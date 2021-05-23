@@ -108,9 +108,9 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private setupRequestingExit(): void {
         const getConfirmModal = () => new Modal(this.confirmExitModal?.nativeElement);
-        this.confirmExitModal?.nativeElement.addEventListener("hidden.bs.modal", () => this.backgroundService.cancelExit());
+        this.confirmExitModal?.nativeElement.addEventListener("hidden.bs.modal", () => this.mainWindow.cancelExit());
         let confirmModal = getConfirmModal();
-        this.backgroundService.isRequestingExit$
+        this.mainWindow.isRequestingExit$
             .pipe(
                 takeUntil(this.isDestroyed$),
                 filter((isRequestingExit) => !!isRequestingExit)

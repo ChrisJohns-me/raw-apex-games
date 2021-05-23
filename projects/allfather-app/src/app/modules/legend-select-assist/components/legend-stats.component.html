@@ -4,11 +4,11 @@
         <h5 class="stat-title">Win Rate</h5>
     </div>
     <div class="stat-group" *ngIf="legendStats.avgEliminations >= 0 && legendStats.avgEliminations <= 100">
-        <h1 class="stat-digit">{{ legendStats.avgEliminations | number: "1.0-2" }}</h1>
+        <h1 class="stat-digit">{{ legendStats.avgEliminations | number: "1.2-2" }}</h1>
         <h5 class="stat-title">Kill Rate</h5>
     </div>
     <div class="stat-group" *ngIf="legendStats.avgKnockdowns >= 0 && legendStats.avgKnockdowns <= 100">
-        <h1 class="stat-digit">{{ legendStats.avgKnockdowns | number: "1.0-2" }}</h1>
+        <h1 class="stat-digit">{{ legendStats.avgKnockdowns | number: "1.2-2" }}</h1>
         <h5 class="stat-title">Knockdown Rate</h5>
     </div>
     <div class="stat-group" *ngIf="legendStats.avgDamage >= 0 && legendStats.avgDamage <= 50000">

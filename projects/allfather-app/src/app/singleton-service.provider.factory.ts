@@ -15,7 +15,7 @@ declare interface Window {
  */
 export const SingletonServiceProviderFactory = (referenceKey: string, service: Provider, deps: any[] = []): Singleton => {
     const logPrefix = `[SingletonServiceProvider] "${referenceKey}"`;
-    const owWindow = (UIWindow.getMainWindow() as unknown) as Window;
+    const owWindow = UIWindow.getMainWindow() as unknown as Window;
     validateNumDependencies(service, deps, referenceKey);
 
     if (!owWindow[REFERENCES_KEY]) owWindow[REFERENCES_KEY] = {};
@@ -28,7 +28,7 @@ export const SingletonServiceProviderFactory = (referenceKey: string, service: P
             console.error(`${logPrefix} Not an Angular service`);
         }
     } else {
-        // console.debug(`${logPrefix} Using existing singleton service`);
+        console.debug(`${logPrefix} Using existing singleton service`);
     }
 
     const singletonService = owWindow[REFERENCES_KEY][referenceKey];
@@ -63,7 +63,7 @@ declare interface Window {
  * @param reference Class reference.
  */
 function addInstanceListing(name: string): void {
-    const owWindow = (UIWindow.getMainWindow() as unknown) as Window;
+    const owWindow = UIWindow.getMainWindow() as unknown as Window;
     if (!owWindow[listingReferenceKey] || !Array.isArray(owWindow[listingReferenceKey])) owWindow[listingReferenceKey] = [];
-    owWindow[listingReferenceKey].push({ referenceName: name, createdDate: new Date() });
+    owWindow[listingReferenceKey].push({ createdDate: new Date(), referenceName: name });
 }

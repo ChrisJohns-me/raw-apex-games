@@ -42,6 +42,10 @@
                             "projects/allfather-app/src/assets/images",
                             "projects/allfather-app/src/assets/fonts"
                         ],
+                        "sourceMap": true,
+                        "namedChunks": true,
+                        "vendorChunk": true,
+                        "buildOptimizer": false,
                         "styles": ["projects/allfather-app/src/styles.scss"],
                         "stylePreprocessorOptions": {
                             "includePaths": ["projects/allfather-app/src/assets/styles/"]
@@ -80,7 +84,7 @@
                             "budgets": [
                                 {
                                     "type": "initial",
-                                    "maximumWarning": "1mb",
+                                    "maximumWarning": "2.5mb",
                                     "maximumError": "5mb"
                                 },
                                 {

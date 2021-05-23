@@ -1,3 +1,4 @@
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import Dexie from "dexie";
 import { exportDB } from "dexie-export-import";
@@ -18,9 +19,12 @@ const DATABASE_NAME = "AllfatherApp";
 /**
  * @class LocalDatabaseService
  * @classdesc Container for the local database; used for long-term data storage.
- * @summary Cannot load this as a Singleton service, due to Dexie collisions.
  */
-@Injectable({ providedIn: "root" })
+@Injectable({
+    providedIn: "root",
+    deps: [],
+    useFactory: (...deps: any[]) => SingletonServiceProviderFactory("LocalDatabaseService", LocalDatabaseService, deps),
+})
 export class LocalDatabaseService extends Dexie {
     public onChanges$ = new Subject<IDatabaseChange[]>();
 

@@ -42,6 +42,14 @@ export const MatchMapList: MatchMap[] = [
             },
         ],
         dropshipZStart: 146,
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -450,
+                xEnd: 450,
+                yStart: -450,
+                yEnd: 450,
+            },
+        },
     }),
     new MatchMap({
         mapName: MatchMapFriendlyName.Olympus,

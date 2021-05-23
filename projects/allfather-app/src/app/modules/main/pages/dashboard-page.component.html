@@ -21,8 +21,9 @@
                     <div class="card">
                         <div class="card-header">
                             <h6 class="card-title">
-                                YOUR STATS
-                                <span *ngIf="getLegendName(focusedLegendId); let legendName">({{ legendName | uppercase }})</span>
+                                YOUR <span *ngIf="getLegendName(focusedLegendId); let legendName">{{ legendName | uppercase }}</span> STATS
+                                ({{ (focusedLegendId ? legendStats?.numMatches : myStats?.numMatches) ?? 0 }}
+                                {{ (focusedLegendId ? legendStats?.numMatches : myStats?.numMatches) == 1 ? "match" : "matches" }})
                             </h6>
                         </div>
                         <div class="card-content">
@@ -35,11 +36,11 @@
                                     class="col-6 col-lg-3 stat-group my-2"
                                     *ngIf="stats.avgEliminations >= 0 && stats.avgEliminations <= 100"
                                 >
-                                    <h1 class="stat-digit">{{ stats.avgEliminations | number: "1.0-2" }}</h1>
+                                    <h1 class="stat-digit">{{ stats.avgEliminations | number: "1.2-2" }}</h1>
                                     <h5 class="stat-title mt-1">Kill Rate</h5>
                                 </div>
                                 <div class="col-6 col-lg-3 stat-group my-2" *ngIf="stats.avgKnockdowns >= 0 && stats.avgKnockdowns <= 100">
-                                    <h1 class="stat-digit">{{ stats.avgKnockdowns | number: "1.0-2" }}</h1>
+                                    <h1 class="stat-digit">{{ stats.avgKnockdowns | number: "1.2-2" }}</h1>
                                     <h5 class="stat-title mt-1">Knockdown Rate</h5>
                                 </div>
                                 <div class="col-6 col-lg-3 stat-group my-2" *ngIf="stats.avgDamage >= 0 && stats.avgDamage <= 50000">
@@ -58,8 +59,8 @@
                     <div class="card">
                         <div class="card-header">
                             <h6 class="card-title">
-                                SUGGESTED SQUAD
-                                <span *ngIf="getLegendName(focusedLegendId); let legendName">({{ legendName | uppercase }})</span>
+                                SUGGESTED
+                                <span *ngIf="getLegendName(focusedLegendId); let legendName">({{ legendName | uppercase }})</span> SQUAD
                             </h6>
                         </div>
                         <div class="card-content">
@@ -78,8 +79,8 @@
                     <div class="card">
                         <div class="card-header">
                             <h6 class="card-title">
-                                SUGGESTED WEAPONS
-                                <span *ngIf="getLegendName(focusedLegendId); let legendName">({{ legendName | uppercase }})</span>
+                                SUGGESTED
+                                <span *ngIf="getLegendName(focusedLegendId); let legendName">({{ legendName | uppercase }})</span> WEAPONS
                             </h6>
                         </div>
                         <div class="card-content">
