@@ -23,7 +23,7 @@ export const SingletonServiceProviderFactory = (referenceKey: string, service: P
         if (typeof service === "function") {
             owWindow[REFERENCES_KEY][referenceKey] = new service(...deps);
             addInstanceListing(referenceKey);
-            // console.debug(`${logPrefix} Instantiating as a singleton service`);
+            console.debug(`${logPrefix} Instantiating as a singleton service`);
         } else {
             console.error(`${logPrefix} Not an Angular service`);
         }

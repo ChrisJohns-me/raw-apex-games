@@ -44,7 +44,10 @@ export class GameService extends AllfatherService {
         const setNewPhaseFn = (newPhase?: GamePhase): void => {
             if (newPhase && newPhase !== this.phase$.value && super.areAllFeatureDepsAvailable()) {
                 if (newPhase !== GamePhase.PreGame) this.phase$.next(newPhase);
-                else setTimeout(() => this.phase$.next(newPhase), PREGAME_DELAY);
+                else
+                    setTimeout(() => {
+                        if (this.phase$.value === GamePhase.LegendSelection) this.phase$.next(newPhase);
+                    }, PREGAME_DELAY);
             }
         };
 

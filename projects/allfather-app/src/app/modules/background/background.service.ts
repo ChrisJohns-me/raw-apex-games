@@ -1,7 +1,7 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { from, Observable, of } from "rxjs";
-import { catchError, concatAll, delay, map, mergeMap, switchMap, takeUntil } from "rxjs/operators";
+import { catchError, concatAll, delay, map, mergeMap, switchMap, takeUntil, tap } from "rxjs/operators";
 import { AllfatherService } from "../core/allfather-service.abstract";
 import { ConfigurationService } from "../core/configuration.service";
 import { FileService } from "../core/file.service";
@@ -124,10 +124,14 @@ export class BackgroundService extends AllfatherService {
     }
 
     public exitApp(): void {
+        console.trace(`[BackgroundService] Exiting App`);
         const backgroundWindow = new UIWindow(WindowName.Background);
         const closeBackgroundWindow$ = of(undefined).pipe(
+            tap(() => console.trace(`[BackgroundService] Exiting App - delaying closing BackgroundService`)),
             delay(BACKGROUND_EXIT_DELAY),
-            switchMap(() => backgroundWindow.close())
+            tap(() => console.trace(`[BackgroundService] Exiting App - closing BackgroundService`)),
+            switchMap(() => backgroundWindow.close()),
+            tap(() => console.trace(`[BackgroundService] Exiting App - backgroundwindow should be closed`))
         );
         from([this.closeAllWindows$(), closeBackgroundWindow$]).pipe(takeUntil(this.isDestroyed$), concatAll()).subscribe();
     }
@@ -137,10 +141,14 @@ export class BackgroundService extends AllfatherService {
         const allWindowNames = Object.values(WindowName).filter((name) => name !== WindowName.Background);
         const allWindows$ = from(allWindowNames);
         return allWindows$.pipe(
+            tap(() => console.trace(`[BackgroundService] Closing all windows`)),
             takeUntil(this.isDestroyed$),
             map((winName) => new UIWindow(winName)),
             mergeMap((uiWindow) => uiWindow.close()),
-            catchError(() => of(undefined))
+            catchError((err) => {
+                console.error(`[BackgroundService] Closing All windows error:`, err);
+                return of(undefined);
+            })
         );
     }
 }

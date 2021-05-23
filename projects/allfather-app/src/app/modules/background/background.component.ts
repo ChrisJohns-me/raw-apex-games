@@ -4,6 +4,7 @@ import { Title } from "@angular/platform-browser";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MainWindowService } from "../main/windows/main-window.service";
+import { BackgroundService } from "./background.service";
 import { HUDWindowControllerService } from "./hud-window-controller.service";
 import { SystemTrayService } from "./system-tray.service";
 
@@ -19,7 +20,8 @@ export class BackgroundComponent implements OnInit, OnDestroy {
         private readonly hudWindowController: HUDWindowControllerService,
         private readonly mainWindow: MainWindowService,
         private readonly systemTray: SystemTrayService,
-        private readonly titleService: Title
+        private readonly titleService: Title,
+        public readonly backgroundService: BackgroundService
     ) {
         this.titleService.setTitle(`${APP_NAME} - Background`);
         this.setupSystemTray();

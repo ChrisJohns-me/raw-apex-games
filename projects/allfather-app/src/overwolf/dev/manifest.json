@@ -44,7 +44,6 @@
                 "transparent": true,
                 "resizable": true,
                 "show_in_taskbar": true,
-
                 "restrict_to_game_bounds": false,
                 "keep_window_location": false,
                 "allow_local_file_access": true,
@@ -69,7 +68,6 @@
                 "transparent": true,
                 "resizable": true,
                 "show_in_taskbar": false,
-
                 "keep_window_location": true,
                 "allow_local_file_access": true,
                 "restrict_to_game_bounds": true,

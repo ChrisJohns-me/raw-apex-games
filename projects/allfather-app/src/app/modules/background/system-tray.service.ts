@@ -50,28 +50,7 @@ const MENUITEMS: OWSystemTrayMenuItem[] = [
 const DEVTOOLS_MENUITEMS: OWSystemTrayMenuItem[] = [
     {
         label: "Development Tools",
-        sub_items: [
-            {
-                label: "Development Tools",
-                id: WindowName.DevelopmentTools,
-            },
-            {
-                label: "Ultimate Timer",
-                id: WindowName.DevelopmentTools,
-            },
-            {
-                label: "Match Timer",
-                id: WindowName.DevelopmentTools,
-            },
-            {
-                label: "Infliction Insight",
-                id: WindowName.DevelopmentTools,
-            },
-            {
-                label: "Legend Select Assist",
-                id: WindowName.DevelopmentTools,
-            },
-        ],
+        id: WindowName.DevelopmentTools,
     },
 ];
 const FOOTER_MENUITEMS: OWSystemTrayMenuItem[] = [
@@ -190,6 +169,7 @@ export class SystemTrayService extends AllfatherService {
                 console.error("DOES NOT EXIST");
                 break;
             case SystemTrayItemKey.ExitApp:
+                console.trace(`[SystemTrayService] Requesting exit from MainWindowService`);
                 this.mainWindow.requestExit();
                 break;
             default:

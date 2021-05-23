@@ -116,6 +116,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
                 filter((isRequestingExit) => !!isRequestingExit)
             )
             .subscribe(() => {
+                console.trace(`[MainWindow] Seen an Exit Request; showing Modal`);
                 if (!confirmModal) confirmModal = getConfirmModal();
                 if (confirmModal) confirmModal.show();
                 else this.backgroundService.exitApp();

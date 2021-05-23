@@ -53,6 +53,7 @@ export class MainWindowService implements OnDestroy {
     }
 
     public requestExit(): void {
+        console.trace(`[MainWindowService] Received request to Exit App; Relaying to Main Window`);
         const grabFocus$ = this.focus().pipe(tap(() => this.isRequestingExit$.next(true)));
         from([this.restore(), grabFocus$]).pipe(takeUntil(this.isDestroyed$), concatAll()).subscribe();
     }
