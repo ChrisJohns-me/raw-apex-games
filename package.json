@@ -16,6 +16,9 @@
         "web:build-dev": "ng build --watch --project=allfatherWeb",
         "web:build-prod": "ng build --project=allfatherWeb --configuration production"
     },
+    "browserslist": [
+        "chrome >= 83"
+    ],
     "private": true,
     "dependencies": {
         "@angular/animations": "^12.0.1",
@@ -27,7 +30,7 @@
         "@angular/platform-browser-dynamic": "^12.0.1",
         "@angular/router": "^12.0.1",
         "@mdi/js": "^5.9.55",
-        "@overwolf/types": "^2.46.0",
+        "@overwolf/types": "^2.48.0",
         "@popperjs/core": "^2.9.2",
         "@svgdotjs/svg.js": "^3.0.16",
         "bootstrap": "^5.0.1",
