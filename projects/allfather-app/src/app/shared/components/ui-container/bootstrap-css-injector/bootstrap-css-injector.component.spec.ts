@@ -1,3 +1,4 @@
+import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { BootstrapCSSInjectorComponent } from "./bootstrap-css-injector.component";
 
@@ -16,6 +17,10 @@ describe("BootstrapCSSInjectorComponent", () => {
         const children = document.getElementById(domTestBedElementId)?.children;
         return (children?.namedItem(name) as Element) ?? undefined;
     };
+
+    beforeAll(() => {
+        supressConsoleLog();
+    });
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({

@@ -1,3 +1,4 @@
+import { IconComponent } from "@allfather-app/app/shared/components/icon/icon.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NavbarComponent } from "./navbar.component";
 
@@ -7,7 +8,7 @@ describe("NavbarComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [NavbarComponent],
+            declarations: [NavbarComponent, IconComponent],
             providers: [],
         }).compileComponents();
     });

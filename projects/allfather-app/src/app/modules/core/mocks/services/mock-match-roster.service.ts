@@ -1,10 +1,10 @@
+import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { MatchRoster } from "@allfather-app/app/common/match/roster";
 import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
 import { MatchRosterTeammate } from "@allfather-app/app/common/match/roster-teammate";
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { BehaviorSubject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
-import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 
 export class MockMatchRosterService implements MockedClass<MatchRosterService> {
     public stagedMatchRoster$ = new BehaviorSubject<MatchRoster<MatchRosterPlayer>>(new MatchRoster());

@@ -1,3 +1,4 @@
+import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { GamePhase } from "@allfather-app/app/common/game-phase";
 import { MatchGameModeType } from "@allfather-app/app/common/match/game-mode";
 import { MatchRoster } from "@allfather-app/app/common/match/roster";
@@ -12,7 +13,7 @@ import { AllfatherService } from "./allfather-service.abstract";
 import { MatchRosterService } from "./match/match-roster.service";
 import { MatchService } from "./match/match.service";
 import { OverwolfGameDataService, OWInfoUpdates2Event } from "./overwolf";
-import { OverwolfFeatureDep, OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status.service";
+import { OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status.service";
 
 /** Amount of time to set GamePhase to "Pregame". */
 const PREGAME_DELAY = 4500;
@@ -56,8 +57,8 @@ export class GameService extends AllfatherService {
             [GamePhase.LegendSelection]: (infoUpdate, matchState, stagedMatchRoster) =>
                 this.phase$.value !== GamePhase.LegendSelection &&
                 this.phase$.value !== GamePhase.PreGame &&
-                this.match.gameMode$.value?.baseType !== MatchGameModeType.FIRINGRANGE &&
-                this.match.gameMode$.value?.baseType !== MatchGameModeType.TRAINING &&
+                this.match.gameMode$.value?.baseType !== MatchGameModeType.FiringRange &&
+                this.match.gameMode$.value?.baseType !== MatchGameModeType.Training &&
                 ((stagedMatchRoster?.allPlayers.length ?? 0) > 0 ||
                     (infoUpdate?.feature === "team" && !isEmpty(findValueByKeyRegEx(infoUpdate?.info?.match_info, /^legendSelect/)))),
             [GamePhase.PreGame]: (infoUpdate) =>

@@ -1,7 +1,7 @@
+import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { MatchPlayerInventoryService } from "@allfather-app/app/modules/core/match/match-player-inventory.service";
 import { BehaviorSubject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
-import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 
 export class MockMatchPlayerInventoryService implements MockedClass<MatchPlayerInventoryService> {
     public myInUseItem$: MatchPlayerInventoryService["myInUseItem$"] = new BehaviorSubject<

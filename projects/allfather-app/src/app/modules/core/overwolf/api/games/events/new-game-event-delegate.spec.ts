@@ -1,4 +1,4 @@
-import { createOverwolfObj, createOverwolfSpyObj } from "@allfather-app/app/common/testing-helpers";
+import { createOverwolfObj, createOverwolfSpyObj, supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { OWGameEvent } from "@allfather-app/app/modules/core/overwolf/types/overwolf-types";
 import { TestScheduler } from "rxjs/testing";
 import { NewGameEventDelegate } from "./new-game-event-delegate";
@@ -9,6 +9,10 @@ type GameEvent = overwolf.games.events.GameEvent;
 describe("NewGameEventDelegate", () => {
     let scheduler: TestScheduler;
     let sut: NewGameEventDelegate;
+
+    beforeAll(() => {
+        supressConsoleLog();
+    });
 
     beforeEach(() => {
         scheduler = new TestScheduler((actual, expected) => {

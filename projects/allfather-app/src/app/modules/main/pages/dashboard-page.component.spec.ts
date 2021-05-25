@@ -7,6 +7,7 @@ import { MockPlayerStatsService } from "../../core/mocks/services/mock-player-st
 import { MockPlayerService } from "../../core/mocks/services/mock-player.service";
 import { PlayerStatsService } from "../../core/player-stats.service";
 import { PlayerService } from "../../core/player.service";
+import { LegendIconsBoardComponent } from "../components/dashboard/legend-icons-board.component";
 import { DashboardPageComponent } from "./dashboard-page.component";
 
 describe("DashboardPageComponent", () => {
@@ -15,7 +16,7 @@ describe("DashboardPageComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [DashboardPageComponent],
+            declarations: [DashboardPageComponent, LegendIconsBoardComponent],
             providers: [
                 { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: LocalDatabaseService, useClass: MockLocalDatabaseService },

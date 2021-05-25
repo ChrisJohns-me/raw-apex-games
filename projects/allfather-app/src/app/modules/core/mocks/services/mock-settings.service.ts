@@ -1,7 +1,7 @@
+import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { SettingKey, SettingValue } from "@allfather-app/app/common/settings";
 import { Observable, of } from "rxjs";
 import { SettingsDataStore } from "../../local-database/settings-data-store";
-import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 import { SettingsService } from "../../settings.service";
 
 export class MockSettingsService implements MockedClass<SettingsService> {

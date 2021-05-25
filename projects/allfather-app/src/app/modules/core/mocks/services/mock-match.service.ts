@@ -1,3 +1,4 @@
+import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { MatchGameModeType } from "@allfather-app/app/common/match/game-mode";
 import { MatchState } from "@allfather-app/app/common/match/state";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
@@ -5,7 +6,6 @@ import { IndexableType } from "dexie";
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
 import { MatchDataStore } from "../../local-database/match-data-store";
-import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 
 export class MockMatchService implements MockedClass<MatchService> {
     public matchId$: MatchService["matchId$"] = new BehaviorSubject<ExtractSubjectType<MatchService["matchId$"]>>("");
@@ -17,7 +17,7 @@ export class MockMatchService implements MockedClass<MatchService> {
     });
     public gameMode$: MatchService["gameMode$"] = new BehaviorSubject<ExtractSubjectType<MatchService["gameMode$"]>>({
         gameModeId: "",
-        baseType: MatchGameModeType.RANKED,
+        baseType: MatchGameModeType.BattleRoyale_Ranked,
     });
     public get isActive(): MatchService["isActive"] {
         return this.state$.value.state === MatchState.Active;

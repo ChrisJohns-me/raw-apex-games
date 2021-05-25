@@ -1,3 +1,4 @@
+import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { BackgroundService } from "@allfather-app/app/modules/background/background.service";
 import { HUDWindowControllerService } from "@allfather-app/app/modules/background/hud-window-controller.service";
 import { SystemTrayService } from "@allfather-app/app/modules/background/system-tray.service";
@@ -25,7 +26,7 @@ import { MatchRosterService } from "../../match/match-roster.service";
 import { MatchService } from "../../match/match.service";
 import { OverwolfGameDataService } from "../../overwolf";
 import { OverwolfExtensionsService } from "../../overwolf/overwolf-extensions.service";
-import { OverwolfFeatureDep, OverwolfFeatureStatusService } from "../../overwolf/overwolf-feature-status.service";
+import { OverwolfFeatureStatusService } from "../../overwolf/overwolf-feature-status.service";
 import { PlayerStatsService } from "../../player-stats.service";
 import { PlayerService } from "../../player.service";
 import { ReportableDataManagerService } from "../../reporting/reporting-engine/reportable-data-manager";
@@ -34,10 +35,13 @@ import { SettingsService } from "../../settings.service";
 
 export class MockBackgroundService implements MockedClass<BackgroundService> {
     public relaunchApp(): void {}
+
     public exitApp(): void {}
+
     public isFeatureDepAvailable(featureName: OverwolfFeatureDep): boolean {
         return true;
     }
+
     public areAllFeatureDepsAvailable(): boolean {
         return true;
     }

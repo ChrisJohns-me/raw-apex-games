@@ -1,5 +1,6 @@
+import { IconComponent } from "@allfather-app/app/shared/components/icon/icon.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { FormBuilder } from "@angular/forms";
+import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { FileService } from "../../core/file.service";
 import { LocalDatabaseService } from "../../core/local-database/local-database.service";
 import { MockFileService } from "../../core/mocks/services/mock-file.service";
@@ -14,7 +15,8 @@ describe("SettingsPageComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [SettingsPageComponent],
+            imports: [ReactiveFormsModule],
+            declarations: [SettingsPageComponent, IconComponent],
             providers: [
                 { provide: FileService, useClass: MockFileService },
                 { provide: FormBuilder, useClass: FormBuilder },

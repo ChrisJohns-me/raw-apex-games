@@ -1,10 +1,13 @@
+import { MatchListingComponent } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ConfigurationService } from "../../core/configuration.service";
 import { MatchMapService } from "../../core/match/match-map.service";
 import { MatchPlayerLegendService } from "../../core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "../../core/match/match-player-location.service";
 import { MatchPlayerStatsService } from "../../core/match/match-player-stats.service";
 import { MatchRosterService } from "../../core/match/match-roster.service";
 import { MatchService } from "../../core/match/match.service";
+import { MockConfigurationService } from "../../core/mocks/services/mock-configuration.service";
 import { MockMatchMapService } from "../../core/mocks/services/mock-match-map.service";
 import { MockMatchPlayerLegendService } from "../../core/mocks/services/mock-match-player-legend.service";
 import { MockMatchPlayerLocationService } from "../../core/mocks/services/mock-match-player-location.service";
@@ -23,8 +26,9 @@ describe("MatchExplorerPageComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [MatchExplorerPageComponent],
+            declarations: [MatchExplorerPageComponent, MatchListingComponent],
             providers: [
+                { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: MatchMapService, useClass: MockMatchMapService },
                 { provide: MatchPlayerLegendService, useClass: MockMatchPlayerLegendService },
                 { provide: MatchPlayerLocationService, useClass: MockMatchPlayerLocationService },

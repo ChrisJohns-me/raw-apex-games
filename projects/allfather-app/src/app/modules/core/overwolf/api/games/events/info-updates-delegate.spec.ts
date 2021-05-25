@@ -1,4 +1,4 @@
-import { createOverwolfObj } from "@allfather-app/app/common/testing-helpers";
+import { createOverwolfObj, supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { InfoUpdatesDelegate } from "@allfather-app/app/modules/core/overwolf";
 import { TestScheduler } from "rxjs/testing";
 
@@ -7,6 +7,10 @@ type InfoUpdates2Event = overwolf.games.events.InfoUpdates2Event;
 describe("InfoUpdatesDelegate", () => {
     let sut: InfoUpdatesDelegate;
     let scheduler: TestScheduler;
+
+    beforeAll(() => {
+        supressConsoleLog();
+    });
 
     beforeEach(() => {
         scheduler = new TestScheduler((actual, expected) => {

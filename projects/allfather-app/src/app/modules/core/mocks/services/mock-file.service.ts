@@ -1,6 +1,6 @@
+import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { of } from "rxjs";
 import { FileService } from "../../file.service";
-import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 
 export class MockFileService implements MockedClass<FileService> {
     public saveFile$(filePath: string, content: string): ReturnType<FileService["saveFile$"]> {

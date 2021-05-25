@@ -1,6 +1,6 @@
+import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { Subject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
-import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 import { ReportingEngineId } from "../../reporting/reporting-engine/reporting-engine";
 import { ReportingService } from "../../reporting/reporting.service";
 

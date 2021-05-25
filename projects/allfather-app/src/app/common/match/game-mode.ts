@@ -1,10 +1,10 @@
 export enum MatchGameModeType {
-    TRAINING = "training",
-    FIRINGRANGE = "firingrange",
-    ARENA = "arena",
-    TRIOS = "trios",
-    DUOS = "duos",
-    RANKED = "ranked",
+    Training = "training",
+    FiringRange = "firingrange",
+    Arenas = "arenas",
+    BattleRoyale_Trios = "br_trios",
+    BattleRoyale_Duos = "br_duos",
+    BattleRoyale_Ranked = "br_ranked",
 }
 
 export class MatchGameMode {
@@ -23,12 +23,12 @@ export class MatchGameMode {
     //#endregion
 
     private static generateBaseType(gameModeId?: string): Optional<MatchGameModeType> {
-        if (gameModeId?.toLowerCase().includes("training")) return MatchGameModeType.TRAINING;
-        if (gameModeId?.toLowerCase().includes("firingrange")) return MatchGameModeType.FIRINGRANGE;
-        if (gameModeId?.toLowerCase().includes("arena")) return MatchGameModeType.ARENA;
-        if (gameModeId?.toLowerCase().includes("rank")) return MatchGameModeType.RANKED;
-        if (gameModeId?.toLowerCase().includes("trio")) return MatchGameModeType.TRIOS;
-        if (gameModeId?.toLowerCase().includes("duo")) return MatchGameModeType.DUOS;
+        if (gameModeId?.toLowerCase().includes("training")) return MatchGameModeType.Training;
+        if (gameModeId?.toLowerCase().includes("firingrange")) return MatchGameModeType.FiringRange;
+        if (gameModeId?.toLowerCase().includes("arena")) return MatchGameModeType.Arenas;
+        if (gameModeId?.toLowerCase().includes("rank")) return MatchGameModeType.BattleRoyale_Ranked;
+        if (gameModeId?.toLowerCase().includes("trio")) return MatchGameModeType.BattleRoyale_Trios;
+        if (gameModeId?.toLowerCase().includes("duo")) return MatchGameModeType.BattleRoyale_Duos;
         return undefined;
     }
 }

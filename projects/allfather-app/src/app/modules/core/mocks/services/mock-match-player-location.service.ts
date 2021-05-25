@@ -1,7 +1,7 @@
+import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
 import { BehaviorSubject } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
-import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 
 export class MockMatchPlayerLocationService implements MockedClass<MatchPlayerLocationService> {
     public myCoordinates$: MatchPlayerLocationService["myCoordinates$"] = new BehaviorSubject<

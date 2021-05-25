@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ConfigurationService } from "../../core/configuration.service";
+import { MockUIContainerComponent } from "../../core/mocks/components/mock-ui-container.component";
 import { MockConfigurationService } from "../../core/mocks/services/mock-configuration.service";
 import { MockPlayerStatsService } from "../../core/mocks/services/mock-player-stats.service";
 import { MockSettingsService } from "../../core/mocks/services/mock-settings.service";
@@ -13,7 +14,7 @@ describe("LegendSelectAssistWindowComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [LegendSelectAssistWindowComponent],
+            declarations: [LegendSelectAssistWindowComponent, MockUIContainerComponent],
             providers: [
                 { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: PlayerStatsService, useClass: MockPlayerStatsService },

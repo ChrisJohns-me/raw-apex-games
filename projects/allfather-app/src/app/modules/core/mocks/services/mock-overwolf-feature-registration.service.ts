@@ -1,7 +1,7 @@
+import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { BehaviorSubject, of } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
 import { OverwolfFeatureRegistrationService, OWFeatureRegistrationStatus } from "../../overwolf/overwolf-feature-registration.service";
-import { OverwolfFeatureDep } from "../../overwolf/overwolf-feature-status.service";
 
 export class MockOverwolfFeatureRegistrationService implements MockedClass<OverwolfFeatureRegistrationService> {
     public registrationStatus$: OverwolfFeatureRegistrationService["registrationStatus$"] = new BehaviorSubject<

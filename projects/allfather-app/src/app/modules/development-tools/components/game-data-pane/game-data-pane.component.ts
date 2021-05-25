@@ -1,3 +1,4 @@
+import { FeatureState, FeatureStatusList } from "@allfather-app/app/common/feature-status";
 import { GamePhase } from "@allfather-app/app/common/game-phase";
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchState } from "@allfather-app/app/common/match/state";
@@ -13,11 +14,11 @@ import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
-import { OverwolfFeatureState } from "@allfather-app/app/modules/core/overwolf/dto/overwolf-feature-status-dto";
-import { FeatureStatusList, OverwolfFeatureStatusService } from "@allfather-app/app/modules/core/overwolf/overwolf-feature-status.service";
+import { OverwolfFeatureStatusService } from "@allfather-app/app/modules/core/overwolf/overwolf-feature-status.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
-import { interval } from "rxjs";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { interval, Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 import { v4 as uuid } from "uuid";
 
 @Component({
@@ -26,11 +27,11 @@ import { v4 as uuid } from "uuid";
     styleUrls: ["./game-data-pane.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GameDataPaneComponent implements OnInit {
+export class GameDataPaneComponent implements OnInit, OnDestroy {
     public Infinity = Infinity;
     public changedHighlightColor = "#ffc9c9";
 
-    public get featureStatus(): OverwolfFeatureState {
+    public get featureStatus(): FeatureState {
         return this.overwolfFeatureStatusService.checkAllFeatureStatus();
     }
 
@@ -41,6 +42,7 @@ export class GameDataPaneComponent implements OnInit {
     }
 
     private ultimatePercentOverride?: number = undefined;
+    private isDestroyed$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
@@ -64,6 +66,11 @@ export class GameDataPaneComponent implements OnInit {
         interval(5000)
             .pipe()
             .subscribe(() => this.cdr.detectChanges());
+    }
+
+    public ngOnDestroy(): void {
+        this.isDestroyed$.next();
+        this.isDestroyed$.complete();
     }
 
     public onChangeGameProcessIsRunningClick(): void {
@@ -144,5 +151,12 @@ export class GameDataPaneComponent implements OnInit {
 
     public lastFeatureStatusListToArray(): FeatureStatusList {
         return this.overwolfFeatureStatusService.featureStatusList$.value;
+    }
+
+    public reloadOWGEPStatus(): void {
+        this.overwolfFeatureStatusService
+            .getFeatureStatusList$()
+            .pipe(takeUntil(this.isDestroyed$))
+            .subscribe((statusList) => console.debug(`Refreshed OW GEP Status`, statusList));
     }
 }
