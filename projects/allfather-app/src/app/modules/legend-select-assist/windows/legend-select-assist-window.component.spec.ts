@@ -4,7 +4,7 @@ import { MockUIContainerComponent } from "../../core/mocks/components/mock-ui-co
 import { MockConfigurationService } from "../../core/mocks/services/mock-configuration.service";
 import { MockPlayerStatsService } from "../../core/mocks/services/mock-player-stats.service";
 import { MockSettingsService } from "../../core/mocks/services/mock-settings.service";
-import { PlayerStatsService } from "../../core/player-stats.service";
+import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { SettingsService } from "../../core/settings.service";
 import { LegendSelectAssistWindowComponent } from "./legend-select-assist-window.component";
 
@@ -17,7 +17,7 @@ describe("LegendSelectAssistWindowComponent", () => {
             declarations: [LegendSelectAssistWindowComponent, MockUIContainerComponent],
             providers: [
                 { provide: ConfigurationService, useClass: MockConfigurationService },
-                { provide: PlayerStatsService, useClass: MockPlayerStatsService },
+                { provide: PlayerLocalStatsService, useClass: MockPlayerStatsService },
                 { provide: SettingsService, useClass: MockSettingsService },
             ],
         }).compileComponents();

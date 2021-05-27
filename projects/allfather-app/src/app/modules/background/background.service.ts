@@ -23,7 +23,7 @@ import { MatchService } from "../core/match/match.service";
 import { OverwolfGameDataService } from "../core/overwolf";
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
 import { OverwolfFeatureStatusService } from "../core/overwolf/overwolf-feature-status.service";
-import { PlayerStatsService } from "../core/player-stats.service";
+import { PlayerLocalStatsService } from "../core/player-local-stats.service";
 import { PlayerService } from "../core/player.service";
 import { ReportableDataManagerService } from "../core/reporting/reporting-engine/reportable-data-manager";
 import { ReportingService } from "../core/reporting/reporting.service";
@@ -68,7 +68,7 @@ const BACKGROUND_EXIT_DELAY = 1000;
         OverwolfFeatureStatusService,
         OverwolfGameDataService,
         PlayerService,
-        PlayerStatsService,
+        PlayerLocalStatsService,
         ReportableDataManagerService,
         ReportingService,
         SettingsService,
@@ -109,7 +109,7 @@ export class BackgroundService extends AllfatherService {
         public readonly overwolfFeatureStatus: OverwolfFeatureStatusService,
         public readonly overwolfGameData: OverwolfGameDataService,
         public readonly player: PlayerService,
-        public readonly playerStats: PlayerStatsService,
+        public readonly playerStats: PlayerLocalStatsService,
         public readonly reportableDataManager: ReportableDataManagerService,
         public readonly reporting: ReportingService,
         public readonly settings: SettingsService,

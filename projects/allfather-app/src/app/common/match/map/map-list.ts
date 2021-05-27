@@ -101,9 +101,20 @@ export const MatchMapList: MatchMap[] = [
         ],
     }),
     new MatchMap({
+        mapName: MatchMapFriendlyName.Artillary,
+        genericId: MatchMapGenericId.Artillary,
+        mapId: "mp_rr_canyonlands_mu3", // TODO: Check
+        gameModeTypes: [MatchGameModeType.Arenas],
+        activeDates: [
+            {
+                from: new Date("May 04, 2021"),
+            },
+        ],
+    }),
+    new MatchMap({
         mapName: MatchMapFriendlyName.ThermalStation,
         genericId: MatchMapGenericId.ThermalStation,
-        mapId: "_maybe_thermal_station_id_here?_",
+        mapId: "mp_rr_desertlands_mu2", // TODO: Check
         gameModeTypes: [MatchGameModeType.Arenas],
         activeDates: [
             {
@@ -114,7 +125,7 @@ export const MatchMapList: MatchMap[] = [
     new MatchMap({
         mapName: MatchMapFriendlyName.GoldenGardens,
         genericId: MatchMapGenericId.GoldenGardens,
-        mapId: "_maybe_thermal_station_id_here?_",
+        mapId: "mp_rr_olympus", // TODO: Check
         gameModeTypes: [MatchGameModeType.Arenas],
         activeDates: [
             {

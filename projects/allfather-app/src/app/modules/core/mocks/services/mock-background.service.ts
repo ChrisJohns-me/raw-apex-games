@@ -27,7 +27,7 @@ import { MatchService } from "../../match/match.service";
 import { OverwolfGameDataService } from "../../overwolf";
 import { OverwolfExtensionsService } from "../../overwolf/overwolf-extensions.service";
 import { OverwolfFeatureStatusService } from "../../overwolf/overwolf-feature-status.service";
-import { PlayerStatsService } from "../../player-stats.service";
+import { PlayerLocalStatsService } from "../../player-local-stats.service";
 import { PlayerService } from "../../player.service";
 import { ReportableDataManagerService } from "../../reporting/reporting-engine/reportable-data-manager";
 import { ReportingService } from "../../reporting/reporting.service";
@@ -73,7 +73,7 @@ export class MockBackgroundService implements MockedClass<BackgroundService> {
     public readonly overwolfFeatureStatus!: OverwolfFeatureStatusService;
     public readonly overwolfGameData!: OverwolfGameDataService;
     public readonly player!: PlayerService;
-    public readonly playerStats!: PlayerStatsService;
+    public readonly playerStats!: PlayerLocalStatsService;
     public readonly reportableDataManager!: ReportableDataManagerService;
     public readonly reporting!: ReportingService;
     public readonly settings!: SettingsService;

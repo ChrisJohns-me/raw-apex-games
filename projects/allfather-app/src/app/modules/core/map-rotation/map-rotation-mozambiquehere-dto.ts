@@ -1,9 +1,9 @@
 import { MatchGameModeType } from "@allfather-app/app/common/match/game-mode";
-import { MapRotation, MapRotationInfo } from "@allfather-app/app/common/match/map/map-rotation";
+import { MapRotationData, MapRotationInfo } from "@allfather-app/app/common/match/map/map-rotation-data";
 import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { cleanInt } from "shared/utilities";
 
-interface MatchMapRotationInfoDTO {
+interface MapRotationInfoDTO {
     map: string; // "Olympus"
     start?: number; // 1621857600
     end?: number; // 1621863000
@@ -16,15 +16,15 @@ interface MatchMapRotationInfoDTO {
     remainingTimer?: string; // "01:16:45"
 }
 
-interface MatchMapRotationIterationDTO {
-    current?: MatchMapRotationInfoDTO;
-    next?: MatchMapRotationInfoDTO;
+interface MapRotationIterationDTO {
+    current?: MapRotationInfoDTO;
+    next?: MapRotationInfoDTO;
 }
 
-export class MatchMapRotationMozambiquehereDTO {
-    public arenas?: MatchMapRotationIterationDTO;
-    public battle_royale?: MatchMapRotationIterationDTO;
-    public ranked?: MatchMapRotationIterationDTO;
+export class MapRotationMozambiquehereDTO {
+    public arenas?: MapRotationIterationDTO;
+    public battle_royale?: MapRotationIterationDTO;
+    public ranked?: MapRotationIterationDTO;
 
     constructor(json: unknown) {
         if (!isAPIMozambiquehereMapRotationDTO(json))
@@ -34,8 +34,8 @@ export class MatchMapRotationMozambiquehereDTO {
         this.ranked = this.sanitizeMapRotationIteration(json.ranked);
     }
 
-    public toMapRotation(): MapRotation {
-        const convertMapRotationInfoFn = (mapIteration: MatchMapRotationInfoDTO, gameMode?: MatchGameModeType): MapRotationInfo => {
+    public toMapRotation(): MapRotationData {
+        const convertMapRotationInfoFn = (mapIteration: MapRotationInfoDTO, gameMode?: MatchGameModeType): MapRotationInfo => {
             console.debug(`[${this.constructor.name}] Attempting to find map based on "${mapIteration.map}" (${gameMode})`);
             return {
                 friendlyName: mapIteration.map,
@@ -45,13 +45,13 @@ export class MatchMapRotationMozambiquehereDTO {
             };
         };
 
-        const arenasPubs: MapRotation["arenasPubs"] = {};
+        const arenasPubs: MapRotationData["arenasPubs"] = {};
         arenasPubs.current = this.arenas?.current?.map
             ? convertMapRotationInfoFn(this.arenas.current, MatchGameModeType.Arenas)
             : undefined;
         arenasPubs.next = this.arenas?.next?.map ? convertMapRotationInfoFn(this.arenas.next, MatchGameModeType.Arenas) : undefined;
 
-        const battleRoyalePubs: MapRotation["battleRoyalePubs"] = {};
+        const battleRoyalePubs: MapRotationData["battleRoyalePubs"] = {};
         battleRoyalePubs.current = this.battle_royale?.current?.map
             ? convertMapRotationInfoFn(this.battle_royale.current, MatchGameModeType.BattleRoyale_Trios)
             : undefined;
@@ -59,7 +59,7 @@ export class MatchMapRotationMozambiquehereDTO {
             ? convertMapRotationInfoFn(this.battle_royale.next, MatchGameModeType.BattleRoyale_Trios)
             : undefined;
 
-        const battleRoyaleRanked: MapRotation["battleRoyaleRanked"] = {};
+        const battleRoyaleRanked: MapRotationData["battleRoyaleRanked"] = {};
         battleRoyaleRanked.current = this.ranked?.current?.map
             ? convertMapRotationInfoFn(this.ranked.current, MatchGameModeType.BattleRoyale_Ranked)
             : undefined;
@@ -67,16 +67,16 @@ export class MatchMapRotationMozambiquehereDTO {
             ? convertMapRotationInfoFn(this.ranked.next, MatchGameModeType.BattleRoyale_Ranked)
             : undefined;
 
-        return new MapRotation(arenasPubs, battleRoyalePubs, battleRoyaleRanked);
+        return new MapRotationData(arenasPubs, battleRoyalePubs, battleRoyaleRanked);
     }
 
-    private sanitizeMapRotationIteration(input?: MatchMapRotationIterationDTO): Optional<MatchMapRotationIterationDTO> {
-        const current: Optional<MatchMapRotationInfoDTO> = this.sanitizeMapRotationInfo(input?.current);
-        const next: Optional<MatchMapRotationInfoDTO> = this.sanitizeMapRotationInfo(input?.next);
+    private sanitizeMapRotationIteration(input?: MapRotationIterationDTO): Optional<MapRotationIterationDTO> {
+        const current: Optional<MapRotationInfoDTO> = this.sanitizeMapRotationInfo(input?.current);
+        const next: Optional<MapRotationInfoDTO> = this.sanitizeMapRotationInfo(input?.next);
         return { current, next };
     }
 
-    private sanitizeMapRotationInfo(input?: MatchMapRotationInfoDTO): Optional<MatchMapRotationInfoDTO> {
+    private sanitizeMapRotationInfo(input?: MapRotationInfoDTO): Optional<MapRotationInfoDTO> {
         if (!input?.map) return;
 
         return {
@@ -102,29 +102,26 @@ export class MatchMapRotationMozambiquehereDTO {
     }
 }
 
-function isAPIMozambiquehereMapRotationDTO(value: unknown): value is MatchMapRotationMozambiquehereDTO {
+function isAPIMozambiquehereMapRotationDTO(value: unknown): value is MapRotationMozambiquehereDTO {
     if (typeof value !== "object") return false;
     if (
-        isMapRotationIteration((value as MatchMapRotationMozambiquehereDTO).arenas) ||
-        isMapRotationIteration((value as MatchMapRotationMozambiquehereDTO).battle_royale) ||
-        isMapRotationIteration((value as MatchMapRotationMozambiquehereDTO).ranked)
+        isMapRotationIteration((value as MapRotationMozambiquehereDTO).arenas) ||
+        isMapRotationIteration((value as MapRotationMozambiquehereDTO).battle_royale) ||
+        isMapRotationIteration((value as MapRotationMozambiquehereDTO).ranked)
     )
         return true;
     return false;
 }
 
-function isMapRotationIteration(value: unknown): value is MatchMapRotationIterationDTO {
+function isMapRotationIteration(value: unknown): value is MapRotationIterationDTO {
     if (typeof value !== "object") return false;
-    if (
-        isMapRotationInfo((value as MatchMapRotationIterationDTO).current) ||
-        isMapRotationInfo((value as MatchMapRotationIterationDTO).next)
-    )
+    if (isMapRotationInfo((value as MapRotationIterationDTO).current) || isMapRotationInfo((value as MapRotationIterationDTO).next))
         return true;
     return false;
 }
 
-function isMapRotationInfo(value: unknown): value is MatchMapRotationInfoDTO {
+function isMapRotationInfo(value: unknown): value is MapRotationInfoDTO {
     if (typeof value !== "object") return false;
-    if (typeof (value as MatchMapRotationInfoDTO).map !== "string") return false;
+    if (typeof (value as MapRotationInfoDTO).map !== "string") return false;
     return true;
 }

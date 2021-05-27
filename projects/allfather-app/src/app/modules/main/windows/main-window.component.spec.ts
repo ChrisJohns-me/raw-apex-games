@@ -6,6 +6,7 @@ import { BackgroundService } from "../../background/background.service";
 import { ConfigurationService } from "../../core/configuration.service";
 import { FileService } from "../../core/file.service";
 import { LocalDatabaseService } from "../../core/local-database/local-database.service";
+import { MapRotationService } from "../../core/map-rotation/map-rotation.service";
 import { MatchMapService } from "../../core/match/match-map.service";
 import { MockUIContainerComponent } from "../../core/mocks/components/mock-ui-container.component";
 import { MockBackgroundService } from "../../core/mocks/services/mock-background.service";
@@ -13,11 +14,12 @@ import { MockConfigurationService } from "../../core/mocks/services/mock-configu
 import { MockFileService } from "../../core/mocks/services/mock-file.service";
 import { MockLocalDatabaseService } from "../../core/mocks/services/mock-local-database.service";
 import { MockMainWindowService } from "../../core/mocks/services/mock-main-window.service";
+import { MockMapRotationService } from "../../core/mocks/services/mock-map-rotation.service";
 import { MockMatchMapService } from "../../core/mocks/services/mock-match-map.service";
 import { MockPlayerStatsService } from "../../core/mocks/services/mock-player-stats.service";
 import { MockPlayerService } from "../../core/mocks/services/mock-player.service";
 import { MockSettingsService } from "../../core/mocks/services/mock-settings.service";
-import { PlayerStatsService } from "../../core/player-stats.service";
+import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { PlayerService } from "../../core/player.service";
 import { SettingsService } from "../../core/settings.service";
 import { DailyAverageGraphComponent } from "../components/charting/daily-average-graph.component";
@@ -60,7 +62,8 @@ describe("MainWindowComponent", () => {
                 { provide: FileService, useClass: MockFileService },
                 { provide: SettingsService, useClass: MockSettingsService },
                 { provide: MatchMapService, useClass: MockMatchMapService },
-                { provide: PlayerStatsService, useClass: MockPlayerStatsService },
+                { provide: PlayerLocalStatsService, useClass: MockPlayerStatsService },
+                { provide: MapRotationService, useClass: MockMapRotationService },
             ],
         }).compileComponents();
     });

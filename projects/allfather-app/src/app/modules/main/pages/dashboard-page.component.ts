@@ -5,7 +5,7 @@ import { Subject, Subscription } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { ConfigurationService } from "../../core/configuration.service";
 import { LocalDatabaseService } from "../../core/local-database/local-database.service";
-import { PlayerStatsService } from "../../core/player-stats.service";
+import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { PlayerService } from "../../core/player.service";
 
 type LegendIdsRow = string[];
@@ -60,7 +60,7 @@ export class DashboardPageComponent implements OnInit {
         private readonly config: ConfigurationService,
         private readonly localDatabase: LocalDatabaseService,
         private readonly player: PlayerService,
-        private readonly playerStats: PlayerStatsService
+        private readonly playerStats: PlayerLocalStatsService
     ) {}
 
     public getLegendName = (legendId?: string): Optional<string> => Legend.getName(legendId);

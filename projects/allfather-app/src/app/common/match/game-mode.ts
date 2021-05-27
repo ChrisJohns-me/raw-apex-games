@@ -29,6 +29,7 @@ export class MatchGameMode {
         if (gameModeId?.toLowerCase().includes("rank")) return MatchGameModeType.BattleRoyale_Ranked;
         if (gameModeId?.toLowerCase().includes("trio")) return MatchGameModeType.BattleRoyale_Trios;
         if (gameModeId?.toLowerCase().includes("duo")) return MatchGameModeType.BattleRoyale_Duos;
+        console.error(`Unable to determine Game Mode type from ID "${gameModeId}".`);
         return undefined;
     }
 }

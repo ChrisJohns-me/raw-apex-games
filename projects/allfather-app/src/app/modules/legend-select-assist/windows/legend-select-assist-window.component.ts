@@ -5,7 +5,7 @@ import { ConfigurationService } from "@allfather-app/app/modules/core/configurat
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { PlayerStatsService } from "../../core/player-stats.service";
+import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { SettingsService } from "../../core/settings.service";
 import { LegendIconRow } from "../legend-select-icon-row.interface";
 
@@ -45,7 +45,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly config: ConfigurationService,
-        private readonly playerStats: PlayerStatsService,
+        private readonly playerStats: PlayerLocalStatsService,
         private readonly settingsService: SettingsService
     ) {}
 

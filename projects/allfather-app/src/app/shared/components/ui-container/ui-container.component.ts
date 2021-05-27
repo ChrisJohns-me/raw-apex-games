@@ -1,6 +1,7 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
 import { UIWindow, WindowState } from "@allfather-app/app/modules/core/_refactor/ui-window";
 import { ConfigPositionUnit, ConfigPositionXAnchor, ConfigPositionYAnchor } from "@allfather-app/configs/config.interface";
+import { environment } from "@allfather-app/environments/environment";
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -43,7 +44,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     @Input() public secondaryTitle = "";
 
     public state: WindowState = WindowState.Normal;
-
+    public isDev = environment.DEV;
     public WindowState = WindowState;
     public mdiWindowMinimize = mdiWindowMinimize;
     public mdiWindowMaximize = mdiWindowMaximize;

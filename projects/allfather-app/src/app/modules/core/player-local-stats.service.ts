@@ -10,12 +10,16 @@ import { MatchService } from "./match/match.service";
 
 type LegendId = string;
 
+/**
+ * @class PlayerLocalStatsService
+ * @classdesc Player's match statistics stored locally in the local database.
+ */
 @Injectable({
     providedIn: "root",
     deps: [ConfigurationService, MatchService],
-    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("PlayerStatsService", PlayerStatsService, deps),
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("PlayerLocalStatsService", PlayerLocalStatsService, deps),
 })
-export class PlayerStatsService {
+export class PlayerLocalStatsService {
     private statWeights = this.config.featureConfigs.legendSelectAssist.complimentaryLegendsWeights;
     private cachedPlayerComplimentaryLegendWeights?: { legendId: string; weightScore: number }[];
     private cachedLegendComplimentaryLegendWeights = new Map<LegendId, { legendId: string; weightScore: number }[]>();

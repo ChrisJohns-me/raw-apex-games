@@ -2,7 +2,13 @@
     <app-bootstrap-css-injector></app-bootstrap-css-injector>
 </ng-container>
 
-<section class="titlebar" *ngIf="isDesktopWindow" (dblclick)="onTitlebarDoubleClick($event)" (mousedown)="onTitlebarMouseDown($event)">
+<section
+    class="titlebar"
+    *ngIf="isDesktopWindow"
+    [ngClass]="{ 'titlebar-developer': isDev }"
+    (dblclick)="onTitlebarDoubleClick($event)"
+    (mousedown)="onTitlebarMouseDown($event)"
+>
     <div class="titlebar-icon"></div>
 
     <div class="titlebar-primary-title">

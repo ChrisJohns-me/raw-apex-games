@@ -32,6 +32,7 @@ export class MockUIContainerComponent implements MockedClass<UIContainerComponen
     @Input() public secondaryTitle = "";
     public state: WindowState = WindowState.Normal;
 
+    public isDev = false;
     public WindowState = WindowState;
     public mdiWindowMinimize = mdiWindowMinimize;
     public mdiWindowMaximize = mdiWindowMaximize;

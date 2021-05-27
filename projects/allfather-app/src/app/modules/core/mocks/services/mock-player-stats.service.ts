@@ -1,23 +1,23 @@
 import { of } from "rxjs";
-import { PlayerStatsService } from "../../player-stats.service";
+import { PlayerLocalStatsService } from "../../player-local-stats.service";
 
-export class MockPlayerStatsService implements MockedClass<PlayerStatsService> {
+export class MockPlayerStatsService implements MockedClass<PlayerLocalStatsService> {
     public clearPlayerCache(): void {}
 
     public clearLegendCache(): void {}
 
-    public getPlayerStats$(limit?: number, breakCache = false): ReturnType<PlayerStatsService["getPlayerStats$"]> {
+    public getPlayerStats$(limit?: number, breakCache = false): ReturnType<PlayerLocalStatsService["getPlayerStats$"]> {
         return of();
     }
 
-    public getLegendStats$(legendId: string, limit?: number, breakCache = false): ReturnType<PlayerStatsService["getLegendStats$"]> {
+    public getLegendStats$(legendId: string, limit?: number, breakCache = false): ReturnType<PlayerLocalStatsService["getLegendStats$"]> {
         return of();
     }
 
     public getPlayerComplimentaryLegendWeights$(
         limit?: number,
         breakCache = false
-    ): ReturnType<PlayerStatsService["getPlayerComplimentaryLegendWeights$"]> {
+    ): ReturnType<PlayerLocalStatsService["getPlayerComplimentaryLegendWeights$"]> {
         return of();
     }
 
@@ -25,7 +25,7 @@ export class MockPlayerStatsService implements MockedClass<PlayerStatsService> {
         legendId: string,
         limit?: number,
         breakCache = false
-    ): ReturnType<PlayerStatsService["getLegendComplimentaryLegendWeights$"]> {
+    ): ReturnType<PlayerLocalStatsService["getLegendComplimentaryLegendWeights$"]> {
         return of();
     }
 }

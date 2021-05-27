@@ -2,16 +2,16 @@ import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
 import { MatchMapGenericId } from "@allfather-app/app/common/match/map/map.enum";
 import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { fakeAsync } from "@angular/core/testing";
-import { MatchMapRotationMozambiquehereDTO } from "./match-map-rotation-mozambiquehere-dto";
+import { MapRotationMozambiquehereDTO } from "./map-rotation-mozambiquehere-dto";
 
-describe("MatchMapRotationMozambiquehereDTO", () => {
+describe("MapRotationMozambiquehereDTO", () => {
     beforeAll(() => {
         supressConsoleLog();
     });
 
     it("creates from JSON", fakeAsync(() => {
         // Arrange / Act
-        const actual = new MatchMapRotationMozambiquehereDTO(normalJSONResponse);
+        const actual = new MapRotationMozambiquehereDTO(normalJSONResponse);
 
         // Assert
         expect(actual.battle_royale?.current?.start).toBe(1621951200);
@@ -58,7 +58,7 @@ describe("MatchMapRotationMozambiquehereDTO", () => {
 
     it("can convert to MapRotation", fakeAsync(() => {
         // Arrange
-        const dto = new MatchMapRotationMozambiquehereDTO(normalJSONResponse);
+        const dto = new MapRotationMozambiquehereDTO(normalJSONResponse);
 
         // Act
         const actual = dto.toMapRotation();
