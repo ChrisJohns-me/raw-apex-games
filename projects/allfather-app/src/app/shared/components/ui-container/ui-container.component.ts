@@ -53,7 +53,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     private readonly uiWindow = new UIWindow();
     private _primaryTitle = "";
     private obtained$?: Observable<boolean>;
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(private readonly cdr: ChangeDetectorRef, private readonly titleService: Title) {
         this.titleService.setTitle(APP_NAME);
@@ -70,7 +70,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         // this.updatePosition();
         this.getState()
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 finalize(() => this.cdr.detectChanges())
             )
             .subscribe();
@@ -83,8 +83,8 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     public onMinimizeButtonClick(): void {
@@ -129,14 +129,14 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
             return;
         }
         event.preventDefault();
-        this.obtained$?.pipe(takeUntil(this.isDestroyed$)).subscribe(() => this.uiWindow.dragMove());
+        this.obtained$?.pipe(takeUntil(this.destroy$)).subscribe(() => this.uiWindow.dragMove());
     }
 
     private minimizeToggle(): void {
         this.uiWindow
             .toggleMinimize()
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 switchMap(() => this.getState()),
                 finalize(() => this.cdr.detectChanges())
             )
@@ -147,7 +147,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         this.uiWindow
             .toggleMaximize()
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 switchMap(() => this.getState()),
                 finalize(() => this.cdr.detectChanges())
             )
@@ -157,7 +157,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     private close(): void {
         this.obtained$
             ?.pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 switchMap(() => this.uiWindow.close())
             )
             .subscribe();
@@ -169,7 +169,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         this.uiWindow
             .getMonitor()
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 tap((monitor) => {
                     screenSize.height = monitor.height;
                     screenSize.width = monitor.width;

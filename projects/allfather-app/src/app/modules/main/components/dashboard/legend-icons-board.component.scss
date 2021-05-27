@@ -1,4 +1,4 @@
-@import "hud-styles";
+@import "window-styles";
 $skewX: -30deg;
 
 .tilt {
@@ -20,9 +20,14 @@ $skewX: -30deg;
     width: 100%;
     margin: 0.5%;
     border: 0.15rem solid #67708a88;
+    opacity: 0.85;
+    transition: all 0.1s linear;
+    animation: border-pulse 0.6s infinite alternate linear paused;
 
-    &:hover:not(.transparent-background) {
+    &:hover {
         border-color: white;
+        opacity: 1;
+        animation-play-state: running;
     }
 }
 
@@ -51,5 +56,11 @@ $skewX: -30deg;
         text-transform: uppercase;
         font-size: calc(2px + 0.7vw);
         font-weight: 700;
+    }
+}
+
+@keyframes border-pulse {
+    to {
+        border-color: rgba(255, 255, 255, 0.5);
     }
 }

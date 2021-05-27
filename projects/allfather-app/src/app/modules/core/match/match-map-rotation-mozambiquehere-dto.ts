@@ -1,6 +1,6 @@
 import { MatchGameModeType } from "@allfather-app/app/common/match/game-mode";
 import { MapRotation, MapRotationInfo } from "@allfather-app/app/common/match/map/map-rotation";
-import { findMatchMapFromFriendlyName } from "@allfather-app/app/common/match/map/match-map";
+import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { cleanInt } from "shared/utilities";
 
 interface MatchMapRotationInfoDTO {
@@ -39,7 +39,7 @@ export class MatchMapRotationMozambiquehereDTO {
             console.debug(`[${this.constructor.name}] Attempting to find map based on "${mapIteration.map}" (${gameMode})`);
             return {
                 friendlyName: mapIteration.map,
-                matchMap: findMatchMapFromFriendlyName(mapIteration.map, gameMode),
+                matchMap: MatchMap.getFromFriendlyName(mapIteration.map, gameMode),
                 startDate: mapIteration.start ? new Date(mapIteration.start * 1000) : undefined,
                 endDate: mapIteration.end ? new Date(mapIteration.end * 1000) : undefined,
             };

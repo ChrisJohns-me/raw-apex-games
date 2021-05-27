@@ -43,7 +43,7 @@ export class MatchPlayerLocationService extends AllfatherService {
     }
 
     private setupMatchStateEvents(): void {
-        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.myCoordinates$.next(undefined);
             this.myLocationPhase$.next(undefined);
             this.myStartingCoordinates$.next(undefined);
@@ -58,7 +58,7 @@ export class MatchPlayerLocationService extends AllfatherService {
     private setupMyCoordinates(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter((infoUpdate) => infoUpdate.feature === "location" && !!infoUpdate.info.match_info?.location),
                 map((infoUpdate) => infoUpdate.info.match_info?.location)
             )
@@ -88,12 +88,12 @@ export class MatchPlayerLocationService extends AllfatherService {
                 this.myLocationPhase$.value === MatchLocationPhase.Dropping && !!this.myLandingCoordinates$.value,
         });
 
-        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.isDestroyed$)).subscribe((infoUpdate) => {
+        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.destroy$)).subscribe((infoUpdate) => {
             const newPhase = triggers.triggeredFirstKey(infoUpdate, false);
             setNewLocationPhaseFn(newPhase);
         });
 
-        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             const newPhase = triggers.triggeredFirstKey(undefined, true);
             setNewLocationPhaseFn(newPhase);
         });
@@ -102,7 +102,7 @@ export class MatchPlayerLocationService extends AllfatherService {
     private setupMyStartingCoordinates(): void {
         this.myCoordinates$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter(() => !this.myStartingCoordinates$.value),
                 filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z))
             )
@@ -112,7 +112,7 @@ export class MatchPlayerLocationService extends AllfatherService {
     private setupMyEndingCoordinates(): void {
         this.match.endedEvent$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter(() => !!this.myStartingCoordinates$.value && !this.myEndingCoordinates$.value),
                 map(() => this.myCoordinates$.value),
                 filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z)),
@@ -124,7 +124,7 @@ export class MatchPlayerLocationService extends AllfatherService {
     private setupMyLandingCoordinates(): void {
         this.playerInventory.myInUseItem$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter((inUse) => !!inUse),
                 map(() => this.myCoordinates$.value),
                 filter(() => !this.myLandingCoordinates$.value),

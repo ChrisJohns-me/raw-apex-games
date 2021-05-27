@@ -7,13 +7,13 @@ import { OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status
 export abstract class AllfatherService implements OnDestroy {
     protected allFeatureDeps?: OverwolfFeatureDep[];
 
-    protected readonly isDestroyed$ = new Subject<void>();
+    protected readonly destroy$ = new Subject<void>();
 
     constructor(private readonly __overwolfGameDataStatus?: OverwolfFeatureStatusService) {}
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     public isFeatureDepAvailable(featureName: OverwolfFeatureDep): boolean {

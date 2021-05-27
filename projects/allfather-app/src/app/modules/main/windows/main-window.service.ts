@@ -17,11 +17,11 @@ export class MainWindowService implements OnDestroy {
     public isRequestingExit$ = new BehaviorSubject<boolean>(false);
 
     private readonly uiWindow = new UIWindow(WindowName.Main);
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     public open(page?: MainPage): Observable<void> {
@@ -55,7 +55,7 @@ export class MainWindowService implements OnDestroy {
     public requestExit(): void {
         console.trace(`[MainWindowService] Received request to Exit App; Relaying to Main Window`);
         const grabFocus$ = this.focus().pipe(tap(() => this.isRequestingExit$.next(true)));
-        from([this.restore(), grabFocus$]).pipe(takeUntil(this.isDestroyed$), concatAll()).subscribe();
+        from([this.restore(), grabFocus$]).pipe(takeUntil(this.destroy$), concatAll()).subscribe();
     }
 
     public cancelExit(): void {

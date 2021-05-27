@@ -11,7 +11,7 @@
 
 //     this.googleFormsMatchSummaryTracker.lastMatchSummary
 //         .pipe(
-//             takeUntil(this.isDestroyed$),
+//             takeUntil(this.destroy$),
 //             filter((matchSummary) => !!matchSummary && !!matchSummary.legend && (matchSummary.placement ?? 0) > 0),
 //             tap(() => hasTrackedFn(true)),
 //             delay(showReportedDuration),
@@ -38,7 +38,7 @@
 //     private unreportedMatchSummary?: MatchSummary;
 //     private _isTrackingEnabled = false;
 
-//     private readonly isDestroyed$ = new Subject<void>();
+//     private readonly destroy$ = new Subject<void>();
 
 //     constructor(
 //         private readonly httpClient: HttpClient,
@@ -49,8 +49,8 @@
 //     ) {}
 
 //     public ngOnDestroy(): void {
-//         this.isDestroyed$.next();
-//         this.isDestroyed$.complete();
+//         this.destroy$.next();
+//         this.destroy$.complete();
 //     }
 
 //     public init(): void {
@@ -75,7 +75,7 @@
 // return this.httpClient
 //     .get(url, { params, observe: "response", responseType: "text" })
 //     .pipe(
-//         takeUntil(this.isDestroyed$),
+//         takeUntil(this.destroy$),
 //         map((response) => ({
 //             success: response.ok,
 //             error: !response.ok ? response.statusText : undefined,
@@ -91,7 +91,7 @@
 // let isReportTriggered = false;
 // this.match.endedEvent$
 //     .pipe(
-//         takeUntil(this.isDestroyed$),
+//         takeUntil(this.destroy$),
 //         switchMap(() =>
 //             combineLatest<[Legend, MatchMap, MatchGameMode, number, number, number, MatchStateChangedEvent]>([
 //                 this.matchPlayerLegend.myLegend$,

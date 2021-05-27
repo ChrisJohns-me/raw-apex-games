@@ -94,7 +94,7 @@ export class MatchService extends AllfatherService {
     private setupMatchId(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter((infoUpdate) => infoUpdate.feature === "match_info" && !isEmpty(infoUpdate.info.match_info?.pseudo_match_id)),
                 map((infoUpdate) => infoUpdate.info.match_info?.pseudo_match_id),
                 filter((matchId) => !!matchId && uuidValidate(matchId))
@@ -107,7 +107,7 @@ export class MatchService extends AllfatherService {
 
     private setupStartEndEvents(): void {
         merge(this.startedEvent$, this.endedEvent$)
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((newState) => this.state$.next(newState));
     }
 
@@ -117,7 +117,7 @@ export class MatchService extends AllfatherService {
             if (newState === MatchState.Active) {
                 // Ensure that we have the matchId for the startEvent
                 this.resolveMatchId$(MATCHID_TIMEOUT)
-                    .pipe(takeUntil(this.isDestroyed$))
+                    .pipe(takeUntil(this.destroy$))
                     .subscribe((matchId) => {
                         console.debug(`[${this.constructor.name}] Match is Active; MatchId: ${matchId}`);
                         this.currentStartDate = new Date();
@@ -151,12 +151,12 @@ export class MatchService extends AllfatherService {
             },
         });
 
-        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.isDestroyed$)).subscribe((infoUpdate) => {
+        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.destroy$)).subscribe((infoUpdate) => {
             const newState = triggers.triggeredFirstKey(this.state$.value.state, infoUpdate, undefined);
             newStateChangeFn(newState);
         });
 
-        this.overwolfGameData.newGameEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe((gameEvent) => {
+        this.overwolfGameData.newGameEvent$.pipe(takeUntil(this.destroy$)).subscribe((gameEvent) => {
             const newState = triggers.triggeredFirstKey(this.state$.value.state, undefined, gameEvent);
             newStateChangeFn(newState);
         });
@@ -167,7 +167,7 @@ export class MatchService extends AllfatherService {
 
         this.overwolfGameData.infoUpdates$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter((infoUpdate) => infoUpdate.feature === "match_info"),
                 filter((infoUpdate) => !!infoUpdate.info.match_info?.game_mode),
                 map((infoUpdate) => infoUpdate.info.match_info?.game_mode)

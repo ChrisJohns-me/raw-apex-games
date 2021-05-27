@@ -60,7 +60,7 @@ export class MatchPlayerInflictionService extends AllfatherService {
     private setupMyDamageEvents(): void {
         this.overwolfGameData.newGameEvent$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter((gameEvent) => gameEvent.name === "damage"),
                 map((gameEvent) => gameEvent.data as overwolf.gep.ApexLegends.GameEventDamage),
                 filter(() => {

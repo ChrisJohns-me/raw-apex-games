@@ -36,9 +36,9 @@
                         <h5>Waiting for match</h5>
                     </div>
                     ​<picture>
-                        <source media="(max-width: 1000px)" srcset="../../../../assets/images/map-layouts/medium/map-layouts-mixed.webp" />
-                        <source media="(max-width: 1440px)" srcset="../../../../assets/images/map-layouts/large/map-layouts-mixed.webp" />
-                        <img src="../../../../assets/images/map-layouts/map-layouts-mixed.webp" class="img-fluid" alt="..." />
+                        <source media="(max-width: 1000px)" [srcset]="'../../../../assets/images/map-layouts/medium/' + getMapFilename()" />
+                        <source media="(max-width: 1440px)" [srcset]="'../../../../assets/images/map-layouts/large/' + getMapFilename()" />
+                        <img [src]="'../../../../assets/images/map-layouts/' + getMapFilename()" class="img-fluid" alt="..." />
                     </picture>
                 </div>
 
@@ -46,14 +46,14 @@
                     ​<picture>
                         <source
                             media="(max-width: 1000px)"
-                            [srcset]="'../../../../assets/images/map-layouts/medium/' + displayedMap!.mapId + '.webp'"
+                            [srcset]="'../../../../assets/images/map-layouts/medium/' + getMapFilename(displayedMap!.mapId)"
                         />
                         <source
                             media="(max-width: 1440px)"
-                            [srcset]="'../../../../assets/images/map-layouts/large/' + displayedMap!.mapId + '.webp'"
+                            [srcset]="'../../../../assets/images/map-layouts/large/' + getMapFilename(displayedMap!.mapId)"
                         />
                         <img
-                            [src]="'../../../../assets/images/map-layouts/' + displayedMap!.mapId + '.webp'"
+                            [src]="'../../../../assets/images/map-layouts/' + getMapFilename(displayedMap!.mapId)"
                             class="img-fluid"
                             alt="..."
                             (load)="isLoadingMapImage = false"

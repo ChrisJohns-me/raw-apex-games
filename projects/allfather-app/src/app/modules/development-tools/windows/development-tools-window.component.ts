@@ -19,7 +19,7 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     public infoUpdates$: Subject<OWInfoUpdates2Event>;
     public newGameEvent$: Subject<OWGameEvent>;
 
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(
         private readonly exposedOverwolfData: ExposedOverwolfGameDataService,
@@ -32,8 +32,8 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     public ngOnInit(): void {}
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     public relaunchApp(): void {

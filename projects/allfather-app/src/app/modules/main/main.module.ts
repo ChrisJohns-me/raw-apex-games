@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { DailyAverageGraphComponent } from "./components/charting/daily-average-graph.component";
 import { ComplimentaryLegendsComponent } from "./components/dashboard/complimentary-legends.component";
 import { LegendIconsBoardComponent } from "./components/dashboard/legend-icons-board.component";
+import { MapRotationDisplayComponent } from "./components/dashboard/map-rotation-display.component";
 import { NavbarComponent } from "./components/navbar.component";
 import { ChartingPageComponent } from "./pages/charting-page.component";
 import { DashboardPageComponent } from "./pages/dashboard-page.component";
@@ -20,6 +21,7 @@ import { MainWindowComponent } from "./windows/main-window.component";
         DashboardPageComponent,
         LegendIconsBoardComponent,
         MainWindowComponent,
+        MapRotationDisplayComponent,
         MatchExplorerPageComponent,
         NavbarComponent,
         SettingsPageComponent,

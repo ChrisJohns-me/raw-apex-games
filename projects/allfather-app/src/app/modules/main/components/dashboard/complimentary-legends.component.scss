@@ -1,4 +1,4 @@
-@import "hud-styles";
+@import "window-styles";
 
 .legend-portraits-container {
     display: flex;
@@ -36,5 +36,6 @@
 }
 
 .legend-portrait {
+    width: 5vw;
     max-height: 65px;
 }

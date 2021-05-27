@@ -1,16 +1,19 @@
 import { IconComponent } from "@allfather-app/app/shared/components/icon/icon.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { BackgroundService } from "../../background/background.service";
 import { ConfigurationService } from "../../core/configuration.service";
 import { FileService } from "../../core/file.service";
 import { LocalDatabaseService } from "../../core/local-database/local-database.service";
+import { MatchMapService } from "../../core/match/match-map.service";
 import { MockUIContainerComponent } from "../../core/mocks/components/mock-ui-container.component";
 import { MockBackgroundService } from "../../core/mocks/services/mock-background.service";
 import { MockConfigurationService } from "../../core/mocks/services/mock-configuration.service";
 import { MockFileService } from "../../core/mocks/services/mock-file.service";
 import { MockLocalDatabaseService } from "../../core/mocks/services/mock-local-database.service";
 import { MockMainWindowService } from "../../core/mocks/services/mock-main-window.service";
+import { MockMatchMapService } from "../../core/mocks/services/mock-match-map.service";
 import { MockPlayerStatsService } from "../../core/mocks/services/mock-player-stats.service";
 import { MockPlayerService } from "../../core/mocks/services/mock-player.service";
 import { MockSettingsService } from "../../core/mocks/services/mock-settings.service";
@@ -19,6 +22,7 @@ import { PlayerService } from "../../core/player.service";
 import { SettingsService } from "../../core/settings.service";
 import { DailyAverageGraphComponent } from "../components/charting/daily-average-graph.component";
 import { LegendIconsBoardComponent } from "../components/dashboard/legend-icons-board.component";
+import { MapRotationDisplayComponent } from "../components/dashboard/map-rotation-display.component";
 import { NavbarComponent } from "../components/navbar.component";
 import { ChartingPageComponent } from "../pages/charting-page.component";
 import { DashboardPageComponent } from "../pages/dashboard-page.component";
@@ -33,7 +37,7 @@ describe("MainWindowComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ReactiveFormsModule],
+            imports: [ReactiveFormsModule, NoopAnimationsModule],
             declarations: [
                 ChartingPageComponent,
                 DailyAverageGraphComponent,
@@ -45,6 +49,7 @@ describe("MainWindowComponent", () => {
                 MockUIContainerComponent,
                 NavbarComponent,
                 SettingsPageComponent,
+                MapRotationDisplayComponent,
             ],
             providers: [
                 { provide: BackgroundService, useClass: MockBackgroundService },
@@ -54,6 +59,7 @@ describe("MainWindowComponent", () => {
                 { provide: PlayerService, useClass: MockPlayerService },
                 { provide: FileService, useClass: MockFileService },
                 { provide: SettingsService, useClass: MockSettingsService },
+                { provide: MatchMapService, useClass: MockMatchMapService },
                 { provide: PlayerStatsService, useClass: MockPlayerStatsService },
             ],
         }).compileComponents();

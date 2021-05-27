@@ -42,7 +42,7 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
     }
 
     private ultimatePercentOverride?: number = undefined;
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
@@ -69,8 +69,8 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     public onChangeGameProcessIsRunningClick(): void {
@@ -156,7 +156,7 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
     public reloadOWGEPStatus(): void {
         this.overwolfFeatureStatusService
             .getFeatureStatusList$()
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((statusList) => console.debug(`Refreshed OW GEP Status`, statusList));
     }
 }

@@ -24,7 +24,7 @@ export class OverwolfWindowService {
     public readonly visibility = new VisibilityDelegate();
     //#endregion
 
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor() {
         this.startWindowEventListeners();
@@ -37,8 +37,8 @@ export class OverwolfWindowService {
         this.size.onDestroy();
         this.state.onDestroy();
         this.visibility.onDestroy();
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     private startWindowEventListeners(): void {

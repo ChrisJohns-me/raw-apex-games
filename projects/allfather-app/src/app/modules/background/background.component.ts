@@ -14,7 +14,7 @@ import { SystemTrayService } from "./system-tray.service";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BackgroundComponent implements OnInit, OnDestroy {
-    private readonly isDestroyed$ = new Subject<void>();
+    private readonly destroy$ = new Subject<void>();
 
     constructor(
         private readonly hudWindowController: HUDWindowControllerService,
@@ -33,15 +33,15 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     private setupUIWindows(): void {
-        // if (environment.allowDevTools) this.developmentToolsWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+        // if (environment.allowDevTools) this.developmentToolsWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
 
         this.mainWindow.setIsStarting(true);
-        this.mainWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+        this.mainWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     private setupSystemTray(): void {

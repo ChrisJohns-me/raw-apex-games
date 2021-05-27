@@ -103,14 +103,12 @@ export class SystemTrayService extends AllfatherService {
         if (environment.allowDevTools) this.menuItems.push(SEPARATOR, ...DEVTOOLS_MENUITEMS);
         this.menuItems.push(SEPARATOR, ...FOOTER_MENUITEMS);
 
-        this.overwolfSystemTray.systemTrayIconClicked$
-            .pipe(takeUntil(this.isDestroyed$))
-            .subscribe(this.onSystemTrayIconClicked.bind(this));
+        this.overwolfSystemTray.systemTrayIconClicked$.pipe(takeUntil(this.destroy$)).subscribe(this.onSystemTrayIconClicked.bind(this));
         this.overwolfSystemTray.systemTrayIconDoubleClicked$
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe(this.onSystemTrayIconDoubleClicked.bind(this));
         this.overwolfSystemTray.menuItemClicked$
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((e) => this.onMenuItemClicked(e as SystemTrayItemKey));
     }
 
@@ -118,7 +116,7 @@ export class SystemTrayService extends AllfatherService {
         this.overwolfSystemTray
             .setTray({ menu_items: this.menuItems })
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 catchError((err) => {
                     console.error(`[${this.constructor.name}] Unable to create system tray.`, err);
                     return of(false);
@@ -130,37 +128,37 @@ export class SystemTrayService extends AllfatherService {
     private onSystemTrayIconClicked(): void {}
 
     private onSystemTrayIconDoubleClicked(): void {
-        this.mainWindow.restore().pipe(takeUntil(this.isDestroyed$)).subscribe();
+        this.mainWindow.restore().pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     private onMenuItemClicked(menuItem: SystemTrayItemKey): void {
         switch (menuItem) {
             case SystemTrayItemKey.Main:
-                this.mainWindow.open(MainPage.Dashboard).pipe(takeUntil(this.isDestroyed$)).subscribe();
+                this.mainWindow.open(MainPage.Dashboard).pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.DevelopmentTools:
-                this.developmentToolsWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+                this.developmentToolsWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.HUDInflictionInsight:
-                this.inflictionInsightWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+                this.inflictionInsightWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.HUDMatchTimer:
-                this.matchTimerWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+                this.matchTimerWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.HUDUltTimer:
-                this.ultTimerWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+                this.ultTimerWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.LegendSelectAssist:
-                this.legendSelectAssistWindow.open().pipe(takeUntil(this.isDestroyed$)).subscribe();
+                this.legendSelectAssistWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.MatchExplorer:
-                this.mainWindow.open(MainPage.MatchExplorer).pipe(takeUntil(this.isDestroyed$)).subscribe();
+                this.mainWindow.open(MainPage.MatchExplorer).pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.Charting:
-                this.mainWindow.open(MainPage.Charting).pipe(takeUntil(this.isDestroyed$)).subscribe();
+                this.mainWindow.open(MainPage.Charting).pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.Settings:
-                this.mainWindow.open(MainPage.Settings).pipe(takeUntil(this.isDestroyed$)).subscribe();
+                this.mainWindow.open(MainPage.Settings).pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.RestartApp:
                 this.overwolfExtensions.relaunchApp();

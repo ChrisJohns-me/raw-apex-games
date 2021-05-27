@@ -53,7 +53,7 @@ export class DashboardPageComponent implements OnInit {
     private _configIsComplimentaryLegendsEnabled = this.config.featureFlags.legendSelectAssist.complimentaryLegends;
     private _settingIsLegendStatsEnabled = false;
     private _settingIsComplimentaryLegendsEnabled = false;
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
@@ -90,7 +90,7 @@ export class DashboardPageComponent implements OnInit {
         this.legendStatsSubscription?.unsubscribe();
         this.legendStatsSubscription = this.playerStats
             .getLegendStats$(legendId)
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((avgStats) => {
                 this.legendStats = avgStats;
                 this.cdr.detectChanges();
@@ -101,7 +101,7 @@ export class DashboardPageComponent implements OnInit {
         this.complimentaryLegendsSubscription?.unsubscribe();
         this.complimentaryLegendsSubscription = this.playerStats
             .getLegendComplimentaryLegendWeights$(legendId)
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((legendWeights) => {
                 const limitedLegendWeights = legendWeights.slice(0, NUM_LEGEND_SUGGESTED_LEGENDS);
                 this.legendComplimentaryLegendWeights = limitedLegendWeights;
@@ -112,7 +112,7 @@ export class DashboardPageComponent implements OnInit {
     private refreshMyStats(): void {
         this.playerStats
             .getPlayerStats$(undefined, true)
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((avgStats) => {
                 this.myStats = avgStats;
                 this.cdr.detectChanges();
@@ -122,7 +122,7 @@ export class DashboardPageComponent implements OnInit {
     private refreshMyComplimentaryLegends(): void {
         this.playerStats
             .getPlayerComplimentaryLegendWeights$(undefined, true)
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((legendWeights) => {
                 const limitedLegendWeights = legendWeights.slice(0, NUM_MY_SUGGESTED_LEGENDS);
                 this.myComplimentaryLegendWeights = limitedLegendWeights;
@@ -139,7 +139,7 @@ export class DashboardPageComponent implements OnInit {
     }
 
     private setupPlayerName(): void {
-        this.player.myName$.pipe(takeUntil(this.isDestroyed$)).subscribe((myName) => {
+        this.player.myName$.pipe(takeUntil(this.destroy$)).subscribe((myName) => {
             this.playerName = myName;
             this.cdr.detectChanges();
         });
@@ -148,7 +148,7 @@ export class DashboardPageComponent implements OnInit {
     private watchLocalDatabase(): void {
         this.localDatabase.onChanges$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 map((changes) => changes.find((c) => c.table === this.localDatabase.matches.name)),
                 map((change) => (change as any)?.obj),
                 filter((value) => value != null)

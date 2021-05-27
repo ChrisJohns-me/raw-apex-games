@@ -32,7 +32,7 @@ export class MatchPlayerService extends AllfatherService {
      * Reset state on match start
      */
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.myState$.next(PlayerState.Alive);
         });
     }
@@ -56,17 +56,17 @@ export class MatchPlayerService extends AllfatherService {
                 matchState === MatchState.Inactive || gameEvent?.name === "match_end",
         });
 
-        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.isDestroyed$)).subscribe((infoUpdate) => {
+        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.destroy$)).subscribe((infoUpdate) => {
             const newState = triggers.triggeredFirstKey(infoUpdate, undefined, undefined);
             setNewStateFn(newState);
         });
 
-        this.overwolfGameData.newGameEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe((gameEvent) => {
+        this.overwolfGameData.newGameEvent$.pipe(takeUntil(this.destroy$)).subscribe((gameEvent) => {
             const newState = triggers.triggeredFirstKey(undefined, gameEvent, undefined);
             setNewStateFn(newState);
         });
 
-        this.match.state$.pipe(takeUntil(this.isDestroyed$)).subscribe((stateChanged) => {
+        this.match.state$.pipe(takeUntil(this.destroy$)).subscribe((stateChanged) => {
             const newState = triggers.triggeredFirstKey(undefined, undefined, stateChanged.state);
             setNewStateFn(newState);
         });

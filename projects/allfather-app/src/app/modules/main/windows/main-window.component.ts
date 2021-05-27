@@ -1,5 +1,6 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
 import { fadeInOutAnimation } from "@allfather-app/app/shared/animations/fade-in-out.animation";
+import { scaleInOutAnimationFactory } from "@allfather-app/app/shared/animations/scale-in-out-factory.animation";
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -27,7 +28,7 @@ const CAPTION_DISPLAY_CHANCE = 0.1;
     templateUrl: "./main-window.component.html",
     styleUrls: ["./main-window.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    animations: [fadeInOutAnimation],
+    animations: [fadeInOutAnimation, scaleInOutAnimationFactory(0, 0.925)],
 })
 export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild("confirmExitModal") private confirmExitModal?: ElementRef;
@@ -38,7 +39,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     public isAppStarting = false;
     public randomCaption = this.captionGenerator();
 
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(
         private readonly backgroundService: BackgroundService,
@@ -48,7 +49,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     ) {}
 
     public ngOnInit(): void {
-        this.mainWindow.isStarting$.pipe(takeUntil(this.isDestroyed$)).subscribe((isStarting) => {
+        this.mainWindow.isStarting$.pipe(takeUntil(this.destroy$)).subscribe((isStarting) => {
             this.isAppStarting = isStarting;
             this.cdr.detectChanges();
         });
@@ -61,8 +62,8 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     public goToPage(page: MainPage): void {
@@ -76,7 +77,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     private setupLoading(): void {
         this.config.loadStatus$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 delayWhen(() => interval(this.mainWindow.isStarting$ ? STARTING_LOAD_DELAY : 0))
             )
             .subscribe((configLoadStatus) => {
@@ -100,7 +101,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private setupPageRouting(): void {
-        this.mainWindow.mainPage.pipe(takeUntil(this.isDestroyed$)).subscribe((page) => {
+        this.mainWindow.mainPage.pipe(takeUntil(this.destroy$)).subscribe((page) => {
             this.activePage = page;
             this.cdr.detectChanges();
         });
@@ -112,7 +113,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         let confirmModal = getConfirmModal();
         this.mainWindow.isRequestingExit$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter((isRequestingExit) => !!isRequestingExit)
             )
             .subscribe(() => {

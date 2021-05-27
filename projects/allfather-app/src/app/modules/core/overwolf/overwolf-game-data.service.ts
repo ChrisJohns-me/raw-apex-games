@@ -56,7 +56,7 @@ export class OverwolfGameDataService extends AllfatherService {
         super();
         this.gameMonitorGameInfoDelegate.gameInfo$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 map((gameInfo) => gameInfo?.isRunning ?? false),
                 distinctUntilChanged()
             )
@@ -89,7 +89,7 @@ export class OverwolfGameDataService extends AllfatherService {
         );
         merge(isRunningHealthcheck$, isRunningChanged$)
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter(() => this.isRunning$.value),
                 switchMap(() => this.featureRegistration.setRegisteredFeatures())
             )

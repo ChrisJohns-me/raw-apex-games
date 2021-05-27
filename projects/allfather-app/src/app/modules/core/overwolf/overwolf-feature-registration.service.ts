@@ -50,7 +50,7 @@ export class OverwolfFeatureRegistrationService extends AllfatherService {
 
     public unregisterFeatures(): Observable<void> {
         return this.setRegisteredFeatures([]).pipe(
-            takeUntil(this.isDestroyed$),
+            takeUntil(this.destroy$),
             tap(() => this.registrationStatus$.next(OWFeatureRegistrationStatus.NOT_REGISTERED)),
             mapTo(undefined)
         );

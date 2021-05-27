@@ -41,10 +41,10 @@ export class ConfigurationService implements Configuration, OnDestroy {
     public general!: General;
     public overwolfQuirks!: OverwolfQuirks;
 
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(private readonly http: HttpClient) {
-        this.loadAppConfig().pipe(takeUntil(this.isDestroyed$)).subscribe();
+        this.loadAppConfig().pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     public loadAppConfig(): Observable<ConfigLoadStatus> {
@@ -69,8 +69,8 @@ export class ConfigurationService implements Configuration, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     private bootstrapData(configData: Configuration): void {

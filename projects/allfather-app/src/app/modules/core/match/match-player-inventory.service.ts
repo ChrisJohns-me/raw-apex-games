@@ -31,7 +31,7 @@ export class MatchPlayerInventoryService extends AllfatherService {
     constructor(private readonly match: MatchService, private readonly overwolfGameData: OverwolfGameDataService) {
         super();
         this.inventoryInfoUpdates$ = this.overwolfGameData.infoUpdates$.pipe(
-            takeUntil(this.isDestroyed$),
+            takeUntil(this.destroy$),
             filter((infoUpdate) => infoUpdate.feature === "inventory")
         );
         this.setupOnMatchStart();
@@ -44,7 +44,7 @@ export class MatchPlayerInventoryService extends AllfatherService {
      * Reset states on match start
      */
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.myInUseItem$.next(undefined);
             this.myWeaponSlots$.next({});
             this.myInventorySlots$.next({});

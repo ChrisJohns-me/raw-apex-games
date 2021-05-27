@@ -15,7 +15,7 @@ export class ChartingPageComponent implements OnInit, AfterViewInit, OnDestroy {
     public matchList: MatchDataStore[] = [];
 
     private numDaysToShow = 30;
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(private readonly cdr: ChangeDetectorRef, private readonly match: MatchService) {}
 
@@ -26,7 +26,7 @@ export class ChartingPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.refreshUI();
 
         this.getMatchList()
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((matchList) => {
                 this.matchList = matchList;
                 this.refreshUI();
@@ -34,15 +34,15 @@ export class ChartingPageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
     //#endregion
 
     private getMatchList(): Observable<MatchDataStore[]> {
         this.isLoadingMatchList = true;
         return this.match.getAllMatchData$().pipe(
-            takeUntil(this.isDestroyed$),
+            takeUntil(this.destroy$),
             finalize(() => (this.isLoadingMatchList = false))
         );
     }

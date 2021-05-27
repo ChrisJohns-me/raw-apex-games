@@ -70,7 +70,7 @@ export class HUDWindowControllerService extends AllfatherService {
     public startWatchEvents(): void {
         combineLatest([this.settingsService.streamAllSettings$(), this.game.phase$])
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 switchMap(([settings, gamePhase]) => merge(...this.fireHUDRequirements(settings, gamePhase)))
             )
             .subscribe();

@@ -61,7 +61,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     private dbExportFilename = `${environment.DEV ? "DEV_" : ""}allfather_db_${format(new Date(), "yyyy_dd_mm")}.json`;
     private dbExportDirectory = "db_export";
     private _isSaving = false;
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(
         private readonly fileService: FileService,
@@ -77,8 +77,8 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     public exportLocalDatabase(): void {
@@ -86,7 +86,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         this.fileService
             .ensureDirectory$(this.dbExportDirectory)
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 switchMap(() => this.localDatabase.exportDatabaseBlob$()),
                 switchMap((blobContent) => from(blobContent.text())),
                 switchMap((jsonContent) => this.fileService.saveFile$(`${this.dbExportDirectory}/${this.dbExportFilename}`, jsonContent)),
@@ -136,7 +136,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
 
         this.settingsService
             .streamAllSettings$()
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((allSettings) => {
                 applyAllSettingsFn(allSettings);
                 this.refreshAllFormStates();
@@ -160,7 +160,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     private setupInGameHUDForm(): void {
         this.settingsForm
             .get([SettingKey.EnableAllInGameHUD])
-            ?.valueChanges.pipe(takeUntil(this.isDestroyed$))
+            ?.valueChanges.pipe(takeUntil(this.destroy$))
             .subscribe(() => {
                 this.refreshInGameFormHUDState();
             });
@@ -171,7 +171,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
                 ?.valueChanges.pipe(map((value) => ({ [SettingKey.EnableAllInGameHUD]: value }))) ?? of(),
             this.inGameHUDFormGroup.valueChanges ?? of()
         )
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe(this.saveSettingsChanges.bind(this));
     }
 
@@ -186,7 +186,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     private setupLegendSelectHUDForm(): void {
         this.settingsForm
             .get([SettingKey.EnableAllLegendSelectHUD])
-            ?.valueChanges.pipe(takeUntil(this.isDestroyed$))
+            ?.valueChanges.pipe(takeUntil(this.destroy$))
             .subscribe(() => {
                 this.refreshLegendSelectHUDFormState();
             });
@@ -197,7 +197,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
                 ?.valueChanges.pipe(map((value) => ({ [SettingKey.EnableAllLegendSelectHUD]: value }))) ?? of(),
             this.legendSelectHUDFormGroup.valueChanges ?? of()
         )
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe(this.saveSettingsChanges.bind(this));
     }
 

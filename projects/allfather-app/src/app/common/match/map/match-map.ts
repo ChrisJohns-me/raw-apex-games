@@ -36,6 +36,9 @@ export class MatchMap implements MatchMapConstructor {
     public dropshipZStart?: MatchMapCoordinates["z"]; // Useful to cross-reference with starting location
     public chartConfig?: MatchMapChartingConfig;
 
+    public static unknownLayoutId = "unknown_map_layout";
+    public static unknownPreviewId = "unknown_map_preview";
+
     public get isActive(): boolean {
         return !!this.activeDates?.some((date) => date.to == null && date.from < new Date());
     }
@@ -49,18 +52,48 @@ export class MatchMap implements MatchMapConstructor {
         this.dropshipZStart = ctor.dropshipZStart;
         this.chartConfig = ctor.chartConfig;
     }
-}
 
-export function findMatchMapFromFriendlyName(friendlyName: string, gameModeBaseType?: MatchGameModeType): Optional<MatchMap> {
-    const mapList = gameModeBaseType
-        ? MatchMapList.filter((matchMap) => matchMap.gameModeTypes?.find((gameMode) => gameMode === gameModeBaseType))
-        : MatchMapList;
-    if (!mapList || !mapList.length) return undefined;
+    //#region Static Methods
+    public static getFromFriendlyName(friendlyName: string, gameModeBaseType?: MatchGameModeType): Optional<MatchMap> {
+        const mapList = gameModeBaseType
+            ? MatchMapList.filter((matchMap) => matchMap.gameModeTypes?.find((gameMode) => gameMode === gameModeBaseType))
+            : MatchMapList;
+        if (!mapList || !mapList.length) return undefined;
 
-    const nameCleanFn = (name: string): string => {
-        return name.toLowerCase().replace(/[^a-z]/gi, "");
-    };
+        const nameCleanFn = (name: string): string => {
+            return name.toLowerCase().replace(/[^a-z]/gi, "");
+        };
 
-    const foundMap = mapList.find((matchMap) => nameCleanFn(matchMap.genericId) === nameCleanFn(friendlyName));
-    return foundMap;
+        const foundMap = mapList.find((matchMap) => nameCleanFn(matchMap.genericId) === nameCleanFn(friendlyName));
+        return foundMap;
+    }
+
+    /**
+     * @returns Filename of map's topographical image.
+     * @returns Defaults to unknown image, if map's id is empty.
+     */
+    public static getLayoutFilename(mapId?: string): string {
+        return MatchMap.generateFilename(mapId ?? MatchMap.unknownLayoutId, "", "", "webp");
+    }
+
+    /**
+     * @returns Filename of map's preview image.
+     * @returns Defaults to unknown image, if map's id is empty.
+     */
+    public static getPreviewFilename(genericId?: MatchMapGenericId): string {
+        return MatchMap.generateFilename(genericId ?? MatchMap.unknownPreviewId, "", "", "webp");
+    }
+    //#endregion
+
+    //#region Instantiation Methods
+    public get layoutFilename(): string {
+        return MatchMap.getLayoutFilename(this.mapId);
+    }
+    public get previewFilename(): string {
+        return MatchMap.getLayoutFilename(this.mapId);
+    }
+    //#endregion
+
+    private static generateFilename = (value: string, prefix = "", postfix = "", extension = "webp"): string =>
+        `${prefix}${value}${postfix}.${extension}`;
 }

@@ -81,7 +81,7 @@ export const MatchMapList: MatchMap[] = [
     new MatchMap({
         mapName: MatchMapFriendlyName.PhaseRunner,
         genericId: MatchMapGenericId.PhaseRunner,
-        mapId: "_maybe_phase_runner_id_here?_",
+        mapId: "mp_rr_arena_phase_runner",
         gameModeTypes: [MatchGameModeType.Arenas],
         activeDates: [
             {
@@ -92,7 +92,7 @@ export const MatchMapList: MatchMap[] = [
     new MatchMap({
         mapName: MatchMapFriendlyName.PartyCrasher,
         genericId: MatchMapGenericId.PartyCrasher,
-        mapId: "_maybe_party_crasher_id_here?_",
+        mapId: "mp_rr_party_crasher",
         gameModeTypes: [MatchGameModeType.Arenas],
         activeDates: [
             {
@@ -108,6 +108,17 @@ export const MatchMapList: MatchMap[] = [
         activeDates: [
             {
                 from: new Date("May 04, 2021"),
+            },
+        ],
+    }),
+    new MatchMap({
+        mapName: MatchMapFriendlyName.GoldenGardens,
+        genericId: MatchMapGenericId.GoldenGardens,
+        mapId: "_maybe_thermal_station_id_here?_",
+        gameModeTypes: [MatchGameModeType.Arenas],
+        activeDates: [
+            {
+                from: new Date("Jan 01, 2025"),
             },
         ],
     }),

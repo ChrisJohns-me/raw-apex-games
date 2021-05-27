@@ -104,7 +104,7 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     private selectedMap?: MatchMap;
     private liveMatchLocationHistory: MatchMapCoordinates[] = [];
     private aggregateMapLocationHistory: MatchMapCoordinates[] = [];
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
@@ -131,6 +131,7 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item) => item.matchId ?? item.endDate;
     public durationSinceNow = (baseDate: Date): Duration => intervalToDuration({ start: baseDate, end: new Date() });
     public getGameModeTypeName = (gameModeId: string): Optional<string> => new MatchGameMode(gameModeId).baseType;
+    public getMapFilename = MatchMap.getLayoutFilename;
 
     //#region Lifecycle Methods
     public ngOnInit(): void {
@@ -138,7 +139,7 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
         this.setLiveMatch();
         this.setupEventListeners();
         this.getMatchList()
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((matchList) => {
                 this.matchList = matchList;
                 this.refreshUI();
@@ -151,8 +152,8 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     }
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
     //#endregion
 
@@ -188,13 +189,13 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     //#region Setup
     private setupEventListeners(): void {
         // Timeline slider changed
-        this.locationHistoryRange.valueChanges.pipe(takeUntil(this.isDestroyed$), distinctUntilChanged()).subscribe(() => {
+        this.locationHistoryRange.valueChanges.pipe(takeUntil(this.destroy$), distinctUntilChanged()).subscribe(() => {
             this.drawGraph();
             this.refreshUI();
         });
 
         // Follow Live Form
-        this.followLiveLocationForm.valueChanges.pipe(takeUntil(this.isDestroyed$), distinctUntilChanged()).subscribe((isEnabled) => {
+        this.followLiveLocationForm.valueChanges.pipe(takeUntil(this.destroy$), distinctUntilChanged()).subscribe((isEnabled) => {
             if (isEnabled) this.locationHistoryRange.enable({ emitEvent: false });
             else this.locationHistoryRange.disable({ emitEvent: false });
             this.refreshUI();
@@ -203,7 +204,7 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
 
     private setupLiveMatchListeners(): void {
         // Match started event
-        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.liveMatchLocationHistory = [];
             if (this.isLiveMatchFocused) {
                 this.setLiveMatch();
@@ -214,14 +215,14 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
         });
 
         // Match ended event
-        this.match.endedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
+        this.match.endedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.liveMatch = undefined;
         });
 
         // New match was reported to local database
         this.reportingService.reportingEvent$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter((reportingEvent) => reportingEvent.engine.engineId === ReportingEngineId.Local),
                 filter((localReportingStatus) => localReportingStatus.status === ReportingStatus.SUCCESS),
                 switchMap(() => this.getMatchList())
@@ -238,7 +239,7 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
             });
 
         // New player coordinates
-        this.matchPlayerLocation.myCoordinates$.pipe(takeUntil(this.isDestroyed$)).subscribe((coordinates) => {
+        this.matchPlayerLocation.myCoordinates$.pipe(takeUntil(this.destroy$)).subscribe((coordinates) => {
             if (!coordinates) return;
             if (this.matchPlayerLocation.myLocationPhase$.value !== MatchLocationPhase.HasLanded) return;
 
@@ -252,7 +253,7 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
         });
 
         // In-Game map change events
-        this.matchMap.map$.pipe(takeUntil(this.isDestroyed$)).subscribe((matchMap) => {
+        this.matchMap.map$.pipe(takeUntil(this.destroy$)).subscribe((matchMap) => {
             if (!matchMap || isEmpty(matchMap)) return;
             // this.liveMap = matchMap;
             if (this.isLiveMatchFocused) {
@@ -280,7 +281,7 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
             this.matchRoster.teammateRoster$,
             this.player.myName$
         )
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe(() => {
                 this.liveMatch = this.generateLiveMatch();
                 this.refreshUI();
@@ -441,7 +442,7 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
             this.yEndRangeForm.valueChanges,
             this.heatSizeRange.valueChanges,
         ])
-            .pipe(takeUntil(this.isDestroyed$), throttleTime(10))
+            .pipe(takeUntil(this.destroy$), throttleTime(10))
             .subscribe(([xShift, xStart, xEnd, yShift, yStart, yEnd, heatSize]) => {
                 const imageAxisScale = { xStart: xStart + xShift, xEnd: xEnd + xShift, yStart: yStart + yShift, yEnd: yEnd + yShift };
                 this.heatSize = heatSize;

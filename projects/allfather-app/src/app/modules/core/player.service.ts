@@ -42,20 +42,20 @@ export class PlayerService extends AllfatherService {
         // Initial load
         of(this.getPlayerNameFromLocalStorage())
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 switchMap((myName) => iif(() => isEmpty(myName), this.getPlayerNameFromLastPlayedGame$(), of(myName)))
             )
             .subscribe((myName) => setNameFn(myName));
 
         // Watch in-game events
         merge(this.getPlayerNameFromInfoUpdates$(), this.getPlayerNameFromGame$())
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((myName) => setNameFn(myName));
     }
 
     private getPlayerNameFromInfoUpdates$(): Observable<string> {
         return this.overwolfGameData.infoUpdates$.pipe(
-            takeUntil(this.isDestroyed$),
+            takeUntil(this.destroy$),
             filter((infoUpdate) => infoUpdate.feature === "me" && !!infoUpdate.info.me?.name),
             map((infoUpdate) => infoUpdate.info.me?.name),
             filter((myName) => !isEmpty(myName))
@@ -64,7 +64,7 @@ export class PlayerService extends AllfatherService {
 
     private getPlayerNameFromGame$(): Observable<string> {
         return this.overwolfGameData.newGameEvent$.pipe(
-            takeUntil(this.isDestroyed$),
+            takeUntil(this.destroy$),
             filter((gameEvent) => gameEvent.name === "kill_feed"),
             filter((gameEvent) => !!(gameEvent.data as OWGameEventKillFeed).local_player_name),
             map((gameEvent) => (gameEvent.data as OWGameEventKillFeed).local_player_name)

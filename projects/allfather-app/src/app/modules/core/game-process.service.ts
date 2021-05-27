@@ -19,7 +19,7 @@ export class GameProcessService extends AllfatherService {
 
     constructor(private readonly overwolfGameData: OverwolfGameDataService) {
         super();
-        this.overwolfGameData.gameInfo$.pipe(takeUntil(this.isDestroyed$)).subscribe((gameInfo) => {
+        this.overwolfGameData.gameInfo$.pipe(takeUntil(this.destroy$)).subscribe((gameInfo) => {
             if (!gameInfo) return;
             if (gameInfo.isRunning !== this.isRunning$.value) this.isRunning$.next(gameInfo.isRunning);
             if (gameInfo.isInFocus !== this.isInFocus$.value) this.isInFocus$.next(gameInfo.isInFocus);

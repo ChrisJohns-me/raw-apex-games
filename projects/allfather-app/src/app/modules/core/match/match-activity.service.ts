@@ -79,7 +79,7 @@ export class MatchActivityService extends AllfatherService {
      * Reset state on match start
      */
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.killfeedEventHistory$.next([]);
         });
     }
@@ -91,7 +91,7 @@ export class MatchActivityService extends AllfatherService {
     private setupKillfeed(): void {
         this.overwolfGameData.newGameEvent$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter((gameEvent) => gameEvent.name === "kill_feed"),
                 map((gameEvent) => gameEvent.data as OWGameEventKillFeed)
             )
@@ -130,7 +130,7 @@ export class MatchActivityService extends AllfatherService {
 
         this.overwolfGameData.newGameEvent$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter((gameEvent) => gameEvent.name === "knockdown" || gameEvent.name === "kill"),
                 filter((gameEvent) => !!gameEvent.data && typeof gameEvent.data === "object"),
                 filter((gameEvent) => !!(gameEvent.data as KillOrKnockdownData).victimName),

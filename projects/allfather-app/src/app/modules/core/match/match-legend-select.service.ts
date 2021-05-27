@@ -31,7 +31,7 @@ export class MatchLegendSelectService extends AllfatherService {
 
     private setupLegendSelected(): void {
         const teamUpdates$ = this.match.state$.pipe(
-            takeUntil(this.isDestroyed$),
+            takeUntil(this.destroy$),
             filter((stateChanged) => stateChanged.state === MatchState.Inactive),
             switchMap(() => this.overwolfGameData.infoUpdates$),
             filter((infoUpdate) => infoUpdate.feature === "team"),

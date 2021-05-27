@@ -80,7 +80,7 @@ export class ReportingService extends AllfatherService implements OnDestroy {
     }
 
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             // this.reportableDataItems.forEach(dataItem => dataItem.doSomething());
         });
     }
@@ -88,7 +88,7 @@ export class ReportingService extends AllfatherService implements OnDestroy {
     private setupOnMatchEnd(): void {
         this.match.endedEvent$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 switchMap(() => {
                     // Give each (started) engine it's opportunity to run.
                     this.runningReportingEngines.forEach((engine) => engine.runOpportunity());

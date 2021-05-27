@@ -1,0 +1,81 @@
+@import "window-styles";
+
+.group-title {
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 1vw;
+    line-height: 1vw;
+}
+
+.map-tile {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    font-family: "Quantico", sans-serif;
+    height: 7.5vw;
+    max-height: 100px;
+    padding: 0px 5px;
+    background-color: $gray-600;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    transition: all 0.1s linear;
+
+    &:first-of-type {
+        border-top-left-radius: 0.35rem;
+        border-top-right-radius: 0.35rem;
+    }
+
+    &:last-of-type {
+        border-bottom-left-radius: 0.35rem;
+        border-bottom-right-radius: 0.35rem;
+    }
+
+    & > * {
+        position: relative;
+    }
+
+    &::before {
+        position: absolute;
+        content: "";
+        background-color: $gray-900;
+        opacity: 0.25;
+        transition: all 0.1s linear;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+    }
+
+    &:hover {
+        background-size: 110%;
+
+        &::before {
+            opacity: 0;
+        }
+    }
+
+    .description-row {
+        text-align: left;
+        text-transform: uppercase;
+        font-size: calc(0.1rem + 1vw);
+    }
+
+    .time-display-row {
+        text-align: center;
+        .time-amount {
+            font-weight: bold;
+            font-size: 1.25rem;
+            line-height: 1rem;
+        }
+    }
+
+    .map-name-row {
+        text-align: right;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: 1vw;
+    }
+}

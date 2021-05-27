@@ -133,7 +133,7 @@ export class BackgroundService extends AllfatherService {
             switchMap(() => backgroundWindow.close()),
             tap(() => console.trace(`[BackgroundService] Exiting App - backgroundwindow should be closed`))
         );
-        from([this.closeAllWindows$(), closeBackgroundWindow$]).pipe(takeUntil(this.isDestroyed$), concatAll()).subscribe();
+        from([this.closeAllWindows$(), closeBackgroundWindow$]).pipe(takeUntil(this.destroy$), concatAll()).subscribe();
     }
 
     /** Closes all windows except Background */
@@ -142,7 +142,7 @@ export class BackgroundService extends AllfatherService {
         const allWindows$ = from(allWindowNames);
         return allWindows$.pipe(
             tap(() => console.trace(`[BackgroundService] Closing all windows`)),
-            takeUntil(this.isDestroyed$),
+            takeUntil(this.destroy$),
             map((winName) => new UIWindow(winName)),
             mergeMap((uiWindow) => uiWindow.close()),
             catchError((err) => {

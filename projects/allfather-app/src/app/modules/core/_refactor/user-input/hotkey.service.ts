@@ -15,7 +15,7 @@
 //     public hotkeyPressedEvent$: Observable<HotkeyName>;
 
 //     private readonly _hotkeyPressed = new Subject<HotkeyName>();
-//     private readonly isDestroyed$ = new Subject<void>();
+//     private readonly destroy$ = new Subject<void>();
 
 //     constructor() {
 //         this.hotkeyPressedEvent$ = this._hotkeyPressed;
@@ -24,8 +24,8 @@
 
 //     public ngOnDestroy(): void {
 //         this.unregisterEvents();
-//         this.isDestroyed$.next();
-//         this.isDestroyed$.complete();
+//         this.destroy$.next();
+//         this.destroy$.complete();
 //     }
 
 //     public static getHotkeyData(): Observable<HotkeyData[]> {

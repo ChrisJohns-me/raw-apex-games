@@ -19,7 +19,7 @@ import { OWConfig, OW_CONFIG } from "./overwolf-config";
 export class OverwolfFeatureStatusService implements OnDestroy {
     public readonly featureStatusList$ = new BehaviorSubject<FeatureStatusList>({});
 
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(
         private readonly config: ConfigurationService,
@@ -30,8 +30,8 @@ export class OverwolfFeatureStatusService implements OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     /**
@@ -79,7 +79,7 @@ export class OverwolfFeatureStatusService implements OnDestroy {
     private setupFeatureStatusHealthCheck(): void {
         timer(0, this.owConfig.FEATURE_HEALTHCHECK_TIME)
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 switchMap(() => this.getFeatureStatusList$()),
                 tap((statusList) =>
                     console.debug(`[${this.constructor.name}] (Feature Status Check) Status: "this.checkAllFeatureStatus()"`, statusList)

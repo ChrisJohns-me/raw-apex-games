@@ -40,7 +40,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
 
     private legendStatsSubscription?: Subscription;
     private complimentaryLegendsSubscription?: Subscription;
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
@@ -55,8 +55,8 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     public hoverLegend(legendId: string): void {
@@ -72,7 +72,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
 
         this.legendStatsSubscription = this.playerStats
             .getLegendStats$(legendId, limit)
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((avgStats) => {
                 this.legendStats = avgStats;
                 this.cdr.detectChanges();
@@ -85,7 +85,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
 
         this.complimentaryLegendsSubscription = this.playerStats
             .getLegendComplimentaryLegendWeights$(legendId, limit)
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((legendWeights) => {
                 const limitedLegendWeights = legendWeights.slice(0, this.config.featureConfigs.legendSelectAssist.maxComplimentaryLegends);
                 this.complimentaryLegendWeights = limitedLegendWeights;
@@ -96,7 +96,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     private setupSettingsListener(): void {
         this.settingsService
             .streamSetting$<boolean>(SettingKey.EnableLegendSelectLegendStats)
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((setting) => {
                 const defaultValue = DefaultSetting.enableLegendSelectLegendStats as boolean;
                 this._settingIsLegendStatsEnabled = setting?.value != null ? setting.value : defaultValue;
@@ -105,7 +105,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
 
         this.settingsService
             .streamSetting$<boolean>(SettingKey.EnableLegendSelectLegendSuggestions)
-            .pipe(takeUntil(this.isDestroyed$))
+            .pipe(takeUntil(this.destroy$))
             .subscribe((setting) => {
                 const defaultValue = DefaultSetting.enableLegendSelectLegendSuggestions as boolean;
                 this._settingIsComplimentaryLegendsEnabled = setting?.value != null ? setting.value : defaultValue;

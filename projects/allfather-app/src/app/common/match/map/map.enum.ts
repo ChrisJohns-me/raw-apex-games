@@ -8,6 +8,7 @@ export enum MatchMapFriendlyName {
     PhaseRunner = "Phase Runner",
     PartyCrasher = "Party Crasher",
     ThermalStation = "Thermal Station",
+    GoldenGardens = "Golden Gardens",
 }
 
 export enum MatchMapGenericId {
@@ -20,4 +21,5 @@ export enum MatchMapGenericId {
     PhaseRunner = "phaserunner",
     PartyCrasher = "partycrasher",
     ThermalStation = "thermalstation",
+    GoldenGardens = "goldengardens",
 }

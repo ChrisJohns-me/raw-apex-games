@@ -1,0 +1,77 @@
+<div class="row">
+    <div class="col" *ngIf="mapRotation?.arenasPubs">
+        <h4 class="group-title">Arenas</h4>
+        <ng-container *ngTemplateOutlet="gameModeMaps; context: { $implicit: mapRotation!.arenasPubs! }"></ng-container>
+    </div>
+    <div class="col" *ngIf="mapRotation?.battleRoyalePubs">
+        <h4 class="group-title">Trios / Duos</h4>
+        <ng-container *ngTemplateOutlet="gameModeMaps; context: { $implicit: mapRotation!.battleRoyalePubs! }"></ng-container>
+    </div>
+    <div class="col" *ngIf="mapRotation?.battleRoyaleRanked">
+        <h4 class="group-title">Ranked</h4>
+        <ng-container *ngTemplateOutlet="gameModeMaps; context: { $implicit: mapRotation!.battleRoyaleRanked! }"></ng-container>
+    </div>
+</div>
+
+<ng-template #gameModeMaps let-mapIteration>
+    <div class="game-mode-group" *ngIf="mapIteration">
+        <!-- Current Map Has Started (or has no start / end dates) -->
+        <ng-container
+            *ngIf="
+                (!mapIteration.current?.startDate || isPast(mapIteration.current.startDate)) &&
+                (!mapIteration.current?.endDate || isFuture(mapIteration.current.endDate))
+            "
+            [ngTemplateOutlet]="mapTile"
+            [ngTemplateOutletContext]="{ mapRotationInfo: mapIteration.current, iterationName: 'Current Map' }"
+        ></ng-container>
+        <!-- Current Map Has Expired (use Next) -->
+        <ng-container
+            *ngIf="mapIteration.current?.endDate && isPast(mapIteration.current.endDate)"
+            [ngTemplateOutlet]="mapTile"
+            [ngTemplateOutletContext]="{ mapRotationInfo: mapIteration.next, iterationName: 'Current Map' }"
+        ></ng-container>
+
+        <!-- Next Map Has Not Started (or has no start / end dates) -->
+        <ng-container
+            *ngIf="!mapIteration.next?.startDate || isFuture(mapIteration.next.startDate)"
+            [ngTemplateOutlet]="mapTile"
+            [ngTemplateOutletContext]="{ mapRotationInfo: mapIteration.next, iterationName: 'Next Map' }"
+        ></ng-container>
+        <!-- Next Map Has Expired (use Unknown) -->
+        <ng-container
+            *ngIf="mapIteration.next?.startDate && isPast(mapIteration.next.startDate)"
+            [ngTemplateOutlet]="mapTile"
+            [ngTemplateOutletContext]="{ isLoading: true }"
+        ></ng-container>
+    </div>
+</ng-template>
+
+<ng-template #mapTile let-mapInfo="mapRotationInfo" let-tileName="iterationName" let-isLoading="isLoading">
+    <div
+        class="map-tile"
+        [ngStyle]="{
+            'background-image': 'url(../../../../../assets/images/map-previews/' + getMapImageName(mapInfo?.matchMap?.genericId) + ')'
+        }"
+        [title]="
+            !mapInfo?.startDate || isFuture(mapInfo.startDate)
+                ? ''
+                : 'Started ' +
+                  (mapInfo.startDate | customFormatDistanceToNow: { hour: 'hr', minute: 'min', second: 'sec' }:'floor') +
+                  ' ago'
+        "
+    >
+        <div class="description-row text-shadow-sm">{{ tileName }}</div>
+        <div class="time-display-row text-shadow-sm" *ngIf="!isLoading && mapInfo.startDate && isFuture(mapInfo.startDate)">
+            <!-- Has NOT started -->
+            <h6 class="m-0">starting in</h6>
+            <h3 class="time-amount m-0">
+                {{
+                    forceTemplateDateRefresh(mapInfo.startDate)
+                        | customFormatDistanceToNow: { hour: "hr", minute: "min", second: "sec" }:"floor"
+                }}
+            </h3>
+        </div>
+        <div class="map-name-row text-shadow-sm" *ngIf="!isLoading">{{ mapInfo?.friendlyName ?? '' }}</div>
+        <div class="map-name-row text-shadow-sm" *ngIf="isLoading">Loading...</div>
+    </div>
+</ng-template>

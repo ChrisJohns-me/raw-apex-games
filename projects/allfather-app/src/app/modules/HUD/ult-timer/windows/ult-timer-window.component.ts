@@ -76,7 +76,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     }
     private ultimateProgressHistory: UltimateProgress[] = [];
     private readonly visibleStates$: Observable<[MatchStateChangedEvent, PlayerState, Optional<MatchLocationPhase>]>;
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
@@ -87,7 +87,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
         private readonly matchPlayerLocation: MatchPlayerLocationService
     ) {
         this.visibleStates$ = combineLatest([this.match.state$, this.matchPlayer.myState$, this.matchPlayerLocation.myLocationPhase$]).pipe(
-            takeUntil(this.isDestroyed$),
+            takeUntil(this.destroy$),
             distinctUntilChanged()
         );
     }
@@ -99,12 +99,12 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.ultimateProgressHistory = [{ percent: 0, increment: 0.05, timestamp: new Date() }];
         });
     }

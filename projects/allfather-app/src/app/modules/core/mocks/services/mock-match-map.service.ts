@@ -2,7 +2,7 @@ import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { MatchGameModeType } from "@allfather-app/app/common/match/game-mode";
 import { MapRotation } from "@allfather-app/app/common/match/map/map-rotation";
 import { MatchMapService } from "@allfather-app/app/modules/core/match/match-map.service";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, of } from "rxjs";
 import { ExtractSubjectType } from "shared/types/rxjs-utilities";
 
 export class MockMatchMapService implements MockedClass<MatchMapService> {
@@ -16,6 +16,10 @@ export class MockMatchMapService implements MockedClass<MatchMapService> {
 
     public getNextMap(gameModeType: MatchGameModeType): ReturnType<MatchMapService["getNextMap"]> {
         return;
+    }
+
+    public getMapRotation$(breakCache?: boolean): ReturnType<MatchMapService["getMapRotation$"]> {
+        return of();
     }
 
     public isFeatureDepAvailable(featureName: OverwolfFeatureDep): boolean {

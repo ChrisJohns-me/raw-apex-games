@@ -34,7 +34,7 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
 
     private gameLogStartTime?: Date;
     private _enableLogging = false;
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(private readonly match: MatchService, private readonly cdr: ChangeDetectorRef) {}
 
@@ -44,8 +44,8 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     public clearLog(): void {
@@ -56,7 +56,7 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
     private setupAutoTrimLog(): void {
         this.match.endedEvent$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter(() => this.enableLogging && this.autoTrimLog),
                 delay(30000)
             )
@@ -69,7 +69,7 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
 
         merge(this.infoUpdates$, this.newGameEvent$)
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter(() => this.enableLogging)
             )
             .subscribe((event) => {

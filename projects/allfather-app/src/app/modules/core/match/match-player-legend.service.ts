@@ -45,7 +45,7 @@ export class MatchPlayerLegendService extends AllfatherService {
     }
 
     private setupOnMatchEnd(): void {
-        this.match.endedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
+        this.match.endedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.stagingLegends = [];
         });
     }
@@ -53,7 +53,7 @@ export class MatchPlayerLegendService extends AllfatherService {
     private setupMyLegend(): void {
         this.matchLegendSelect.legendSelected$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter((selection) => !!selection.legend),
                 tap((selection) => {
                     this.stagingLegends = this.stagingLegends.filter((sl) => !isPlayerNameEqual(sl.playerName, selection.playerName));
@@ -73,7 +73,7 @@ export class MatchPlayerLegendService extends AllfatherService {
     private setupMyUltimateCooldown(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter(() => this.matchPlayerLocation.myLocationPhase$.value === MatchLocationPhase.HasLanded),
                 filter((infoUpdate) => infoUpdate.feature === "me" && !!infoUpdate.info.me?.ultimate_cooldown),
                 map((infoUpdate) => String(infoUpdate.info.me?.ultimate_cooldown?.ultimate_cooldown ?? "")),
@@ -89,7 +89,7 @@ export class MatchPlayerLegendService extends AllfatherService {
     private setupMyUltimateUsage(): void {
         this.myUltimateCooldown$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter(() => this.matchPlayerLocation.myLocationPhase$.value === MatchLocationPhase.HasLanded),
                 pairwise()
             )

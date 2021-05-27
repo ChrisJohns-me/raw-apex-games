@@ -22,7 +22,7 @@ export interface OpponentBanner {
 })
 export class OpponentBannerComponent implements AfterViewInit, OnDestroy {
     @Input("bannerData") public bannerData: Optional<OpponentBanner>;
-    private isDestroyed$ = new Subject<void>();
+    private destroy$ = new Subject<void>();
 
     constructor(private readonly cdr: ChangeDetectorRef, private readonly config: ConfigurationService) {}
 
@@ -31,8 +31,8 @@ export class OpponentBannerComponent implements AfterViewInit, OnDestroy {
     }
 
     public ngOnDestroy(): void {
-        this.isDestroyed$.next();
-        this.isDestroyed$.complete();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     private setupRefreshTimer() {
@@ -40,7 +40,7 @@ export class OpponentBannerComponent implements AfterViewInit, OnDestroy {
             !!this.bannerData?.latestInflictionAccum?.isKnocked || !!this.bannerData?.latestInflictionAccum?.isEliminated;
         interval(this.config.featureConfigs.inflictionInsight.refreshTime)
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter(() => shouldRefresh())
             )
             .subscribe(() => this.cdr.detectChanges());

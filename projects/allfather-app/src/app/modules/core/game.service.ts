@@ -72,17 +72,17 @@ export class GameService extends AllfatherService {
             [GamePhase.InGame]: (infoUpdate, matchState) => matchState === MatchState.Active,
         });
 
-        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.isDestroyed$)).subscribe((infoUpdate) => {
+        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.destroy$)).subscribe((infoUpdate) => {
             const newPhase = triggers.triggeredFirstKey(infoUpdate, undefined, undefined);
             setNewPhaseFn(newPhase);
         });
 
-        this.match.state$.pipe(takeUntil(this.isDestroyed$)).subscribe((stateChanged) => {
+        this.match.state$.pipe(takeUntil(this.destroy$)).subscribe((stateChanged) => {
             const newPhase = triggers.triggeredFirstKey(undefined, stateChanged.state, undefined);
             setNewPhaseFn(newPhase);
         });
 
-        this.matchRoster.stagedMatchRoster$.pipe(takeUntil(this.isDestroyed$)).subscribe((stagedMatchRoster) => {
+        this.matchRoster.stagedMatchRoster$.pipe(takeUntil(this.destroy$)).subscribe((stagedMatchRoster) => {
             const newPhase = triggers.triggeredFirstKey(undefined, undefined, stagedMatchRoster);
             setNewPhaseFn(newPhase);
         });

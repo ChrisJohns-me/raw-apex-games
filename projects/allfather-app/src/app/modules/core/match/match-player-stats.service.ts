@@ -56,7 +56,7 @@ export class MatchPlayerStatsService extends AllfatherService {
     }
 
     private setupMatchStateEvents(): void {
-        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.myDamage$.next(0);
             this.myEliminations$.next(0);
             this.myAssists$.next(0);
@@ -91,7 +91,7 @@ export class MatchPlayerStatsService extends AllfatherService {
     private setupTotalDamageDealt(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter((infoUpdate) => infoUpdate.feature === "damage" && !!infoUpdate.info.me?.totalDamageDealt),
                 map((infoUpdate) => cleanInt(infoUpdate.info.me?.totalDamageDealt))
             )
@@ -105,7 +105,7 @@ export class MatchPlayerStatsService extends AllfatherService {
 
         this.match.state$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 tap((stateChanged) => (stateChanged.state === MatchState.Active ? setVictoryFn(false) : null)),
                 switchMap(() => this.overwolfGameData.infoUpdates$),
                 filter(() => {
@@ -127,7 +127,7 @@ export class MatchPlayerStatsService extends AllfatherService {
     private setupMyKnockdowns(): void {
         this.matchPlayerInfliction.myKillfeedEvent$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter((myKillfeedEvent) => !!myKillfeedEvent.isKnockdown)
             )
             .subscribe(() => {

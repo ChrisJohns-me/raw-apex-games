@@ -122,7 +122,7 @@ export class MatchRosterService extends AllfatherService {
         };
 
         return this.overwolfGameData.infoUpdates$.pipe(
-            takeUntil(this.isDestroyed$),
+            takeUntil(this.destroy$),
             filter((infoUpdate) => infoUpdate.feature === "roster"),
             map((infoUpdate) => infoUpdate.info.match_info),
             map((matchInfo): [number, OWMatchInfo] => {
@@ -146,7 +146,7 @@ export class MatchRosterService extends AllfatherService {
      * Resets states and emits rosters
      */
     private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
+        this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.numPlayers$.next(0);
             this.numTeams$.next(0);
             this.startingNumPlayers$.next(0);
@@ -167,7 +167,7 @@ export class MatchRosterService extends AllfatherService {
      * Resets state on match start
      */
     private setupOnMatchEnd(): void {
-        this.match.endedEvent$.pipe(takeUntil(this.isDestroyed$)).subscribe(() => {
+        this.match.endedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.resetStagedRosters();
         });
     }
@@ -178,7 +178,7 @@ export class MatchRosterService extends AllfatherService {
     private setupCounts(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 filter((infoUpdate) => infoUpdate.feature === "match_info" && !!infoUpdate.info.match_info?.tabs),
                 map((infoUpdate) => infoUpdate.info.match_info?.tabs),
                 filter((tabs) => !isEmpty(tabs))
@@ -286,7 +286,7 @@ export class MatchRosterService extends AllfatherService {
     private setupTeammateRosterSecondary(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 // Should only receive roster additions prior to the match start
                 filter(() => !this.match.isActive),
                 filter((infoUpdate) => infoUpdate.feature === "team"),
@@ -308,7 +308,7 @@ export class MatchRosterService extends AllfatherService {
      *  and adds that combined result to the Staging Teammate Roster.
      */
     private setupTeammateLegends(): void {
-        this.matchLegendSelect.legendSelected$.pipe(takeUntil(this.isDestroyed$)).subscribe((legendSelect) => {
+        this.matchLegendSelect.legendSelected$.pipe(takeUntil(this.destroy$)).subscribe((legendSelect) => {
             const rosterPlayer = this.stagedMatchRoster$.value.allPlayers.find((p) => isPlayerNameEqual(p.name, legendSelect!.playerName));
             let newRosterTeammate: MatchRosterTeammate;
 

@@ -1,12 +1,12 @@
 import { MatchGameModeType } from "@allfather-app/app/common/match/game-mode";
 import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
-import { MapRotation, MapRotationInfo } from "@allfather-app/app/common/match/map/map-rotation";
+import { findSoonestMapRotationInfo, MapRotation, MapRotationInfo } from "@allfather-app/app/common/match/map/map-rotation";
 import { MatchMapFriendlyName, MatchMapGenericId } from "@allfather-app/app/common/match/map/map.enum";
 import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { addMinutes, subMinutes } from "date-fns";
+import { addMinutes } from "date-fns";
 import { BehaviorSubject, combineLatest, Observable, of, throwError, timer } from "rxjs";
 import { delay, filter, map, mergeMap, retryWhen, switchMap, takeUntil, tap } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
@@ -89,13 +89,34 @@ export class MatchMapService extends AllfatherService {
     }
 
     /**
+     * Retrieves map rotation data from API if data is expired.
+     * Otherwise, returns existing data.
+     */
+    public getMapRotation$(breakCache = false): Observable<MapRotation> {
+        const isExpired = new Date() > (this.mapRotationExpire ?? 0);
+        if (this.mapRotation$.value && (breakCache || isExpired)) return of(this.mapRotation$.value);
+
+        return this.http.get(API_URL, { params: { version: API_VER, auth: API_KEY }, responseType: "json" }).pipe(
+            tap((response) => console.debug(`[${this.constructor.name}] getMapRotation got response: `, response)),
+            map((mapRotationJSON) => new MatchMapRotationMozambiquehereDTO(mapRotationJSON)),
+            tap((dto) => console.debug(`[${this.constructor.name}] getMapRotation converted response to DTO class`, dto)),
+            map((mapRotationDTO) => mapRotationDTO.toMapRotation()),
+            tap((custom) =>
+                console.debug(`[${this.constructor.name}] getMapRotation converted DTO class to Custom Map Rotation class`, custom)
+            ),
+            tap((mapRotation) => this.updateMapRotationExpire(mapRotation)),
+            retryWhen((errors) => this.mapRotationRetry$(errors))
+        );
+    }
+
+    /**
      * Less than ideal logic to deduce the map based off of dropship's starting z-position
      */
     private setupMapFromZLocation(): void {
         this.matchPlayerLocation.myStartingCoordinates$
             .pipe(
                 filter((startingCoordinates) => !!startingCoordinates && !isEmpty(startingCoordinates)),
-                takeUntil(this.isDestroyed$)
+                takeUntil(this.destroy$)
             )
             .subscribe((startingCoordinates) => {
                 const gameMap = MatchMapList.find((map) => map.dropshipZStart == startingCoordinates?.z);
@@ -115,7 +136,7 @@ export class MatchMapService extends AllfatherService {
         timer(0, 5 * 1000 * 60)
             .pipe(
                 tap(() => console.debug(`[${this.constructor.name}] setupAutoMapRotation Running Map Rotation check...`)),
-                takeUntil(this.isDestroyed$),
+                takeUntil(this.destroy$),
                 switchMap(() => combineLatest([this.gameProcess.isRunning$, this.match.gameMode$])),
                 tap(([isRunning, gameMode]) =>
                     console.debug(`[${this.constructor.name}] setupAutoMapRotation Game is Running: ${isRunning}; Game Mode: ${gameMode}`)
@@ -130,51 +151,17 @@ export class MatchMapService extends AllfatherService {
     }
 
     /**
-     * Retrieves map rotation data from API if data is expired.
-     * Otherwise, returns existing data.
-     */
-    private getMapRotation$(breakCache = false): Observable<MapRotation> {
-        const isExpired = new Date() > (this.mapRotationExpire ?? 0);
-        if (this.mapRotation$.value && (breakCache || isExpired)) return of(this.mapRotation$.value);
-
-        return this.http.get(API_URL, { params: { version: API_VER, auth: API_KEY }, responseType: "json" }).pipe(
-            tap((response) => console.debug(`[${this.constructor.name}] getMapRotation got response: `, response)),
-            map((mapRotationJSON) => new MatchMapRotationMozambiquehereDTO(mapRotationJSON)),
-            tap((dto) => console.debug(`[${this.constructor.name}] getMapRotation converted response to DTO class`, dto)),
-            map((mapRotationDTO) => mapRotationDTO.toMapRotation()),
-            tap((custom) =>
-                console.debug(`[${this.constructor.name}] getMapRotation converted DTO class to Custom Map Rotation class`, custom)
-            ),
-            tap((mapRotation) => this.updateMapRotationExpire(mapRotation)),
-            retryWhen((errors) => this.mapRotationRetry$(errors))
-        );
-    }
-
-    /**
-     * Allow cache to be broken within a few minutes of any map changing
+     * Allow cache to be broken within a few minutes after any map changing
      */
     private updateMapRotationExpire(mapRotation: MapRotation): void {
-        const now = new Date();
-        const endDates = [
-            mapRotation.arenasPubs?.current?.endDate,
-            mapRotation.arenasPubs?.next?.endDate,
-            mapRotation.battleRoyalePubs?.current?.endDate,
-            mapRotation.battleRoyalePubs?.next?.endDate,
-            mapRotation.battleRoyaleRanked?.current?.endDate,
-            mapRotation.battleRoyaleRanked?.next?.endDate,
-        ];
+        const defaultExpireMin = 10;
+        const soonestMapInfo = findSoonestMapRotationInfo(mapRotation);
+        if (!soonestMapInfo?.endDate) console.warn(`[${this.constructor.name}] While updating map rotation expiration, no map had .`);
+        const soonestMapEndDateMs = soonestMapInfo?.endDate ?? addMinutes(new Date(), defaultExpireMin - 1); // Default to every x minutes
+        const newMapRotationExpire = addMinutes(soonestMapEndDateMs, 1); // Refresh after any map has expired
 
-        let earliestDate: Date = addMinutes(now, 5); // Default 5 minutes
-        endDates.forEach((endDate) => {
-            // Check for any endDates below the default
-            if (!endDate) return;
-            const potentialEarliestDate = subMinutes(endDate, 1);
-            if (potentialEarliestDate < earliestDate) earliestDate = potentialEarliestDate; // Expire before the map changes
-        });
-
-        console.debug(`[${this.constructor.name}] Time now : ${now}; Earliest Date calc'd : ${earliestDate}`);
-        if (this.mapRotationExpire && earliestDate < this.mapRotationExpire) this.mapRotationExpire = undefined;
-        else this.mapRotationExpire = earliestDate;
+        console.debug(`[${this.constructor.name}] Time now : ${new Date()}; Earliest MapInfo Date calc'd : ${soonestMapInfo?.endDate}`);
+        this.mapRotationExpire = newMapRotationExpire;
         console.debug(`[${this.constructor.name}] New mapRotationExpire : ${this.mapRotationExpire}`);
     }
 
