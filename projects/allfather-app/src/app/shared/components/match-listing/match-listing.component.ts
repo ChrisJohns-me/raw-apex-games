@@ -37,7 +37,7 @@ export class MatchListingComponent {
     public isFunction = (value: unknown): boolean => typeof value === "function";
     public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item) => item.matchId;
     public durationSinceNow = (baseDate: Date): Duration => intervalToDuration({ start: baseDate, end: new Date() });
-    public getGameModeTypeName = (gameModeId: string): Optional<string> => MatchGameMode.getBaseType(gameModeId);
+    public getGameModeTypeName = (gameModeId: string): Optional<string> => MatchGameMode.getName(gameModeId);
     public getMatchMapName = (matchMapId: string): Optional<string> => MatchMapList.find((m) => m.mapId === matchMapId)?.mapName;
     public getLegendImageName = (legendId?: string): string => Legend.getSquarePortraitFilename(legendId);
 

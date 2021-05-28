@@ -53,7 +53,7 @@
             'background-image': 'url(../../../../../assets/images/map-previews/' + getMapImageName(mapInfo?.matchMap?.genericId) + ')'
         }"
         [title]="
-            mapInfo.startDate
+            mapInfo?.startDate
                 ? isFuture(mapInfo.startDate)
                     ? 'Starting at ' + (mapInfo.startDate | date: 'medium')
                     : 'Started ' +
@@ -63,7 +63,7 @@
         "
     >
         <div class="description-row text-shadow-sm">{{ tileName }}</div>
-        <div class="time-display-row text-shadow-sm" *ngIf="!isLoading && mapInfo.startDate && isFuture(mapInfo.startDate)">
+        <div class="time-display-row text-shadow-sm" *ngIf="!isLoading && mapInfo?.startDate && isFuture(mapInfo.startDate)">
             <!-- Has NOT started -->
             <h6 class="m-0">starting in</h6>
             <h3 class="time-amount m-0">

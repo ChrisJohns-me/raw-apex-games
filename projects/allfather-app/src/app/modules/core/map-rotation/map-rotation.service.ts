@@ -23,7 +23,8 @@ const RETRY_MULTIPLIER = 5000;
 
 /**
  * @class MapRotationService
- * @classdesc Retrieves current and next map data
+ * @classdesc Retrieves current and next map data.
+ * Auto-retrieves when Game Process is running or
  */
 @Injectable({
     providedIn: "root",
