@@ -1,5 +1,5 @@
 @import "hud-styles";
-$titlebar-height: 3rem;
+$titlebar-height: 2.5rem;
 
 :host {
     display: flex;
@@ -32,14 +32,22 @@ $titlebar-height: 3rem;
     }
 
     &-icon {
+        display: inline-flex;
+        align-items: center;
         flex: 0 0;
+        height: 100%;
+        padding: 0.5rem 1rem 0.5rem 1.5rem;
+
+        img {
+            height: 100%;
+        }
     }
 
     &-primary-title,
     &-secondary-title {
-        font-family: "Play", sans-serif;
+        font-family: "Red Hat Display", sans-serif;
+        font-weight: 500;
         flex: 1 0;
-        padding: 0 1rem;
         color: white;
     }
 
@@ -47,6 +55,10 @@ $titlebar-height: 3rem;
         padding: 0 0.5rem;
         flex: 1 0;
         text-align: right;
+
+        .btn:hover {
+            background-color: #0000001a;
+        }
     }
 }
 

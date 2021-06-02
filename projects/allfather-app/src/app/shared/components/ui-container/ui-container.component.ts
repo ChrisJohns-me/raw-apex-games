@@ -1,5 +1,7 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
 import { UIWindow, WindowState } from "@allfather-app/app/modules/core/_refactor/ui-window";
+import { MainPage } from "@allfather-app/app/modules/main/pages/main-page";
+import { MainWindowService } from "@allfather-app/app/modules/main/windows/main-window.service";
 import { ConfigPositionUnit, ConfigPositionXAnchor, ConfigPositionYAnchor } from "@allfather-app/configs/config.interface";
 import { environment } from "@allfather-app/environments/environment";
 import {
@@ -14,7 +16,7 @@ import {
     SimpleChanges,
 } from "@angular/core";
 import { Title } from "@angular/platform-browser";
-import { mdiWindowClose, mdiWindowMaximize, mdiWindowMinimize, mdiWindowRestore } from "@mdi/js";
+import { mdiCogOutline, mdiWindowClose, mdiWindowMaximize, mdiWindowMinimize, mdiWindowRestore } from "@mdi/js";
 import { Observable, Subject } from "rxjs";
 import { finalize, map, shareReplay, switchMap, takeUntil, tap } from "rxjs/operators";
 
@@ -46,6 +48,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     public state: WindowState = WindowState.Normal;
     public isDev = environment.DEV;
     public WindowState = WindowState;
+    public mdiCogOutline = mdiCogOutline;
     public mdiWindowMinimize = mdiWindowMinimize;
     public mdiWindowMaximize = mdiWindowMaximize;
     public mdiWindowRestore = mdiWindowRestore;
@@ -56,7 +59,11 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     private obtained$?: Observable<boolean>;
     private destroy$ = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef, private readonly titleService: Title) {
+    constructor(
+        private readonly cdr: ChangeDetectorRef,
+        private readonly mainWindow: MainWindowService,
+        private readonly titleService: Title
+    ) {
         this.titleService.setTitle(APP_NAME);
     }
 
@@ -86,6 +93,10 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     public ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    public onSettingsButtonClick(): void {
+        this.mainWindow.goToPage(MainPage.Settings);
     }
 
     public onMinimizeButtonClick(): void {
