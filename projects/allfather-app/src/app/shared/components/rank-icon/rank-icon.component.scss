@@ -1,0 +1,40 @@
+@import "window-styles";
+:host {
+    position: relative;
+    display: block;
+    width: 100%;
+}
+
+.rank-image {
+    height: 100%;
+    width: 100%;
+}
+
+.rank-division {
+    position: absolute;
+    top: 77%;
+    left: 0;
+    right: 0;
+    font-family: "Lexend", serif;
+    font-weight: 500;
+    font-size: 8.5px;
+    fill: $white;
+
+    svg {
+        text {
+            text-anchor: middle;
+            dominant-baseline: hanging;
+        }
+    }
+}
+
+.rank-ladder-position {
+    position: absolute;
+    top: 77%;
+    left: 0;
+    right: 0;
+    font-family: "Lexend", serif; // "Quantico" - For "#1,300 RP"
+    font-weight: 500;
+    font-size: 8.5px;
+    fill: $white;
+}

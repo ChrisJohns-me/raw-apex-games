@@ -35,7 +35,7 @@ export class GameService extends AllfatherService {
         private readonly match: MatchService,
         private readonly matchRoster: MatchRosterService,
         private readonly overwolfGameData: OverwolfGameDataService,
-        overwolfGameDataStatus: OverwolfFeatureStatusService
+        public readonly overwolfGameDataStatus: OverwolfFeatureStatusService
     ) {
         super(overwolfGameDataStatus);
         this.setupPhase();

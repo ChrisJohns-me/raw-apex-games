@@ -30,3 +30,24 @@ export function isPlayerNameEqual(playerNameLeft?: string, playerNameRight?: str
         maybeClubPlayerNameLeft === maybeClubPlayerNameRight
     );
 }
+
+/**
+ * Returns a sanitized player name from the lowest common denominator of allowed characters, and character limits.
+ *
+ * Max character length:
+ * - Xbox               12
+ * - Origin             16
+ * - PlayStation        16
+ * - Nintendo Switch    30
+ * - Steam              64 <-
+ *
+ * @todo Characters dis-allowed:
+ * - Xbox               ~!@#$%^&*()_{}[].,/\`
+ * - Origin
+ * - PlayStation
+ * - Nintendo Switch
+ * - Steam
+ */
+export function sanitizePlayerName(playerName: string): string {
+    return playerName.slice(0, 64);
+}

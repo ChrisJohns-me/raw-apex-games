@@ -27,8 +27,7 @@ export class MapRotationMozambiquehereDTO {
     public ranked?: MapRotationIterationDTO;
 
     constructor(json: unknown) {
-        if (!isAPIMozambiquehereMapRotationDTO(json))
-            throw Error(`Unable to create API MozambiqueHe.re Map Rotation data transfer object.`);
+        if (!isMapRotationMozambiquehereDTO(json)) throw Error(`Unable to create API MozambiqueHe.re Map Rotation data transfer object.`);
         this.arenas = this.sanitizeMapRotationIteration(json.arenas);
         this.battle_royale = this.sanitizeMapRotationIteration(json.battle_royale);
         this.ranked = this.sanitizeMapRotationIteration(json.ranked);
@@ -102,7 +101,7 @@ export class MapRotationMozambiquehereDTO {
     }
 }
 
-function isAPIMozambiquehereMapRotationDTO(value: unknown): value is MapRotationMozambiquehereDTO {
+function isMapRotationMozambiquehereDTO(value: unknown): value is MapRotationMozambiquehereDTO {
     if (typeof value !== "object") return false;
     if (
         isMapRotationIteration((value as MapRotationMozambiquehereDTO).arenas) ||

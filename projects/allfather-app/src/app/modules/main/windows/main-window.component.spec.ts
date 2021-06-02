@@ -5,24 +5,30 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { BackgroundService } from "../../background/background.service";
 import { ConfigurationService } from "../../core/configuration.service";
 import { FileService } from "../../core/file.service";
+import { GameProcessService } from "../../core/game-process.service";
 import { LocalDatabaseService } from "../../core/local-database/local-database.service";
 import { MapRotationService } from "../../core/map-rotation/map-rotation.service";
 import { MatchMapService } from "../../core/match/match-map.service";
+import { MatchService } from "../../core/match/match.service";
 import { MockUIContainerComponent } from "../../core/mocks/components/mock-ui-container.component";
 import { MockBackgroundService } from "../../core/mocks/services/mock-background.service";
 import { MockConfigurationService } from "../../core/mocks/services/mock-configuration.service";
 import { MockFileService } from "../../core/mocks/services/mock-file.service";
+import { MockGameProcessService } from "../../core/mocks/services/mock-game-process.service";
 import { MockLocalDatabaseService } from "../../core/mocks/services/mock-local-database.service";
 import { MockMainWindowService } from "../../core/mocks/services/mock-main-window.service";
 import { MockMapRotationService } from "../../core/mocks/services/mock-map-rotation.service";
 import { MockMatchMapService } from "../../core/mocks/services/mock-match-map.service";
+import { MockMatchService } from "../../core/mocks/services/mock-match.service";
 import { MockPlayerStatsService } from "../../core/mocks/services/mock-player-stats.service";
 import { MockPlayerService } from "../../core/mocks/services/mock-player.service";
 import { MockSettingsService } from "../../core/mocks/services/mock-settings.service";
+import { PlayerAccountStatsService } from "../../core/player-account-stats/player-account-stats.service";
 import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { PlayerService } from "../../core/player.service";
 import { SettingsService } from "../../core/settings.service";
 import { DailyAverageGraphComponent } from "../components/charting/daily-average-graph.component";
+import { AccountStatsDisplayComponent } from "../components/dashboard/account-stats-display.component";
 import { LegendIconsBoardComponent } from "../components/dashboard/legend-icons-board.component";
 import { MapRotationDisplayComponent } from "../components/dashboard/map-rotation-display.component";
 import { NavbarComponent } from "../components/navbar.component";
@@ -52,6 +58,7 @@ describe("MainWindowComponent", () => {
                 NavbarComponent,
                 SettingsPageComponent,
                 MapRotationDisplayComponent,
+                AccountStatsDisplayComponent,
             ],
             providers: [
                 { provide: BackgroundService, useClass: MockBackgroundService },
@@ -64,6 +71,9 @@ describe("MainWindowComponent", () => {
                 { provide: MatchMapService, useClass: MockMatchMapService },
                 { provide: PlayerLocalStatsService, useClass: MockPlayerStatsService },
                 { provide: MapRotationService, useClass: MockMapRotationService },
+                { provide: GameProcessService, useClass: MockGameProcessService },
+                { provide: MatchService, useClass: MockMatchService },
+                { provide: PlayerAccountStatsService, useClass: MockPlayerStatsService },
             ],
         }).compileComponents();
     });
