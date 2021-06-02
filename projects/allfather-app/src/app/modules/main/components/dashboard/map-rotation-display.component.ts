@@ -19,7 +19,7 @@ export class MapRotationDisplayComponent implements OnInit, OnDestroy {
     /** Enables change detection to run every second; otherwise every minute */
     private fastUIRefresh = true;
     /** Timer to fetch map rotation */
-    private mapRotationFetchTimer$ = new BehaviorSubject<number>(0);
+    private mapRotationPollTimer$ = new BehaviorSubject<number>(0);
 
     private destroy$ = new Subject<void>();
 
@@ -31,7 +31,7 @@ export class MapRotationDisplayComponent implements OnInit, OnDestroy {
     public isPast = isPast;
 
     public ngOnInit(): void {
-        this.setupMapRotationCheck();
+        this.setupMapRotationPolling();
         this.setupUIRefreshTimer();
     }
 
@@ -40,7 +40,7 @@ export class MapRotationDisplayComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    private setupMapRotationCheck(): void {
+    private setupMapRotationPolling(): void {
         const addedFetchDelay = 10 * 1000;
 
         const handleDataFn = (rotationData: MapRotationData) => {
@@ -54,7 +54,7 @@ export class MapRotationDisplayComponent implements OnInit, OnDestroy {
                 `[${this.constructor.name}] Checking map rotation in ${Math.round(newDelay / 1000)} seconds; ` +
                     `soonest map change "${soonestMapInfo?.friendlyName}" at ${soonestMapInfo?.startDate}`
             );
-            this.mapRotationFetchTimer$.next(newDelay);
+            this.mapRotationPollTimer$.next(newDelay);
         };
 
         const loopOperator = (timeMs: number) =>
@@ -65,7 +65,7 @@ export class MapRotationDisplayComponent implements OnInit, OnDestroy {
                 )
             );
 
-        this.mapRotationFetchTimer$
+        this.mapRotationPollTimer$
             .pipe(
                 takeUntil(this.destroy$),
                 switchMap((delayTimeMs) => (delayTimeMs < 0 ? EMPTY : of("start").pipe(loopOperator(delayTimeMs))))

@@ -94,6 +94,6 @@ export class MatchMap implements MatchMapConstructor {
     }
     //#endregion
 
-    private static generateFilename = (value: string, prefix = "", postfix = "", extension = "webp"): string =>
-        `${prefix}${value}${postfix}.${extension}`;
+    private static generateFilename = (value: string, prefix = "", suffix = "", extension = "webp"): string =>
+        `${prefix}${value}${suffix}.${extension}`;
 }

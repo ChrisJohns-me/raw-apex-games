@@ -42,6 +42,7 @@
                             "projects/allfather-app/src/assets/images",
                             "projects/allfather-app/src/assets/fonts"
                         ],
+                        "optimization": true,
                         "sourceMap": true,
                         "namedChunks": true,
                         "vendorChunk": true,

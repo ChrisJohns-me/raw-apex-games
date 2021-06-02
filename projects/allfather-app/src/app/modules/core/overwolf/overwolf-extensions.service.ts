@@ -12,7 +12,7 @@ import { IODelegate } from "./api/extensions/io-delegate";
 @Injectable({
     providedIn: "root",
     deps: [],
-    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("OverwolfExtensionService", OverwolfExtensionsService, deps),
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("OverwolfExtensionsService", OverwolfExtensionsService, deps),
 })
 export class OverwolfExtensionsService extends AllfatherService {
     private extensionsDelegate = new ExtensionsDelegate();

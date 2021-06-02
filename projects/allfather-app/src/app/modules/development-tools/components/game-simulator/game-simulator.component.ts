@@ -14,6 +14,7 @@ import { fullGame2_2k } from "./simulations/full-game2-2k";
 import { resetToInGame } from "./simulations/reset-to-in-game";
 import { resetToLobby } from "./simulations/reset-to-lobby";
 import { stupidGame1Full } from "./simulations/stupid-game1";
+import { valkUltGame } from "./simulations/valk-ult-game";
 
 interface Command {
     timestamp: Date;
@@ -77,8 +78,14 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         const commands = this.logToCommands(fullGame1Eventful());
         this.runCommands(commands, speedAdjust);
     }
+
     public onPerformFullGame2Click(speedAdjust?: number): void {
         const commands = this.logToCommands(fullGame2_2k());
+        this.runCommands(commands, speedAdjust);
+    }
+
+    public onPerformValkUltGameClick(speedAdjust?: number): void {
+        const commands = this.logToCommands(valkUltGame());
         this.runCommands(commands, speedAdjust);
     }
 

@@ -34,7 +34,7 @@ const RETRY_MULTIPLIER = 5000;
 export class MapRotationService extends AllfatherService {
     public readonly mapRotation$ = new BehaviorSubject<Optional<MapRotationData>>(undefined);
 
-    private mapRotationExpire?: Date;
+    private cacheMapRotationExpire?: Date;
 
     constructor(private readonly gameProcess: GameProcessService, private readonly http: HttpClient, private readonly match: MatchService) {
         super();
@@ -71,7 +71,7 @@ export class MapRotationService extends AllfatherService {
      * Otherwise, returns existing data.
      */
     public getMapRotation$(breakCache = false): Observable<MapRotationData> {
-        const isExpired = new Date() > (this.mapRotationExpire ?? 0);
+        const isExpired = new Date() > (this.cacheMapRotationExpire ?? 0);
         if (this.mapRotation$.value && (breakCache || isExpired)) return of(this.mapRotation$.value);
 
         return this.http.get(API_URL, { params: { version: API_VER, auth: API_KEY }, responseType: "json" }).pipe(
@@ -120,8 +120,8 @@ export class MapRotationService extends AllfatherService {
         const newMapRotationExpire = addMinutes(soonestMapEndDateMs, 1); // Refresh after any map has expired
 
         console.debug(`[${this.constructor.name}] Time now : ${new Date()}; Earliest MapInfo Date calc'd : ${soonestMapInfo?.endDate}`);
-        this.mapRotationExpire = newMapRotationExpire;
-        console.debug(`[${this.constructor.name}] New mapRotationExpire : ${this.mapRotationExpire}`);
+        this.cacheMapRotationExpire = newMapRotationExpire;
+        console.debug(`[${this.constructor.name}] New mapRotationExpire : ${this.cacheMapRotationExpire}`);
     }
 
     private mapRotationInfo(

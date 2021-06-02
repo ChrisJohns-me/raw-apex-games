@@ -1,5 +1,5 @@
 import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
-import { MatchGameModeType } from "@allfather-app/app/common/match/game-mode";
+import { MatchGameModeFriendlyName, MatchGameModeType } from "@allfather-app/app/common/match/game-mode";
 import { MatchState } from "@allfather-app/app/common/match/state";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { IndexableType } from "dexie";
@@ -17,7 +17,8 @@ export class MockMatchService implements MockedClass<MatchService> {
     });
     public gameMode$: MatchService["gameMode$"] = new BehaviorSubject<ExtractSubjectType<MatchService["gameMode$"]>>({
         gameModeId: "",
-        baseType: MatchGameModeType.BattleRoyale_Ranked,
+        name: MatchGameModeFriendlyName.BattleRoyale_Trios,
+        baseType: MatchGameModeType.BattleRoyale_Trios,
     });
     public get isActive(): MatchService["isActive"] {
         return this.state$.value.state === MatchState.Active;
