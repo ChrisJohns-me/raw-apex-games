@@ -8,22 +8,22 @@
     display: flex;
     flex-direction: column;
     position: absolute;
-    right: 395px;
-    top: 925px;
-    height: 200px;
-    width: 800px;
+    right: 27.43vw;
+    top: 64.236vh;
+    height: 13.88vh;
+    width: 55.55vw;
     color: white;
     font-family: "Quantico", sans-serif;
     text-transform: uppercase;
 
     .more-matches-title {
-        font-size: 1.5rem;
-        line-height: 1.5rem;
+        font-size: 1.67vw;
+        line-height: 1.67vw;
         text-align: center;
-        margin: 25px 0;
+        margin: 1.75vh 0;
 
         small {
-            font-size: 0.75rem;
+            font-size: 0.85vw;
         }
     }
 }
@@ -34,24 +34,24 @@
     align-self: center;
     text-align: center;
     transform: skewX(-30deg);
-    width: 500px;
-    height: 50px;
-    border: 3px solid white;
+    width: 34.72vw;
+    height: 3.472vh;
+    border: 0.2vw solid white;
 
     .num-matches-digit {
-        transform: skewX(30deg);
-        line-height: 1.5rem;
-        font-size: 1.5rem;
-        margin: 0;
         position: absolute;
-        right: -100px;
-        top: 1rem;
+        transform: skewX(30deg);
+        margin: 0;
+        line-height: 1.7vw;
+        font-size: 1.7vw;
+        right: -7vw;
+        top: 1.115vh;
     }
 
     .num-matches-bar {
         position: absolute;
         background-color: white;
-        height: 50px;
+        height: 3.5vh;
         width: 0%;
         top: 0;
         left: 0;

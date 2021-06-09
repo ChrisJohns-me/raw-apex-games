@@ -121,7 +121,6 @@ export interface OverwolfQuirks {}
 
 export type ConfigPositionXAnchor = "left" | "center" | "right";
 export type ConfigPositionYAnchor = "top" | "middle" | "bottom";
-export type ConfigPositionUnit = "percent" | "pixel";
 export interface ConfigWindowPosition {
     x: number;
     y: number;
@@ -129,7 +128,6 @@ export interface ConfigWindowPosition {
 export interface UIContainers {
     inflictionInsight: {
         defaultPosition: ConfigWindowPosition;
-        positionUnit: ConfigPositionUnit;
         positionXAnchor: ConfigPositionXAnchor;
         positionYAnchor: ConfigPositionYAnchor;
     };

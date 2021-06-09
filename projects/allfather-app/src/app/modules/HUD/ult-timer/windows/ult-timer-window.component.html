@@ -2,9 +2,8 @@
     [isDesktopWindow]="false"
     [isContentDraggable]="true"
     primaryTitle="Ultimate Timer"
-    [position]="{ x: 135, y: -20 }"
-    [positionUnits]="{ x: 'pixel', y: 'pixel' }"
-    [positionAnchors]="{ x: 'center', y: 'bottom' }"
+    [position]="{ xPercent: 0.05, yPercent: -0.014, xAnchor: 'center', yAnchor: 'bottom' }"
+    [size]="{ widthPercent: 0.078, heightPercent: 0.0347 }"
 >
     <div
         class="timer-container"
@@ -14,7 +13,7 @@
         }"
         *ngIf="!isUltimateReady && isVisible"
     >
-        <p class="timer-display">
+        <p class="timer-display text-shadow-dark-sm">
             <ng-container *ngIf="maybeReadyDate">
                 {{ maybeReadyDate | customFormatDistanceToNow: { hour: "hr", minute: "min", second: "sec" }:"floor" }}
             </ng-container>

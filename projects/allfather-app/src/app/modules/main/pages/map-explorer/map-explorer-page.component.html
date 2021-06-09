@@ -28,7 +28,7 @@
 
 <div class="container-fluid">
     <div class="row justify-content-center">
-        <div class="col col-xl-auto">
+        <div class="col col-xl-auto" appFullHeight [marginBottom]="10">
             <!-- TODO: Maybe Breakout into own component -->
             <div class="interactive-map-container ms-auto">
                 <div class="map-full-image map-full-image-no-map" *ngIf="!displayedMap?.mapId">
@@ -84,7 +84,7 @@
                 />
             </div> -->
         </div>
-        <div class="col-7 col-md-6 col-lg-5 col-xl-4 col-xxl-3">
+        <div class="col-7 col-md-6 col-lg-5 col-xl-4 col-xxl-3" appFullHeight [marginBottom]="10">
             <!-- Showing All Text -->
             <table class="table table-dark mb-0" *ngIf="isLiveMatchFocused">
                 <tbody>
@@ -120,6 +120,7 @@
                     [isSelectable]="true"
                     [selectedMatchId]="liveMatch?.matchId"
                     (matchClick)="onLiveMatchClick()"
+                    [showDataItems]="showMatchItems"
                 ></app-match-listing>
 
                 <!-- All Saved Matches -->
@@ -128,6 +129,7 @@
                     [isSelectable]="true"
                     [selectedMatchId]="selectedMatch?.matchId"
                     (matchClick)="onSelectMatchClick($event)"
+                    [showDataItems]="showMatchItems"
                 ></app-match-listing>
 
                 <!-- Selected Map -->
@@ -137,6 +139,7 @@
                     [isSelectable]="true"
                     [selectedMatchId]="selectedMatch?.matchId"
                     (matchClick)="onSelectMatchClick($event)"
+                    [showDataItems]="showMatchItems"
                 ></app-match-listing> -->
 
                 <!-- Removing... -->
@@ -145,6 +148,7 @@
                     [matches]="matchList"
                     [isSelectable]="true"
                     (matchClick)="onSelectMatchClick($event)"
+                    [showDataItems]="showMatchItems"
                 ></app-match-listing> -->
             </div>
         </div>

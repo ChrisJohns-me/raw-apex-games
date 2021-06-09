@@ -1,4 +1,8 @@
 import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
+import { FileService } from "@allfather-app/app/modules/core/file.service";
+import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
+import { SettingsDataStore } from "@allfather-app/app/modules/core/local-database/settings-data-store";
+import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
@@ -8,10 +12,6 @@ import "dexie-export-import";
 import { importInto, ImportOptions } from "dexie-export-import";
 import { from, merge, of, Subject } from "rxjs";
 import { finalize, map, switchMap, takeUntil } from "rxjs/operators";
-import { FileService } from "../../core/file.service";
-import { LocalDatabaseService } from "../../core/local-database/local-database.service";
-import { SettingsDataStore } from "../../core/local-database/settings-data-store";
-import { SettingsService } from "../../core/settings.service";
 
 @Component({
     selector: "app-settings-page",

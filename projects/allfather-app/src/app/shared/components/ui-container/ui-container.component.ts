@@ -1,8 +1,9 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
+import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { UIWindow, WindowState } from "@allfather-app/app/modules/core/_refactor/ui-window";
 import { MainPage } from "@allfather-app/app/modules/main/pages/main-page";
 import { MainWindowService } from "@allfather-app/app/modules/main/windows/main-window.service";
-import { ConfigPositionUnit, ConfigPositionXAnchor, ConfigPositionYAnchor } from "@allfather-app/configs/config.interface";
+import { ConfigPositionXAnchor, ConfigPositionYAnchor } from "@allfather-app/configs/config.interface";
 import { environment } from "@allfather-app/environments/environment";
 import {
     AfterViewInit,
@@ -19,6 +20,23 @@ import { Title } from "@angular/platform-browser";
 import { mdiCogOutline, mdiWindowClose, mdiWindowMaximize, mdiWindowMinimize, mdiWindowRestore } from "@mdi/js";
 import { Observable, Subject } from "rxjs";
 import { finalize, map, shareReplay, switchMap, takeUntil, tap } from "rxjs/operators";
+import { mathClamp } from "shared/utilities";
+
+type WindowPositionInput = {
+    // x, y: percent
+    xPercent: number;
+    yPercent: number;
+    xAnchor: ConfigPositionXAnchor;
+    yAnchor: ConfigPositionYAnchor;
+};
+
+type WindowSizeInput = {
+    // width, height: percent
+    minWidthPercent?: number;
+    minHeightPercent?: number;
+    widthPercent: number;
+    heightPercent: number;
+};
 
 @Component({
     selector: "app-ui-container",
@@ -28,14 +46,15 @@ import { finalize, map, shareReplay, switchMap, takeUntil, tap } from "rxjs/oper
 })
 export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
     @Input() public injectBootstrapCSS = false;
+    @Input() public resolutionZoom = true;
     @Input() public isContentDraggable = true;
     @Input() public isDesktopWindow = true;
     @Input() public isTitlebarDraggable = true;
     @Input() public isMaximizable = true;
     @Input() public isMinimizable = true;
-    @Input() public position = { y: 0, x: 0 };
-    @Input() public positionUnits: { x: ConfigPositionUnit; y: ConfigPositionUnit } = { x: "pixel", y: "pixel" };
-    @Input() public positionAnchors: { x: ConfigPositionXAnchor; y: ConfigPositionYAnchor } = { x: "left", y: "top" };
+    @Input() public position?: WindowPositionInput;
+    /** If min/max are not set, default to the width/height percent */
+    @Input() public size?: WindowSizeInput;
     @Input() public set primaryTitle(value: string) {
         this.titleService.setTitle(value ? `${value} - ${APP_NAME}` : APP_NAME);
         this._primaryTitle = value;
@@ -62,6 +81,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly mainWindow: MainWindowService,
+        private readonly overwolfGameData: OverwolfGameDataService,
         private readonly titleService: Title
     ) {
         this.titleService.setTitle(APP_NAME);
@@ -75,7 +95,26 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     public ngAfterViewInit(): void {
-        // this.updatePosition();
+        // Set default size (is DPI unaware)
+        this.uiWindow
+            .getMonitor()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((monitor) => {
+                const standardDPI = 96;
+                const dpiAdjustedWidth = (monitor.width * standardDPI) / monitor.dpiX;
+                const dpiAdjustedHeight = (monitor.height * standardDPI) / monitor.dpiY;
+
+                if (this.size) {
+                    this.setMinSizeByPercent(dpiAdjustedWidth, dpiAdjustedHeight, this.size?.minWidthPercent, this.size?.minHeightPercent);
+                    this.setSizeByPercent(dpiAdjustedWidth, dpiAdjustedHeight, this.size.widthPercent, this.size.heightPercent);
+                }
+            });
+
+        this.overwolfGameData.gameInfo$.pipe(takeUntil(this.destroy$)).subscribe((gameInfo) => {
+            if (!gameInfo) return;
+            this.onResolutionChange(gameInfo);
+            this.updatePosition();
+        });
         this.getState()
             .pipe(
                 takeUntil(this.destroy$),
@@ -85,7 +124,10 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     public ngOnChanges(changes: SimpleChanges): void {
-        if (changes.position || changes.positionUnit || changes.positionXAnchor || changes.positionYAnchor) {
+        const gameInfo = this.overwolfGameData.gameInfo$.value;
+        if (gameInfo) this.onResolutionChange(gameInfo);
+
+        if (changes.position) {
             this.updatePosition();
         }
     }
@@ -175,7 +217,65 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
             .subscribe();
     }
 
+    /**
+     * @todo Move this into Overwolf Window Service after refactor
+     */
+    private onResolutionChange(gameInfo: overwolf.games.RunningGameInfo): void {
+        if (!this.size) return;
+        this.setSizeByPercent(gameInfo.logicalWidth, gameInfo.logicalHeight, this.size.widthPercent, this.size.heightPercent);
+    }
+
+    /**
+     * Sets the window size to the pixel value from the given `width` and `height` percentage values.
+     */
+    private setSizeByPercent(screenWidth: number, screenHeight: number, widthPercent: number, heightPercent: number): void {
+        const widthPercentClamp = mathClamp(widthPercent, 0, 1);
+        const heightPercentClamp = mathClamp(heightPercent, 0, 1);
+        const widthPixel = Math.round(screenWidth * widthPercentClamp);
+        const heightPixel = Math.round(screenHeight * heightPercentClamp);
+
+        console.log(
+            `Setting "${this.uiWindow.name}" size to: ${widthPixel}px (${widthPercentClamp * 100}%) width,  ` +
+                `${heightPixel}px (${heightPercentClamp * 100}%) height`
+        );
+
+        this.uiWindow
+            .changeSize(widthPixel, heightPixel)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((result) => console.log(result));
+    }
+
+    /**
+     * If width/height are undefined, defaults to 1px
+     */
+    private setMinSizeByPercent(screenWidth: number, screenHeight: number, widthPercent?: number, heightPercent?: number): void {
+        let widthPixel = 1;
+        let heightPixel = 1;
+        let widthPercentClamp;
+        let heightPercentClamp;
+        if (widthPercent) {
+            widthPercentClamp = mathClamp(widthPercent, 0, 1);
+            widthPixel = Math.round(screenWidth * widthPercentClamp);
+        }
+        if (heightPercent) {
+            heightPercentClamp = mathClamp(heightPercent, 0, 1);
+            heightPixel = Math.round(screenHeight * heightPercentClamp);
+        }
+
+        console.log(
+            `Setting "${this.uiWindow.name}" MIN size to: ${widthPixel}px ${
+                widthPercentClamp ? widthPercentClamp * 100 + "% " : ""
+            }width,  ` + `${heightPixel}px ${heightPercentClamp ? heightPercentClamp * 100 + "% " : ""}height`
+        );
+
+        this.uiWindow
+            .setMinSize(widthPixel, heightPixel)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((result) => console.log(result));
+    }
+
     private updatePosition(): void {
+        if (!this.position) return;
         const screenSize = { height: 0, width: 0 };
         const windowSize = { height: 0, width: 0 };
         this.uiWindow
@@ -191,8 +291,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
                     windowSize.height = _windowSize.height;
                     windowSize.width = _windowSize.width;
                 }),
-                map(() => xyPosToPixelsFn(this.position, screenSize, this.positionUnits.x, this.positionUnits.y)),
-                map((xyPos) => xyPosToTopLeftFn(xyPos, screenSize, windowSize, this.positionAnchors.x, this.positionAnchors.y)),
+                map(() => toTopLeftFn(this.position!, screenSize, windowSize)),
                 switchMap((newPos) => this.uiWindow.changePosition(newPos.left, newPos.top)),
                 finalize(() => this.cdr.detectChanges())
             )
@@ -200,33 +299,22 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 }
 
-function xyPosToPixelsFn(
-    xyPos: { x: number; y: number },
+function toTopLeftFn(
+    positionInput: WindowPositionInput,
     screenSize: { width: number; height: number },
-    fromUnitX: ConfigPositionUnit,
-    fromUnitY: ConfigPositionUnit
-): { x: number; y: number } {
-    const pixelPosition = { ...xyPos };
-    if (fromUnitX === "percent") pixelPosition.x = xyPos.x * screenSize.height;
-    if (fromUnitY === "percent") pixelPosition.y = xyPos.y * screenSize.width;
-    return pixelPosition;
-}
-
-function xyPosToTopLeftFn(
-    xyPos: { x: number; y: number },
-    screenSize: { width: number; height: number },
-    windowSize: { width: number; height: number },
-    posXAnchor: ConfigPositionXAnchor,
-    posYAnchor: ConfigPositionYAnchor
+    windowSize: { width: number; height: number }
 ): { left: number; top: number } {
-    const topLeftPos = { left: xyPos.x, top: xyPos.y };
+    const xPixel = screenSize.width * positionInput.xPercent;
+    const yPixel = screenSize.height * positionInput.yPercent;
+
+    const topLeftPos = { left: xPixel, top: yPixel };
     const windowCenterX = windowSize.width / 2;
     const windowCenterY = windowSize.height / 2;
     const screenCenterX = screenSize.width / 2;
     const screenCenterY = screenSize.height / 2;
-    if (posXAnchor === "right") topLeftPos.left = screenSize.width - windowSize.width + topLeftPos.left;
-    else if (posXAnchor === "center") topLeftPos.left = screenCenterX - windowCenterX + topLeftPos.left;
-    if (posYAnchor === "bottom") topLeftPos.top = screenSize.height - windowSize.height + topLeftPos.top;
-    else if (posYAnchor === "middle") topLeftPos.top = screenCenterY - windowCenterY + topLeftPos.top;
+    if (positionInput.xAnchor === "right") topLeftPos.left = screenSize.width - windowSize.width + topLeftPos.left;
+    else if (positionInput.xAnchor === "center") topLeftPos.left = screenCenterX - windowCenterX + topLeftPos.left;
+    if (positionInput.yAnchor === "bottom") topLeftPos.top = screenSize.height - windowSize.height + topLeftPos.top;
+    else if (positionInput.yAnchor === "middle") topLeftPos.top = screenCenterY - windowCenterY + topLeftPos.top;
     return topLeftPos;
 }

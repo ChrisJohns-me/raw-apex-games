@@ -1,12 +1,12 @@
-import { Legend } from "@allfather-app/app/common/legend";
+import { Legend } from "@allfather-app/app/common/legend/legend";
 import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { Subject, Subscription } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
-import { ConfigurationService } from "../../core/configuration.service";
-import { LocalDatabaseService } from "../../core/local-database/local-database.service";
-import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
-import { PlayerService } from "../../core/player.service";
+import { ConfigurationService } from "../../../core/configuration.service";
+import { LocalDatabaseService } from "../../../core/local-database/local-database.service";
+import { PlayerLocalStatsService } from "../../../core/player-local-stats.service";
+import { PlayerService } from "../../../core/player.service";
 
 type LegendIdsRow = string[];
 

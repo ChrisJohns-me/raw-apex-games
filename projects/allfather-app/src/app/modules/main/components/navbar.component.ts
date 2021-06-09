@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from "@angular/core";
-import { mdiChartAreaspline, mdiMap, mdiViewDashboard } from "@mdi/js";
+import { mdiChartAreaspline, mdiFencing, mdiMap, mdiViewDashboard } from "@mdi/js";
 import { MainPage } from "../pages/main-page";
 
 @Component({
@@ -15,7 +15,8 @@ export class NavbarComponent {
     public MainPage = MainPage;
     public navPages = [
         { title: "Dashboard", icon: mdiViewDashboard, page: MainPage.Dashboard },
-        { title: "Match Explorer", icon: mdiMap, page: MainPage.MatchExplorer },
+        { title: "Match Explorer", icon: mdiFencing, page: MainPage.MatchExplorer },
+        { title: "Map Explorer", icon: mdiMap, page: MainPage.MapExplorer },
         { title: "Charts", icon: mdiChartAreaspline, page: MainPage.Charting },
     ];
 

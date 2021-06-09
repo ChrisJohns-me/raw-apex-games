@@ -39,14 +39,16 @@ export class MatchMapService extends AllfatherService {
      */
     private setupMapFromMapRotation(): void {
         this.match.gameMode$.pipe(takeUntil(this.destroy$)).subscribe((gameMode) => {
-            if (gameMode && gameMode.baseType) {
-                const currentMap = this.mapRotationService.getCurrentMap(gameMode.baseType);
+            if (gameMode && gameMode.gameModeGenericId) {
+                const currentMap = this.mapRotationService.getCurrentMap(gameMode.gameModeGenericId);
                 console.log(
                     `[${this.constructor.name}] Using gamemode "${gameMode.gameModeId}" to determine map: "${currentMap?.mapName}"`
                 );
                 this.map$.next(currentMap);
             } else {
-                console.error(`[${this.constructor.name}] Could not determine map from GameMode "${gameMode?.baseType}" + Map Rotation`);
+                console.error(
+                    `[${this.constructor.name}] Could not determine map from GameMode "${gameMode?.gameModeGenericId}" + Map Rotation`
+                );
             }
         });
     }

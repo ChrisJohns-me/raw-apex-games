@@ -1,4 +1,4 @@
-import { MatchGameModeType } from "../game-mode";
+import { MatchGameModeGenericId } from "../game-mode/game-mode.enum";
 import { MatchMap } from "./match-map";
 
 export interface MapRotationInfo {
@@ -27,16 +27,19 @@ export class MapRotationData {
      */
     public static getSoonestMapRotationInfo(
         mapRotationData: MapRotationData,
-        gameModeType?: MatchGameModeType,
+        gameModeType?: MatchGameModeGenericId,
         baseDate: Date = new Date()
     ): Optional<MapRotationInfo> {
         let earliestMapInfo: Optional<MapRotationInfo>;
         let filteredMapRotation: MapRotationData;
-        if (gameModeType === MatchGameModeType.Arenas) {
+        if (gameModeType === MatchGameModeGenericId.Arenas) {
             filteredMapRotation = { arenasPubs: mapRotationData.arenasPubs };
-        } else if (gameModeType === MatchGameModeType.BattleRoyale_Trios || gameModeType === MatchGameModeType.BattleRoyale_Duos) {
+        } else if (
+            gameModeType === MatchGameModeGenericId.BattleRoyale_Trios ||
+            gameModeType === MatchGameModeGenericId.BattleRoyale_Duos
+        ) {
             filteredMapRotation = { battleRoyalePubs: mapRotationData.battleRoyalePubs };
-        } else if (gameModeType === MatchGameModeType.BattleRoyale_Ranked) {
+        } else if (gameModeType === MatchGameModeGenericId.BattleRoyale_Ranked) {
             filteredMapRotation = { battleRoyaleRanked: mapRotationData.battleRoyaleRanked };
         } else {
             filteredMapRotation = mapRotationData;

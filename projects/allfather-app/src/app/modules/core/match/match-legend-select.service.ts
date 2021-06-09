@@ -1,4 +1,4 @@
-import { Legend } from "@allfather-app/app/common/legend";
+import { Legend } from "@allfather-app/app/common/legend/legend";
 import { MatchState } from "@allfather-app/app/common/match/state";
 import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoLegendSelect } from "@allfather-app/app/modules/core/overwolf";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";

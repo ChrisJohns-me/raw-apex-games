@@ -94,6 +94,19 @@
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
                     <div class="col-6"><a class="link-primary" (click)="onChangePlayerUltimatePercentClick()">UltimatePercent</a></div>
                     <div class="col-6 text-end">{{ matchPlayerLegend.myUltimateCooldown$ | async | percent: "0.0-0" }}</div>
+                    <div class="col-6 offset-1"><small>Auto Simulate</small></div>
+                    <div class="col-5 text-end">
+                        <div class="form-check form-switch form-check-inline me-0">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="autoUltimateSwitch"
+                                [checked]="autoUltimate"
+                                (change)="onAutoUltimateChange($event)"
+                            />
+                            <!-- <label class="form-check-label" for="autoUltimateSwitch">Auto Scroll</label> -->
+                        </div>
+                    </div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
                     <div class="col-6">Kills</div>

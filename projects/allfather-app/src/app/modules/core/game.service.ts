@@ -1,6 +1,6 @@
 import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { GamePhase } from "@allfather-app/app/common/game-phase";
-import { MatchGameModeType } from "@allfather-app/app/common/match/game-mode";
+import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
 import { MatchRoster } from "@allfather-app/app/common/match/roster";
 import { MatchState } from "@allfather-app/app/common/match/state";
 import { TriggerConditions } from "@allfather-app/app/common/utilities/trigger-conditions";
@@ -57,8 +57,8 @@ export class GameService extends AllfatherService {
             [GamePhase.LegendSelection]: (infoUpdate, matchState, stagedMatchRoster) =>
                 this.phase$.value !== GamePhase.LegendSelection &&
                 this.phase$.value !== GamePhase.PreGame &&
-                this.match.gameMode$.value?.baseType !== MatchGameModeType.FiringRange &&
-                this.match.gameMode$.value?.baseType !== MatchGameModeType.Training &&
+                this.match.gameMode$.value?.gameModeGenericId !== MatchGameModeGenericId.FiringRange &&
+                this.match.gameMode$.value?.gameModeGenericId !== MatchGameModeGenericId.Training &&
                 ((stagedMatchRoster?.allPlayers.length ?? 0) > 0 ||
                     (infoUpdate?.feature === "team" && !isEmpty(findValueByKeyRegEx(infoUpdate?.info?.match_info, /^legendSelect/)))),
             [GamePhase.PreGame]: (infoUpdate) =>

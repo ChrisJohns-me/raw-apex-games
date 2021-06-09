@@ -136,7 +136,20 @@ export class UIWindow {
 
     public changeSize(width: number, height: number): Observable<void> {
         const promise = new Promise<void>((resolve, reject) => {
-            overwolf.windows.changeSize(this.name, width, height, (result) => {
+            overwolf.windows.changeSize(this.name, Math.round(width), Math.round(height), (result) => {
+                if (result.success) {
+                    resolve();
+                } else {
+                    reject(result.error);
+                }
+            });
+        });
+        return from(promise);
+    }
+
+    public setMinSize(width: number, height: number): Observable<void> {
+        const promise = new Promise<void>((resolve, reject) => {
+            overwolf.windows.setMinSize(this.name, Math.round(width), Math.round(height), (result) => {
                 if (result.success) {
                     resolve();
                 } else {

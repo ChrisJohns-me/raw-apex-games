@@ -38,7 +38,7 @@ export class Item {
      * @example "r97", "energy_ar", "3030repeater", "Melee", "rui/ordnance_icons/grenade_frag"
      */
     private loadByInGameEventName(inGameEventName: string): void {
-        const callbackFn = (predicateItem: ItemJSON) => {
+        const callbackFn = (predicateItem: ItemJSON): boolean => {
             if (!predicateItem.inGameEventNameRegExPattern) return false;
             return new RegExp(predicateItem.inGameEventNameRegExPattern, "i").test(inGameEventName);
         };
@@ -49,7 +49,7 @@ export class Item {
      * @example "G7 Scout", "Melee", "R-301 Carbine", "mp_weapon_3030", "Knockdown Shield"
      */
     private loadByInGameInfoName(inGameInfoName: string): void {
-        const callbackFn = (predicateItem: ItemJSON) => {
+        const callbackFn = (predicateItem: ItemJSON): boolean => {
             if (!predicateItem.inGameInfoNameRegExPattern) return false;
             return new RegExp(predicateItem.inGameInfoNameRegExPattern, "i").test(inGameInfoName);
         };
@@ -60,7 +60,7 @@ export class Item {
      * @example "159", "136"
      */
     private loadByInGameInventoryId(inGameInventoryId: string): void {
-        const callbackFn = (predicateItem: ItemJSON) => {
+        const callbackFn = (predicateItem: ItemJSON): boolean => {
             if (!predicateItem.inGameInventoryIdRegExPattern) return false;
             return new RegExp(predicateItem.inGameInventoryIdRegExPattern, "i").test(inGameInventoryId);
         };

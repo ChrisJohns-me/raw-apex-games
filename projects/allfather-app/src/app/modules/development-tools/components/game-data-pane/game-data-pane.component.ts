@@ -17,7 +17,7 @@ import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/
 import { OverwolfFeatureStatusService } from "@allfather-app/app/modules/core/overwolf/overwolf-feature-status.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { interval, Subject } from "rxjs";
+import { interval, Subject, Subscription, timer } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { v4 as uuid } from "uuid";
 
@@ -30,6 +30,7 @@ import { v4 as uuid } from "uuid";
 export class GameDataPaneComponent implements OnInit, OnDestroy {
     public Infinity = Infinity;
     public changedHighlightColor = "#ffc9c9";
+    public autoUltimate = false;
 
     public get featureStatus(): FeatureState {
         return this.overwolfFeatureStatusService.checkAllFeatureStatus();
@@ -41,7 +42,9 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
         return new Date(endDate.getTime() - startDate.getTime());
     }
 
+    private autoUltimateTime = 10000;
     private ultimatePercentOverride?: number = undefined;
+    private autoUltimateSubscription?: Subscription;
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -71,6 +74,21 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
     public ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    public onAutoUltimateChange(event: Event): void {
+        const target = event.target as HTMLInputElement;
+        if (!target) return;
+        this.autoUltimate = target.checked;
+
+        this.autoUltimateSubscription?.unsubscribe();
+        if (this.autoUltimate) {
+            this.autoUltimateSubscription = timer(0, this.autoUltimateTime)
+                .pipe(takeUntil(this.destroy$))
+                .subscribe(() => {
+                    this.incrementUltimatePercent();
+                });
+        }
     }
 
     public onChangeGameProcessIsRunningClick(): void {
@@ -135,6 +153,21 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
     }
 
     public onChangePlayerUltimatePercentClick(): void {
+        this.incrementUltimatePercent();
+    }
+
+    public lastFeatureStatusListToArray(): FeatureStatusList {
+        return this.overwolfFeatureStatusService.featureStatusList$.value;
+    }
+
+    public reloadOWGEPStatus(): void {
+        this.overwolfFeatureStatusService
+            .getFeatureStatusList$()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((statusList) => console.debug(`Refreshed OW GEP Status`, statusList));
+    }
+
+    private incrementUltimatePercent(): void {
         if (this.ultimatePercentOverride == null) {
             this.ultimatePercentOverride = 0;
         } else if (this.ultimatePercentOverride >= 100) {
@@ -147,16 +180,5 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
             info: { me: { ultimate_cooldown: { ultimate_cooldown: this.ultimatePercentOverride } } },
             feature: "me",
         });
-    }
-
-    public lastFeatureStatusListToArray(): FeatureStatusList {
-        return this.overwolfFeatureStatusService.featureStatusList$.value;
-    }
-
-    public reloadOWGEPStatus(): void {
-        this.overwolfFeatureStatusService
-            .getFeatureStatusList$()
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((statusList) => console.debug(`Refreshed OW GEP Status`, statusList));
     }
 }

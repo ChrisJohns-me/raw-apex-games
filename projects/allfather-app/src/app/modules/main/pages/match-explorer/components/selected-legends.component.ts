@@ -1,0 +1,99 @@
+import { Legend } from "@allfather-app/app/common/legend/legend";
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from "@angular/core";
+import { FormControl, FormGroup } from "@angular/forms";
+import { Subject, Subscription } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+
+@Component({
+    selector: "app-selected-legends",
+    templateUrl: "./selected-legends.component.html",
+    changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class SelectedLegendsComponent implements OnInit, OnChanges, OnDestroy {
+    @Input() public legendList: Legend[] = [];
+    @Output("selectedLegends") public selectedLegendsOutput = new EventEmitter<Legend[]>();
+
+    public selectedLegendsFormGroup!: FormGroup;
+
+    /** Shown on the Legend Selection button */
+    public get selectedLegendsText(): string {
+        if (this.everyLegendsSelected) return "All Legends";
+        if (!this.everyLegendsSelected && !this.someLegendsSelected) return "No Legends";
+        const legendsSelected = Object.entries(this.selectedLegendsFormGroup.controls).filter(
+            ([, legendFormControl]) => !!legendFormControl.value
+        );
+        if (legendsSelected.length === 1) {
+            const legendId = legendsSelected[0][0];
+            const foundLegend = this.legendList.find((m) => m.legendId === legendId);
+            return foundLegend?.name ?? "One Legend";
+        }
+
+        return "Selected Legends";
+    }
+    public get everyLegendsSelected(): boolean {
+        return Object.values(this.selectedLegendsFormGroup.controls).every((legendFormControl) => !!legendFormControl.value);
+    }
+    public get someLegendsSelected(): boolean {
+        return Object.entries(this.selectedLegendsFormGroup.controls).some(([, legendFormControl]) => !!legendFormControl.value);
+    }
+    public get partialLegendsSelected(): boolean {
+        return this.someLegendsSelected && !this.everyLegendsSelected;
+    }
+
+    private get selectedLegendIds(): string[] {
+        return Object.entries(this.selectedLegendsFormGroup.controls)
+            .filter(([, legendFormControl]) => !!legendFormControl.value)
+            .map(([legendId]) => legendId);
+    }
+    private get selectedLegends(): Legend[] {
+        return this.selectedLegendIds
+            .map((legendId) => this.legendList.find((m) => m.legendId === legendId))
+            .filter((m) => !!m) as Legend[];
+    }
+
+    private selectedLegendsChangeSubscription?: Subscription;
+    private destroy$ = new Subject<void>();
+
+    constructor() {}
+
+    public ngOnInit(): void {
+        this.setupLegendsList(this.legendList);
+        this.setupSelectedLegendsChange();
+    }
+
+    public ngOnChanges(): void {
+        this.setupLegendsList(this.legendList);
+        this.setupSelectedLegendsChange();
+    }
+
+    public ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
+    public onAllLegendsSelectedChange(event: Event): void {
+        const target = event.target as HTMLInputElement;
+        if (!(target instanceof HTMLInputElement)) return;
+        const formControls = Object.entries(this.selectedLegendsFormGroup.controls);
+        formControls.forEach(([, form]) => form.setValue(target.checked));
+    }
+
+    private setupLegendsList(legendList: Legend[]): void {
+        const group: Record<string, FormControl> = {};
+        legendList.forEach((matchLegend) => {
+            if (!matchLegend.legendId) return;
+            group[matchLegend.legendId] = new FormControl(true);
+        });
+
+        this.selectedLegendsFormGroup = new FormGroup(group);
+    }
+
+    private setupSelectedLegendsChange(): void {
+        this.selectedLegendsChangeSubscription?.unsubscribe();
+        this.selectedLegendsChangeSubscription = this.selectedLegendsFormGroup.valueChanges
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((change) => {
+                this.selectedLegendsOutput.emit(this.selectedLegends);
+            });
+    }
+}

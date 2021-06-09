@@ -54,8 +54,8 @@
             },
             "legendRows": [
                 {
-                    "top": 376,
-                    "right": 160,
+                    "top": 26.11,
+                    "right": 11.11,
                     "legendIds": [
                         "#character_bloodhound_NAME",
                         "#character_gibraltar_NAME",
@@ -66,8 +66,8 @@
                     ]
                 },
                 {
-                    "top": 545,
-                    "right": 215,
+                    "top": 37.84,
+                    "right": 14.93,
                     "legendIds": [
                         "#character_caustic_NAME",
                         "#character_mirage_NAME",
@@ -78,8 +78,8 @@
                     ]
                 },
                 {
-                    "top": 712,
-                    "right": 267,
+                    "top": 49.44,
+                    "right": 18.54,
                     "legendIds": [
                         "#character_loba_NAME",
                         "#character_rampart_NAME",

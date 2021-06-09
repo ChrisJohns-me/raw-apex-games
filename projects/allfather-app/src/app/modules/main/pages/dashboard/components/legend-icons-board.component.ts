@@ -1,4 +1,4 @@
-import { Legend } from "@allfather-app/app/common/legend";
+import { Legend } from "@allfather-app/app/common/legend/legend";
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from "@angular/core";
 
 type LegendIdsRow = string[];

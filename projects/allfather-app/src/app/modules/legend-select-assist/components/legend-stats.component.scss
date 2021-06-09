@@ -3,9 +3,9 @@
 .legend-stats-container {
     display: flex;
     position: absolute;
-    width: 800px;
-    top: 85px;
-    right: 290px;
+    width: 55.55vw;
+    top: 5.9vh;
+    right: 20.138vw;
     flex-wrap: nowrap;
     justify-content: space-evenly;
     align-items: flex-end;
@@ -18,14 +18,14 @@
     text-align: center;
 
     .stat-digit {
-        font-size: 3rem;
-        line-height: 3.5rem;
+        font-size: 3.35vw;
+        line-height: 3.9vw;
         margin: 0;
     }
 
     .stat-title {
-        font-size: 1rem;
-        line-height: 2rem;
+        font-size: 1.11vw;
+        line-height: 2.22vw;
         margin: 0;
     }
 }

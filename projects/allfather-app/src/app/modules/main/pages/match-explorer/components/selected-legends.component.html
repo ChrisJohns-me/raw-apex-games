@@ -1,0 +1,45 @@
+<form [formGroup]="selectedLegendsFormGroup">
+    <div class="dropdown">
+        <button
+            class="btn btn-secondary dropdown-toggle"
+            type="button"
+            id="dropdownMenu2"
+            [ngClass]="{ 'btn-outline-warning': !everyLegendsSelected && !someLegendsSelected }"
+            data-bs-toggle="dropdown"
+            data-bs-auto-close="outside"
+            aria-expanded="false"
+        >
+            {{ selectedLegendsText }}
+        </button>
+        <ul class="dropdown-menu">
+            <li class="dropdown-item">
+                <div class="form-check">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        [indeterminate]="partialLegendsSelected"
+                        [checked]="everyLegendsSelected"
+                        (change)="onAllLegendsSelectedChange($event)"
+                        id="everyLegendsSelectedCheckbox"
+                    />
+                    <label class="form-check-label" for="everyLegendsSelectedCheckbox">All Legends</label>
+                </div>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+
+            <li class="dropdown-item" *ngFor="let legend of legendList">
+                <div class="form-check ms-2" *ngIf="legend.legendId; let legendId">
+                    <input
+                        class="form-check-input"
+                        type="checkbox"
+                        [formControlName]="legendId"
+                        [id]="legendId"
+                        [value]="legendId"
+                        checked
+                    />
+                    <label class="form-check-label" [attr.for]="legendId">{{ legend.name }}</label>
+                </div>
+            </li>
+        </ul>
+    </div>
+</form>

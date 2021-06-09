@@ -1,4 +1,5 @@
-import { MatchGameMode } from "@allfather-app/app/common/match/game-mode";
+import { MatchGameMode } from "@allfather-app/app/common/match/game-mode/game-mode";
+import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
 import { TriggerConditions } from "@allfather-app/app/common/utilities/trigger-conditions";
 import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
@@ -178,7 +179,7 @@ export class MatchService extends AllfatherService {
                 if (isBlacklisted) return;
                 if (gameModeId === this.gameMode$.value?.gameModeId) return;
 
-                const newGameMode = new MatchGameMode(gameModeId);
+                const newGameMode = MatchGameMode.getFromId(MatchGameModeList, gameModeId);
                 this.gameMode$.next(newGameMode);
             });
     }

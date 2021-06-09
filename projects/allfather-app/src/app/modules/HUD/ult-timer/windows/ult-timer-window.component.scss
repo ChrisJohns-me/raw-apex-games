@@ -8,7 +8,7 @@
     align-items: center;
     justify-content: flex-start;
     box-sizing: border-box;
-    padding: 0 10px;
+    padding: 0 5vw;
 
     &.no-confidence {
         display: none;
@@ -22,7 +22,7 @@
 
 .timer-display {
     font-family: "Quantico", sans-serif;
-    font-size: 1.5rem;
+    font-size: 12vw;
     margin: 0;
     padding: 0;
 }

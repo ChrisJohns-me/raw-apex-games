@@ -1,4 +1,4 @@
-import { Legend } from "./legend";
+import { Legend } from "./legend/legend";
 import { PlatformHardware } from "./platform";
 import { Rank } from "./rank/rank";
 import { RankNext } from "./rank/rank-next";

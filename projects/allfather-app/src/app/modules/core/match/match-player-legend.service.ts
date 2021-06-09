@@ -1,4 +1,4 @@
-import { Legend } from "@allfather-app/app/common/legend";
+import { Legend } from "@allfather-app/app/common/legend/legend";
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";

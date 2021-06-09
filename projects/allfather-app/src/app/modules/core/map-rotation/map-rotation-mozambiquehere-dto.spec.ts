@@ -67,25 +67,25 @@ describe("MapRotationMozambiquehereDTO", () => {
         expect(actual.battleRoyalePubs?.current?.startDate).toEqual(new Date(1621951200000));
         expect(actual.battleRoyalePubs?.current?.endDate).toEqual(new Date(1621956600000));
         expect(actual.battleRoyalePubs?.current?.friendlyName).toBe("Olympus");
-        expect(actual.battleRoyalePubs?.current?.matchMap).toEqual(MatchMapList.find((m) => m.genericId === MatchMapGenericId.Olympus));
+        expect(actual.battleRoyalePubs?.current?.matchMap).toEqual(MatchMapList.find((m) => m.mapGenericId === MatchMapGenericId.Olympus));
 
         expect(actual.battleRoyalePubs?.next?.startDate).toEqual(new Date(1621956600000));
         expect(actual.battleRoyalePubs?.next?.endDate).toEqual(new Date(1621962000000));
         expect(actual.battleRoyalePubs?.next?.friendlyName).toBe("World's Edge");
-        expect(actual.battleRoyalePubs?.next?.matchMap).toEqual(MatchMapList.find((m) => m.genericId === MatchMapGenericId.WorldsEdge));
+        expect(actual.battleRoyalePubs?.next?.matchMap).toEqual(MatchMapList.find((m) => m.mapGenericId === MatchMapGenericId.WorldsEdge));
 
         expect(actual.arenasPubs?.current?.startDate).toEqual(new Date(1621955700000));
         expect(actual.arenasPubs?.current?.endDate).toEqual(new Date(1621956600000));
         expect(actual.arenasPubs?.current?.friendlyName).toBe("Thermal station");
-        expect(actual.arenasPubs?.current?.matchMap).toEqual(MatchMapList.find((m) => m.genericId === MatchMapGenericId.ThermalStation));
+        expect(actual.arenasPubs?.current?.matchMap).toEqual(MatchMapList.find((m) => m.mapGenericId === MatchMapGenericId.ThermalStation));
 
         expect(actual.arenasPubs?.next?.startDate).toEqual(new Date(1621956600000));
         expect(actual.arenasPubs?.next?.endDate).toEqual(new Date(1621957500000));
         expect(actual.arenasPubs?.next?.friendlyName).toBe("Phase runner");
-        expect(actual.arenasPubs?.next?.matchMap).toEqual(MatchMapList.find((m) => m.genericId === MatchMapGenericId.PhaseRunner));
+        expect(actual.arenasPubs?.next?.matchMap).toEqual(MatchMapList.find((m) => m.mapGenericId === MatchMapGenericId.PhaseRunner));
 
         expect(actual.battleRoyaleRanked?.current?.friendlyName).toBe("World's Edge");
-        expect(actual.battleRoyaleRanked?.next?.matchMap).toEqual(MatchMapList.find((m) => m.genericId === MatchMapGenericId.Olympus));
+        expect(actual.battleRoyaleRanked?.next?.matchMap).toEqual(MatchMapList.find((m) => m.mapGenericId === MatchMapGenericId.Olympus));
     }));
 });
 

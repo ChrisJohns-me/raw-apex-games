@@ -2,33 +2,27 @@ import { SharedModule } from "@allfather-app/app/shared/shared.module";
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import { DailyAverageGraphComponent } from "./components/charting/daily-average-graph.component";
-import { AccountStatsDisplayComponent } from "./components/dashboard/account-stats-display.component";
-import { ComplimentaryLegendsComponent } from "./components/dashboard/complimentary-legends.component";
-import { LegendIconsBoardComponent } from "./components/dashboard/legend-icons-board.component";
-import { MapRotationDisplayComponent } from "./components/dashboard/map-rotation-display.component";
 import { NavbarComponent } from "./components/navbar.component";
-import { ChartingPageComponent } from "./pages/charting-page.component";
-import { DashboardPageComponent } from "./pages/dashboard-page.component";
-import { MatchExplorerPageComponent } from "./pages/match-explorer-page.component";
-import { SettingsPageComponent } from "./pages/settings-page.component";
+import { ChartingPageModule } from "./pages/charting/charting-page.module";
+import { DashboardPageModule } from "./pages/dashboard/dashboard-page.module";
+import { DatasheetPageModule } from "./pages/datasheet/datasheet-page.module";
+import { MapExplorerPageModule } from "./pages/map-explorer/map-explorer-page.module";
+import { MatchExplorerPageModule } from "./pages/match-explorer/match-explorer-page.module";
+import { SettingsPageModule } from "./pages/settings/settings-page.module";
 import { MainWindowComponent } from "./windows/main-window.component";
 
+const PAGES = [
+    ChartingPageModule,
+    DashboardPageModule,
+    DatasheetPageModule,
+    MapExplorerPageModule,
+    MatchExplorerPageModule,
+    SettingsPageModule,
+];
+
 @NgModule({
-    declarations: [
-        AccountStatsDisplayComponent,
-        ChartingPageComponent,
-        ComplimentaryLegendsComponent,
-        DailyAverageGraphComponent,
-        DashboardPageComponent,
-        LegendIconsBoardComponent,
-        MainWindowComponent,
-        MapRotationDisplayComponent,
-        MatchExplorerPageComponent,
-        NavbarComponent,
-        SettingsPageComponent,
-    ],
-    imports: [CommonModule, ReactiveFormsModule, SharedModule],
+    declarations: [MainWindowComponent, NavbarComponent],
+    imports: [...PAGES, CommonModule, ReactiveFormsModule, SharedModule],
     providers: [],
     exports: [MainWindowComponent],
 })

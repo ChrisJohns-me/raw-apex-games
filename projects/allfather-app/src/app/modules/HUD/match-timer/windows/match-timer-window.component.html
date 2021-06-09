@@ -2,13 +2,12 @@
     [isDesktopWindow]="false"
     [isContentDraggable]="true"
     primaryTitle="Match Timer"
-    [position]="{ x: 162, y: 18 }"
-    [positionUnits]="{ x: 'pixel', y: 'pixel' }"
-    [positionAnchors]="{ x: 'left', y: 'top' }"
+    [position]="{ xPercent: 0.06, yPercent: 0.008, xAnchor: 'left', yAnchor: 'top' }"
+    [size]="{ widthPercent: 0.0625, heightPercent: 0.0347 }"
 >
     <div class="timer-container tilt-box" *ngIf="isDateValid(matchDurationDate) && showTimer">
-        <p class="timer-display untilt-content">
-            <ng-container>{{ matchDurationDate | date: "mm:ss" }}</ng-container>
+        <p class="timer-display untilt-content text-shadow-dark-sm">
+            {{ matchDurationDate | date: "mm:ss" }}
         </p>
     </div>
 </app-ui-container>

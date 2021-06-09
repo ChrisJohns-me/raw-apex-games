@@ -1,4 +1,4 @@
-import { Legend } from "@allfather-app/app/common/legend";
+import { Legend } from "@allfather-app/app/common/legend/legend";
 import { DefaultSetting, SettingKey } from "@allfather-app/app/common/settings";
 import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";

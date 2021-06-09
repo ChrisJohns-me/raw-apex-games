@@ -1,0 +1,27 @@
+<ul class="nav m-3">
+    <li class="nav-item me-2">
+        <app-selected-maps [mapList]="mapList" (selectedMaps)="onSelectedMapsChange($event)"></app-selected-maps>
+    </li>
+    <li class="nav-item me-2">
+        <app-selected-game-modes
+            [gameModeList]="gameModeList"
+            (selectedGameModes)="onSelectedGameModesChange($event)"
+        ></app-selected-game-modes>
+    </li>
+    <li class="nav-item me-2">
+        <app-selected-legends [legendList]="legendList" (selectedLegends)="onSelectedLegendsChange($event)"></app-selected-legends>
+    </li>
+</ul>
+
+<div class="container-fluid" appFullHeight [marginBottom]="10">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <app-match-listing
+                [matches]="filteredMatchList"
+                [isSelectable]="false"
+                (matchClick)="onSelectMatchClick()"
+                [showDataItems]="showMatchItems"
+            ></app-match-listing>
+        </div>
+    </div>
+</div>

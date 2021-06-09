@@ -189,10 +189,10 @@
                                     "type": "object",
                                     "properties": {
                                         "top": {
-                                            "type": "integer"
+                                            "type": "number"
                                         },
                                         "right": {
-                                            "type": "integer"
+                                            "type": "number"
                                         },
                                         "legendIds": {
                                             "type": "array",

@@ -1,6 +1,5 @@
-import { MatchGameModeType } from "../game-mode";
+import { MatchGameModeGenericId } from "../game-mode/game-mode.enum";
 import { MatchMapCoordinates } from "./map-coordinates";
-import { MatchMapList } from "./map-list";
 import { MatchMapFriendlyName, MatchMapGenericId } from "./map.enum";
 
 type ActiveDates = Array<{
@@ -17,24 +16,34 @@ interface MatchMapChartingConfig {
     };
 }
 
-export interface MatchMapConstructor {
+interface MatchMapConstructor {
     mapId: string;
-    genericId: MatchMapGenericId;
+    mapGenericId: MatchMapGenericId;
     mapName: MatchMapFriendlyName;
-    gameModeTypes?: MatchGameModeType[];
+    isBattleRoyaleMap: boolean;
+    isArenasMap: boolean;
+    gameModeTypes?: MatchGameModeGenericId[];
     activeDates?: ActiveDates;
     dropshipZStart?: MatchMapCoordinates["z"];
     chartConfig?: MatchMapChartingConfig;
 }
-
 export class MatchMap implements MatchMapConstructor {
     public mapId: string;
-    public genericId: MatchMapGenericId;
+    public mapGenericId: MatchMapGenericId;
     public mapName: MatchMapFriendlyName;
-    public gameModeTypes?: MatchGameModeType[];
+    public isBattleRoyaleMap: boolean;
+    public isArenasMap: boolean;
+    public gameModeTypes?: MatchGameModeGenericId[];
     public activeDates?: ActiveDates;
     public dropshipZStart?: MatchMapCoordinates["z"]; // Useful to cross-reference with starting location
     public chartConfig?: MatchMapChartingConfig;
+
+    public get layoutFilename(): string {
+        return MatchMap.getLayoutFilename(this.mapId);
+    }
+    public get previewFilename(): string {
+        return MatchMap.getLayoutFilename(this.mapId);
+    }
 
     public static unknownLayoutId = "unknown_map_layout";
     public static unknownPreviewId = "unknown_map_preview";
@@ -45,8 +54,10 @@ export class MatchMap implements MatchMapConstructor {
 
     constructor(ctor: MatchMapConstructor) {
         this.mapId = ctor.mapId;
-        this.genericId = ctor.genericId;
+        this.mapGenericId = ctor.mapGenericId;
         this.mapName = ctor.mapName;
+        this.isBattleRoyaleMap = ctor.isBattleRoyaleMap;
+        this.isArenasMap = ctor.isArenasMap;
         this.gameModeTypes = ctor.gameModeTypes;
         this.activeDates = ctor.activeDates;
         this.dropshipZStart = ctor.dropshipZStart;
@@ -54,17 +65,27 @@ export class MatchMap implements MatchMapConstructor {
     }
 
     //#region Static Methods
-    public static getFromFriendlyName(friendlyName: string, gameModeBaseType?: MatchGameModeType): Optional<MatchMap> {
+    public static getFromId(matchMapList: MatchMap[], mapId: string): Optional<MatchMap> {
+        const idCleanFn = (id: string): string => id.toLowerCase().replace(/[_\W]+/gi, "");
+        const foundMatchMap = matchMapList.find((matchMap) => idCleanFn(matchMap.mapId) === idCleanFn(mapId));
+        return foundMatchMap;
+    }
+
+    public static getFromFriendlyName(
+        matchMapList: MatchMap[],
+        friendlyName: string,
+        gameModeBaseType?: MatchGameModeGenericId
+    ): Optional<MatchMap> {
         const mapList = gameModeBaseType
-            ? MatchMapList.filter((matchMap) => matchMap.gameModeTypes?.find((gameMode) => gameMode === gameModeBaseType))
-            : MatchMapList;
+            ? matchMapList.filter((matchMap) => matchMap.gameModeTypes?.find((gameMode) => gameMode === gameModeBaseType))
+            : matchMapList;
         if (!mapList || !mapList.length) return undefined;
 
         const nameCleanFn = (name: string): string => {
             return name.toLowerCase().replace(/[^a-z]/gi, "");
         };
 
-        const foundMap = mapList.find((matchMap) => nameCleanFn(matchMap.genericId) === nameCleanFn(friendlyName));
+        const foundMap = mapList.find((matchMap) => nameCleanFn(matchMap.mapGenericId) === nameCleanFn(friendlyName));
         return foundMap;
     }
 
@@ -83,17 +104,8 @@ export class MatchMap implements MatchMapConstructor {
     public static getPreviewFilename(genericId?: MatchMapGenericId): string {
         return MatchMap.generateFilename(genericId ?? MatchMap.unknownPreviewId, "", "", "webp");
     }
-    //#endregion
-
-    //#region Instantiation Methods
-    public get layoutFilename(): string {
-        return MatchMap.getLayoutFilename(this.mapId);
-    }
-    public get previewFilename(): string {
-        return MatchMap.getLayoutFilename(this.mapId);
-    }
-    //#endregion
 
     private static generateFilename = (value: string, prefix = "", suffix = "", extension = "webp"): string =>
         `${prefix}${value}${suffix}.${extension}`;
+    //#endregion
 }

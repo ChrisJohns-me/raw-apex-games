@@ -1,30 +1,32 @@
 @import "hud-styles";
+:host {
+    text-align: center;
+}
 
 .timer-container {
     background: rgba(128, 128, 128, 0.5);
     color: white;
     display: inline-flex;
     height: 100%;
-    min-width: 125px;
-    max-width: 170px;
+    width: 80%;
     align-items: center;
     justify-content: center;
-    border: 3px solid white;
-    border-radius: 5px;
+    border: 2vw solid white;
+    border-radius: 3vw;
     box-sizing: border-box;
 }
 
 .timer-display {
     font-family: "Quantico", sans-serif;
-    font-size: 1.5rem;
+    font-size: 15vw;
     margin: 0;
     padding: 0;
 }
 
 .tilt-box {
     transform: skewX(-30deg);
-    margin: 0 15px;
-    padding: 0 15px;
+    margin: 0 10vw;
+    padding: 0 10vw;
 }
 
 .untilt-content {

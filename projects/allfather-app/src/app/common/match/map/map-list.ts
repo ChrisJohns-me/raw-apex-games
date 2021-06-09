@@ -1,4 +1,4 @@
-import { MatchGameModeType } from "../game-mode";
+import { MatchGameModeGenericId } from "../game-mode/game-mode.enum";
 import { MatchMapFriendlyName, MatchMapGenericId } from "./map.enum";
 import { MatchMap } from "./match-map";
 
@@ -6,9 +6,11 @@ export const MatchMapList: MatchMap[] = [
     // Firing Range / Training Maps
     new MatchMap({
         mapName: MatchMapFriendlyName.FiringRange,
-        genericId: MatchMapGenericId.FiringRange,
+        mapGenericId: MatchMapGenericId.FiringRange,
         mapId: "mp_rr_canyonlands_staging",
-        gameModeTypes: [MatchGameModeType.FiringRange],
+        isBattleRoyaleMap: false,
+        isArenasMap: false,
+        gameModeTypes: [MatchGameModeGenericId.FiringRange],
         activeDates: [
             {
                 from: new Date(0),
@@ -19,9 +21,15 @@ export const MatchMapList: MatchMap[] = [
     // Battle Royale Maps
     new MatchMap({
         mapName: MatchMapFriendlyName.KingsCanyon,
-        genericId: MatchMapGenericId.KingsCanyon,
+        mapGenericId: MatchMapGenericId.KingsCanyon,
         mapId: "mp_rr_canyonlands_mu3",
-        gameModeTypes: [MatchGameModeType.BattleRoyale_Duos, MatchGameModeType.BattleRoyale_Trios, MatchGameModeType.BattleRoyale_Ranked],
+        isBattleRoyaleMap: true,
+        isArenasMap: false,
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
         activeDates: [
             {
                 from: new Date("June 23, 2020"),
@@ -39,9 +47,15 @@ export const MatchMapList: MatchMap[] = [
     }),
     new MatchMap({
         mapName: MatchMapFriendlyName.WorldsEdge,
-        genericId: MatchMapGenericId.WorldsEdge,
+        mapGenericId: MatchMapGenericId.WorldsEdge,
         mapId: "mp_rr_desertlands_mu2",
-        gameModeTypes: [MatchGameModeType.BattleRoyale_Duos, MatchGameModeType.BattleRoyale_Trios, MatchGameModeType.BattleRoyale_Ranked],
+        isBattleRoyaleMap: true,
+        isArenasMap: false,
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
         activeDates: [
             {
                 from: new Date("May 04, 2021"),
@@ -59,9 +73,15 @@ export const MatchMapList: MatchMap[] = [
     }),
     new MatchMap({
         mapName: MatchMapFriendlyName.Olympus,
-        genericId: MatchMapGenericId.Olympus,
+        mapGenericId: MatchMapGenericId.Olympus,
         mapId: "mp_rr_olympus",
-        gameModeTypes: [MatchGameModeType.BattleRoyale_Duos, MatchGameModeType.BattleRoyale_Trios, MatchGameModeType.BattleRoyale_Ranked],
+        isBattleRoyaleMap: true,
+        isArenasMap: false,
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
         activeDates: [
             {
                 from: new Date("January 04, 2021"),
@@ -80,9 +100,11 @@ export const MatchMapList: MatchMap[] = [
     // Arena Maps
     new MatchMap({
         mapName: MatchMapFriendlyName.PhaseRunner,
-        genericId: MatchMapGenericId.PhaseRunner,
+        mapGenericId: MatchMapGenericId.PhaseRunner,
         mapId: "mp_rr_arena_phase_runner",
-        gameModeTypes: [MatchGameModeType.Arenas],
+        isBattleRoyaleMap: false,
+        isArenasMap: true,
+        gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
             {
                 from: new Date("May 04, 2021"),
@@ -91,9 +113,11 @@ export const MatchMapList: MatchMap[] = [
     }),
     new MatchMap({
         mapName: MatchMapFriendlyName.PartyCrasher,
-        genericId: MatchMapGenericId.PartyCrasher,
+        mapGenericId: MatchMapGenericId.PartyCrasher,
         mapId: "mp_rr_party_crasher",
-        gameModeTypes: [MatchGameModeType.Arenas],
+        isBattleRoyaleMap: false,
+        isArenasMap: true,
+        gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
             {
                 from: new Date("May 04, 2021"),
@@ -102,9 +126,11 @@ export const MatchMapList: MatchMap[] = [
     }),
     new MatchMap({
         mapName: MatchMapFriendlyName.Artillary,
-        genericId: MatchMapGenericId.Artillary,
-        mapId: "mp_rr_canyonlands_mu3", // TODO: Check
-        gameModeTypes: [MatchGameModeType.Arenas],
+        mapGenericId: MatchMapGenericId.Artillary,
+        mapId: "mp_rr_canyonlands_mu3_arena", // TODO: Check
+        isBattleRoyaleMap: false,
+        isArenasMap: true,
+        gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
             {
                 from: new Date("May 04, 2021"),
@@ -113,9 +139,11 @@ export const MatchMapList: MatchMap[] = [
     }),
     new MatchMap({
         mapName: MatchMapFriendlyName.ThermalStation,
-        genericId: MatchMapGenericId.ThermalStation,
-        mapId: "mp_rr_desertlands_mu2", // TODO: Check
-        gameModeTypes: [MatchGameModeType.Arenas],
+        mapGenericId: MatchMapGenericId.ThermalStation,
+        mapId: "mp_rr_desertlands_mu2_arena", // TODO: Check
+        isBattleRoyaleMap: false,
+        isArenasMap: true,
+        gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
             {
                 from: new Date("May 04, 2021"),
@@ -124,9 +152,11 @@ export const MatchMapList: MatchMap[] = [
     }),
     new MatchMap({
         mapName: MatchMapFriendlyName.GoldenGardens,
-        genericId: MatchMapGenericId.GoldenGardens,
-        mapId: "mp_rr_olympus", // TODO: Check
-        gameModeTypes: [MatchGameModeType.Arenas],
+        mapGenericId: MatchMapGenericId.GoldenGardens,
+        mapId: "mp_rr_olympus_arena", // TODO: Check
+        isBattleRoyaleMap: false,
+        isArenasMap: true,
+        gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
             {
                 from: new Date("Jan 01, 2025"),
@@ -134,3 +164,24 @@ export const MatchMapList: MatchMap[] = [
         ],
     }),
 ];
+
+/**
+ * Sorts by:
+ *  - Non-battle royale & non-arenas maps first
+ *  - Battle Royale maps second
+ *  - Arenas maps third
+ *  - Alphabetically
+ */
+export function sortMatchMapList(matchMapList: MatchMap[]): MatchMap[] {
+    return matchMapList.sort((a, b) => {
+        if ((!a.isBattleRoyaleMap && !a.isArenasMap && b.isBattleRoyaleMap) || b.isArenasMap) return -1;
+        if ((a.isBattleRoyaleMap && a.isArenasMap && !b.isBattleRoyaleMap) || !b.isArenasMap) return 1;
+        if (a.isBattleRoyaleMap && !b.isBattleRoyaleMap) return -1;
+        if (!a.isBattleRoyaleMap && b.isBattleRoyaleMap) return 1;
+        if (a.isArenasMap && !b.isArenasMap) return -1;
+        if (!a.isArenasMap && b.isArenasMap) return 1;
+        if (a.mapName.toLowerCase() < b.mapName.toLowerCase()) return -1;
+        if (a.mapName.toLowerCase() > b.mapName.toLowerCase()) return 1;
+        return 0;
+    });
+}

@@ -1,4 +1,4 @@
-import { MatchGameModeType } from "@allfather-app/app/common/match/game-mode";
+import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
 import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
 import { MapRotationData, MapRotationInfo } from "@allfather-app/app/common/match/map/map-rotation-data";
 import { MatchMapFriendlyName, MatchMapGenericId } from "@allfather-app/app/common/match/map/map.enum";
@@ -41,7 +41,7 @@ export class MapRotationService extends AllfatherService {
         this.setupAutoMapRotation();
     }
 
-    public getCurrentMap(gameModeType: MatchGameModeType): Optional<MatchMap> {
+    public getCurrentMap(gameModeType: MatchGameModeGenericId): Optional<MatchMap> {
         const now = new Date();
         const currInfo = this.mapRotationInfo(this.mapRotation$.value, "current", gameModeType);
         const nextInfo = this.mapRotationInfo(this.mapRotation$.value, "next", gameModeType);
@@ -62,7 +62,7 @@ export class MapRotationService extends AllfatherService {
         return;
     }
 
-    public getNextMap(gameModeType: MatchGameModeType): Optional<MatchMap> {
+    public getNextMap(gameModeType: MatchGameModeGenericId): Optional<MatchMap> {
         return this.mapRotationInfo(this.mapRotation$.value, "next", gameModeType)?.matchMap;
     }
 
@@ -100,12 +100,12 @@ export class MapRotationService extends AllfatherService {
                 tap(([isRunning, gameMode]) =>
                     console.debug(`[${this.constructor.name}] setupAutoMapRotation Game is Running: ${isRunning}; Game Mode: ${gameMode}`)
                 ),
-                filter(([isRunning, gameMode]) => !!isRunning && !!gameMode?.baseType),
+                filter(([isRunning, gameMode]) => !!isRunning && !!gameMode?.gameModeGenericId),
                 switchMap(([, gameMode]) => combineLatest([this.getMapRotation$(), of(gameMode!)]))
             )
             .subscribe(([mapRotation, gameMode]) => {
                 console.debug(`[${this.constructor.name}] setupAutoMapRotation Got Map Rotation Data`, mapRotation, gameMode);
-                this.mapRotationInfo(mapRotation, "current", gameMode.baseType!);
+                this.mapRotationInfo(mapRotation, "current", gameMode.gameModeGenericId!);
             });
     }
 
@@ -127,19 +127,22 @@ export class MapRotationService extends AllfatherService {
     private mapRotationInfo(
         mapRotation: Optional<MapRotationData>,
         iteration: "next" | "current",
-        gameModeType: MatchGameModeType
+        gameModeType: MatchGameModeGenericId
     ): Optional<MapRotationInfo> {
-        if (gameModeType === MatchGameModeType.Arenas) {
+        if (gameModeType === MatchGameModeGenericId.Arenas) {
             if (iteration === "current") return mapRotation?.arenasPubs?.current;
             if (iteration === "next") return mapRotation?.arenasPubs?.next;
-        } else if (gameModeType === MatchGameModeType.BattleRoyale_Duos || gameModeType === MatchGameModeType.BattleRoyale_Trios) {
+        } else if (
+            gameModeType === MatchGameModeGenericId.BattleRoyale_Duos ||
+            gameModeType === MatchGameModeGenericId.BattleRoyale_Trios
+        ) {
             if (iteration === "current") return mapRotation?.arenasPubs?.current;
             if (iteration === "next") return mapRotation?.arenasPubs?.next;
-        } else if (gameModeType === MatchGameModeType.BattleRoyale_Ranked) {
+        } else if (gameModeType === MatchGameModeGenericId.BattleRoyale_Ranked) {
             if (iteration === "current") return mapRotation?.arenasPubs?.current;
             if (iteration === "next") return mapRotation?.arenasPubs?.next;
-        } else if (gameModeType === MatchGameModeType.FiringRange || gameModeType === MatchGameModeType.Training) {
-            const firingRangeMap = MatchMapList.find((m) => m.genericId === MatchMapGenericId.FiringRange);
+        } else if (gameModeType === MatchGameModeGenericId.FiringRange || gameModeType === MatchGameModeGenericId.Training) {
+            const firingRangeMap = MatchMapList.find((m) => m.mapGenericId === MatchMapGenericId.FiringRange);
             return {
                 friendlyName: MatchMapFriendlyName.FiringRange,
                 matchMap: firingRangeMap,

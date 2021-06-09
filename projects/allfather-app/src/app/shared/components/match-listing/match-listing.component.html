@@ -11,64 +11,98 @@
                 (click)="matchClick.next(match)"
             >
                 <td class="py-2 pt-3 text-nowrap">
-                    <div class="legend-portraits-container">
+                    <div class="legend-portraits-container" *ngIf="showDataItems.includes(DataItem.SquadLegends)">
                         <img
                             *ngFor="let teammate of buildTeamRoster(match)"
                             class="legend-portrait teammate-legend-portrait"
                             [ngClass]="{ 'my-legend-portrait': teammate.isMe, 'teammate-legend-portrait': !teammate.isMe }"
                             [src]="'../../../assets/images/legend-portraits/' + getLegendImageName(teammate.legendId)"
-                            alt=""
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                            [title]="teammate.name"
+                            [alt]="teammate.name + ' playing ' + (getLegendName(teammate.legendId) ?? 'N/A')"
                         />
                     </div>
-                    <div class="match-details-container" *ngIf="match.mapId && getMatchMapName(match.mapId); let matchMapName">
-                        <span *ngIf="matchMapName">{{ matchMapName }}</span>
-                        <span *ngIf="!matchMapName"><em>Map Unknown</em></span>
-                        <br />
-                        <span class="small strong text-muted in-progress-pulse" *ngIf="!match.endDate && isLiveMatch">In Progress</span>
-                        <small
-                            class="text-muted"
-                            *ngIf="match.endDate && isFunction(match.endDate) && match.endDate.getTime() > now - 60 * 1000"
-                            >Just now</small
+                    <div class="match-details-container">
+                        <ng-container
+                            *ngIf="showDataItems.includes(DataItem.Map) && match.mapId && getMatchMapName(match.mapId); let matchMapName"
                         >
-                        <small
-                            class="text-muted"
-                            *ngIf="
-                                match.endDate &&
-                                isFunction(match.endDate) &&
-                                match.endDate.getTime() < now - 60 * 1000 &&
-                                match.endDate.getTime() > now - relativeTime
-                            "
-                        >
-                            {{
-                                durationSinceNow(match.endDate)
-                                    | dfnsFormatDurationPure: { format: ["years", "months", "weeks", "days", "hours", "minutes"] }
-                            }}
-                            ago
-                        </small>
-                        <small
-                            class="text-muted"
-                            *ngIf="!match.endDate || !isFunction(match.endDate) || match.endDate.getTime() < now - relativeTime"
-                        >
-                            {{ match.endDate | dfnsFormatRelative: now }}
-                        </small>
+                            <span *ngIf="matchMapName">{{ matchMapName }}</span>
+                            <span *ngIf="!matchMapName"><em>Map Unknown</em></span>
+                        </ng-container>
+                        <ng-container *ngIf="showDataItems.includes(DataItem.MatchDate)">
+                            <br />
+                            <span class="small strong text-muted in-progress-pulse" *ngIf="!match.endDate && isLiveMatch">In Progress</span>
+                            <small
+                                class="text-muted"
+                                *ngIf="match.endDate && isFunction(match.endDate) && match.endDate.getTime() > now - 60 * 1000"
+                                >Just now</small
+                            >
+                            <small
+                                class="text-muted"
+                                *ngIf="
+                                    match.endDate &&
+                                    isFunction(match.endDate) &&
+                                    match.endDate.getTime() < now - 60 * 1000 &&
+                                    match.endDate.getTime() > now - relativeTime
+                                "
+                            >
+                                {{
+                                    durationSinceNow(match.endDate)
+                                        | dfnsFormatDurationPure: { format: ["years", "months", "weeks", "days", "hours", "minutes"] }
+                                }}
+                                ago
+                            </small>
+                            <small
+                                class="text-muted"
+                                *ngIf="!match.endDate || !isFunction(match.endDate) || match.endDate.getTime() < now - relativeTime"
+                            >
+                                {{ match.endDate | dfnsFormatRelative: now }}
+                            </small>
+                        </ng-container>
                     </div>
                 </td>
+                <!-- <td class="align-middle text-center" *ngIf="showDataItems.includes(DataItem.Rank) && match.rankScore">
+                    <ng-container *ngIf="getRankFromScore(match.rankScore); let rank">
+                        <app-rank-icon
+                            class="rank-icon current"
+                            [rank]="rank"
+                            [title]="rank.friendlyName + ' (' + rank.score ?? 0 + ')'"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="bottom"
+                        ></app-rank-icon>
+                        <small>{{ match.rankScoreDiff ?? 0 }}</small>
+                    </ng-container>
+                </td> -->
                 <td class="align-middle text-center">
-                    <div *ngIf="!match.placement && !match.maxPlacement">N/A</div>
+                    <div *ngIf="showDataItems.includes(DataItem.Placement) && !match.placement && !match.maxPlacement">N/A</div>
 
-                    <h4 class="data-digit-primary mb-0" *ngIf="match.placement || match.maxPlacement">
+                    <h3
+                        class="data-digit-primary mb-0"
+                        *ngIf="showDataItems.includes(DataItem.Placement) && (match.placement || match.maxPlacement)"
+                    >
                         {{ match.placement ?? "-" }}
                         <sub class="max-placement-sign text-muted" *ngIf="match.maxPlacement">/</sub>
                         <sub class="max-placement-digit text-muted" *ngIf="match.maxPlacement">{{ match.maxPlacement }}</sub>
-                    </h4>
-                    <small class="text-muted">{{ match.gameModeId ? (getGameModeTypeName(match.gameModeId) | titlecase) : "N/A" }}</small>
+                    </h3>
+                    <small class="text-muted" *ngIf="showDataItems.includes(DataItem.GameMode)">{{
+                        match.gameModeId ? (getGameModeTypeName(match.gameModeId) | titlecase) : "N/A"
+                    }}</small>
                 </td>
-                <td class="align-middle text-center">
-                    <h5 class="data-digit mb-1">{{ match.eliminations ?? 0 }}</h5>
+                <td class="align-middle text-center" *ngIf="showDataItems.includes(DataItem.Eliminations)">
+                    <h3 class="data-digit mb-1">{{ match.eliminations ?? 0 }}</h3>
                     <small class="text-muted">kills</small>
                 </td>
-                <td class="align-middle text-center">
-                    <h5 class="data-digit mb-1">{{ match.damage ?? 0 }}</h5>
+                <td class="align-middle text-center" *ngIf="showDataItems.includes(DataItem.Knockdowns)">
+                    <h3 class="data-digit mb-1">{{ match.knockdowns ?? 0 }}</h3>
+                    <small class="text-muted">knockdowns</small>
+                </td>
+                <td class="align-middle text-center" *ngIf="showDataItems.includes(DataItem.Assists)">
+                    <h3 class="data-digit mb-1">{{ match.assists ?? 0 }}</h3>
+                    <small class="text-muted">assists</small>
+                </td>
+                <td class="align-middle text-center" *ngIf="showDataItems.includes(DataItem.Damage)">
+                    <h3 class="data-digit mb-1">{{ match.damage ?? 0 }}</h3>
                     <small class="text-muted">damage</small>
                 </td>
             </tr>

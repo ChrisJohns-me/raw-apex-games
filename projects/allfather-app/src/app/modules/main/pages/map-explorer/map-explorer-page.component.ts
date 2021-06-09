@@ -1,9 +1,21 @@
-import { MatchGameMode } from "@allfather-app/app/common/match/game-mode";
+import { MatchGameMode } from "@allfather-app/app/common/match/game-mode/game-mode";
+import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchMapCoordinates } from "@allfather-app/app/common/match/map/map-coordinates";
 import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
 import { MatchMapFriendlyName } from "@allfather-app/app/common/match/map/map.enum";
 import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
+import { LocationPhaseNum, MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
+import { MatchMapService } from "@allfather-app/app/modules/core/match/match-map.service";
+import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
+import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
+import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/match-player-stats.service";
+import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
+import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
+import { PlayerService } from "@allfather-app/app/modules/core/player.service";
+import { ReportingEngineId, ReportingStatus } from "@allfather-app/app/modules/core/reporting/reporting-engine/reporting-engine";
+import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
+import { DataItem } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
 import { environment } from "@allfather-app/environments/environment";
 import {
     AfterViewInit,
@@ -23,26 +35,16 @@ import { combineLatest, merge, Observable, Subject } from "rxjs";
 import { distinctUntilChanged, filter, finalize, switchMap, takeUntil, throttleTime } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
 import { unique } from "shared/utilities/primitives/array";
-import { LocationPhaseNum, MatchDataStore } from "../../core/local-database/match-data-store";
-import { MatchMapService } from "../../core/match/match-map.service";
-import { MatchPlayerLegendService } from "../../core/match/match-player-legend.service";
-import { MatchPlayerLocationService } from "../../core/match/match-player-location.service";
-import { MatchPlayerStatsService } from "../../core/match/match-player-stats.service";
-import { MatchRosterService } from "../../core/match/match-roster.service";
-import { MatchService } from "../../core/match/match.service";
-import { PlayerService } from "../../core/player.service";
-import { ReportingEngineId, ReportingStatus } from "../../core/reporting/reporting-engine/reporting-engine";
-import { ReportingService } from "../../core/reporting/reporting.service";
 
 type MatchMapImageAxisScale = NonNullable<MatchMap["chartConfig"]>["imageAxisScale"];
 
 @Component({
-    selector: "app-match-explorer-page",
-    templateUrl: "./match-explorer-page.component.html",
-    styleUrls: ["./match-explorer-page.component.scss"],
+    selector: "app-map-explorer-page",
+    templateUrl: "./map-explorer-page.component.html",
+    styleUrls: ["./map-explorer-page.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestroy {
     public ENABLE_DEBUG_TOOLS = environment.DEV && false; // Debug tools
     @ViewChild("mapOverlayGraph") public mapOverlayGraphRef?: ElementRef<HTMLDivElement>;
 
@@ -52,6 +54,15 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     public mapList: MatchMap[];
     public matchList: MatchDataStore[] = [];
     public selectedMatch?: MatchDataStore;
+    public showMatchItems: DataItem[] = [
+        DataItem.GameMode,
+        DataItem.MatchDate,
+        DataItem.SquadLegends,
+        DataItem.Map,
+        DataItem.Eliminations,
+        DataItem.Placement,
+        DataItem.Damage,
+    ];
 
     public get isLiveMatchStarted(): boolean {
         return !!this.liveMatch?.matchId && !this.liveMatch?.endDate;
@@ -130,7 +141,8 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
 
     public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item) => item.matchId ?? item.endDate;
     public durationSinceNow = (baseDate: Date): Duration => intervalToDuration({ start: baseDate, end: new Date() });
-    public getGameModeTypeName = (gameModeId: string): Optional<string> => new MatchGameMode(gameModeId).baseType;
+    public getGameModeTypeName = (gameModeId: string): Optional<string> =>
+        MatchGameMode.getFromId(MatchGameModeList, gameModeId).gameModeGenericId;
     public getMapFilename = MatchMap.getLayoutFilename;
 
     //#region Lifecycle Methods

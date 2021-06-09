@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MatchService } from "../../core/match/match.service";
-import { MockMatchService } from "../../core/mocks/services/mock-match.service";
-import { DailyAverageGraphComponent } from "../components/charting/daily-average-graph.component";
+import { MatchService } from "../../../core/match/match.service";
+import { MockMatchService } from "../../../core/mocks/services/mock-match.service";
+import { DailyAverageGraphComponent } from "../../components/charting/daily-average-graph.component";
 import { ChartingPageComponent } from "./charting-page.component";
 
 describe("ChartingPageComponent", () => {

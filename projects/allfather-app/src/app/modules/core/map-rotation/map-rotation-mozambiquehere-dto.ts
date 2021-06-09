@@ -1,4 +1,5 @@
-import { MatchGameModeType } from "@allfather-app/app/common/match/game-mode";
+import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
+import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
 import { MapRotationData, MapRotationInfo } from "@allfather-app/app/common/match/map/map-rotation-data";
 import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { cleanInt } from "shared/utilities";
@@ -34,11 +35,12 @@ export class MapRotationMozambiquehereDTO {
     }
 
     public toMapRotation(): MapRotationData {
-        const convertMapRotationInfoFn = (mapIteration: MapRotationInfoDTO, gameMode?: MatchGameModeType): MapRotationInfo => {
-            console.debug(`[${this.constructor.name}] Attempting to find map based on "${mapIteration.map}" (${gameMode})`);
+        const convertMapRotationInfoFn = (mapIteration: MapRotationInfoDTO, gameMode?: MatchGameModeGenericId): MapRotationInfo => {
+            const matchMap = MatchMap.getFromFriendlyName(MatchMapList, mapIteration.map, gameMode);
+            console.debug(`[${this.constructor.name}] Attempting to find map based on "${mapIteration.map}" (${gameMode})`, matchMap);
             return {
                 friendlyName: mapIteration.map,
-                matchMap: MatchMap.getFromFriendlyName(mapIteration.map, gameMode),
+                matchMap: matchMap,
                 startDate: mapIteration.start ? new Date(mapIteration.start * 1000) : undefined,
                 endDate: mapIteration.end ? new Date(mapIteration.end * 1000) : undefined,
             };
@@ -46,24 +48,24 @@ export class MapRotationMozambiquehereDTO {
 
         const arenasPubs: MapRotationData["arenasPubs"] = {};
         arenasPubs.current = this.arenas?.current?.map
-            ? convertMapRotationInfoFn(this.arenas.current, MatchGameModeType.Arenas)
+            ? convertMapRotationInfoFn(this.arenas.current, MatchGameModeGenericId.Arenas)
             : undefined;
-        arenasPubs.next = this.arenas?.next?.map ? convertMapRotationInfoFn(this.arenas.next, MatchGameModeType.Arenas) : undefined;
+        arenasPubs.next = this.arenas?.next?.map ? convertMapRotationInfoFn(this.arenas.next, MatchGameModeGenericId.Arenas) : undefined;
 
         const battleRoyalePubs: MapRotationData["battleRoyalePubs"] = {};
         battleRoyalePubs.current = this.battle_royale?.current?.map
-            ? convertMapRotationInfoFn(this.battle_royale.current, MatchGameModeType.BattleRoyale_Trios)
+            ? convertMapRotationInfoFn(this.battle_royale.current, MatchGameModeGenericId.BattleRoyale_Trios)
             : undefined;
         battleRoyalePubs.next = this.battle_royale?.next?.map
-            ? convertMapRotationInfoFn(this.battle_royale.next, MatchGameModeType.BattleRoyale_Trios)
+            ? convertMapRotationInfoFn(this.battle_royale.next, MatchGameModeGenericId.BattleRoyale_Trios)
             : undefined;
 
         const battleRoyaleRanked: MapRotationData["battleRoyaleRanked"] = {};
         battleRoyaleRanked.current = this.ranked?.current?.map
-            ? convertMapRotationInfoFn(this.ranked.current, MatchGameModeType.BattleRoyale_Ranked)
+            ? convertMapRotationInfoFn(this.ranked.current, MatchGameModeGenericId.BattleRoyale_Ranked)
             : undefined;
         battleRoyaleRanked.next = this.ranked?.next?.map
-            ? convertMapRotationInfoFn(this.ranked.next, MatchGameModeType.BattleRoyale_Ranked)
+            ? convertMapRotationInfoFn(this.ranked.next, MatchGameModeGenericId.BattleRoyale_Ranked)
             : undefined;
 
         return new MapRotationData(arenasPubs, battleRoyalePubs, battleRoyaleRanked);

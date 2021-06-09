@@ -1,5 +1,5 @@
 import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
-import { MatchGameModeType } from "@allfather-app/app/common/match/game-mode";
+import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
 import { MapRotationData } from "@allfather-app/app/common/match/map/map-rotation-data";
 import { BehaviorSubject, of } from "rxjs";
 import { MapRotationService } from "../../map-rotation/map-rotation.service";
@@ -7,11 +7,11 @@ import { MapRotationService } from "../../map-rotation/map-rotation.service";
 export class MockMapRotationService implements MockedClass<MapRotationService> {
     public mapRotation$: MapRotationService["mapRotation$"] = new BehaviorSubject<Optional<MapRotationData>>(undefined);
 
-    public getCurrentMap(gameModeType: MatchGameModeType): ReturnType<MapRotationService["getCurrentMap"]> {
+    public getCurrentMap(gameModeType: MatchGameModeGenericId): ReturnType<MapRotationService["getCurrentMap"]> {
         return;
     }
 
-    public getNextMap(gameModeType: MatchGameModeType): ReturnType<MapRotationService["getNextMap"]> {
+    public getNextMap(gameModeType: MatchGameModeGenericId): ReturnType<MapRotationService["getNextMap"]> {
         return;
     }
 
