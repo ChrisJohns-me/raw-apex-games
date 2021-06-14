@@ -74,6 +74,9 @@
                 "enableInflictionInsightWindow": {
                     "type": "boolean"
                 },
+                "enableReticleHelperWindow": {
+                    "type": "boolean"
+                },
                 "inflictionInsight": {
                     "type": "object",
                     "properties": {
@@ -108,14 +111,25 @@
                         }
                     },
                     "required": ["legendStats", "complimentaryLegends"]
+                },
+                "reticleHelper": {
+                    "type": "object",
+                    "properties": {
+                        "enableAimingReticle": {
+                            "type": "boolean"
+                        }
+                    },
+                    "required": ["enableAimingReticle"]
                 }
             },
             "required": [
                 "enableMatchTimerWindow",
                 "enableUltTimerWindow",
                 "enableInflictionInsightWindow",
+                "enableReticleHelperWindow",
                 "inflictionInsight",
-                "legendSelectAssist"
+                "legendSelectAssist",
+                "reticleHelper"
             ]
         },
         "featureConfigs": {
@@ -178,6 +192,7 @@
                                 "placementWeight",
                                 "damageWeight",
                                 "eliminationWeight",
+                                "assistWeight",
                                 "knockdownWeight",
                                 "durationWeight"
                             ]

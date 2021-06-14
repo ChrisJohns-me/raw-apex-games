@@ -1,4 +1,5 @@
 import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
+import { PlatformHardware, PlatformSoftware } from "@allfather-app/app/common/platform";
 import { map } from "rxjs/operators";
 import { MatchRosterService } from "../../../match/match-roster.service";
 import { ReportableDataSnapshot } from "../reportable-data";
@@ -7,6 +8,8 @@ type MatchRoster = {
     isMe: boolean;
     name: string;
     teamId: number;
+    hw?: PlatformHardware;
+    sw?: PlatformSoftware;
 };
 type MatchRosterDataOutput = MatchRoster[];
 export function MatchRosterDataFactory(matchRosterObs: MatchRosterService["matchRoster$"]): ReportableDataSnapshot<MatchRosterDataOutput> {
@@ -14,6 +17,8 @@ export function MatchRosterDataFactory(matchRosterObs: MatchRosterService["match
         isMe: rosterPlayer.isMe,
         name: rosterPlayer.name,
         teamId: rosterPlayer.teamId ?? -1,
+        platformHardware: rosterPlayer.platformHardware,
+        platformSoftware: rosterPlayer.platformSoftware,
     });
 
     return new ReportableDataSnapshot({

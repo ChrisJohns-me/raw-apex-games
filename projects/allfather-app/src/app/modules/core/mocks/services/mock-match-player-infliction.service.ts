@@ -6,6 +6,8 @@ export class MockMatchPlayerInflictionService implements MockedClass<MatchPlayer
     public myKillfeedEvent$: MatchPlayerInflictionService["myKillfeedEvent$"] = new Subject();
     public notMyKillfeedEvent$: MatchPlayerInflictionService["notMyKillfeedEvent$"] = new Subject();
     public myDamageEvent$: MatchPlayerInflictionService["myDamageEvent$"] = new Subject();
+    public myKnockdownEvent$: MatchPlayerInflictionService["myKnockdownEvent$"] = new Subject();
+    public myEliminationEvent$: MatchPlayerInflictionService["myEliminationEvent$"] = new Subject();
 
     public isFeatureDepAvailable(featureName: OverwolfFeatureDep): boolean {
         return true;

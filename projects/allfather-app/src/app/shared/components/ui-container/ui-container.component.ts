@@ -239,10 +239,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
                 `${heightPixel}px (${heightPercentClamp * 100}%) height`
         );
 
-        this.uiWindow
-            .changeSize(widthPixel, heightPixel)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((result) => console.log(result));
+        this.uiWindow.changeSize(widthPixel, heightPixel).pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     /**
@@ -268,10 +265,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
             }width,  ` + `${heightPixel}px ${heightPercentClamp ? heightPercentClamp * 100 + "% " : ""}height`
         );
 
-        this.uiWindow
-            .setMinSize(widthPixel, heightPixel)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((result) => console.log(result));
+        this.uiWindow.setMinSize(widthPixel, heightPixel).pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     private updatePosition(): void {

@@ -1,3 +1,5 @@
+import { AimingReticleList } from "../modules/HUD/reticle-helper/components/aiming-reticle/aiming-reticles";
+
 export type SettingValue = BasicPrimitive;
 export type AllSettings = { [key in SettingKey]: SettingValue };
 
@@ -9,6 +11,11 @@ export enum SettingKey {
     EnableAllLegendSelectHUD = "enableAllLegendSelectHUD",
     EnableLegendSelectLegendStats = "enableLegendSelectLegendStats",
     EnableLegendSelectLegendSuggestions = "enableLegendSelectLegendSuggestions",
+    EnableInGameAimingReticle = "enableInGameAimingReticle",
+    InGameAimingReticleId = "inGameAimingReticleId",
+    InGameAimingReticleColor = "inGameAimingReticleColor",
+    InGameAimingReticleAlpha = "inGameAimingReticleAlpha",
+    InGameAimingReticleDynamicHide = "inGameAimingReticleDynamicHide",
 }
 
 export const DefaultSetting: { [P in SettingKey]: SettingValue } = {
@@ -19,4 +26,9 @@ export const DefaultSetting: { [P in SettingKey]: SettingValue } = {
     enableAllLegendSelectHUD: true,
     enableLegendSelectLegendStats: true,
     enableLegendSelectLegendSuggestions: true,
+    enableInGameAimingReticle: false,
+    inGameAimingReticleId: AimingReticleList[0].reticleId,
+    inGameAimingReticleColor: AimingReticleList[0].hexColor,
+    inGameAimingReticleAlpha: AimingReticleList[0].alpha,
+    inGameAimingReticleDynamicHide: false,
 };

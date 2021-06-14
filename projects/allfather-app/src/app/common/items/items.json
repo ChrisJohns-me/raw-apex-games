@@ -341,6 +341,21 @@
             "inGameEventNameRegExPattern": "Smoke Launcher"
         },
         {
+            "id": "valkyrie_vtol_jets",
+            "friendlyName": "VTOL Jets",
+            "inGameInfoNameRegExPattern": "mp_ability_valk_jets"
+        },
+        {
+            "id": "valkyrie_cluster_missile",
+            "friendlyName": "Missile Swarm",
+            "inGameInfoNameRegExPattern": "mp_ability_valk_cluster_missile"
+        },
+        {
+            "id": "valkyrie_skyward_dive",
+            "friendlyName": "Skyward Dive",
+            "inGameInfoNameRegExPattern": "mp_ability_valk_skyward"
+        },
+        {
             "id": "grenade_thermite",
             "friendlyName": "Thermite Grenade",
             "inGameInfoNameRegExPattern": "^Thermite Grenade$",

@@ -15,9 +15,9 @@ import { MatchService } from "./match.service";
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerService", MatchPlayerService, deps),
 })
 export class MatchPlayerService extends AllfatherService {
-    /** Reset on match start */
+    /** Local player's state in the match. Resets on match start */
     public readonly myState$ = new BehaviorSubject<PlayerState>(PlayerState.Disconnected);
-    /** Immediately check if local player is alive */
+    /** Check if local player is currently alive */
     public get isAlive(): boolean {
         return this.myState$.value === PlayerState.Alive;
     }

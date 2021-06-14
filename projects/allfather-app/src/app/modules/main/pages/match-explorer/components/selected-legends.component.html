@@ -37,7 +37,7 @@
                         [value]="legendId"
                         checked
                     />
-                    <label class="form-check-label" [attr.for]="legendId">{{ legend.name }}</label>
+                    <label class="form-check-label" [attr.for]="legendId">{{ legend.name | titlecase }}</label>
                 </div>
             </li>
         </ul>

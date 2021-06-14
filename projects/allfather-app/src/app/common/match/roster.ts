@@ -16,7 +16,7 @@ export class MatchRoster<T extends MatchRosterPlayer = MatchRosterPlayer> {
         const playerExistsInRoster = this.allPlayers.some((p) => isPlayerNameEqual(p.name, newPlayer.name));
         if (playerExistsInRoster) {
             console.warn(`"${newPlayer.name}" already exists in the roster, overwriting.`, newPlayer, this.teams);
-            this.removePlayerName(newPlayer.name);
+            this.removePlayer(newPlayer.name);
         }
 
         const foundTeam = this.teams.find((t) => !!t.teamId && t.teamId === newPlayer.teamId);
@@ -32,7 +32,7 @@ export class MatchRoster<T extends MatchRosterPlayer = MatchRosterPlayer> {
         this.removeEmptyTeams();
     }
 
-    public removePlayerName(playerName: string): void {
+    public removePlayer(playerName: string): void {
         const foundPlayer = this.allPlayers.find((p) => isPlayerNameEqual(p.name, playerName));
         if (!foundPlayer)
             return void console.warn(`Attempted to remove "${playerName}" from roster, but was not found.`, playerName, this.teams);

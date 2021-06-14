@@ -4,7 +4,7 @@ import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
 import { PlayerState } from "@allfather-app/app/common/player-state";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
-import { MatchActivityService } from "@allfather-app/app/modules/core/match/match-activity.service";
+import { MatchKillfeedService } from "@allfather-app/app/modules/core/match/match-killfeed.service";
 import { MatchPlayerInflictionService } from "@allfather-app/app/modules/core/match/match-player-infliction.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
@@ -13,7 +13,7 @@ import { MatchService } from "@allfather-app/app/modules/core/match/match.servic
 import { MockOpponentBannerComponent } from "@allfather-app/app/modules/core/mocks/components/mock-opponent-banner.component";
 import { MockUIContainerComponent } from "@allfather-app/app/modules/core/mocks/components/mock-ui-container.component";
 import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/services/mock-configuration.service";
-import { MockMatchActivityService } from "@allfather-app/app/modules/core/mocks/services/mock-match-activity.service";
+import { MockmatchKillfeedService } from "@allfather-app/app/modules/core/mocks/services/mock-match-killfeed.service";
 import { MockMatchPlayerInflictionService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-infliction.service";
 import { MockMatchPlayerLocationService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-location.service";
 import { MockMatchPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player.service";
@@ -33,11 +33,9 @@ describe("InflictionInsightWindowComponent", () => {
     let fixture: ComponentFixture<InflictionInsightWindowComponent>;
     let scheduler: TestScheduler;
     let config: ConfigurationService;
-    let matchActivityService: MatchActivityService;
     let matchPlayerInflictionService: MatchPlayerInflictionService;
     let matchPlayerLocationService: MatchPlayerLocationService;
     let matchPlayerService: MatchPlayerService;
-    let matchRosterService: MatchRosterService;
     let matchService: MatchService;
 
     beforeEach(async () => {
@@ -47,7 +45,7 @@ describe("InflictionInsightWindowComponent", () => {
                 { provide: ChangeDetectorRef, useValue: {} },
                 { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: MatchService, useClass: MockMatchService },
-                { provide: MatchActivityService, useClass: MockMatchActivityService },
+                { provide: MatchKillfeedService, useClass: MockmatchKillfeedService },
                 { provide: MatchPlayerService, useClass: MockMatchPlayerService },
                 { provide: MatchPlayerInflictionService, useClass: MockMatchPlayerInflictionService },
                 { provide: MatchPlayerLocationService, useClass: MockMatchPlayerLocationService },
@@ -69,7 +67,6 @@ describe("InflictionInsightWindowComponent", () => {
         matchPlayerInflictionService = TestBed.inject(MatchPlayerInflictionService);
         matchPlayerLocationService = TestBed.inject(MatchPlayerLocationService);
         matchPlayerService = TestBed.inject(MatchPlayerService);
-        matchRosterService = TestBed.inject(MatchRosterService);
         matchService = TestBed.inject(MatchService);
         fixture.detectChanges(); // ngOnInit
     });

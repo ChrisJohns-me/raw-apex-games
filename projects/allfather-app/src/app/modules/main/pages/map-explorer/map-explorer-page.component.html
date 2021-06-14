@@ -1,23 +1,9 @@
-<div class="container mt-3">
+<div class="container my-3">
     <div class="row justify-content-center">
         <div class="col-12 col-lg-8 col-md-10">
             <ul class="nav nav-pills nav-fill">
-                <li class="nav-item">
-                    <button class="nav-link" (click)="onLiveMatchClick()" [ngClass]="{ active: isLiveMatchFocused }">
-                        <span
-                            class="spinner-grow spinner-grow-sm"
-                            [ngClass]="{ 'text-danger': !isLiveMatchFocused }"
-                            *ngIf="isLiveMatchStarted"
-                        ></span>
-                        <strong>Live Map</strong>
-                    </button>
-                </li>
                 <li class="nav-item" *ngFor="let map of mapList">
-                    <button
-                        class="nav-link"
-                        (click)="onSelectMapClick(map)"
-                        [ngClass]="{ active: !isLiveMatchFocused && map.mapId == displayedMap?.mapId }"
-                    >
+                    <button class="nav-link" (click)="onSelectMapClick(map)" [ngClass]="{ active: map.mapId == selectedMap?.mapId }">
                         {{ map.mapName }}
                     </button>
                 </li>
@@ -31,9 +17,9 @@
         <div class="col col-xl-auto" appFullHeight [marginBottom]="10">
             <!-- TODO: Maybe Breakout into own component -->
             <div class="interactive-map-container ms-auto">
-                <div class="map-full-image map-full-image-no-map" *ngIf="!displayedMap?.mapId">
+                <div class="map-full-image map-full-image-no-map" *ngIf="!selectedMap?.mapId">
                     <div class="message-overlay">
-                        <h5>Waiting for match</h5>
+                        <!-- <h5></h5> -->
                     </div>
                     ​<picture>
                         <source media="(max-width: 1000px)" [srcset]="'../../../../assets/images/map-layouts/medium/' + getMapFilename()" />
@@ -42,18 +28,18 @@
                     </picture>
                 </div>
 
-                <div class="map-full-image" *ngIf="displayedMap?.mapId">
+                <div class="map-full-image" *ngIf="selectedMap?.mapId">
                     ​<picture>
                         <source
                             media="(max-width: 1000px)"
-                            [srcset]="'../../../../assets/images/map-layouts/medium/' + getMapFilename(displayedMap!.mapId)"
+                            [srcset]="'../../../../assets/images/map-layouts/medium/' + getMapFilename(selectedMap!.mapId)"
                         />
                         <source
                             media="(max-width: 1440px)"
-                            [srcset]="'../../../../assets/images/map-layouts/large/' + getMapFilename(displayedMap!.mapId)"
+                            [srcset]="'../../../../assets/images/map-layouts/large/' + getMapFilename(selectedMap!.mapId)"
                         />
                         <img
-                            [src]="'../../../../assets/images/map-layouts/' + getMapFilename(displayedMap!.mapId)"
+                            [src]="'../../../../assets/images/map-layouts/' + getMapFilename(selectedMap!.mapId)"
                             class="img-fluid"
                             alt="..."
                             (load)="isLoadingMapImage = false"
@@ -66,45 +52,19 @@
                     <ng-container [ngTemplateOutlet]="mapDebugTools"></ng-container>
                 </div>
             </div>
-
-            <!-- <div class="form-check form-switch form-check-inline">
-                <input class="form-check-input" type="checkbox" id="followLiveLocationSwitch" [formControl]="followLiveLocationForm" />
-                <label class="form-check-label" for="followLiveLocationSwitch">Follow Live Location</label>
-            </div> -->
-            <!-- <div>
-                <label for="locationHistoryRange" class="form-label">Timeline ({{ locationHistoryRange?.value }})</label>
-                <input
-                    type="range"
-                    class="form-range"
-                    min="0"
-                    [max]="coordinateData?.length"
-                    step="1"
-                    id="locationHistoryRange"
-                    [formControl]="locationHistoryRange"
-                />
-            </div> -->
         </div>
         <div class="col-7 col-md-6 col-lg-5 col-xl-4 col-xxl-3" appFullHeight [marginBottom]="10">
-            <!-- Showing All Text -->
-            <table class="table table-dark mb-0" *ngIf="isLiveMatchFocused">
-                <tbody>
-                    <tr>
-                        <td class="text-muted">Showing {{ matchList.length }} {{ matchList.length == 1 ? "Match" : "Matches" }}</td>
-                    </tr>
-                </tbody>
-            </table>
-
             <!-- Aggregate Option -->
-            <table class="table table-dark table-hover mb-0" *ngIf="!isLiveMatchFocused && displayedMap">
+            <table class="table table-dark table-hover mb-0" *ngIf="selectedMap">
                 <tbody>
                     <tr
-                        (click)="onSelectMapClick(displayedMap)"
+                        (click)="onSelectMapClick(selectedMap)"
                         class="clickable"
                         [ngClass]="{ 'table-active table-primary': selectedMapMatchList && !selectedMatch }"
                     >
                         <td>
                             {{ selectedMapMatchList.length }} {{ selectedMapMatchList.length == 1 ? "Match" : "Matches" }} on
-                            <strong>{{ displayedMap.mapName }}</strong>
+                            <strong>{{ selectedMap.mapName }}</strong>
                         </td>
                     </tr>
                 </tbody>
@@ -112,44 +72,13 @@
 
             <!-- Match List -->
             <div class="matches-container">
-                <!-- Current Live Match -->
-                <app-match-listing
-                    *ngIf="isLiveMatchStarted"
-                    [isLiveMatch]="true"
-                    [matches]="[liveMatch!]"
-                    [isSelectable]="true"
-                    [selectedMatchId]="liveMatch?.matchId"
-                    (matchClick)="onLiveMatchClick()"
-                    [showDataItems]="showMatchItems"
-                ></app-match-listing>
-
-                <!-- All Saved Matches -->
                 <app-match-listing
                     [matches]="matchList"
-                    [isSelectable]="true"
+                    [isMatchClickable]="true"
                     [selectedMatchId]="selectedMatch?.matchId"
                     (matchClick)="onSelectMatchClick($event)"
                     [showDataItems]="showMatchItems"
                 ></app-match-listing>
-
-                <!-- Selected Map -->
-                <!-- <app-match-listing
-                    *ngIf="!isLiveMatch"
-                    [matches]="selectedMapMatchList"
-                    [isSelectable]="true"
-                    [selectedMatchId]="selectedMatch?.matchId"
-                    (matchClick)="onSelectMatchClick($event)"
-                    [showDataItems]="showMatchItems"
-                ></app-match-listing> -->
-
-                <!-- Removing... -->
-                <!-- <app-match-listing
-                    *ngIf="isLiveMatch"
-                    [matches]="matchList"
-                    [isSelectable]="true"
-                    (matchClick)="onSelectMatchClick($event)"
-                    [showDataItems]="showMatchItems"
-                ></app-match-listing> -->
             </div>
         </div>
     </div>
@@ -179,8 +108,8 @@
                 X Start ({{ xStartRangeForm?.value + xShiftRangeForm?.value | number: "0.0-3" }})
                 <span
                     class="text-muted"
-                    *ngIf="xStartRangeForm?.value + xShiftRangeForm?.value != displayedMap?.chartConfig?.imageAxisScale?.xStart"
-                    >was: {{ displayedMap?.chartConfig?.imageAxisScale?.xStart | number: "0.0-3" }}</span
+                    *ngIf="xStartRangeForm?.value + xShiftRangeForm?.value != selectedMap?.chartConfig?.imageAxisScale?.xStart"
+                    >was: {{ selectedMap?.chartConfig?.imageAxisScale?.xStart | number: "0.0-3" }}</span
                 >
             </label>
             <input
@@ -198,8 +127,8 @@
                 X End ({{ xEndRangeForm?.value + xShiftRangeForm?.value | number: "0.0-3" }})
                 <span
                     class="text-muted"
-                    *ngIf="xEndRangeForm?.value + xShiftRangeForm?.value != displayedMap?.chartConfig?.imageAxisScale?.xEnd"
-                    >was: {{ displayedMap?.chartConfig?.imageAxisScale?.xEnd | number: "0.0-3" }}</span
+                    *ngIf="xEndRangeForm?.value + xShiftRangeForm?.value != selectedMap?.chartConfig?.imageAxisScale?.xEnd"
+                    >was: {{ selectedMap?.chartConfig?.imageAxisScale?.xEnd | number: "0.0-3" }}</span
                 >
             </label>
             <input
@@ -229,8 +158,8 @@
                 Y Start ({{ yStartRangeForm?.value + yShiftRangeForm?.value | number: "0.0-3" }})
                 <span
                     class="text-muted"
-                    *ngIf="yStartRangeForm?.value + yShiftRangeForm?.value != displayedMap?.chartConfig?.imageAxisScale?.yStart"
-                    >was:{{ displayedMap?.chartConfig?.imageAxisScale?.yStart | number: "0.0-3" }}</span
+                    *ngIf="yStartRangeForm?.value + yShiftRangeForm?.value != selectedMap?.chartConfig?.imageAxisScale?.yStart"
+                    >was:{{ selectedMap?.chartConfig?.imageAxisScale?.yStart | number: "0.0-3" }}</span
                 >
             </label>
             <input
@@ -248,8 +177,8 @@
                 Y End ({{ yEndRangeForm?.value + yShiftRangeForm?.value | number: "0.0-3" }})
                 <span
                     class="text-muted"
-                    *ngIf="yEndRangeForm?.value + yShiftRangeForm?.value != displayedMap?.chartConfig?.imageAxisScale?.yEnd"
-                    >was:{{ displayedMap?.chartConfig?.imageAxisScale?.yEnd | number: "0.0-3" }}</span
+                    *ngIf="yEndRangeForm?.value + yShiftRangeForm?.value != selectedMap?.chartConfig?.imageAxisScale?.yEnd"
+                    >was:{{ selectedMap?.chartConfig?.imageAxisScale?.yEnd | number: "0.0-3" }}</span
                 >
             </label>
             <input

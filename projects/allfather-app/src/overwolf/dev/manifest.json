@@ -58,7 +58,7 @@
                 },
                 "max_size": {
                     "width": 1440,
-                    "height": 900
+                    "height": 1440
                 }
             },
             "main-ingame": {
@@ -82,7 +82,7 @@
                 },
                 "max_size": {
                     "width": 1440,
-                    "height": 900
+                    "height": 1440
                 }
             },
             "development-tools": {
@@ -150,6 +150,26 @@
                 "disable_blur": true,
                 "show_in_taskbar": true,
                 "clickthrough": false,
+                "mute": true,
+                "popup_blocker": true,
+                "allow_local_file_access": true,
+                "size": {
+                    "width": 1,
+                    "height": 1
+                },
+                "start_position": {
+                    "top": 0,
+                    "left": 0
+                }
+            },
+            "hud-reticle-helper": {
+                "file": "index.html",
+                "in_game_only": false,
+                "resizable": false,
+                "transparent": true,
+                "disable_blur": true,
+                "show_in_taskbar": true,
+                "clickthrough": true,
                 "mute": true,
                 "popup_blocker": true,
                 "allow_local_file_access": true,

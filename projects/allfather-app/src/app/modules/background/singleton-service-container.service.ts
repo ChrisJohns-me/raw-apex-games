@@ -7,7 +7,7 @@ import { GameService } from "../core/game.service";
 import { LocalDatabaseService } from "../core/local-database/local-database.service";
 import { LocalStorageService } from "../core/local-storage/local-storage.service";
 import { MapRotationService } from "../core/map-rotation/map-rotation.service";
-import { MatchActivityService } from "../core/match/match-activity.service";
+import { MatchKillfeedService } from "../core/match/match-killfeed.service";
 import { MatchLegendSelectService } from "../core/match/match-legend-select.service";
 import { MatchMapService } from "../core/match/match-map.service";
 import { MatchPlayerInflictionService } from "../core/match/match-player-infliction.service";
@@ -21,6 +21,7 @@ import { MatchService } from "../core/match/match.service";
 import { OverwolfGameDataService } from "../core/overwolf";
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
 import { OverwolfFeatureStatusService } from "../core/overwolf/overwolf-feature-status.service";
+import { OverwolfInputTrackingService } from "../core/overwolf/overwolf-input-tracking.service";
 import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service";
 import { PlayerAccountStatsService } from "../core/player-account-stats/player-account-stats.service";
 import { PlayerLocalStatsService } from "../core/player-local-stats.service";
@@ -56,7 +57,7 @@ import { SystemTrayService } from "./system-tray.service";
         LocalStorageService,
         MainWindowService,
         MapRotationService,
-        MatchActivityService,
+        MatchKillfeedService,
         MatchLegendSelectService,
         MatchMapService,
         MatchPlayerInflictionService,
@@ -71,6 +72,7 @@ import { SystemTrayService } from "./system-tray.service";
         OverwolfExtensionsService,
         OverwolfFeatureStatusService,
         OverwolfGameDataService,
+        OverwolfInputTrackingService,
         OverwolfSystemTrayService,
         PlayerAccountStatsService,
         PlayerLocalStatsService,
@@ -98,7 +100,7 @@ export class SingletonServiceContainerService {
         public readonly LocalStorageService: LocalStorageService,
         public readonly MainWindowService: MainWindowService,
         public readonly MapRotationService: MapRotationService,
-        public readonly MatchActivityService: MatchActivityService,
+        public readonly matchKillfeedService: MatchKillfeedService,
         public readonly MatchLegendSelectService: MatchLegendSelectService,
         public readonly MatchMapService: MatchMapService,
         public readonly MatchPlayerInflictionService: MatchPlayerInflictionService,
@@ -113,6 +115,7 @@ export class SingletonServiceContainerService {
         public readonly OverwolfExtensionsService: OverwolfExtensionsService,
         public readonly OverwolfFeatureStatusService: OverwolfFeatureStatusService,
         public readonly OverwolfGameDataService: OverwolfGameDataService,
+        public readonly OverwolfInputTrackingService: OverwolfInputTrackingService,
         public readonly OverwolfSystemTrayService: OverwolfSystemTrayService,
         public readonly PlayerAccountStatsService: PlayerAccountStatsService,
         public readonly PlayerLocalStatsService: PlayerLocalStatsService,

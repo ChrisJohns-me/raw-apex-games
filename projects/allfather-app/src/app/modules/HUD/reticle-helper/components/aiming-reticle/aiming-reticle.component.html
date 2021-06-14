@@ -1,0 +1,13 @@
+<ng-container>
+    <img
+        *ngIf="filename"
+        class="aiming-reticle"
+        [src]="'../../../../../assets/svgs/aiming-reticles/' + filename"
+        [ngStyle]="{
+            filter: cssColorFilter,
+            opacity: alpha,
+            width: width,
+            height: height
+        }"
+    />
+</ng-container>

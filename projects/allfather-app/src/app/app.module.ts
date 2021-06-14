@@ -10,6 +10,7 @@ import { DevelopmentToolsModule } from "./modules/development-tools/development-
 import { NoopDevelopmentToolsModule } from "./modules/development-tools/noop-development-tools.module";
 import { InflictionInsightWindowModule } from "./modules/HUD/infliction-insight/infliction-insight.module";
 import { MatchTimerWindowModule } from "./modules/HUD/match-timer/match-timer.module";
+import { ReticleHelperWindowModule } from "./modules/HUD/reticle-helper/reticle-helper.module";
 import { UltTimerWindowModule } from "./modules/HUD/ult-timer/ult-timer.module";
 import { LegendSelectAssistWindowModule } from "./modules/legend-select-assist/legend-select-assist.module";
 import { MainModule } from "./modules/main/main.module";
@@ -26,6 +27,7 @@ import { MainModule } from "./modules/main/main.module";
         LegendSelectAssistWindowModule,
         MatchTimerWindowModule,
         OverwolfModule,
+        ReticleHelperWindowModule,
         UltTimerWindowModule,
     ],
     providers: [WINDOW_PROVIDERS],

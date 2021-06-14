@@ -11,12 +11,12 @@ import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwol
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { TestScheduler } from "rxjs/testing";
-import { MatchActivityService } from "./match-activity.service";
+import { MatchKillfeedService } from "./match-killfeed.service";
 import { MatchRosterService } from "./match-roster.service";
 import { MatchService } from "./match.service";
 
-describe("MatchActivityService", () => {
-    let sut: MatchActivityService;
+describe("MatchKillfeedService", () => {
+    let sut: MatchKillfeedService;
     let scheduler: TestScheduler;
     let matchService: MatchService;
     let matchRosterService: MatchRosterService;
@@ -24,7 +24,7 @@ describe("MatchActivityService", () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             providers: [
-                MatchActivityService,
+                MatchKillfeedService,
                 { provide: MatchRosterService, useClass: MockMatchRosterService },
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: OverwolfGameDataService, useClass: MockOverwolfGameDataService },
@@ -36,7 +36,7 @@ describe("MatchActivityService", () => {
     beforeEach(() => {
         jasmine.clock().uninstall();
         jasmine.clock().install();
-        sut = TestBed.inject(MatchActivityService);
+        sut = TestBed.inject(MatchKillfeedService);
         matchService = TestBed.inject(MatchService);
         matchRosterService = TestBed.inject(MatchRosterService);
     });

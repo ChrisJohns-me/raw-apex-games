@@ -117,6 +117,10 @@
                     <div class="col-6 text-end">{{ matchPlayerStats.myAssists$ | async }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">Knocks</div>
+                    <div class="col-6 text-end">{{ matchPlayerStats.myKnockdowns$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
                     <div class="col-6">Damage</div>
                     <div class="col-6 text-end">{{ matchPlayerStats.myDamage$ | async }}</div>
                 </div>

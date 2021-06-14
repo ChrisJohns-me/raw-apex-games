@@ -1,4 +1,4 @@
-import { getMatchStatBounds, matchListAvgStatsGroupedBy } from "@allfather-app/app/common/utilities/match-stats";
+import { matchListAvgStatsGroupedBy, matchStatBounds } from "@allfather-app/app/common/utilities/match-stats";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import { ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, ViewChild } from "@angular/core";
 import {
@@ -148,7 +148,7 @@ export class DailyAverageGraphComponent implements OnChanges {
         const recentMatchList = this.matchList.filter((match) => (match.endDate ?? 0) > recentStartDate);
         const groupedAvgMatchList = matchListAvgStatsGroupedBy(recentMatchList, (m) => format(m.endDate!, this.dateKeyFormat));
 
-        const { placementMin } = getMatchStatBounds(this.matchList);
+        const { placementMin } = matchStatBounds(this.matchList);
 
         for (let i = this.numDaysToShow - 1; i >= 0; i--) {
             const labelDate = subDays(now, i);

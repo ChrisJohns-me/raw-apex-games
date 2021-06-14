@@ -3,7 +3,7 @@ import { MatchMapFriendlyName, MatchMapGenericId } from "./map.enum";
 import { MatchMap } from "./match-map";
 
 export const MatchMapList: MatchMap[] = [
-    // Firing Range / Training Maps
+    //#region Firing Range / Training Maps
     new MatchMap({
         mapName: MatchMapFriendlyName.FiringRange,
         mapGenericId: MatchMapGenericId.FiringRange,
@@ -18,7 +18,8 @@ export const MatchMapList: MatchMap[] = [
         ],
         dropshipZStart: -Infinity,
     }),
-    // Battle Royale Maps
+    //#endregion
+    //#region Battle Royale Maps
     new MatchMap({
         mapName: MatchMapFriendlyName.KingsCanyon,
         mapGenericId: MatchMapGenericId.KingsCanyon,
@@ -85,6 +86,7 @@ export const MatchMapList: MatchMap[] = [
         activeDates: [
             {
                 from: new Date("January 04, 2021"),
+                to: new Date("May 03, 2021"),
             },
         ],
         dropshipZStart: 119,
@@ -97,7 +99,34 @@ export const MatchMapList: MatchMap[] = [
             },
         },
     }),
-    // Arena Maps
+    new MatchMap({
+        mapName: MatchMapFriendlyName.Olympus,
+        mapGenericId: MatchMapGenericId.Olympus,
+        mapId: "mp_rr_olympus_mu1",
+        isBattleRoyaleMap: true,
+        isArenasMap: false,
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
+        activeDates: [
+            {
+                from: new Date("May 04, 2021"),
+            },
+        ],
+        dropshipZStart: 119,
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -520,
+                xEnd: 378,
+                yStart: -421,
+                yEnd: 480,
+            },
+        },
+    }),
+    //#endregion
+    //#region Arena Maps
     new MatchMap({
         mapName: MatchMapFriendlyName.PhaseRunner,
         mapGenericId: MatchMapGenericId.PhaseRunner,
@@ -106,9 +135,9 @@ export const MatchMapList: MatchMap[] = [
         isArenasMap: true,
         gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
-            {
-                from: new Date("May 04, 2021"),
-            },
+            // {
+            //     from: new Date("May 04, 2021"),
+            // },
         ],
     }),
     new MatchMap({
@@ -119,9 +148,9 @@ export const MatchMapList: MatchMap[] = [
         isArenasMap: true,
         gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
-            {
-                from: new Date("May 04, 2021"),
-            },
+            // {
+            //     from: new Date("May 04, 2021"),
+            // },
         ],
     }),
     new MatchMap({
@@ -132,9 +161,9 @@ export const MatchMapList: MatchMap[] = [
         isArenasMap: true,
         gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
-            {
-                from: new Date("May 04, 2021"),
-            },
+            // {
+            //     from: new Date("May 04, 2021"),
+            // },
         ],
     }),
     new MatchMap({
@@ -145,9 +174,9 @@ export const MatchMapList: MatchMap[] = [
         isArenasMap: true,
         gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
-            {
-                from: new Date("May 04, 2021"),
-            },
+            // {
+            //     from: new Date("May 04, 2021"),
+            // },
         ],
     }),
     new MatchMap({
@@ -158,11 +187,12 @@ export const MatchMapList: MatchMap[] = [
         isArenasMap: true,
         gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
-            {
-                from: new Date("Jan 01, 2025"),
-            },
+            // {
+            //     from: new Date("June 01, 2021"),
+            // },
         ],
     }),
+    //#endregion
 ];
 
 /**

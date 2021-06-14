@@ -9,6 +9,7 @@ import { GameService } from "../core/game.service";
 import { SettingsService } from "../core/settings.service";
 import { InflictionInsightWindowService } from "../HUD/infliction-insight/windows/infliction-insight-window.service";
 import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
+import { ReticleHelperWindowService } from "../HUD/reticle-helper/windows/reticle-helper-window.service";
 import { UltTimerWindowService } from "../HUD/ult-timer/windows/ult-timer-window.service";
 import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
 
@@ -25,6 +26,7 @@ type HUDTriggers = {
         InflictionInsightWindowService,
         LegendSelectAssistWindowService,
         MatchTimerWindowService,
+        ReticleHelperWindowService,
         SettingsService,
         UltTimerWindowService,
     ],
@@ -52,6 +54,11 @@ export class HUDWindowControllerService extends AllfatherService {
             requiredGamePhases: [GamePhase.InGame],
             requiredSettings: [SettingKey.EnableAllInGameHUD, SettingKey.EnableInGameUltimateTimerHUD],
         },
+        {
+            windowService: this.reticleHelperWindow,
+            requiredGamePhases: [GamePhase.InGame],
+            requiredSettings: [SettingKey.EnableInGameAimingReticle],
+        },
     ];
 
     private watchEventsSubscription?: Subscription;
@@ -61,6 +68,7 @@ export class HUDWindowControllerService extends AllfatherService {
         private readonly inflictionInsightWindow: InflictionInsightWindowService,
         private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
         private readonly matchTimerWindow: MatchTimerWindowService,
+        private readonly reticleHelperWindow: ReticleHelperWindowService,
         private readonly settingsService: SettingsService,
         private readonly ultTimerWindow: UltTimerWindowService
     ) {

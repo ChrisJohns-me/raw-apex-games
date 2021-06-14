@@ -7,7 +7,7 @@ import { MapRotationService } from "../../map-rotation/map-rotation.service";
 export class MockMapRotationService implements MockedClass<MapRotationService> {
     public mapRotation$: MapRotationService["mapRotation$"] = new BehaviorSubject<Optional<MapRotationData>>(undefined);
 
-    public getCurrentMap(gameModeType: MatchGameModeGenericId): ReturnType<MapRotationService["getCurrentMap"]> {
+    public getCurrentMapFromGameMode(gameModeType: MatchGameModeGenericId): ReturnType<MapRotationService["getCurrentMapFromGameMode"]> {
         return;
     }
 

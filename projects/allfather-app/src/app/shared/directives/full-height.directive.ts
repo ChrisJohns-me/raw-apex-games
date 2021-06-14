@@ -1,12 +1,12 @@
 import { WINDOW } from "@allfather-app/app/modules/core/window.service";
-import { AfterViewInit, Directive, ElementRef, HostListener, Inject, Input, OnChanges } from "@angular/core";
+import { AfterViewChecked, AfterViewInit, Directive, ElementRef, HostListener, Inject, Input, OnChanges } from "@angular/core";
 
 /**
  * Dynamically sets the height of an element to reach the bottom of the window
  * Also listens to Window's Resize events
  */
 @Directive({ selector: "[appFullHeight]" })
-export class FullHeightDirective implements AfterViewInit, OnChanges {
+export class FullHeightDirective implements AfterViewInit, AfterViewChecked, OnChanges {
     @Input() public marginBottom = 0;
     @Input() public overflowY: "auto" | "hidden" | "scroll" | "unset" | "inherit" = "auto";
 
@@ -17,6 +17,10 @@ export class FullHeightDirective implements AfterViewInit, OnChanges {
     }
 
     public ngOnChanges(): void {
+        this.setFullHeight();
+    }
+
+    public ngAfterViewChecked(): void {
         this.setFullHeight();
     }
 

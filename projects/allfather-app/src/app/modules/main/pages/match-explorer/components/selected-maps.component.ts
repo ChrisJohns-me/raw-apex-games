@@ -11,6 +11,8 @@ import { takeUntil } from "rxjs/operators";
 })
 export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
     @Input() public mapList: MatchMap[] = [];
+    @Input() public selectAll?: Subject<void>;
+    @Input() public clearAll?: Subject<void>;
     @Output("selectedMaps") public selectedMapsOutput = new EventEmitter<MatchMap[]>();
 
     public get battleRoyaleMapList(): MatchMap[] {
@@ -102,6 +104,12 @@ export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
     public ngOnInit(): void {
         this.setupMapsList(this.mapList);
         this.setupSelectedMapsChange();
+        this.selectAll?.pipe(takeUntil(this.destroy$)).subscribe(() => {
+            Object.entries(this.selectedMapsFormGroup.controls).filter(([, mapFormControl]) => mapFormControl.setValue(true));
+        });
+        this.clearAll?.pipe(takeUntil(this.destroy$)).subscribe(() => {
+            Object.entries(this.selectedMapsFormGroup.controls).filter(([, mapFormControl]) => mapFormControl.setValue(false));
+        });
     }
 
     public ngOnChanges(): void {

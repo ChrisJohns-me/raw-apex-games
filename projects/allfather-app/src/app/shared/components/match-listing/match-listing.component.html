@@ -1,37 +1,46 @@
-<table class="table table-striped table-borderless table-dark table-hover mb-0" *ngIf="matches?.length">
+<table class="table table-striped table-borderless table-dark mb-0" [ngClass]="{ 'table-hover': isMatchClickable }" *ngIf="matches?.length">
     <tbody>
-        <ng-container *ngFor="let match of matches; trackBy: matchTrackBy">
+        <ng-container *ngFor="let match of matches; index as i; trackBy: matchTrackBy">
             <tr
                 *ngIf="match && match.matchId"
                 [ngClass]="{
-                    clickable: isSelectable,
-                    'table-active table-primary': !!selectedMatchId && match.matchId === selectedMatchId,
-                    'table-danger': isLiveMatch
+                    clickable: isMatchClickable,
+                    'table-primary': isRecent(match.endDate) || (!!selectedMatchId && match.matchId === selectedMatchId),
+                    'table-danger ': isLiveMatch,
+                    'table-active': isLiveMatch || isRecent(match.endDate) || (!!selectedMatchId && match.matchId === selectedMatchId)
                 }"
-                (click)="matchClick.next(match)"
+                (click)="onMatchClick(match)"
             >
+                <td class="align-middle col-first">
+                    <div class="fw-bold" *ngIf="showDataItems.includes(DataItem.GameMode)">
+                        {{ match.gameModeId ? (getGameModeTypeName(match.gameModeId) | uppercase) : "N/A" }}
+                    </div>
+                    <div
+                        class="small"
+                        *ngIf="showDataItems.includes(DataItem.Map) && match.mapId && getMatchMapName(match.mapId); let matchMapName"
+                    >
+                        <ng-container *ngIf="matchMapName">{{ matchMapName }}</ng-container>
+                        <ng-container *ngIf="!matchMapName"><em>Map Unknown</em></ng-container>
+                    </div>
+                </td>
                 <td class="py-2 pt-3 text-nowrap">
                     <div class="legend-portraits-container" *ngIf="showDataItems.includes(DataItem.SquadLegends)">
                         <img
                             *ngFor="let teammate of buildTeamRoster(match)"
-                            class="legend-portrait teammate-legend-portrait"
-                            [ngClass]="{ 'my-legend-portrait': teammate.isMe, 'teammate-legend-portrait': !teammate.isMe }"
-                            [src]="'../../../assets/images/legend-portraits/' + getLegendImageName(teammate.legendId)"
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="bottom"
+                            class="legend-portrait teammate-legend-portrait mx-1"
+                            [ngClass]="{
+                                'my-legend-portrait': teammate.isMe,
+                                'teammate-legend-portrait': !teammate.isMe,
+                                clickable: isTeamRosterPlayerClickable
+                            }"
+                            [src]="'../../../assets/images/legend-portraits/medium/' + getLegendImageName(teammate.legendId)"
                             [title]="teammate.name"
                             [alt]="teammate.name + ' playing ' + (getLegendName(teammate.legendId) ?? 'N/A')"
+                            (click)="onTeamRosterClick(teammate)"
                         />
                     </div>
                     <div class="match-details-container">
-                        <ng-container
-                            *ngIf="showDataItems.includes(DataItem.Map) && match.mapId && getMatchMapName(match.mapId); let matchMapName"
-                        >
-                            <span *ngIf="matchMapName">{{ matchMapName }}</span>
-                            <span *ngIf="!matchMapName"><em>Map Unknown</em></span>
-                        </ng-container>
                         <ng-container *ngIf="showDataItems.includes(DataItem.MatchDate)">
-                            <br />
                             <span class="small strong text-muted in-progress-pulse" *ngIf="!match.endDate && isLiveMatch">In Progress</span>
                             <small
                                 class="text-muted"
@@ -68,8 +77,6 @@
                             class="rank-icon current"
                             [rank]="rank"
                             [title]="rank.friendlyName + ' (' + rank.score ?? 0 + ')'"
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="bottom"
                         ></app-rank-icon>
                         <small>{{ match.rankScoreDiff ?? 0 }}</small>
                     </ng-container>
@@ -85,9 +92,7 @@
                         <sub class="max-placement-sign text-muted" *ngIf="match.maxPlacement">/</sub>
                         <sub class="max-placement-digit text-muted" *ngIf="match.maxPlacement">{{ match.maxPlacement }}</sub>
                     </h3>
-                    <small class="text-muted" *ngIf="showDataItems.includes(DataItem.GameMode)">{{
-                        match.gameModeId ? (getGameModeTypeName(match.gameModeId) | titlecase) : "N/A"
-                    }}</small>
+                    <small class="text-muted">placement</small>
                 </td>
                 <td class="align-middle text-center" *ngIf="showDataItems.includes(DataItem.Eliminations)">
                     <h3 class="data-digit mb-1">{{ match.eliminations ?? 0 }}</h3>

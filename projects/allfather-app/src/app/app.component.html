@@ -8,6 +8,7 @@
         <app-hud-ult-timer-window *ngSwitchCase="WindowName.HUDUltTimer"></app-hud-ult-timer-window>
         <app-hud-infliction-insight-window *ngSwitchCase="WindowName.HUDInflictionInsight"></app-hud-infliction-insight-window>
         <app-legend-select-assist-window *ngSwitchCase="WindowName.LegendSelectAssist"></app-legend-select-assist-window>
+        <app-hud-reticle-helper-window *ngSwitchCase="WindowName.HUDReticleHelper"></app-hud-reticle-helper-window>
 
         <div *ngSwitchDefault>Could not match window with name: {{ winInfo.name }}</div>
     </ng-container>

@@ -7,23 +7,36 @@
     img {
         &.legend-portrait {
             display: inline-block;
+            transition: all 150ms ease;
 
             &.my-legend-portrait {
-                max-width: 50px;
-                max-height: 50px;
+                max-width: 60px;
+                max-height: 60px;
             }
 
             &.teammate-legend-portrait {
-                max-width: 35px;
-                max-height: 35px;
+                max-width: 40px;
+                max-height: 40px;
                 opacity: 0.7;
+            }
+
+            &.clickable:hover {
+                transform: scale(1.1);
+                opacity: 1;
             }
         }
     }
 }
 
+.recent {
+}
+
 .match-details-container {
     font-size: small;
+}
+
+.col-first {
+    width: 100px;
 }
 
 .col-stats {

@@ -6,6 +6,7 @@ import { isEmpty, mathClamp } from "shared/utilities";
 const MAX_PLACEMENT = 50;
 const MAX_DAMAGE = 50000;
 const MAX_ELIMINATIONS = 500;
+const MAX_ASSISTS = 500;
 const MAX_KNOCKDOWNS = 50000;
 const MAX_DURATION = 86400000;
 
@@ -15,6 +16,7 @@ export interface AvgMatchStats {
     avgPlacement: number;
     avgEliminations: number;
     avgKnockdowns: number;
+    avgAssists: number;
     avgDamage: number;
     avgDuration: number;
 }
@@ -25,6 +27,7 @@ export interface SumMatchStats {
     sumPlacement: number;
     sumEliminations: number;
     sumKnockdowns: number;
+    sumAssists: number;
     sumDamage: number;
     sumDuration: number;
 }
@@ -35,6 +38,7 @@ export interface AvgStatWeights {
     avgDamageWeight: number;
     avgEliminationWeight: number;
     avgKnockdownWeight: number;
+    avgAssistWeight: number;
     avgDurationWeight: number;
     totalAvgWeight: number;
 }
@@ -45,6 +49,7 @@ interface SumStatWeights {
     sumDamageWeight: number;
     sumEliminationWeight: number;
     sumKnockdownWeight: number;
+    sumAssistWeight: number;
     sumDurationWeight: number;
     totalSumWeight: number;
 }
@@ -55,6 +60,7 @@ interface StatWeights {
     damageWeight: number;
     eliminationWeight: number;
     knockdownWeight: number;
+    assistWeight: number;
     durationWeight: number;
     totalWeight?: number;
 }
@@ -64,6 +70,7 @@ interface StatBounds {
     damageMax: number;
     eliminationsMax: number;
     knockdownsMax: number;
+    assistsMax: number;
     durationMax: number;
 }
 
@@ -93,7 +100,7 @@ export function complimentaryLegendsWeights(
     const filteredMatchList = legendId
         ? matchList.filter((m) => m.teamRoster?.find((tr) => !!tr.isMe && tr.legendId === legendId))
         : matchList;
-    const matchStatBounds = getMatchStatBounds(matchList);
+    const statBounds = matchStatBounds(matchList);
     const numLegendMatches = new Map<LegendId, number>(); // number of matches with each Legend
     const sumCompLegendWeights = new Map<LegendId, SumStatWeights>(); // summed weights with each Legend
     const avgCompLegendWeights = new Map<LegendId, AvgStatWeights>(); // avg weights with each Legend
@@ -107,13 +114,14 @@ export function complimentaryLegendsWeights(
             avgDuration: match.endDate && match.startDate ? match.endDate.getTime() - match.startDate.getTime() : 0,
             avgEliminations: match.eliminations ?? 0,
             avgKnockdowns: match.knockdowns ?? 0,
+            avgAssists: match.assists ?? 0,
             avgPlacement: match.placement ?? 0,
         };
         // Sum complimentary Legend weights
         match.teamRoster?.forEach((rosterPlayer) => {
             if (rosterPlayer.isMe || rosterPlayer.legendId === legendId || isEmpty(rosterPlayer.legendId)) return;
             const existingSumWeights = sumCompLegendWeights.get(rosterPlayer.legendId);
-            const matchStatWeights = matchAvgStatWeights(matchStats, matchStatBounds, statWeights);
+            const matchStatWeights = matchAvgStatWeights(matchStats, statBounds, statWeights);
             const newSumWeights = reduceSumWeights(existingSumWeights, matchStatWeights);
 
             numLegendMatches.set(rosterPlayer.legendId, (numLegendMatches.get(rosterPlayer.legendId) ?? 0) + 1);
@@ -142,9 +150,17 @@ export function complimentaryLegendsWeights(
  *  { numMatches: 99, avgWins: 0.042, avgPlacement: 7, avgDamage: 420, avgEliminations: 1.02, avgKnockdowns: 2.34 }
  */
 export function avgStats(matchList: MatchDataStore[]): AvgMatchStats {
-    const sumStats = matchList.reduce(reduceMatchStats, {} as SumMatchStats);
-    const avgStats = calcAvgStats(sumStats);
-    return avgStats;
+    return calcAvgStats(sumStats(matchList));
+}
+
+/**
+ * All stats from a list of matches.
+ * @example sumStats(matchList)
+ * @returns
+ *  { numMatches: 99, sumWins: 0.042, sumPlacement: 7, sumDamage: 420, sumEliminations: 1.02, sumKnockdowns: 2.34 }
+ */
+export function sumStats(matchList: MatchDataStore[]): SumMatchStats {
+    return matchList.reduce(reduceMatchStats, {} as SumMatchStats);
 }
 
 /**
@@ -165,6 +181,7 @@ export function matchAvgStatWeights(matchStats: Partial<AvgMatchStats>, statBoun
     const _avgPlacementWeight = (statBounds.placementMin / (matchStats.avgPlacement ?? 15)) * statWeights.placementWeight;
     const _avgDamageWeight = ((matchStats.avgDamage ?? 0) / statBounds.damageMax) * statWeights.damageWeight;
     const _avgEliminationWeight = ((matchStats.avgEliminations ?? 0) / statBounds.eliminationsMax) * statWeights.eliminationWeight;
+    const _avgAssistWeight = ((matchStats.avgAssists ?? 0) / statBounds.assistsMax) * statWeights.assistWeight;
     const _avgKnockdownWeight = ((matchStats.avgKnockdowns ?? 0) / statBounds.knockdownsMax) * statWeights.knockdownWeight;
     const _avgDurationWeight = ((matchStats.avgDuration ?? 0) / statBounds.durationMax) * statWeights.damageWeight;
 
@@ -175,11 +192,18 @@ export function matchAvgStatWeights(matchStats: Partial<AvgMatchStats>, statBoun
     );
     const avgDamageWeight = Math.min(_avgDamageWeight >= 0 ? _avgDamageWeight : statWeights.damageWeight, statWeights.damageWeight);
     const avgEliminationWeight = Math.min(_avgEliminationWeight >= 0 ? _avgEliminationWeight : 0, statWeights.eliminationWeight);
+    const avgAssistWeight = Math.min(_avgAssistWeight >= 0 ? _avgAssistWeight : 0, statWeights.assistWeight);
     const avgKnockdownWeight = Math.min(_avgKnockdownWeight >= 0 ? _avgKnockdownWeight : 0, statWeights.knockdownWeight);
     const avgDurationWeight = Math.min(_avgDurationWeight >= 0 ? _avgDurationWeight : 0, statWeights.durationWeight);
 
     const totalWeight = Math.min(
-        avgWinWeight + avgPlacementWeight + avgDamageWeight + avgEliminationWeight + avgKnockdownWeight + avgDurationWeight,
+        avgWinWeight +
+            avgPlacementWeight +
+            avgDamageWeight +
+            avgEliminationWeight +
+            avgAssistWeight +
+            avgKnockdownWeight +
+            avgDurationWeight,
         1
     );
     return {
@@ -187,6 +211,7 @@ export function matchAvgStatWeights(matchStats: Partial<AvgMatchStats>, statBoun
         avgPlacementWeight,
         avgDamageWeight,
         avgEliminationWeight,
+        avgAssistWeight,
         avgKnockdownWeight,
         avgDurationWeight,
         totalAvgWeight: totalWeight,
@@ -194,10 +219,11 @@ export function matchAvgStatWeights(matchStats: Partial<AvgMatchStats>, statBoun
 }
 
 /** Find each highest stat from a given match list. */
-export function getMatchStatBounds(matchList: MatchDataStore[]): StatBounds {
+export function matchStatBounds(matchList: MatchDataStore[]): StatBounds {
     let placementMin = MAX_PLACEMENT,
         damageMax = 0,
         eliminationsMax = 0,
+        assistsMax = 0,
         knockdownsMax = 0,
         durationMax = 0;
     for (let i = 0; i < matchList.length; i++) {
@@ -206,6 +232,7 @@ export function getMatchStatBounds(matchList: MatchDataStore[]): StatBounds {
         if (match.placement && match.placement > 0) placementMin = Math.min(placementMin, match.placement);
         damageMax = Math.max(damageMax, match.damage ?? 0);
         eliminationsMax = Math.max(eliminationsMax, match.eliminations ?? 0);
+        assistsMax = Math.max(assistsMax, match.assists ?? 0);
         knockdownsMax = Math.max(knockdownsMax, match.knockdowns ?? 0);
         const startDate: number = match.startDate?.getTime() ?? 0;
         const endDate: number = match.endDate?.getTime() ?? 0;
@@ -216,6 +243,7 @@ export function getMatchStatBounds(matchList: MatchDataStore[]): StatBounds {
         placementMin: mathClamp(placementMin, 1, MAX_PLACEMENT),
         damageMax: mathClamp(damageMax, 0, MAX_DAMAGE),
         eliminationsMax: mathClamp(eliminationsMax, 0, MAX_ELIMINATIONS),
+        assistsMax: mathClamp(assistsMax, 0, MAX_ASSISTS),
         knockdownsMax: mathClamp(knockdownsMax, 0, MAX_KNOCKDOWNS),
         durationMax: mathClamp(durationMax, 0, MAX_DURATION),
     };
@@ -242,6 +270,7 @@ export function matchListAvgStatsGroupedBy<T>(
             avgDamage: stat.sumDamage / numMatches,
             avgDuration: stat.sumDuration / numMatches,
             avgEliminations: stat.sumEliminations / numMatches,
+            avgAssists: stat.sumAssists / numMatches,
             avgKnockdowns: stat.sumKnockdowns / numMatches,
             avgPlacement: stat.sumPlacement / numMatches,
             avgWins: stat.sumWins / numMatches,
@@ -289,6 +318,7 @@ function reduceMatchStats(prev: Optional<SumMatchStats>, curr: MatchDataStore): 
         sumPlacement: (prev?.sumPlacement ?? 0) + (curr.placement ?? 0),
         sumDamage: (prev?.sumDamage ?? 0) + (curr.damage ?? 0),
         sumEliminations: (prev?.sumEliminations ?? 0) + (curr.eliminations ?? 0),
+        sumAssists: (prev?.sumAssists ?? 0) + (curr.assists ?? 0),
         sumKnockdowns: (prev?.sumKnockdowns ?? 0) + (curr.knockdowns ?? 0),
         sumDuration: (prev?.sumDuration ?? 0) + currDuration,
         numMatches: (prev?.numMatches ?? 0) + 1,
@@ -304,6 +334,7 @@ function reduceSumWeights(existingSumWeights: SumStatWeights | undefined, matchS
         sumPlacementWeight: (existingSumWeights?.sumPlacementWeight ?? 0) + matchStatWeights.avgPlacementWeight,
         sumDamageWeight: (existingSumWeights?.sumDamageWeight ?? 0) + matchStatWeights.avgDamageWeight,
         sumEliminationWeight: (existingSumWeights?.sumEliminationWeight ?? 0) + matchStatWeights.avgEliminationWeight,
+        sumAssistWeight: (existingSumWeights?.sumAssistWeight ?? 0) + matchStatWeights.avgAssistWeight,
         sumKnockdownWeight: (existingSumWeights?.sumKnockdownWeight ?? 0) + matchStatWeights.avgKnockdownWeight,
         sumDurationWeight: (existingSumWeights?.sumDurationWeight ?? 0) + matchStatWeights.avgDurationWeight,
         totalSumWeight: 0,
@@ -312,6 +343,7 @@ function reduceSumWeights(existingSumWeights: SumStatWeights | undefined, matchS
         newSumWeights.sumDamageWeight! +
         newSumWeights.sumDurationWeight! +
         newSumWeights.sumEliminationWeight! +
+        newSumWeights.sumAssistWeight! +
         newSumWeights.sumKnockdownWeight! +
         newSumWeights.sumPlacementWeight! +
         newSumWeights.sumWinWeight!;
@@ -326,6 +358,7 @@ function calcAvgWeights(sumWeights: SumStatWeights, numWeights: number): AvgStat
         avgDamageWeight: Math.min(sumWeights.sumDamageWeight / numWeights, 1),
         avgDurationWeight: Math.min(sumWeights.sumDurationWeight / numWeights, 1),
         avgEliminationWeight: Math.min(sumWeights.sumEliminationWeight / numWeights, 1),
+        avgAssistWeight: Math.min(sumWeights.sumAssistWeight / numWeights, 1),
         avgKnockdownWeight: Math.min(sumWeights.sumKnockdownWeight / numWeights, 1),
         avgPlacementWeight: Math.min(sumWeights.sumPlacementWeight / numWeights, 1),
         avgWinWeight: Math.min(sumWeights.sumWinWeight / numWeights, 1),
@@ -335,6 +368,7 @@ function calcAvgWeights(sumWeights: SumStatWeights, numWeights: number): AvgStat
         newAvgWeights.avgDamageWeight! +
             newAvgWeights.avgDurationWeight! +
             newAvgWeights.avgEliminationWeight! +
+            newAvgWeights.avgAssistWeight! +
             newAvgWeights.avgKnockdownWeight! +
             newAvgWeights.avgPlacementWeight! +
             newAvgWeights.avgWinWeight!,
@@ -349,6 +383,7 @@ function calcAvgStats(sumMatchStats: SumMatchStats): AvgMatchStats {
         avgDamage: sumMatchStats.sumDamage / sumMatchStats.numMatches,
         avgDuration: sumMatchStats.sumDuration / sumMatchStats.numMatches,
         avgEliminations: sumMatchStats.sumEliminations / sumMatchStats.numMatches,
+        avgAssists: sumMatchStats.sumAssists / sumMatchStats.numMatches,
         avgKnockdowns: sumMatchStats.sumKnockdowns / sumMatchStats.numMatches,
         avgPlacement: sumMatchStats.sumPlacement / sumMatchStats.numMatches,
         avgWins: sumMatchStats.sumWins / sumMatchStats.numMatches,

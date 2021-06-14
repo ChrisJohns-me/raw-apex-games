@@ -1,7 +1,7 @@
-<!-- #region In-Game HUD -->
 <div class="container-xl">
     <div class="row">
-        <div class="col-6 col-xl-5">
+        <div class="col-6 col-xl-5" appFullHeight>
+            <!-- #region In-Game HUD -->
             <table class="table table-dark table-striped table-hover mt-4">
                 <thead>
                     <tr>
@@ -13,17 +13,17 @@
                         </td>
                     </tr>
                 </thead>
-                <tbody [formGroup]="inGameHUDFormGroup">
-                    <tr>
-                        <td class="ps-5">Match Timer</td>
+                <tbody [formGroup]="inGameHUDFormGroup" (mousedown)="isEditing = true" (mouseup)="isEditing = false">
+                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.MatchTimer" (mouseout)="selectedPreviewSetting = undefined">
+                        <td class="ps-4 ps-lg-5">Match Timer</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
                                 <input class="form-check-input" type="checkbox" [formControlName]="SettingKey.EnableInGameMatchTimerHUD" />
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="ps-5">Ultimate Timer</td>
+                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.UltTimer" (mouseout)="selectedPreviewSetting = undefined">
+                        <td class="ps-4 ps-lg-5">Ultimate Timer</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
                                 <input
@@ -35,7 +35,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="ps-5">Infliction Insight</td>
+                        <td class="ps-4 ps-lg-5">Infliction Insight</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
                                 <input
@@ -46,20 +46,100 @@
                             </div>
                         </td>
                     </tr>
+                    <!-- #region Aiming Reticle -->
+                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle" (mouseout)="selectedPreviewSetting = undefined">
+                        <td class="ps-4 ps-lg-5">Permanent Aiming Reticle</td>
+                        <td class="text-end pe-5">
+                            <div class="form-check form-switch d-inline-flex">
+                                <input class="form-check-input" type="checkbox" [formControlName]="SettingKey.EnableInGameAimingReticle" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr
+                        [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleId)?.enabled }"
+                        (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
+                        (mouseout)="selectedPreviewSetting = undefined"
+                    >
+                        <td class="ps-4 ps-lg-5"><span class="ms-3">Reticle Shape</span></td>
+                        <td class="text-end pe-5">
+                            <select
+                                class="form-select form-select-sm bg-secondary text-white"
+                                [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleId)?.enabled }"
+                                [formControlName]="SettingKey.InGameAimingReticleId"
+                            >
+                                <option *ngFor="let aimingReticle of AimingReticleList" [ngValue]="aimingReticle.reticleId">
+                                    {{ aimingReticle.friendlyName }}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr
+                        [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleColor)?.enabled }"
+                        (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
+                        (mouseout)="selectedPreviewSetting = undefined"
+                    >
+                        <td class="ps-4 ps-lg-5 ms-3"><span class="ms-3">Reticle Color</span></td>
+                        <td class="text-end pe-5">
+                            <input
+                                type="color"
+                                class="form-control form-control-sm form-control-color bg-secondary"
+                                [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleColor)?.enabled }"
+                                id="aimingReticleColorInput"
+                                [formControlName]="SettingKey.InGameAimingReticleColor"
+                                (focus)="isEditing = true"
+                                (blur)="isEditing = false"
+                                (mousedown)="isEditing = true"
+                                (mouseup)="isEditing = false"
+                                (mouseover)="isEditing = true"
+                                (mouseout)="isEditing = false"
+                                (mouseenter)="isEditing = true"
+                                (mouseleave)="isEditing = false"
+                            />
+                        </td>
+                    </tr>
+                    <tr
+                        [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleAlpha)?.enabled }"
+                        (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
+                        (mouseout)="selectedPreviewSetting = undefined"
+                    >
+                        <td class="ps-4 ps-lg-5 ms-3"><span class="ms-3">Reticle Transparency</span></td>
+                        <td class="text-end pe-5">
+                            <input
+                                type="range"
+                                class="form-range form-control-sm"
+                                min="0.1"
+                                max="1"
+                                step="0.05"
+                                id="aimingReticleAlphaInput"
+                                [formControlName]="SettingKey.InGameAimingReticleAlpha"
+                                (focus)="isEditing = true"
+                                (blur)="isEditing = false"
+                            />
+                        </td>
+                    </tr>
+                    <tr
+                        [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleDynamicHide)?.enabled }"
+                        (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
+                        (mouseout)="selectedPreviewSetting = undefined"
+                    >
+                        <td class="ps-4 ps-lg-5"><span class="ms-3">Hide while ADS</span></td>
+                        <td class="text-end pe-5">
+                            <div class="form-check form-switch d-inline-flex">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    (change)="selectedAimingReticleBackground = AimingReticlePreview.NoWeapon"
+                                    [formControlName]="SettingKey.InGameAimingReticleDynamicHide"
+                                />
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- #endregion -->
                 </tbody>
             </table>
-        </div>
-        <div class="col-6 col-xl-7">
-            <div class="preview-image-container"></div>
-        </div>
-    </div>
-</div>
-<!-- #endregion -->
+            <!-- #endregion -->
 
-<!-- #region Legend Select -->
-<div class="container-xl">
-    <div class="row">
-        <div class="col-6 col-xl-5">
+            <!-- #region Legend Select -->
             <table class="table table-dark table-striped table-hover">
                 <thead>
                     <tr>
@@ -72,8 +152,11 @@
                     </tr>
                 </thead>
                 <tbody [formGroup]="legendSelectHUDFormGroup">
-                    <tr>
-                        <td class="ps-5">Legend Statistics</td>
+                    <tr
+                        (mouseover)="selectedPreviewSetting = SettingPreview.LegendSelectionStats"
+                        (mouseout)="selectedPreviewSetting = undefined"
+                    >
+                        <td class="ps-4 ps-lg-5">Legend Statistics</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
                                 <input
@@ -84,8 +167,11 @@
                             </div>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="ps-5">Legend Suggestions</td>
+                    <tr
+                        (mouseover)="selectedPreviewSetting = SettingPreview.LegendSelectionSuggestions"
+                        (mouseout)="selectedPreviewSetting = undefined"
+                    >
+                        <td class="ps-4 ps-lg-5">Legend Suggestions</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
                                 <input
@@ -98,15 +184,10 @@
                     </tr>
                 </tbody>
             </table>
-        </div>
-        <div class="col-6 col-xl-7"></div>
-    </div>
-</div>
 
-<!-- #region Export/Import -->
-<div class="container-xl">
-    <div class="row">
-        <div class="col-6 col-xl-5">
+            <!-- #endregion -->
+
+            <!-- #region Export/Import -->
             <table class="table table-dark table-striped table-hover">
                 <thead>
                     <tr>
@@ -115,13 +196,13 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="ps-5">Export Local Data</td>
+                        <td class="ps-4 ps-lg-5">Export Local Data</td>
                         <td class="text-end pe-5">
                             <button class="btn btn-sm btn-primary" type="button" (click)="exportLocalDatabase()">Export</button>
                         </td>
                     </tr>
                     <tr>
-                        <td class="ps-5">Import Local Data</td>
+                        <td class="ps-4 ps-lg-5">Import Local Data</td>
                         <td class="text-end pe-5">
                             <input type="file" class="hide-file-input" (change)="importLocalDatabase($event)" #fileUpload />
 
@@ -132,7 +213,114 @@
                     </tr>
                 </tbody>
             </table>
+
+            <!-- #endregion -->
         </div>
-        <div class="col-6 col-xl-7"></div>
+        <div class="col-6 col-xl-7">
+            <!-- Preview -->
+            <ng-container *ngIf="selectedPreviewSetting">
+                <h4 class="mt-5 text-center">In-Game Preview</h4>
+                <div class="preview-container">
+                    <div *ngIf="selectedPreviewSetting === SettingPreview.MatchTimer" class="preview-image preview-match-timer"></div>
+                    <div *ngIf="selectedPreviewSetting === SettingPreview.UltTimer" class="preview-image preview-ult-timer"></div>
+                    <div
+                        *ngIf="selectedPreviewSetting === SettingPreview.AimingReticle && aimingReticlePreview"
+                        class="preview-image preview-aiming-reticle-container"
+                        [ngClass]="{
+                            'no-weapon': selectedAimingReticleBackground == AimingReticlePreview.NoWeapon,
+                            'hipfire-assault-rifle': selectedAimingReticleBackground == AimingReticlePreview.HipfireAssaultRifle,
+                            'hipfire-pistol': selectedAimingReticleBackground == AimingReticlePreview.HipfirePistol,
+                            'hipfire-shotgun': selectedAimingReticleBackground == AimingReticlePreview.HipfireShotgun,
+                            'ads-assault-rifle': selectedAimingReticleBackground == AimingReticlePreview.ADSAssaultRifle,
+                            'ads-pistol': selectedAimingReticleBackground == AimingReticlePreview.ADSPistol,
+                            'ads-shotgun': selectedAimingReticleBackground == AimingReticlePreview.ADSShotgun
+                        }"
+                    >
+                        <app-aiming-reticle [aimingReticle]="aimingReticlePreview"></app-aiming-reticle>
+                    </div>
+                    <div
+                        *ngIf="selectedPreviewSetting === SettingPreview.LegendSelectionStats"
+                        class="preview-image preview-legend-select-stats"
+                    ></div>
+                    <div
+                        *ngIf="selectedPreviewSetting === SettingPreview.LegendSelectionSuggestions"
+                        class="preview-image preview-legend-select-suggestions"
+                    ></div>
+                </div>
+
+                <!-- #region Aiming Reticle Preview Options -->
+                <ng-container *ngIf="selectedPreviewSetting === SettingPreview.AimingReticle">
+                    <div class="btn-group d-block text-center mt-2" role="group">
+                        <input
+                            type="radio"
+                            class="btn-check"
+                            id="aimingReticlePreviewNoWeapon"
+                            (click)="selectedAimingReticleBackground = AimingReticlePreview.NoWeapon"
+                            [checked]="selectedAimingReticleBackground == AimingReticlePreview.NoWeapon"
+                        />
+                        <label class="btn btn-sm btn-outline-primary" for="aimingReticlePreviewNoWeapon">No Weapon</label>
+                    </div>
+                    <div class="btn-group d-block text-center mt-2" role="group">
+                        <input
+                            type="radio"
+                            class="btn-check"
+                            id="aimingReticlePreviewHipfireAssaultRifle"
+                            (click)="selectedAimingReticleBackground = AimingReticlePreview.HipfireAssaultRifle"
+                            [checked]="selectedAimingReticleBackground == AimingReticlePreview.HipfireAssaultRifle"
+                        />
+                        <label class="btn btn-sm btn-outline-primary" for="aimingReticlePreviewHipfireAssaultRifle"
+                            >Hipfire Assault Rifle</label
+                        >
+                        <input
+                            type="radio"
+                            class="btn-check"
+                            id="aimingReticlePreviewHipfirePistol"
+                            (click)="selectedAimingReticleBackground = AimingReticlePreview.HipfirePistol"
+                            [checked]="selectedAimingReticleBackground == AimingReticlePreview.HipfirePistol"
+                        />
+                        <label class="btn btn-sm btn-outline-primary" for="aimingReticlePreviewHipfirePistol">Hipfire Pistol</label>
+                        <input
+                            type="radio"
+                            class="btn-check"
+                            id="aimingReticlePreviewHipfireShotgun"
+                            (click)="selectedAimingReticleBackground = AimingReticlePreview.HipfireShotgun"
+                            [checked]="selectedAimingReticleBackground == AimingReticlePreview.HipfireShotgun"
+                        />
+                        <label class="btn btn-sm btn-outline-primary" for="aimingReticlePreviewHipfireShotgun">Hipfire Shotgun</label>
+                    </div>
+                    <div
+                        *ngIf="!inGameHUDFormGroup.get(SettingKey.InGameAimingReticleDynamicHide)?.value"
+                        class="btn-group d-block text-center mt-2"
+                        role="group"
+                    >
+                        <input
+                            type="radio"
+                            class="btn-check"
+                            id="aimingReticlePreviewADSAssaultRifle"
+                            (click)="selectedAimingReticleBackground = AimingReticlePreview.ADSAssaultRifle"
+                            [checked]="selectedAimingReticleBackground == AimingReticlePreview.ADSAssaultRifle"
+                        />
+                        <label class="btn btn-sm btn-outline-primary" for="aimingReticlePreviewADSAssaultRifle">ADS Assault Rifle</label>
+                        <input
+                            type="radio"
+                            class="btn-check"
+                            id="aimingReticlePreviewADSPistol"
+                            (click)="selectedAimingReticleBackground = AimingReticlePreview.ADSPistol"
+                            [checked]="selectedAimingReticleBackground == AimingReticlePreview.ADSPistol"
+                        />
+                        <label class="btn btn-sm btn-outline-primary" for="aimingReticlePreviewADSPistol">ADS Pistol</label>
+                        <input
+                            type="radio"
+                            class="btn-check"
+                            id="aimingReticlePreviewADSShotgun"
+                            (click)="selectedAimingReticleBackground = AimingReticlePreview.ADSShotgun"
+                            [checked]="selectedAimingReticleBackground == AimingReticlePreview.ADSShotgun"
+                        />
+                        <label class="btn btn-sm btn-outline-primary" for="aimingReticlePreviewADSShotgun">ADS Shotgun</label>
+                    </div>
+                </ng-container>
+                <!-- #endregion -->
+            </ng-container>
+        </div>
     </div>
 </div>

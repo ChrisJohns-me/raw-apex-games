@@ -1,25 +1,91 @@
 <ul class="nav m-3">
     <li class="nav-item me-2">
-        <app-selected-maps [mapList]="mapList" (selectedMaps)="onSelectedMapsChange($event)"></app-selected-maps>
+        <input class="form-control bg-dark text-white" placeholder="Search..." type="text" [formControl]="searchForm" />
+    </li>
+    <li class="nav-item me-2">
+        <app-selected-maps [mapList]="mapList" (selectedMaps)="onSelectedMapsChange($event)" [selectAll]="resetFilters"></app-selected-maps>
     </li>
     <li class="nav-item me-2">
         <app-selected-game-modes
             [gameModeList]="gameModeList"
             (selectedGameModes)="onSelectedGameModesChange($event)"
+            [selectAll]="resetFilters"
         ></app-selected-game-modes>
     </li>
     <li class="nav-item me-2">
-        <app-selected-legends [legendList]="legendList" (selectedLegends)="onSelectedLegendsChange($event)"></app-selected-legends>
+        <app-selected-legends
+            [legendList]="legendList"
+            (selectedLegends)="onSelectedLegendsChange($event)"
+            [selectAll]="resetFilters"
+        ></app-selected-legends>
+    </li>
+    <li class="nav-item me-2" *ngIf="areFiltersResettable">
+        <button class="btn btn-outline-danger btn-sm btn-reset" (click)="onResetClick()" type="button">
+            <icon [path]="mdiFilterVariantRemove"></icon>
+        </button>
     </li>
 </ul>
+
+<div class="container-fluid" *ngIf="filteredMatchList.length > 0">
+    <div class="row">
+        <div class="col-12 text-end">
+            <button
+                class="btn btn-sm"
+                [ngClass]="{ 'btn-link': !avgToggle, 'btn-primary': avgToggle }"
+                type="button"
+                (click)="setAvgToggle(true)"
+            >
+                Average
+            </button>
+            <button
+                class="btn btn-sm"
+                [ngClass]="{ 'btn-link': avgToggle, 'btn-primary': !avgToggle }"
+                type="button"
+                (click)="setAvgToggle(false)"
+            >
+                Total
+            </button>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-4 col-5-lg">
+            <small>
+                Showing
+                <ng-container *ngIf="filteredMatchList.length === matchList.length">{{ filteredMatchList.length }}</ng-container>
+                <ng-container *ngIf="filteredMatchList.length < matchList.length"
+                    >{{ filteredMatchList.length }} out of {{ matchList.length }}</ng-container
+                >
+                matches
+            </small>
+        </div>
+        <div class="col-8 col-7-lg text-end">
+            <ng-container *ngIf="avgToggle">
+                <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgWins ?? 0 | percent }} win rate</span>
+                <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgEliminations ?? 0 | number:'1.0-2' }} kill rate</span>
+                <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgKnockdowns ?? 0 | number:'1.0-2' }} knockdown rate</span>
+                <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgAssists ?? 0 | number:'1.0-2' }} assist rate</span>
+                <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgDamage ?? 0 | number:'1.0-0' }} damage rate</span>
+            </ng-container>
+            <ng-container *ngIf="!avgToggle">
+                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumWins?? 0 | number:'1.0-2' }} total wins</span>
+                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumEliminations ?? 0 | number:'1.0-2' }} total kills</span>
+                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumKnockdowns ?? 0 | number:'1.0-2' }} total knockdowns</span>
+                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumAssists ?? 0 | number:'1.0-2' }} total assists</span>
+                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumDamage ?? 0 | number:'1.0-0' }} total damage</span>
+            </ng-container>
+        </div>
+    </div>
+</div>
 
 <div class="container-fluid" appFullHeight [marginBottom]="10">
     <div class="row justify-content-center">
         <div class="col-12">
             <app-match-listing
                 [matches]="filteredMatchList"
-                [isSelectable]="false"
+                [isMatchClickable]="false"
                 (matchClick)="onSelectMatchClick()"
+                (teamRosterClick)="onTeamRosterClick($event)"
+                [isTeamRosterPlayerClickable]="true"
                 [showDataItems]="showMatchItems"
             ></app-match-listing>
         </div>

@@ -69,7 +69,7 @@ export class MatchRosterService extends AllfatherService {
     public readonly stagedMatchRoster$ = new BehaviorSubject<MatchRoster>(new MatchRoster());
     /**
      * Preloaded match roster data.
-     * Emitted on every roster update, including merge events.
+     * Emitted on every roster update, including merge events, and removal of invalid teammates
      */
     public readonly stagedTeammateRoster$ = new BehaviorSubject<MatchRoster<MatchRosterPlayer>>(new MatchRoster<MatchRosterTeammate>());
 
@@ -151,6 +151,9 @@ export class MatchRosterService extends AllfatherService {
             this.numTeams$.next(0);
             this.startingNumPlayers$.next(0);
             this.startingNumTeams$.next(0);
+
+            // Clean any invalid Teammates
+            this.cleanStagedTeammates();
 
             // Rosters should be ready to be emitted
             if (this.stagedMatchRoster$.value.allPlayers.length) this.matchRoster$.next(this.stagedMatchRoster$.value);
@@ -347,6 +350,22 @@ export class MatchRosterService extends AllfatherService {
         }
         const newStagedTeammateRoster = this.stagedTeammateRoster$.value;
         newStagedTeammateRoster.addPlayer(mergedTeammate);
+
+        this.stagedTeammateRoster$.next(newStagedTeammateRoster);
+    }
+
+    /**
+     * Sub-method that removes staged teammates that don't exist on the staged match roster
+     */
+    private cleanStagedTeammates(): void {
+        const newStagedTeammateRoster = this.stagedTeammateRoster$.value;
+        newStagedTeammateRoster.allPlayers.forEach((player) => {
+            const foundRosterPlayer = !!this.stagedMatchRoster$.value.allPlayers.find((mr) => isPlayerNameEqual(mr.name, player.name));
+            if (!foundRosterPlayer) {
+                console.warn(`An extra teammate was found in the staged teammater roster; Removing extra teammate: "${player.name}"`);
+                newStagedTeammateRoster.removePlayer(player.name);
+            }
+        });
 
         this.stagedTeammateRoster$.next(newStagedTeammateRoster);
     }

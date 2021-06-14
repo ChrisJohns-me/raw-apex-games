@@ -1,12 +1,12 @@
+import { FileService } from "@allfather-app/app/modules/core/file.service";
+import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
+import { MockFileService } from "@allfather-app/app/modules/core/mocks/services/mock-file.service";
+import { MockLocalDatabaseService } from "@allfather-app/app/modules/core/mocks/services/mock-local-database.service";
+import { MockSettingsService } from "@allfather-app/app/modules/core/mocks/services/mock-settings.service";
+import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { IconComponent } from "@allfather-app/app/shared/components/icon/icon.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
-import { FileService } from "../../core/file.service";
-import { LocalDatabaseService } from "../../core/local-database/local-database.service";
-import { MockFileService } from "../../core/mocks/services/mock-file.service";
-import { MockLocalDatabaseService } from "../../core/mocks/services/mock-local-database.service";
-import { MockSettingsService } from "../../core/mocks/services/mock-settings.service";
-import { SettingsService } from "../../core/settings.service";
 import { SettingsPageComponent } from "./settings-page.component";
 
 describe("SettingsPageComponent", () => {

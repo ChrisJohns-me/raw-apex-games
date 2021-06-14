@@ -19,7 +19,7 @@ declare namespace overwolf.gep.ApexLegends {
         // "Caustic Gas" ~= "knockdown"
         // "Melee" ~= "knockdown"
         // "Bleed Out" ~= "kill"
-        action: "kill" | "knockdown" | "assist" | "Bleed Out" | "Melee" | "Caustic Gas" | "headshot_kill";
+        action: "kill" | "knockdown" | "assist" | "Bleed Out" | "Melee" | "Caustic Gas" | "headshot_kill" | "Finisher";
     }
 
     interface GameEventKnockdown {

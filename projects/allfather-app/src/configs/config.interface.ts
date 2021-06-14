@@ -47,6 +47,7 @@ export interface FeatureFlags {
     enableMatchTimerWindow: boolean;
     enableUltTimerWindow: boolean;
     enableInflictionInsightWindow: boolean;
+    enableReticleHelperWindow: boolean;
     inflictionInsight: {
         /** Show non-damaged teammates' shields */
         showAssumedOpponentTeammateShields: boolean;
@@ -58,6 +59,9 @@ export interface FeatureFlags {
     legendSelectAssist: {
         legendStats: boolean;
         complimentaryLegends: boolean;
+    };
+    reticleHelper: {
+        enableAimingReticle: boolean;
     };
 }
 
@@ -88,6 +92,7 @@ export interface FeatureConfigs {
             placementWeight: number;
             damageWeight: number;
             eliminationWeight: number;
+            assistWeight: number;
             knockdownWeight: number;
             durationWeight: number;
         };

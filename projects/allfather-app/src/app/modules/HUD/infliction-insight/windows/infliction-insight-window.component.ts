@@ -7,7 +7,7 @@ import { PlayerState } from "@allfather-app/app/common/player-state";
 import { InflictionAggregator } from "@allfather-app/app/common/utilities/infliction-aggregator";
 import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
-import { MatchActivityService } from "@allfather-app/app/modules/core/match/match-activity.service";
+import { MatchKillfeedService } from "@allfather-app/app/modules/core/match/match-killfeed.service";
 import { MatchPlayerInflictionService } from "@allfather-app/app/modules/core/match/match-player-infliction.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
@@ -69,7 +69,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         private readonly cdr: ChangeDetectorRef,
         private readonly config: ConfigurationService,
         private readonly match: MatchService,
-        private readonly matchActivity: MatchActivityService,
+        private readonly matchKillfeed: MatchKillfeedService,
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInfliction: MatchPlayerInflictionService,
         private readonly matchPlayerLocation: MatchPlayerLocationService,
@@ -77,7 +77,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         private readonly player: PlayerService
     ) {}
 
-    public trackByFn(index: number, banner: OpponentBanner): any {
+    public trackByFn(index: number, banner: OpponentBanner): string {
         return banner.rosterPlayer.name;
     }
 
@@ -137,6 +137,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
     }
 
     private setupInflictionEventList(): void {
+        // merge(this.createMyDamageInflictionEvents$(), this.createIndirectInflictionEvents$())
         merge(this.createMyDamageInflictionEvents$())
             .pipe(takeUntil(this.destroy$))
             .subscribe((inflAccum) => {
@@ -184,11 +185,9 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
      * Keep track of opponents' status using the killfeed
      * and convert them to accumulated events for banners to consume.
      * Sends out reset events.
-     * @todo This is not currently in use. Need to create a way to keep track of indirect killfeed events
      */
     private createIndirectInflictionEvents$(): Observable<MatchInflictionEventAccum> {
         const indirectAccum$ = this.matchPlayerInfliction.notMyKillfeedEvent$.pipe(
-            tap(() => console.log(`createUntrackedInflictionEvents: notMyAccum$ START`)),
             filter((killfeedEvent) =>
                 this.opponentBannerList.some((b) => isPlayerNameEqual(b.rosterPlayer?.name, killfeedEvent?.victim?.name))
             ),
@@ -207,24 +206,45 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
                     latestTimestamp: killfeedEvent.timestamp,
                 } as MatchInflictionEventAccum;
             }),
-            tap(() => console.log(`createUntrackedInflictionEvents: notMyAccum$ END`)),
             share()
         );
 
         const indirectKnockdownReset$ = indirectAccum$.pipe(
             filter((inflAccum) => inflAccum.isKnocked && this.config.featureFlags.inflictionInsight.assumeKnockdownExpires),
-            tap(() => console.log(`createUntrackedInflictionEvents: indirectKnockdownReset$ -> filtered (isKnocked) or (isEliminated)`)),
+            tap(() => console.log(`createUntrackedInflictionEvents: indirectKnockdownReset$ -> filtered isKnocked`)),
             delayWhen(() => interval(this.config.assumptions.knockdownExpireTime)),
-            map((inflAccum) => ({ ...inflAccum, isKnocked: false })),
-            tap(() => console.log(`createUntrackedInflictionEvents: indirectKnockdownReset$ -> after delayWhen()`))
+            map((inflAccum) => {
+                return {
+                    victim: inflAccum.victim,
+                    shieldDamageSum: 0,
+                    healthDamageSum: 0,
+                    hasShield: true,
+                    isKnocked: false,
+                    isEliminated: false,
+                    latestAttacker: undefined,
+                    latestTimestamp: undefined,
+                } as MatchInflictionEventAccum;
+            }),
+            tap((inflAccum) => console.log(`createUntrackedInflictionEvents: indirectKnockdownReset$ -> after delayWhen()`, inflAccum))
         );
 
         const indirectEliminationReset$ = indirectAccum$.pipe(
-            filter((inflAccum) => inflAccum.isKnocked && this.config.featureFlags.inflictionInsight.assumeKnockdownExpires),
-            tap(() => console.log(`createUntrackedInflictionEvents: indirectKnockdownReset$ -> filtered (isKnocked) or (isEliminated)`)),
-            delayWhen(() => interval(this.config.assumptions.knockdownExpireTime)),
-            map((inflAccum) => ({ ...inflAccum, isKnocked: false })),
-            tap(() => console.log(`createUntrackedInflictionEvents: indirectKnockdownReset$ -> after delayWhen()`))
+            filter((inflAccum) => inflAccum.isEliminated && this.config.featureFlags.inflictionInsight.assumeEliminationExpires),
+            tap(() => console.log(`createUntrackedInflictionEvents: indirectEliminationReset$ -> filtered isEliminated`)),
+            delayWhen(() => interval(this.config.assumptions.eliminationExpireTime)),
+            map((inflAccum) => {
+                return {
+                    victim: inflAccum.victim,
+                    shieldDamageSum: 0,
+                    healthDamageSum: 0,
+                    hasShield: true,
+                    isKnocked: false,
+                    isEliminated: false,
+                    latestAttacker: undefined,
+                    latestTimestamp: undefined,
+                } as MatchInflictionEventAccum;
+            }),
+            tap((inflAccum) => console.log(`createUntrackedInflictionEvents: indirectKnockdownReset$ -> after delayWhen()`, inflAccum))
         );
 
         return merge(indirectAccum$, indirectKnockdownReset$, indirectEliminationReset$);
@@ -246,7 +266,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
     private createOpponentIndirectBanner(player: MatchRosterPlayer): Optional<OpponentBanner> {
         if (isEmpty(player.name)) return;
         const now = new Date();
-        const lastKnownState = this.matchActivity.playerLastKnownState(player);
+        const lastKnownState = this.matchKillfeed.playerLastKnownState(player);
 
         const isKnocked = PlayerState.Knocked === lastKnownState?.state;
         const hasKnockExpired =

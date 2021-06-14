@@ -8,6 +8,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeGenericId: MatchGameModeGenericId.Training,
         gameModeName: MatchGameModeFriendlyName.Training,
         gameModeIdRegExPattern: "training",
+        isAFSupported: false,
         isBattleRoyaleGameMode: false,
         isArenasGameMode: false,
         activeDates: [
@@ -21,6 +22,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeGenericId: MatchGameModeGenericId.FiringRange,
         gameModeName: MatchGameModeFriendlyName.FiringRange,
         gameModeIdRegExPattern: "firingrange",
+        isAFSupported: false,
         isBattleRoyaleGameMode: false,
         isArenasGameMode: false,
         activeDates: [
@@ -73,9 +75,14 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeGenericId: MatchGameModeGenericId.Arenas,
         gameModeName: MatchGameModeFriendlyName.Arenas,
         gameModeIdRegExPattern: "arenas",
+        isAFSupported: false,
         isBattleRoyaleGameMode: false,
         isArenasGameMode: true,
-        activeDates: [],
+        activeDates: [
+            {
+                from: new Date("May 04, 2021"),
+            },
+        ],
     }),
 ];
 

@@ -4,8 +4,13 @@ import { MapRotationService } from "@allfather-app/app/modules/core/map-rotation
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { differenceInMilliseconds, isFuture, isPast } from "date-fns";
 import addMinutes from "date-fns/addMinutes";
-import { BehaviorSubject, EMPTY, interval, of, Subject, timer } from "rxjs";
+import { BehaviorSubject, interval, of, Subject, timer } from "rxjs";
 import { expand, filter, switchMap, takeUntil, tap } from "rxjs/operators";
+
+/** Allow time to pass and Maps to rotate, before re-retrieving map rotation data */
+const ROLLOVER_FETCH_DELAY = 10 * 1000;
+/** Used if a dynamic poll time cannot be determined */
+const DEFAULT_POLL_TIME = 10 * 60 * 1000;
 
 @Component({
     selector: "app-map-rotation-display",
@@ -41,15 +46,15 @@ export class MapRotationDisplayComponent implements OnInit, OnDestroy {
     }
 
     private setupMapRotationPolling(): void {
-        const addedFetchDelay = 10 * 1000;
-
         const handleDataFn = (rotationData: MapRotationData) => {
+            const now = new Date();
             this.mapRotationData = rotationData;
             this.fastUIRefresh = true; // Temporarily turn on fast refreshing after data is fetched
             const soonestMapInfo = MapRotationData.getSoonestMapRotationInfo(rotationData);
-            const newDelay = soonestMapInfo?.endDate
-                ? differenceInMilliseconds(soonestMapInfo.endDate, new Date()) + addedFetchDelay
-                : 10 * 60 * 1000;
+            const newDelay =
+                soonestMapInfo?.endDate && soonestMapInfo.endDate > now
+                    ? differenceInMilliseconds(soonestMapInfo.endDate, now) + ROLLOVER_FETCH_DELAY
+                    : DEFAULT_POLL_TIME;
             console.debug(
                 `[${this.constructor.name}] Checking map rotation in ${Math.round(newDelay / 1000)} seconds; ` +
                     `soonest map change "${soonestMapInfo?.friendlyName}" at ${soonestMapInfo?.startDate}`
@@ -68,7 +73,10 @@ export class MapRotationDisplayComponent implements OnInit, OnDestroy {
         this.mapRotationPollTimer$
             .pipe(
                 takeUntil(this.destroy$),
-                switchMap((delayTimeMs) => (delayTimeMs < 0 ? EMPTY : of("start").pipe(loopOperator(delayTimeMs))))
+                switchMap((delayTimeMs) => {
+                    delayTimeMs = delayTimeMs >= 0 ? delayTimeMs : DEFAULT_POLL_TIME;
+                    return of("start").pipe(loopOperator(delayTimeMs));
+                })
             )
             .subscribe();
     }

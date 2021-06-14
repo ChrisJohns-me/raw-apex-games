@@ -1,20 +1,10 @@
 import { MatchGameMode } from "@allfather-app/app/common/match/game-mode/game-mode";
 import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
-import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchMapCoordinates } from "@allfather-app/app/common/match/map/map-coordinates";
-import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
-import { MatchMapFriendlyName } from "@allfather-app/app/common/match/map/map.enum";
+import { MatchMapList, sortMatchMapList } from "@allfather-app/app/common/match/map/map-list";
 import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { LocationPhaseNum, MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
-import { MatchMapService } from "@allfather-app/app/modules/core/match/match-map.service";
-import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
-import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
-import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/match-player-stats.service";
-import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { ReportingEngineId, ReportingStatus } from "@allfather-app/app/modules/core/reporting/reporting-engine/reporting-engine";
-import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { DataItem } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
 import { environment } from "@allfather-app/environments/environment";
 import {
@@ -31,9 +21,8 @@ import {
 import { FormControl } from "@angular/forms";
 import * as d3 from "d3";
 import { intervalToDuration } from "date-fns";
-import { combineLatest, merge, Observable, Subject } from "rxjs";
-import { distinctUntilChanged, filter, finalize, switchMap, takeUntil, throttleTime } from "rxjs/operators";
-import { isEmpty } from "shared/utilities";
+import { combineLatest, Observable, Subject } from "rxjs";
+import { distinctUntilChanged, finalize, takeUntil, throttleTime } from "rxjs/operators";
 import { unique } from "shared/utilities/primitives/array";
 
 type MatchMapImageAxisScale = NonNullable<MatchMap["chartConfig"]>["imageAxisScale"];
@@ -48,12 +37,11 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
     public ENABLE_DEBUG_TOOLS = environment.DEV && false; // Debug tools
     @ViewChild("mapOverlayGraph") public mapOverlayGraphRef?: ElementRef<HTMLDivElement>;
 
-    public isLiveMatchFocused = true;
-    public liveMatch?: MatchDataStore;
     public isLoadingMatchList = false;
     public mapList: MatchMap[];
     public matchList: MatchDataStore[] = [];
     public selectedMatch?: MatchDataStore;
+    public selectedMap?: MatchMap;
     public showMatchItems: DataItem[] = [
         DataItem.GameMode,
         DataItem.MatchDate,
@@ -64,18 +52,12 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         DataItem.Damage,
     ];
 
-    public get isLiveMatchStarted(): boolean {
-        return !!this.liveMatch?.matchId && !this.liveMatch?.endDate;
-    }
     public get isLoadingMapImage(): boolean {
         return this._isLoadingMapImage;
     }
     public set isLoadingMapImage(value: boolean) {
         this._isLoadingMapImage = value;
         this.refreshUI();
-    }
-    public get displayedMap(): Optional<MatchMap> {
-        return this.isLiveMatchFocused ? this.matchMap.map$.value : this.selectedMap;
     }
     public get isShowingAggregateData(): boolean {
         return !!this.selectedMap && !this.selectedMatch;
@@ -84,14 +66,12 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         return this.matchList.filter((m) => m.mapId === this.selectedMap?.mapId);
     }
     public get displayedLocationHistory(): MatchMapCoordinates[] {
-        if (this.isLiveMatchFocused) return this.liveMatchLocationHistory;
-        else if (this.isShowingAggregateData) return this.aggregateMapLocationHistory;
+        if (this.isShowingAggregateData) return this.aggregateMapLocationHistory;
         else if (!this.selectedMatch?.locationHistory || !Array.isArray(this.selectedMatch?.locationHistory)) return [];
         else return this.selectedMatch.locationHistory.filter((l) => l.value.phaseNum === LocationPhaseNum.HasLanded).map((l) => l.value);
     }
 
     // Form inputs
-    public followLiveLocationForm = new FormControl(false);
     public locationHistoryRange = new FormControl(1000);
 
     // Debug
@@ -112,31 +92,16 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
     private heatAlpha = 0.25;
 
     private _isLoadingMapImage = false;
-    private selectedMap?: MatchMap;
-    private liveMatchLocationHistory: MatchMapCoordinates[] = [];
     private aggregateMapLocationHistory: MatchMapCoordinates[] = [];
     private destroy$ = new Subject<void>();
 
-    constructor(
-        private readonly cdr: ChangeDetectorRef,
-        private readonly match: MatchService,
-        private readonly matchMap: MatchMapService,
-        private readonly matchPlayerLegend: MatchPlayerLegendService,
-        private readonly matchPlayerLocation: MatchPlayerLocationService,
-        private readonly matchPlayerStats: MatchPlayerStatsService,
-        private readonly matchRoster: MatchRosterService,
-        private readonly player: PlayerService,
-        private readonly reportingService: ReportingService
-    ) {
+    constructor(private readonly cdr: ChangeDetectorRef, private readonly match: MatchService) {
         this.heatSizeRange = new FormControl(this.heatSize);
-        this.mapList = unique(
-            MatchMapList.filter((m) => m.mapName !== MatchMapFriendlyName.FiringRange),
-            (m) => m.mapName
-        ).sort((a, b) => {
-            if (a.mapName < b.mapName) return -1;
-            if (a.mapName > b.mapName) return 1;
-            return 0;
-        });
+        this.mapList = unique(MatchMapList, (m) => m.mapName);
+        this.mapList = this.mapList.filter((m) =>
+            m.gameModeTypes?.some((gm) => MatchGameMode.getFromId(MatchGameModeList, gm).isAFSupported)
+        );
+        this.mapList = sortMatchMapList(this.mapList.filter((m) => m.isBattleRoyaleMap || m.isArenasMap));
     }
 
     public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item) => item.matchId ?? item.endDate;
@@ -147,13 +112,12 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
 
     //#region Lifecycle Methods
     public ngOnInit(): void {
-        this.setupLiveMatchListeners();
-        this.setLiveMatch();
         this.setupEventListeners();
         this.getMatchList()
             .pipe(takeUntil(this.destroy$))
             .subscribe((matchList) => {
                 this.matchList = matchList;
+                this.onSelectMatchClick(matchList[0]);
                 this.refreshUI();
             });
         if (this.ENABLE_DEBUG_TOOLS) this.setupDebug();
@@ -169,19 +133,9 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
     }
     //#endregion
 
-    public onLiveMatchClick(): void {
-        this.setLiveMatch();
-        this.setSelectedMap(this.matchMap.map$.value);
-        this.setSelectedMatch(undefined);
-        this.setShowAggregateMapData(false);
-        this.drawGraph();
-        this.refreshUI();
-    }
-
     public onSelectMatchClick(match?: MatchDataStore): void {
         const matchMap = this.mapList.find((m) => m.mapId === match?.mapId);
         this.locationHistoryRange.enable({ emitEvent: false });
-        this.setLiveMatch(false);
         this.setSelectedMap(matchMap);
         this.setSelectedMatch(match);
         this.setShowAggregateMapData(false);
@@ -190,7 +144,6 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
     }
 
     public onSelectMapClick(map?: MatchMap): void {
-        this.setLiveMatch(false);
         this.setSelectedMap(map);
         this.setSelectedMatch(undefined);
         this.setShowAggregateMapData(true);
@@ -205,14 +158,200 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
             this.drawGraph();
             this.refreshUI();
         });
-
-        // Follow Live Form
-        this.followLiveLocationForm.valueChanges.pipe(takeUntil(this.destroy$), distinctUntilChanged()).subscribe((isEnabled) => {
-            if (isEnabled) this.locationHistoryRange.enable({ emitEvent: false });
-            else this.locationHistoryRange.disable({ emitEvent: false });
-            this.refreshUI();
-        });
     }
+    //#endregion
+
+    //#region Intermediate Functions
+    private setSelectedMap(map?: MatchMap): void {
+        if (!map?.mapId || map?.mapId === this.selectedMap?.mapId) return;
+        this.isLoadingMapImage = true;
+        this.selectedMap = map;
+        if (this.ENABLE_DEBUG_TOOLS) this.refreshMapDebugTools();
+    }
+
+    private setSelectedMatch(match?: MatchDataStore): void {
+        this.selectedMatch = match;
+        if (match?.matchId) {
+            this.locationHistoryRange.enable({ emitEvent: false });
+            this.locationHistoryRange.setValue(this.displayedLocationHistory?.length ?? Infinity, { emitEvent: false });
+        }
+    }
+
+    private setShowAggregateMapData(show = true): void {
+        if (show && this.selectedMap) {
+            this.aggregateMapLocationHistory = this.extractAggregateMapLocationHistory(this.matchList, this.selectedMap);
+            this.locationHistoryRange.disable({ emitEvent: false });
+            this.locationHistoryRange.setValue(Infinity, { emitEvent: false });
+        } else {
+            this.aggregateMapLocationHistory = [];
+        }
+    }
+    //#endregion
+
+    //#region Low Order Functions
+    private initGraph(): void {
+        if (!this.mapOverlayGraphRef?.nativeElement) return;
+        this.graphSvg = d3
+            .select(this.mapOverlayGraphRef.nativeElement)
+            .append("svg")
+            .attr("viewBox", `0 0 ${this.graphResolutionX} ${this.graphResolutionY}`) as any;
+    }
+
+    private getMatchList(): Observable<MatchDataStore[]> {
+        this.isLoadingMatchList = true;
+        return this.match.getAllMatchData$().pipe(finalize(() => (this.isLoadingMatchList = false)));
+    }
+
+    private extractAggregateMapLocationHistory(matchList: MatchDataStore[], map: MatchMap): MatchMapCoordinates[] {
+        return matchList
+            .filter((m) => m.mapId === map.mapId)
+            .reduce((prev, curr) => {
+                if (!curr.locationHistory || !Array.isArray(curr.locationHistory)) return prev;
+                const coordinates = curr.locationHistory.filter((l) => l.value.phaseNum === LocationPhaseNum.HasLanded).map((l) => l.value);
+                return prev.concat(coordinates);
+            }, [] as MatchMapCoordinates[]);
+    }
+
+    private drawGraph(customImageAxisScale?: MatchMapImageAxisScale, customHeatSize?: number): void {
+        if (!this.mapOverlayGraphRef?.nativeElement) return void console.error(`Map graph element was not found.`);
+
+        const matchMap = this.selectedMap;
+        const maxHistory = this.locationHistoryRange?.value;
+        const coordinates = this.displayedLocationHistory?.slice(0, maxHistory) ?? [];
+
+        const xStart = customImageAxisScale?.xStart ?? matchMap?.chartConfig?.imageAxisScale?.xStart ?? -500,
+            xEnd = customImageAxisScale?.xEnd ?? matchMap?.chartConfig?.imageAxisScale?.xEnd ?? 500,
+            yStart = customImageAxisScale?.yStart ?? matchMap?.chartConfig?.imageAxisScale?.yStart ?? -500,
+            yEnd = customImageAxisScale?.yEnd ?? matchMap?.chartConfig?.imageAxisScale?.yEnd ?? 500;
+
+        // clear the graph
+        this.graphSvg?.selectAll("g").remove();
+
+        // read data
+        const x = d3 // Add X axis
+            .scaleLinear()
+            .domain([xStart, xEnd])
+            .range([0, this.graphResolutionX]);
+
+        const y = d3 // Add Y axis
+            .scaleLinear()
+            .domain([yStart, yEnd])
+            .range([this.graphResolutionY, 0]);
+
+        const color = d3.scaleLinear(
+            [0, 0.5, 1],
+            [`rgba(0, 128, 0, ${this.heatAlpha})`, `rgba(255, 255, 0, ${this.heatAlpha})`, `rgba(255, 0, 0, ${this.heatAlpha})`]
+        );
+
+        // compute the density data
+        const densityData = d3
+            .contourDensity()
+            .x((d) => x((d as any)["x"]))
+            .y((d) => y((d as any)["y"]))
+            .size([this.graphResolutionX, this.graphResolutionY])
+            .bandwidth(customHeatSize ?? this.heatSize)(coordinates as any);
+
+        // show the shape
+        this.graphSvg
+            ?.insert("g", "g")
+            .selectAll("path")
+            .data(densityData)
+            .enter()
+            .append("path")
+            .attr("d", d3.geoPath())
+            .attr("fill", (d) => color(d.value));
+    }
+
+    private refreshUI(): void {
+        this.cdr.detectChanges();
+    }
+    //#endregion
+
+    //#region Debug Tools
+    private setupDebug(): void {
+        console.warn(`Match Map DEBUG Enabled`);
+        combineLatest([
+            this.xShiftRangeForm.valueChanges,
+            this.xStartRangeForm.valueChanges,
+            this.xEndRangeForm.valueChanges,
+            this.yShiftRangeForm.valueChanges,
+            this.yStartRangeForm.valueChanges,
+            this.yEndRangeForm.valueChanges,
+            this.heatSizeRange.valueChanges,
+        ])
+            .pipe(takeUntil(this.destroy$), throttleTime(10))
+            .subscribe(([xShift, xStart, xEnd, yShift, yStart, yEnd, heatSize]) => {
+                const imageAxisScale = { xStart: xStart + xShift, xEnd: xEnd + xShift, yStart: yStart + yShift, yEnd: yEnd + yShift };
+                this.heatSize = heatSize;
+                this.drawGraph(imageAxisScale, heatSize);
+            });
+    }
+
+    private refreshMapDebugTools(): void {
+        this.xShiftRangeForm.setValue(0);
+        this.xStartRangeForm.setValue(this.selectedMap?.chartConfig?.imageAxisScale?.xStart ?? -500);
+        this.xEndRangeForm.setValue(this.selectedMap?.chartConfig?.imageAxisScale?.xEnd ?? 500);
+        this.yShiftRangeForm.setValue(0);
+        this.yStartRangeForm.setValue(this.selectedMap?.chartConfig?.imageAxisScale?.yStart ?? -500);
+        this.yEndRangeForm.setValue(this.selectedMap?.chartConfig?.imageAxisScale?.yEnd ?? 500);
+    }
+    //#endregion
+}
+
+/**
+// TODO: Extract into a new LIVE MATCH component
+// Template:
+    <!-- Current Live Match -->
+    <app-match-listing
+        *ngIf="isLiveMatchStarted"
+        [isLiveMatch]="true"
+        [matches]="[liveMatch!]"
+        [isMatchClickable]="true"
+        [selectedMatchId]="liveMatch?.matchId"
+        (matchClick)="onLiveMatchClick()"
+        [showDataItems]="showMatchItems"
+    ></app-match-listing>
+    <!-- -->
+
+    <!-- No Map Selected / No Live Map -->
+    <div class="map-full-image map-full-image-no-map" *ngIf="!selectedMap?.mapId">
+        <div class="message-overlay">
+            <h5>Waiting for match</h5>
+        </div>
+        <picture>
+            <source media="(max-width: 1000px)" [srcset]="'../../../../assets/images/map-layouts/medium/' + getMapFilename()" />
+            <source media="(max-width: 1440px)" [srcset]="'../../../../assets/images/map-layouts/large/' + getMapFilename()" />
+            <img [src]="'../../../../assets/images/map-layouts/' + getMapFilename()" class="img-fluid" alt="..." />
+        </picture>
+    </div>
+
+
+
+// Component:
+    public isLiveMatchFocused = true;
+    public liveMatch?: MatchDataStore;
+
+    private liveMatchLocationHistory: MatchMapCoordinates[] = [];
+
+    public get isLiveMatchStarted(): boolean {
+        return !!this.liveMatch?.matchId && !this.liveMatch?.endDate;
+    }
+
+
+    public onLiveMatchClick(): void {
+        this.setLiveMatch();
+        this.setSelectedMap(this.matchMap.map$.value);
+        this.setSelectedMatch(undefined);
+        this.setShowAggregateMapData(false);
+        this.drawGraph();
+        this.refreshUI();
+    }
+
+    private setLiveMatch(isLive = true): void {
+        this.isLiveMatchFocused = isLive;
+        this.followLiveLocationForm.setValue(isLive, { emitEvent: false });
+    }
+
 
     private setupLiveMatchListeners(): void {
         // Match started event
@@ -299,113 +438,6 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
                 this.refreshUI();
             });
     }
-    //#endregion
-
-    //#region Intermediate Functions
-    private setLiveMatch(isLive = true): void {
-        this.isLiveMatchFocused = isLive;
-        this.followLiveLocationForm.setValue(isLive, { emitEvent: false });
-    }
-
-    private setSelectedMap(map?: MatchMap): void {
-        if (!map?.mapId || map?.mapId === this.selectedMap?.mapId) return;
-        this.isLoadingMapImage = true;
-        this.selectedMap = map;
-        if (this.ENABLE_DEBUG_TOOLS) this.refreshMapDebugTools();
-    }
-
-    private setSelectedMatch(match?: MatchDataStore): void {
-        this.selectedMatch = match;
-        if (match?.matchId) {
-            this.locationHistoryRange.enable({ emitEvent: false });
-            this.locationHistoryRange.setValue(this.displayedLocationHistory?.length ?? Infinity, { emitEvent: false });
-        }
-    }
-
-    private setShowAggregateMapData(show = true): void {
-        if (show && this.selectedMap) {
-            this.aggregateMapLocationHistory = this.extractAggregateMapLocationHistory(this.matchList, this.selectedMap);
-            this.locationHistoryRange.disable({ emitEvent: false });
-            this.locationHistoryRange.setValue(Infinity, { emitEvent: false });
-        } else {
-            this.aggregateMapLocationHistory = [];
-        }
-    }
-    //#endregion
-
-    //#region Low Order Functions
-    private initGraph(): void {
-        if (!this.mapOverlayGraphRef?.nativeElement) return;
-        this.graphSvg = d3
-            .select(this.mapOverlayGraphRef.nativeElement)
-            .append("svg")
-            .attr("viewBox", `0 0 ${this.graphResolutionX} ${this.graphResolutionY}`) as any;
-    }
-
-    private getMatchList(): Observable<MatchDataStore[]> {
-        this.isLoadingMatchList = true;
-        return this.match.getAllMatchData$().pipe(finalize(() => (this.isLoadingMatchList = false)));
-    }
-
-    private extractAggregateMapLocationHistory(matchList: MatchDataStore[], map: MatchMap): MatchMapCoordinates[] {
-        return matchList
-            .filter((m) => m.mapId === map.mapId)
-            .reduce((prev, curr) => {
-                if (!curr.locationHistory || !Array.isArray(curr.locationHistory)) return prev;
-                const coordinates = curr.locationHistory.filter((l) => l.value.phaseNum === LocationPhaseNum.HasLanded).map((l) => l.value);
-                return prev.concat(coordinates);
-            }, [] as MatchMapCoordinates[]);
-    }
-
-    private drawGraph(customImageAxisScale?: MatchMapImageAxisScale, customHeatSize?: number): void {
-        if (!this.mapOverlayGraphRef?.nativeElement) return void console.error(`Map graph element was not found.`);
-
-        const matchMap = this.isLiveMatchFocused ? this.matchMap.map$.value : this.selectedMap;
-        const maxHistory = this.locationHistoryRange?.value;
-        const coordinates = this.displayedLocationHistory?.slice(0, maxHistory) ?? [];
-
-        const xStart = customImageAxisScale?.xStart ?? matchMap?.chartConfig?.imageAxisScale?.xStart ?? -500,
-            xEnd = customImageAxisScale?.xEnd ?? matchMap?.chartConfig?.imageAxisScale?.xEnd ?? 500,
-            yStart = customImageAxisScale?.yStart ?? matchMap?.chartConfig?.imageAxisScale?.yStart ?? -500,
-            yEnd = customImageAxisScale?.yEnd ?? matchMap?.chartConfig?.imageAxisScale?.yEnd ?? 500;
-
-        // clear the graph
-        this.graphSvg?.selectAll("g").remove();
-
-        // read data
-        const x = d3 // Add X axis
-            .scaleLinear()
-            .domain([xStart, xEnd])
-            .range([0, this.graphResolutionX]);
-
-        const y = d3 // Add Y axis
-            .scaleLinear()
-            .domain([yStart, yEnd])
-            .range([this.graphResolutionY, 0]);
-
-        const color = d3.scaleLinear(
-            [0, 0.5, 1],
-            [`rgba(0, 128, 0, ${this.heatAlpha})`, `rgba(255, 255, 0, ${this.heatAlpha})`, `rgba(255, 0, 0, ${this.heatAlpha})`]
-        );
-
-        // compute the density data
-        const densityData = d3
-            .contourDensity()
-            .x((d) => x((d as any)["x"]))
-            .y((d) => y((d as any)["y"]))
-            .size([this.graphResolutionX, this.graphResolutionY])
-            .bandwidth(customHeatSize ?? this.heatSize)(coordinates as any);
-
-        // show the shape
-        this.graphSvg
-            ?.insert("g", "g")
-            .selectAll("path")
-            .data(densityData)
-            .enter()
-            .append("path")
-            .attr("d", d3.geoPath())
-            .attr("fill", (d) => color(d.value));
-    }
 
     private generateLiveMatch(): MatchDataStore {
         const teamRoster: MatchDataStore["teamRoster"] = this.matchRoster.teammateRoster$.value.allPlayers.map((p) => ({
@@ -437,38 +469,4 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         };
     }
 
-    private refreshUI(): void {
-        this.cdr.detectChanges();
-    }
-    //#endregion
-
-    //#region Debug Tools
-    private setupDebug(): void {
-        console.warn(`Match Map DEBUG Enabled`);
-        combineLatest([
-            this.xShiftRangeForm.valueChanges,
-            this.xStartRangeForm.valueChanges,
-            this.xEndRangeForm.valueChanges,
-            this.yShiftRangeForm.valueChanges,
-            this.yStartRangeForm.valueChanges,
-            this.yEndRangeForm.valueChanges,
-            this.heatSizeRange.valueChanges,
-        ])
-            .pipe(takeUntil(this.destroy$), throttleTime(10))
-            .subscribe(([xShift, xStart, xEnd, yShift, yStart, yEnd, heatSize]) => {
-                const imageAxisScale = { xStart: xStart + xShift, xEnd: xEnd + xShift, yStart: yStart + yShift, yEnd: yEnd + yShift };
-                this.heatSize = heatSize;
-                this.drawGraph(imageAxisScale, heatSize);
-            });
-    }
-
-    private refreshMapDebugTools(): void {
-        this.xShiftRangeForm.setValue(0);
-        this.xStartRangeForm.setValue(this.selectedMap?.chartConfig?.imageAxisScale?.xStart ?? -500);
-        this.xEndRangeForm.setValue(this.selectedMap?.chartConfig?.imageAxisScale?.xEnd ?? 500);
-        this.yShiftRangeForm.setValue(0);
-        this.yStartRangeForm.setValue(this.selectedMap?.chartConfig?.imageAxisScale?.yStart ?? -500);
-        this.yEndRangeForm.setValue(this.selectedMap?.chartConfig?.imageAxisScale?.yEnd ?? 500);
-    }
-    //#endregion
-}
+ */

@@ -6,7 +6,11 @@
         (click)="onLegendClick.next(legendId)"
     >
         <div class="legend-portrait-container untilt">
-            <img class="legend-portrait-image" [src]="'../../../assets/images/legend-portraits/' + getLegendImageName(legendId)" alt="" />
+            <img
+                class="legend-portrait-image"
+                [src]="'../../../assets/images/legend-portraits/large/' + getLegendImageName(legendId)"
+                alt=""
+            />
             <div class="legend-portrait-name-tag">
                 {{ getLegendName(legendId) }}
             </div>

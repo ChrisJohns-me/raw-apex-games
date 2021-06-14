@@ -7,10 +7,13 @@ import { takeUntil } from "rxjs/operators";
 @Component({
     selector: "app-selected-legends",
     templateUrl: "./selected-legends.component.html",
+    styleUrls: ["./selected-legends.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectedLegendsComponent implements OnInit, OnChanges, OnDestroy {
     @Input() public legendList: Legend[] = [];
+    @Input() public selectAll?: Subject<void>;
+    @Input() public clearAll?: Subject<void>;
     @Output("selectedLegends") public selectedLegendsOutput = new EventEmitter<Legend[]>();
 
     public selectedLegendsFormGroup!: FormGroup;
@@ -59,6 +62,12 @@ export class SelectedLegendsComponent implements OnInit, OnChanges, OnDestroy {
     public ngOnInit(): void {
         this.setupLegendsList(this.legendList);
         this.setupSelectedLegendsChange();
+        this.selectAll?.pipe(takeUntil(this.destroy$)).subscribe(() => {
+            Object.entries(this.selectedLegendsFormGroup.controls).filter(([, legendFormControl]) => legendFormControl.setValue(true));
+        });
+        this.clearAll?.pipe(takeUntil(this.destroy$)).subscribe(() => {
+            Object.entries(this.selectedLegendsFormGroup.controls).filter(([, legendFormControl]) => legendFormControl.setValue(false));
+        });
     }
 
     public ngOnChanges(): void {

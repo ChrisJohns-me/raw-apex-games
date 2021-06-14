@@ -1,6 +1,6 @@
 import { MatchInflictionEvent } from "@allfather-app/app/common/match/infliction-event";
 import { map } from "rxjs/operators";
-import { MatchActivityService } from "../../../match/match-activity.service";
+import { MatchKillfeedService } from "../../../match/match-killfeed.service";
 import { ReportableDataTimestampedStream } from "../reportable-data";
 
 type KillfeedHistoryDataOutput = {
@@ -11,7 +11,7 @@ type KillfeedHistoryDataOutput = {
     weaponId?: string;
 };
 export function KillfeedHistoryDataFactory(
-    killfeedEventObs: MatchActivityService["killfeedEvent$"]
+    killfeedEventObs: MatchKillfeedService["killfeedEvent$"]
 ): ReportableDataTimestampedStream<KillfeedHistoryDataOutput> {
     const mapKillfeedEvent = (killfeedEvent: MatchInflictionEvent) => ({
         victimName: killfeedEvent.victim.name,

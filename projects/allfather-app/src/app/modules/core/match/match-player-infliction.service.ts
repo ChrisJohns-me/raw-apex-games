@@ -1,3 +1,4 @@
+import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
 import { MatchInflictionEvent } from "@allfather-app/app/common/match/infliction-event";
 import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
 import { PlayerState } from "@allfather-app/app/common/player-state";
@@ -10,18 +11,19 @@ import { Observable, partition, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { cleanInt, isEmpty, parseBoolean } from "shared/utilities";
 import { AllfatherService } from "../allfather-service.abstract";
-import { MatchActivityService } from "./match-activity.service";
+import { MatchKillfeedService } from "./match-killfeed.service";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
 import { MatchPlayerService } from "./match-player.service";
 import { MatchRosterService } from "./match-roster.service";
 
 /**
- * @classdesc Provides local player damage/knockdown/kill events, and damage calculation
+ * @classdesc Provides local player damage/knockdown/kill/damage events
+ * Killfeed can include kill events of the local player, when the local player finished off an already knocked down player.
  */
 @Injectable({
     providedIn: "root",
     deps: [
-        MatchActivityService,
+        MatchKillfeedService,
         MatchPlayerService,
         MatchPlayerInventoryService,
         MatchRosterService,
@@ -31,15 +33,19 @@ import { MatchRosterService } from "./match-roster.service";
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerInflictionService", MatchPlayerInflictionService, deps),
 })
 export class MatchPlayerInflictionService extends AllfatherService {
-    /** Eliminations/knockdown event stream for the local user */
+    /** Local user's Killfeed event stream */
     public readonly myKillfeedEvent$: Observable<MatchInflictionEvent>;
     /** Eliminations/knockdown event stream for all players except the local user */
     public readonly notMyKillfeedEvent$: Observable<MatchInflictionEvent>;
     /** Damage event stream for the local user */
     public readonly myDamageEvent$ = new Subject<MatchInflictionEvent>();
+    /** Knockdown stream for the local user */
+    public readonly myKnockdownEvent$ = new Subject<MatchInflictionEvent>();
+    /** Elimination event stream for the local user */
+    public readonly myEliminationEvent$ = new Subject<MatchInflictionEvent>();
 
     constructor(
-        private readonly matchActivity: MatchActivityService,
+        private readonly matchKillfeed: MatchKillfeedService,
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
         private readonly matchRoster: MatchRosterService,
@@ -48,10 +54,11 @@ export class MatchPlayerInflictionService extends AllfatherService {
     ) {
         super();
         [this.myKillfeedEvent$, this.notMyKillfeedEvent$] = partition(
-            this.matchActivity.killfeedEvent$,
+            this.matchKillfeed.killfeedEvent$,
             (killfeedEvent) => !isEmpty(killfeedEvent.victim.name) && !!killfeedEvent.attacker?.isMe && !killfeedEvent.victim.isMe
         );
         this.setupMyDamageEvents();
+        this.setupKillsAndKnockdowns();
     }
 
     /**
@@ -103,6 +110,47 @@ export class MatchPlayerInflictionService extends AllfatherService {
                     weapon: primaryWeapon,
                 };
                 this.myDamageEvent$.next(newDamageEvent);
+            });
+    }
+
+    /**
+     * Knockdown or kill events caused by the local player, from the gameEvent name: "kill", "knockdown".
+     */
+    private setupKillsAndKnockdowns(): void {
+        type KillOrKnockdownData = overwolf.gep.ApexLegends.GameEventKill | overwolf.gep.ApexLegends.GameEventKnockdown;
+
+        this.overwolfGameData.newGameEvent$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((gameEvent) => gameEvent.name === "knockdown" || gameEvent.name === "kill"),
+                filter((gameEvent) => !!gameEvent.data && typeof gameEvent.data === "object"),
+                filter((gameEvent) => !!(gameEvent.data as KillOrKnockdownData).victimName)
+            )
+            .subscribe((gameEvent) => {
+                if (!this.player.myName$.value) return;
+                const actionData = gameEvent.data as KillOrKnockdownData;
+                const allRosterPlayers = this.matchRoster.matchRoster$.value.allPlayers;
+                const victim = allRosterPlayers.find((p) => isPlayerNameEqual(p.name, actionData.victimName));
+                const attacker = allRosterPlayers.find((p) => p.isMe);
+                const weapon = new WeaponItem({});
+                const isVictimKnocked = gameEvent.name === "knockdown";
+                const isVictimEliminated = gameEvent.name === "kill";
+                if (!victim) return;
+
+                const newMatchInflictionEvent: MatchInflictionEvent = {
+                    timestamp: new Date(),
+                    victim: victim,
+                    attacker: attacker,
+                    isKnockdown: isVictimKnocked,
+                    isElimination: isVictimEliminated,
+                    weapon,
+                };
+
+                if (isVictimEliminated) {
+                    this.myEliminationEvent$.next(newMatchInflictionEvent);
+                } else if (isVictimKnocked) {
+                    this.myKnockdownEvent$.next(newMatchInflictionEvent);
+                }
             });
     }
 }

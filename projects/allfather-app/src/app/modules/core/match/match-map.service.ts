@@ -40,7 +40,7 @@ export class MatchMapService extends AllfatherService {
     private setupMapFromMapRotation(): void {
         this.match.gameMode$.pipe(takeUntil(this.destroy$)).subscribe((gameMode) => {
             if (gameMode && gameMode.gameModeGenericId) {
-                const currentMap = this.mapRotationService.getCurrentMap(gameMode.gameModeGenericId);
+                const currentMap = this.mapRotationService.getCurrentMapFromGameMode(gameMode.gameModeGenericId);
                 console.log(
                     `[${this.constructor.name}] Using gamemode "${gameMode.gameModeId}" to determine map: "${currentMap?.mapName}"`
                 );

@@ -8,6 +8,7 @@ import { FormControl, FormGroup } from "@angular/forms";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
 import { Subject } from "rxjs";
 import { JSONTryParse } from "shared/utilities";
+import { almost1 } from "./simulations/almost1";
 import { fullGame1Eventful } from "./simulations/full-game1-eventful";
 import { fullGame1Quick } from "./simulations/full-game1-quick";
 import { fullGame2_2k } from "./simulations/full-game2-2k";
@@ -64,6 +65,11 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
+    public onPerformAlmost1GameClick(speedAdjust?: number): void {
+        const commands = this.logToCommands(almost1());
+        this.runCommands(commands, speedAdjust);
+    }
+
     public onPerformFullQuickGameClick(): void {
         const commands = this.logToCommands(fullGame1Quick());
         this.runCommands(commands);
@@ -99,13 +105,15 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         this.runCommands(commands);
     }
 
-    public onKillfeedKnockeddownClick(player?: MatchRosterPlayer): void {
+    public onKillfeedKnockeddownClick(player?: MatchRosterPlayer, randomAttacker = false): void {
         if (!player) return;
+        const attackerName = randomAttacker ? this.getRandomPlayer()?.name : this.player.myName$.value;
+
         const killfeedEvent: OWGameEvent = {
             name: "kill_feed",
             data: `{
                 "local_player_name": "${this.player.myName$.value}",
-                "attackerName": "${this.getRandomPlayer()?.name}",
+                "attackerName": "${attackerName}",
                 "victimName": "${player.name}",
                 "weaponName": "energy_ar",
                 "action": "knockdown"
@@ -121,13 +129,15 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         this.runCommands(commands);
     }
 
-    public onKillfeedEliminatedClick(player?: MatchRosterPlayer): void {
+    public onKillfeedEliminatedClick(player?: MatchRosterPlayer, randomAttacker = false): void {
         if (!player) return;
+        const attackerName = randomAttacker ? this.getRandomPlayer()?.name : this.player.myName$.value;
+
         const killfeedEvent: OWGameEvent = {
             name: "kill_feed",
             data: `{
                 "local_player_name": "${this.player.myName$.value}",
-                "attackerName": "${this.getRandomPlayer()?.name}",
+                "attackerName": "${attackerName}",
                 "victimName": "${player.name}",
                 "weaponName": "energy_ar",
                 "action": "kill"

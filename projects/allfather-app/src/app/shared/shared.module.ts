@@ -13,9 +13,10 @@ import { HrefDirective } from "./directives/href.directive";
 import { ResizeDirective } from "./directives/resize.directive";
 import { CustomFormatDistanceToNowPipe } from "./pipes/custom-format-distance-to-now.pipe";
 import { CustomFormatDistancePipe } from "./pipes/custom-format-distance.pipe";
+import { SafePipe } from "./pipes/safe.pipe";
 
 const DIRECTIVES = [HighlightOnChangeDirective, HrefDirective, ResizeDirective, FullHeightDirective];
-const PIPES = [CustomFormatDistancePipe, CustomFormatDistanceToNowPipe];
+const PIPES = [CustomFormatDistancePipe, CustomFormatDistanceToNowPipe, SafePipe];
 const COMPONENTS = [BootstrapCSSInjectorComponent, MatchListingComponent, RankIconComponent, IconComponent, UIContainerComponent];
 const THIRDPARTYMODULES = [DateFnsModule];
 

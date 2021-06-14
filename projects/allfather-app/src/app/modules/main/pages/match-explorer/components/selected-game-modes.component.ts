@@ -11,6 +11,8 @@ import { takeUntil } from "rxjs/operators";
 })
 export class SelectedGameModesComponent implements OnInit, OnChanges, OnDestroy {
     @Input() public gameModeList: MatchGameMode[] = [];
+    @Input() public selectAll?: Subject<void>;
+    @Input() public clearAll?: Subject<void>;
     @Output("selectedGameModes") public selectedGameModesOutput = new EventEmitter<MatchGameMode[]>();
 
     public selectedGameModesFormGroup!: FormGroup;
@@ -59,6 +61,16 @@ export class SelectedGameModesComponent implements OnInit, OnChanges, OnDestroy 
     public ngOnInit(): void {
         this.setupGameModesList(this.gameModeList);
         this.setupSelectedGameModesChange();
+        this.selectAll?.pipe(takeUntil(this.destroy$)).subscribe(() => {
+            Object.entries(this.selectedGameModesFormGroup.controls).filter(([, gameModeFormControl]) =>
+                gameModeFormControl.setValue(true)
+            );
+        });
+        this.clearAll?.pipe(takeUntil(this.destroy$)).subscribe(() => {
+            Object.entries(this.selectedGameModesFormGroup.controls).filter(([, gameModeFormControl]) =>
+                gameModeFormControl.setValue(false)
+            );
+        });
     }
 
     public ngOnChanges(): void {

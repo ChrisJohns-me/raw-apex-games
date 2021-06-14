@@ -2,14 +2,31 @@ import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/gam
 import { Rank } from "@allfather-app/app/common/rank/rank";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
-import { AfterViewInit, ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output, TrackByFunction } from "@angular/core";
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    TrackByFunction,
+} from "@angular/core";
 import { Tooltip } from "bootstrap";
-import { intervalToDuration } from "date-fns";
+import { differenceInMilliseconds, intervalToDuration } from "date-fns";
+import { interval, Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
 import { unique } from "shared/utilities/primitives/array";
 import { Legend } from "../../../common/legend/legend";
 import { MatchGameMode } from "../../../common/match/game-mode/game-mode";
 import { MatchMapList } from "../../../common/match/map/map-list";
+
+const REFRESH_TIME = 1 * 60 * 1000;
+const MATCH_RECENT_TIME = 3 * 60 * 1000;
+
+type TeamRosterPlayer = NonNullable<MatchDataStore["teamRoster"]>[0];
 
 export enum DataItem {
     MatchDate = "matchdate",
@@ -30,7 +47,7 @@ export enum DataItem {
     templateUrl: "./match-listing.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MatchListingComponent implements AfterViewInit, OnChanges {
+export class MatchListingComponent implements OnInit, OnDestroy {
     @Input() public showDataItems: DataItem[] = [];
     @Input() public isLiveMatch = false;
     @Input() public set matches(value: MatchDataStore[]) {
@@ -40,17 +57,21 @@ export class MatchListingComponent implements AfterViewInit, OnChanges {
         return this._matches;
     }
     @Input() public selectedMatchId? = "";
-    @Input() public isSelectable = false;
+    @Input() public isMatchClickable = false;
+    @Input() public isTeamRosterPlayerClickable = false;
     @Output() public matchClick = new EventEmitter<MatchDataStore>();
+    @Output() public teamRosterClick = new EventEmitter<TeamRosterPlayer>();
 
-    public DataItem: typeof DataItem = DataItem;
+    public DataItem = DataItem;
     public now = Date.now();
     /** Tipping point to show date played in different formats. */
     public relativeTime = 6 * 60 * 60 * 1000;
 
+    private tooltipList: Tooltip[] = [];
     private _matches: MatchDataStore[] = [];
+    private destroy$ = new Subject<void>();
 
-    constructor(private readonly config: ConfigurationService) {}
+    constructor(private readonly cdr: ChangeDetectorRef, private readonly config: ConfigurationService) {}
 
     public isFunction = (value: unknown): boolean => typeof value === "function";
     public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item) => item.matchId;
@@ -61,11 +82,17 @@ export class MatchListingComponent implements AfterViewInit, OnChanges {
     public getLegendImageName = (legendId?: string): string => Legend.getSquarePortraitFilename(legendId);
     public getLegendName = (legendId?: string): Optional<string> => Legend.getName(legendId);
     public getRankFromScore = (rankScore: number): Optional<Rank> => new Rank({ score: rankScore });
+    public isRecent = (baseDate?: Date): boolean => !!baseDate && differenceInMilliseconds(new Date(), baseDate) <= MATCH_RECENT_TIME;
 
-    public ngAfterViewInit(): void {}
+    public ngOnInit(): void {
+        interval(REFRESH_TIME)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => this.refreshUI());
+    }
 
-    public ngOnChanges(): void {
-        setTimeout(() => this.enableBSTooltips(), 1000);
+    public ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     /**
@@ -83,10 +110,17 @@ export class MatchListingComponent implements AfterViewInit, OnChanges {
         return teamRoster;
     }
 
-    private enableBSTooltips(): void {
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new Tooltip(tooltipTriggerEl);
-        });
+    public onMatchClick(match: MatchDataStore): void {
+        if (!this.isMatchClickable) return;
+        this.matchClick.emit(match);
+    }
+
+    public onTeamRosterClick(teamRoster: TeamRosterPlayer): void {
+        if (!this.isTeamRosterPlayerClickable) return;
+        this.teamRosterClick.emit(teamRoster);
+    }
+
+    private refreshUI(): void {
+        this.cdr.detectChanges();
     }
 }

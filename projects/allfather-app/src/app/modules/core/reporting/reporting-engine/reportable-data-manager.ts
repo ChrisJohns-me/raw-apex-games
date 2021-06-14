@@ -1,6 +1,6 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
-import { MatchActivityService } from "../../match/match-activity.service";
+import { MatchKillfeedService } from "../../match/match-killfeed.service";
 import { MatchMapService } from "../../match/match-map.service";
 import { MatchPlayerInflictionService } from "../../match/match-player-infliction.service";
 import { MatchPlayerInventoryService } from "../../match/match-player-inventory.service";
@@ -42,7 +42,7 @@ import { WeaponIdsHistoryDataFactory } from "./reportable-data/weapon-ids-histor
     providedIn: "root",
     deps: [
         MatchService,
-        MatchActivityService,
+        MatchKillfeedService,
         MatchMapService,
         MatchPlayerInflictionService,
         MatchPlayerInventoryService,
@@ -62,7 +62,7 @@ export class ReportableDataManagerService {
 
     constructor(
         private readonly match: MatchService,
-        private readonly matchActivity: MatchActivityService,
+        private readonly matchKillfeed: MatchKillfeedService,
         private readonly matchMap: MatchMapService,
         private readonly matchPlayerInfliction: MatchPlayerInflictionService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
@@ -89,7 +89,7 @@ export class ReportableDataManagerService {
             DamageEventsHistoryDataFactory(this.matchPlayerInfliction.myDamageEvent$),
             EliminationsDataFactory(this.matchPlayerStats.myEliminations$),
             GameModeDataFactory(this.match.gameMode$),
-            KillfeedHistoryDataFactory(this.matchActivity.killfeedEvent$),
+            KillfeedHistoryDataFactory(this.matchKillfeed.killfeedEvent$),
             KnockdownsDataFactory(this.matchPlayerStats.myKnockdowns$),
             LegendDataFactory(this.matchPlayerLegend.myLegend$),
             LocationHistoryDataFactory(this.matchPlayerLocation.myCoordinates$, this.matchPlayerLocation.myLocationPhase$),

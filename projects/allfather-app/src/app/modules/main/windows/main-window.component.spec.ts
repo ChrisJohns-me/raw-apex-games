@@ -1,4 +1,5 @@
 import { IconComponent } from "@allfather-app/app/shared/components/icon/icon.component";
+import { FullHeightDirective } from "@allfather-app/app/shared/directives/full-height.directive";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -27,15 +28,16 @@ import { PlayerAccountStatsService } from "../../core/player-account-stats/playe
 import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { PlayerService } from "../../core/player.service";
 import { SettingsService } from "../../core/settings.service";
-import { DailyAverageGraphComponent } from "../components/charting/daily-average-graph.component";
-import { AccountStatsDisplayComponent } from "../components/dashboard/account-stats-display.component";
-import { LegendIconsBoardComponent } from "../components/dashboard/legend-icons-board.component";
-import { MapRotationDisplayComponent } from "../components/dashboard/map-rotation-display.component";
+import { BrowserWindowRef, WINDOW } from "../../core/window.service";
 import { NavbarComponent } from "../components/navbar.component";
-import { ChartingPageComponent } from "../pages/charting-page.component";
-import { DashboardPageComponent } from "../pages/dashboard-page.component";
-import { MatchExplorerPageComponent } from "../pages/match-explorer-page.component";
-import { SettingsPageComponent } from "../pages/settings-page.component";
+import { ChartingPageComponent } from "../pages/charting/charting-page.component";
+import { DailyAverageGraphComponent } from "../pages/charting/components/daily-average-graph.component";
+import { AccountStatsDisplayComponent } from "../pages/dashboard/components/account-stats-display.component";
+import { LegendIconsBoardComponent } from "../pages/dashboard/components/legend-icons-board.component";
+import { MapRotationDisplayComponent } from "../pages/dashboard/components/map-rotation-display.component";
+import { DashboardPageComponent } from "../pages/dashboard/dashboard-page.component";
+import { MatchExplorerPageComponent } from "../pages/match-explorer/match-explorer-page.component";
+import { SettingsPageComponent } from "../pages/settings/settings-page.component";
 import { MainWindowComponent } from "./main-window.component";
 import { MainWindowService } from "./main-window.service";
 
@@ -59,8 +61,10 @@ describe("MainWindowComponent", () => {
                 SettingsPageComponent,
                 MapRotationDisplayComponent,
                 AccountStatsDisplayComponent,
+                FullHeightDirective,
             ],
             providers: [
+                { provide: WINDOW, useClass: BrowserWindowRef },
                 { provide: BackgroundService, useClass: MockBackgroundService },
                 { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: MainWindowService, useClass: MockMainWindowService },

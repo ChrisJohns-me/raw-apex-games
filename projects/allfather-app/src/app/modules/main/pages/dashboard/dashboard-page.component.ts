@@ -41,6 +41,7 @@ export class DashboardPageComponent implements OnInit {
         avgDamage: 0,
         avgDuration: 0,
         avgEliminations: 0,
+        avgAssists: 0,
         avgKnockdowns: 0,
         avgPlacement: 0,
         avgWins: 0,

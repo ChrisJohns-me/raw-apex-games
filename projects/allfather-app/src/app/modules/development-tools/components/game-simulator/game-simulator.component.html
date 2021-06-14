@@ -26,6 +26,9 @@
             <button class="btn btn-sm btn-outline-primary mx-2" type="button" (click)="onPerformValkUltGameClick(speedAdjust)">
                 "valk ult"
             </button>
+            <button class="btn btn-sm btn-outline-primary mx-2" type="button" (click)="onPerformAlmost1GameClick(speedAdjust)">
+                "almost won"
+            </button>
         </div>
     </div>
 </form>
@@ -50,9 +53,25 @@
                     class="btn btn-outline-warning"
                     type="button"
                     [disabled]="!rosterPlayerSelected"
+                    (click)="onKillfeedKnockeddownClick(rosterPlayerSelected, true)"
+                >
+                    Knock Down
+                </button>
+                <button
+                    class="btn btn-outline-danger"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onKillfeedEliminatedClick(rosterPlayerSelected, true)"
+                >
+                    Eliminate</button
+                ><br />
+                <button
+                    class="btn btn-outline-warning"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
                     (click)="onKillfeedKnockeddownClick(rosterPlayerSelected)"
                 >
-                    Knocked Down
+                    Knock Down (by me)
                 </button>
                 <button
                     class="btn btn-outline-danger"
@@ -60,7 +79,7 @@
                     [disabled]="!rosterPlayerSelected"
                     (click)="onKillfeedEliminatedClick(rosterPlayerSelected)"
                 >
-                    Eliminated
+                    Eliminate (by me)
                 </button>
             </div>
             <div class="col-6">

@@ -24,7 +24,7 @@ const RETRY_MULTIPLIER = 5000;
 /**
  * @class MapRotationService
  * @classdesc Retrieves current and next map data.
- * Auto-retrieves when Game Process is running or
+ * Auto-retrieves when Game Process is running or every several minutes
  */
 @Injectable({
     providedIn: "root",
@@ -41,13 +41,16 @@ export class MapRotationService extends AllfatherService {
         this.setupAutoMapRotation();
     }
 
-    public getCurrentMap(gameModeType: MatchGameModeGenericId): Optional<MatchMap> {
+    public getCurrentMapFromGameMode(gameModeType: MatchGameModeGenericId): Optional<MatchMap> {
         const now = new Date();
         const currInfo = this.mapRotationInfo(this.mapRotation$.value, "current", gameModeType);
         const nextInfo = this.mapRotationInfo(this.mapRotation$.value, "next", gameModeType);
 
         if (currInfo?.matchMap) {
-            if ((currInfo.endDate ?? 0) > now) {
+            if (!currInfo.startDate && !currInfo.endDate && !nextInfo?.startDate && !nextInfo?.endDate) {
+                // Game Mode from map rotation does not have or use start/end dates
+                return currInfo.matchMap;
+            } else if ((currInfo.endDate ?? 0) > now) {
                 return currInfo.matchMap;
             } else if (nextInfo?.matchMap && (nextInfo?.endDate ?? 0) > now) {
                 console.log(
@@ -79,10 +82,11 @@ export class MapRotationService extends AllfatherService {
             map((mapRotationJSON) => new MapRotationMozambiquehereDTO(mapRotationJSON)),
             tap((dto) => console.debug(`[${this.constructor.name}] getMapRotation converted response to DTO class`, dto)),
             map((mapRotationDTO) => mapRotationDTO.toMapRotation()),
-            tap((custom) =>
-                console.debug(`[${this.constructor.name}] getMapRotation converted DTO class to Custom Map Rotation class`, custom)
-            ),
-            tap((mapRotation) => this.updateMapRotationExpire(mapRotation)),
+            tap((mapRotation) => {
+                console.debug(`[${this.constructor.name}] getMapRotation converted DTO class to Custom Map Rotation class`, mapRotation);
+                this.mapRotation$.next(mapRotation);
+                this.updateMapRotationExpire(mapRotation);
+            }),
             retryWhen((errors) => this.mapRotationRetry$(errors))
         );
     }
@@ -92,7 +96,8 @@ export class MapRotationService extends AllfatherService {
      * Only if game process is started.
      */
     private setupAutoMapRotation(): void {
-        timer(0, 5 * 1000 * 60)
+        const updateMapRotationTime = 5 * 60 * 1000;
+        timer(0, updateMapRotationTime)
             .pipe(
                 tap(() => console.debug(`[${this.constructor.name}] setupAutoMapRotation Running Map Rotation check...`)),
                 takeUntil(this.destroy$),
@@ -116,8 +121,8 @@ export class MapRotationService extends AllfatherService {
         const defaultExpireMin = 10;
         const soonestMapInfo = MapRotationData.getSoonestMapRotationInfo(mapRotation);
         if (!soonestMapInfo?.endDate) console.warn(`[${this.constructor.name}] While updating map rotation expiration, no map had .`);
-        const soonestMapEndDateMs = soonestMapInfo?.endDate ?? addMinutes(new Date(), defaultExpireMin - 1); // Default to every x minutes
-        const newMapRotationExpire = addMinutes(soonestMapEndDateMs, 1); // Refresh after any map has expired
+        const soonestMapEndDate = soonestMapInfo?.endDate ?? addMinutes(new Date(), defaultExpireMin - 1); // Default to every x minutes
+        const newMapRotationExpire = addMinutes(soonestMapEndDate, 1); // Refresh after any map has expired
 
         console.debug(`[${this.constructor.name}] Time now : ${new Date()}; Earliest MapInfo Date calc'd : ${soonestMapInfo?.endDate}`);
         this.cacheMapRotationExpire = newMapRotationExpire;
@@ -136,11 +141,11 @@ export class MapRotationService extends AllfatherService {
             gameModeType === MatchGameModeGenericId.BattleRoyale_Duos ||
             gameModeType === MatchGameModeGenericId.BattleRoyale_Trios
         ) {
-            if (iteration === "current") return mapRotation?.arenasPubs?.current;
-            if (iteration === "next") return mapRotation?.arenasPubs?.next;
+            if (iteration === "current") return mapRotation?.battleRoyalePubs?.current;
+            if (iteration === "next") return mapRotation?.battleRoyalePubs?.next;
         } else if (gameModeType === MatchGameModeGenericId.BattleRoyale_Ranked) {
-            if (iteration === "current") return mapRotation?.arenasPubs?.current;
-            if (iteration === "next") return mapRotation?.arenasPubs?.next;
+            if (iteration === "current") return mapRotation?.battleRoyaleRanked?.current;
+            if (iteration === "next") return mapRotation?.battleRoyaleRanked?.next;
         } else if (gameModeType === MatchGameModeGenericId.FiringRange || gameModeType === MatchGameModeGenericId.Training) {
             const firingRangeMap = MatchMapList.find((m) => m.mapGenericId === MatchMapGenericId.FiringRange);
             return {

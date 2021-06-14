@@ -26,7 +26,7 @@ enum GroupBy {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasheetPageComponent implements OnInit, AfterViewInit, OnDestroy {
-    public GroupBy: typeof GroupBy = GroupBy;
+    public GroupBy = GroupBy;
 
     private destroy$ = new Subject<void>();
 

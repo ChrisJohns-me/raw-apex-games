@@ -22,6 +22,7 @@
         "enableMatchTimerWindow": true,
         "enableUltTimerWindow": true,
         "enableInflictionInsightWindow": true,
+        "enableReticleHelperWindow": true,
         "inflictionInsight": {
             "showAssumedOpponentTeammateShields": false,
             "showAssumedOpponentTeammateHealth": false,
@@ -31,6 +32,9 @@
         "legendSelectAssist": {
             "legendStats": true,
             "complimentaryLegends": true
+        },
+        "reticleHelper": {
+            "enableAimingReticle": true
         }
     },
     "featureConfigs": {
@@ -45,11 +49,12 @@
             "limitLegendStatsMatches": 250,
             "limitComplimentaryLegendsMatches": 500,
             "complimentaryLegendsWeights": {
-                "winWeight": 0.2,
-                "placementWeight": 0.2,
-                "damageWeight": 0.2,
-                "eliminationWeight": 0.2,
-                "knockdownWeight": 0.2,
+                "winWeight": 0.17,
+                "placementWeight": 0.17,
+                "damageWeight": 0.17,
+                "eliminationWeight": 0.17,
+                "assistWeight": 0.17,
+                "knockdownWeight": 0.17,
                 "durationWeight": 0
             },
             "legendRows": [

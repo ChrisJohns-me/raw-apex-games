@@ -16,7 +16,9 @@ import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/service
 import { MockReportingService } from "@allfather-app/app/modules/core/mocks/services/mock-reporting.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
+import { BrowserWindowRef, WINDOW } from "@allfather-app/app/modules/core/window.service";
 import { MatchListingComponent } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
+import { FullHeightDirective } from "@allfather-app/app/shared/directives/full-height.directive";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MapExplorerPageComponent } from "./map-explorer-page.component";
 
@@ -26,8 +28,9 @@ describe("MapExplorerPageComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [MapExplorerPageComponent, MatchListingComponent],
+            declarations: [MapExplorerPageComponent, MatchListingComponent, FullHeightDirective],
             providers: [
+                { provide: WINDOW, useClass: BrowserWindowRef },
                 { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: MatchMapService, useClass: MockMatchMapService },
                 { provide: MatchPlayerLegendService, useClass: MockMatchPlayerLegendService },

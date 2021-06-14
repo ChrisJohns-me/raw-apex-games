@@ -15,6 +15,10 @@ $top-distance: 195px;
     white-space: nowrap;
     background-color: var(--bs-light);
 
+    & * {
+        user-select: unset;
+    }
+
     &.disabled {
         opacity: 0.5;
     }
