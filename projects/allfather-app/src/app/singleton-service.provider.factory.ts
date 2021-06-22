@@ -50,11 +50,17 @@ function isServiceInstantiated(referenceKey: string): boolean {
 }
 
 function validateIsBackgroundWindow(referenceKey: string): void {
+    const isMockEnvironment = !!(overwolf as any).__mockInstallationCheck;
+
+    if (isMockEnvironment) {
+        console.error(`This is a unit test; bailing`);
+        return;
+    }
     UIWindow.getCurrentWindow()
         .pipe(take(1))
         .subscribe((currentWindow) => {
             if (currentWindow.name !== WindowName.Background) {
-                const errMsg = `[SingletonServiceProvider] "${referenceKey}" Singleton Service is not instantiated on the Background Window.`;
+                const errMsg = `[SingletonServiceProvider] "${referenceKey}" Singleton Service is not instantiated on the Background Window; is instantiated on "${currentWindow.name}"`;
                 if (environment.DEV) throw new Error(errMsg);
                 console.error(errMsg);
             }

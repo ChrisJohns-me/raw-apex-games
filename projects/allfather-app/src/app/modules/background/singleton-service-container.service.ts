@@ -7,6 +7,7 @@ import { GameService } from "../core/game.service";
 import { LocalDatabaseService } from "../core/local-database/local-database.service";
 import { LocalStorageService } from "../core/local-storage/local-storage.service";
 import { MapRotationService } from "../core/map-rotation/map-rotation.service";
+import { MatchArenasScoreboardService } from "../core/match/match-arenas-scoreboard.service";
 import { MatchKillfeedService } from "../core/match/match-killfeed.service";
 import { MatchLegendSelectService } from "../core/match/match-legend-select.service";
 import { MatchMapService } from "../core/match/match-map.service";
@@ -56,6 +57,7 @@ import { SystemTrayService } from "./system-tray.service";
         LocalDatabaseService,
         LocalStorageService,
         MainWindowService,
+        MatchArenasScoreboardService,
         MapRotationService,
         MatchKillfeedService,
         MatchLegendSelectService,
@@ -100,7 +102,8 @@ export class SingletonServiceContainerService {
         public readonly LocalStorageService: LocalStorageService,
         public readonly MainWindowService: MainWindowService,
         public readonly MapRotationService: MapRotationService,
-        public readonly matchKillfeedService: MatchKillfeedService,
+        public readonly MatchArenasScoreboardService: MatchArenasScoreboardService,
+        public readonly MatchKillfeedService: MatchKillfeedService,
         public readonly MatchLegendSelectService: MatchLegendSelectService,
         public readonly MatchMapService: MatchMapService,
         public readonly MatchPlayerInflictionService: MatchPlayerInflictionService,

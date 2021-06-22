@@ -102,7 +102,7 @@
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
-                        "main": "projects/allfather-app/src/test.ts",
+                        "main": "projects/allfather-app/test.ts",
                         "polyfills": "projects/allfather-app/src/polyfills.ts",
                         "tsConfig": "projects/allfather-app/tsconfig.spec.json",
                         "karmaConfig": "projects/allfather-app/karma.conf.js",
@@ -203,7 +203,7 @@
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
-                        "main": "projects/allfather-web/src/test.ts",
+                        "main": "projects/allfather-web/test.ts",
                         "polyfills": "projects/allfather-web/src/polyfills.ts",
                         "tsConfig": "projects/allfather-web/tsconfig.spec.json",
                         "karmaConfig": "projects/allfather-web/karma.conf.js",

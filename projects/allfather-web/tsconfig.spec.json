@@ -4,7 +4,7 @@
     "outDir": "../../out-tsc/spec"
   },
   "files": [
-    "src/test.ts",
+    "./test.ts",
     "src/polyfills.ts"
   ],
   "include": [

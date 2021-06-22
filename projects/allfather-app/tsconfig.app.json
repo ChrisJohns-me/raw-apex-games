@@ -8,7 +8,7 @@
     "src/polyfills.ts"
   ],
   "exclude": [
-    "src/test.ts",
+    "./test.ts",
     "src/**/*.spec.ts"
   ]
 }
