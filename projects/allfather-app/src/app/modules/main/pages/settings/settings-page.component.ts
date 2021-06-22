@@ -101,7 +101,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     public mdiAttachment = mdiAttachment;
     //#endregion
 
-    private dbExportFilename = `${environment.DEV ? "DEV_" : ""}allfather_db_${format(new Date(), "yyyy_dd_mm")}.json`;
+    private dbExportFilename = `${environment.DEV ? "DEV_" : ""}allfather_db_${format(new Date(), "yyyy_dd_MM")}.json`;
     private dbExportDirectory = "db_export";
     private _isSaving = false;
     private destroy$ = new Subject<void>();
@@ -127,17 +127,18 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
 
     public exportLocalDatabase(): void {
         this.isExportingLocalDatabase = true;
+        const filePath = `${this.dbExportDirectory}/${this.dbExportFilename}`;
         this.fileService
             .ensureDirectory$(this.dbExportDirectory)
             .pipe(
                 takeUntil(this.destroy$),
                 switchMap(() => this.localDatabase.exportDatabaseBlob$()),
                 switchMap((blobContent) => from(blobContent.text())),
-                switchMap((jsonContent) => this.fileService.saveFile$(`${this.dbExportDirectory}/${this.dbExportFilename}`, jsonContent)),
+                switchMap((jsonContent) => this.fileService.saveFile$(filePath, jsonContent)),
                 finalize(() => (this.isExportingLocalDatabase = false))
             )
             .subscribe(() => {
-                console.debug(`>>> Finished Export.`);
+                console.debug(`>>> Finished Export to "${filePath}"`);
             });
     }
 

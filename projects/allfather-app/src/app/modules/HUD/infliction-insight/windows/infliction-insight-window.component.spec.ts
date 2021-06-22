@@ -221,7 +221,7 @@ describe("InflictionInsightWindowComponent", () => {
             matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
             // Act
-            const actualValue: MatchInflictionEvent = {
+            const damageEvent: MatchInflictionEvent = {
                 timestamp: new Date(),
                 victim: { name: "Victim1", isMe: false },
                 attacker: { name: "Me", isMe: true },
@@ -233,7 +233,7 @@ describe("InflictionInsightWindowComponent", () => {
                 isElimination: false,
                 weapon: new WeaponItem({}),
             };
-            hot("a|", { a: actualValue }).subscribe(matchPlayerInflictionService.myDamageEvent$);
+            hot("a|", { a: damageEvent }).subscribe(matchPlayerInflictionService.myDamageEvent$);
 
             const expectedInflictionAccum: MatchInflictionEventAccum = {
                 victim: { name: "Victim1", isMe: false },
@@ -281,7 +281,7 @@ describe("InflictionInsightWindowComponent", () => {
             matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
             // Act
-            const actualValue: MatchInflictionEvent = {
+            const damageEvent: MatchInflictionEvent = {
                 timestamp: new Date(),
                 victim: { name: "Victim1", isMe: false },
                 attacker: { name: "Me", isMe: true },
@@ -293,7 +293,7 @@ describe("InflictionInsightWindowComponent", () => {
                 isElimination: false,
                 weapon: new WeaponItem({}),
             };
-            hot("a", { a: actualValue }).subscribe(matchPlayerInflictionService.myDamageEvent$);
+            hot("a", { a: damageEvent }).subscribe(matchPlayerInflictionService.myDamageEvent$);
 
             const expectedInflictionAccum: MatchInflictionEventAccum = {
                 victim: { name: "Victim1", isMe: false },
@@ -341,7 +341,7 @@ describe("InflictionInsightWindowComponent", () => {
             matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
             // Act
-            const actualValue: MatchInflictionEvent = {
+            const damageEvent: MatchInflictionEvent = {
                 timestamp: new Date(),
                 victim: { name: "Victim1", isMe: false },
                 attacker: { name: "Me", isMe: true },
@@ -353,7 +353,7 @@ describe("InflictionInsightWindowComponent", () => {
                 isElimination: true,
                 weapon: new WeaponItem({}),
             };
-            hot("a", { a: actualValue }).subscribe(matchPlayerInflictionService.myDamageEvent$);
+            hot("a", { a: damageEvent }).subscribe(matchPlayerInflictionService.myDamageEvent$);
 
             const expectedInflictionAccum: MatchInflictionEventAccum = {
                 victim: { name: "Victim1", isMe: false },

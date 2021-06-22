@@ -10,7 +10,7 @@ import { filter, switchMap, take, takeUntil, tap } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
 
 const STATS_SLOW_POLL_DELAY = 10 * 60 * 1000;
-const STATS_FAST_POLL_DELAY = 60 * 1000;
+const STATS_FAST_POLL_DELAY = 15 * 1000;
 
 @Component({
     selector: "app-account-stats-display",
@@ -60,7 +60,7 @@ export class AccountStatsDisplayComponent implements OnInit, OnDestroy {
                 filter((increment) => !!this.gameProcess.isRunning$.value || increment % 6 === 0),
                 tap(() => {
                     const reason = this.gameProcess.isRunning$.value ? "Game Running" : (STATS_SLOW_POLL_DELAY * 6) / 1000 + "sec";
-                    console.trace(`[${this.constructor.name}] (${reason}) Slow polling for account stats`);
+                    console.trace(`[${this.constructor.name}] (${reason}) Slow polling for account stats (cache allowed)`);
                 }),
                 switchMap(() => this.getAccountStats$())
             )
@@ -70,19 +70,15 @@ export class AccountStatsDisplayComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Poll the account stats API every 30 seconds:
+     * Poll the account stats API every X seconds:
      *  After a match ends
      *  Until stats version changes
      *  Max 10 times (per match)
+     *  Forces breaks cache
      */
     private setupFastStatsPolling(): void {
         const maxPostMatchFetches = 10;
         let isPolling = false;
-
-        const getMyStats$ = this.player.myName$.pipe(
-            filter((myName) => !isEmpty(myName)),
-            switchMap((myName) => this.playerAccountStats.getPlayerAccountStats$(myName!, MozambiqueherePlatform.PC))
-        );
 
         this.match.endedEvent$
             .pipe(
@@ -90,8 +86,8 @@ export class AccountStatsDisplayComponent implements OnInit, OnDestroy {
                 tap(() => (isPolling = true)),
                 switchMap(() => timer(0, STATS_FAST_POLL_DELAY).pipe(take(maxPostMatchFetches))),
                 filter(() => isPolling),
-                tap(() => console.trace(`[${this.constructor.name}] (Match ended) Fast polling for account stats`)),
-                switchMap(() => getMyStats$)
+                tap(() => console.trace(`[${this.constructor.name}] (Match ended) Fast polling for account stats (cache breaking)`)),
+                switchMap(() => this.getAccountStats$(true))
             )
             .subscribe((myStats: PlayerAccountStats) => {
                 if (this.latestAccountStatsVersion !== myStats.statsVersion) {
@@ -101,10 +97,10 @@ export class AccountStatsDisplayComponent implements OnInit, OnDestroy {
             });
     }
 
-    private getAccountStats$(): Observable<PlayerAccountStats> {
+    private getAccountStats$(breakCache = false): Observable<PlayerAccountStats> {
         return this.player.myName$.pipe(
             filter((myName) => !isEmpty(myName)),
-            switchMap((myName) => this.playerAccountStats.getPlayerAccountStats$(myName!, MozambiqueherePlatform.PC)),
+            switchMap((myName) => this.playerAccountStats.getPlayerAccountStats$(myName!, MozambiqueherePlatform.PC, breakCache)),
             tap((accountStats) => console.trace(`[${this.constructor.name}] Received account stats for "${accountStats.playerName}"`))
         );
     }

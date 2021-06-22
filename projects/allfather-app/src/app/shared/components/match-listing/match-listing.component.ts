@@ -3,6 +3,7 @@ import { Rank } from "@allfather-app/app/common/rank/rank";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import {
+    AfterViewChecked,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
     Component,
@@ -17,7 +18,7 @@ import { Tooltip } from "bootstrap";
 import { differenceInMilliseconds, intervalToDuration } from "date-fns";
 import { interval, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { isEmpty } from "shared/utilities";
+import { isEmpty, Stopwatch } from "shared/utilities";
 import { unique } from "shared/utilities/primitives/array";
 import { Legend } from "../../../common/legend/legend";
 import { MatchGameMode } from "../../../common/match/game-mode/game-mode";
@@ -47,7 +48,7 @@ export enum DataItem {
     templateUrl: "./match-listing.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MatchListingComponent implements OnInit, OnDestroy {
+export class MatchListingComponent implements OnInit, OnDestroy, AfterViewChecked {
     @Input() public showDataItems: DataItem[] = [];
     @Input() public isLiveMatch = false;
     @Input() public set matches(value: MatchDataStore[]) {
@@ -71,17 +72,67 @@ export class MatchListingComponent implements OnInit, OnDestroy {
     private _matches: MatchDataStore[] = [];
     private destroy$ = new Subject<void>();
 
+    private stopwatch = new Stopwatch();
+    private stopwatch2 = new Stopwatch();
+    private times = {
+        getRankFromScore: 0,
+        getLegendName: 0,
+        getLegendImageName: 0,
+        getMatchMapName: 0,
+        getGameModeTypeName: 0,
+        buildTeamRoster: 0,
+        refreshUI: 0,
+    };
     constructor(private readonly cdr: ChangeDetectorRef, private readonly config: ConfigurationService) {}
 
     public isFunction = (value: unknown): boolean => typeof value === "function";
     public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item) => item.matchId;
     public durationSinceNow = (baseDate: Date): Duration => intervalToDuration({ start: baseDate, end: new Date() });
-    public getGameModeTypeName = (gameModeId: string): Optional<string> =>
-        MatchGameMode.getFromId(MatchGameModeList, gameModeId).gameModeName;
-    public getMatchMapName = (matchMapId: string): Optional<string> => MatchMapList.find((m) => m.mapId === matchMapId)?.mapName;
-    public getLegendImageName = (legendId?: string): string => Legend.getSquarePortraitFilename(legendId);
-    public getLegendName = (legendId?: string): Optional<string> => Legend.getName(legendId);
-    public getRankFromScore = (rankScore: number): Optional<Rank> => new Rank({ score: rankScore });
+    public getGameModeTypeName = (gameModeId: string): Optional<string> => {
+        this.stopwatch.start();
+        const newGameModeName = MatchGameMode.getFromId(MatchGameModeList, gameModeId).gameModeName;
+        this.stopwatch.stop();
+        this.times["getGameModeTypeName"] += this.stopwatch.result(false);
+        this.stopwatch.clear();
+
+        return newGameModeName;
+    };
+    public getMatchMapName = (matchMapId: string): Optional<string> => {
+        this.stopwatch.start();
+        const newMatchMapName = MatchMapList.find((m) => m.mapId === matchMapId)?.mapName;
+        this.stopwatch.stop();
+        this.times["getMatchMapName"] += this.stopwatch.result(false);
+        this.stopwatch.clear();
+
+        return newMatchMapName;
+    };
+    public getLegendImageName = (legendId?: string): string => {
+        this.stopwatch.start();
+        const newLegendImageName = Legend.getSquarePortraitFilename(legendId);
+        this.stopwatch.stop();
+        this.times["getLegendImageName"] += this.stopwatch.result(false);
+        this.stopwatch.clear();
+
+        return newLegendImageName;
+    };
+    public getLegendName = (legendId?: string): Optional<string> => {
+        this.stopwatch.start();
+        const newLegendName = Legend.getName(legendId);
+        this.stopwatch.stop();
+        this.times["getLegendName"] += this.stopwatch.result(false);
+        this.stopwatch.clear();
+
+        return newLegendName;
+    };
+    public getRankFromScore = (rankScore: number): Optional<Rank> => {
+        this.stopwatch.start();
+        const newRank = new Rank({ score: rankScore });
+        this.stopwatch.stop();
+        this.times["getRankFromScore"] += this.stopwatch.result(false);
+        this.stopwatch.clear();
+
+        return newRank;
+    };
     public isRecent = (baseDate?: Date): boolean => !!baseDate && differenceInMilliseconds(new Date(), baseDate) <= MATCH_RECENT_TIME;
 
     public ngOnInit(): void {
@@ -95,6 +146,10 @@ export class MatchListingComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
+    public ngAfterViewChecked(): void {
+        console.debug(this.times);
+    }
+
     /**
      * Makes each legend unique.
      * Sorts and places "me" first.
@@ -103,10 +158,16 @@ export class MatchListingComponent implements OnInit, OnDestroy {
      */
     public buildTeamRoster(match: MatchDataStore): MatchDataStore["teamRoster"] {
         if (isEmpty(match?.teamRoster)) return [];
+        this.stopwatch.start();
         const maxTeammates = this.config.facts.maxSquadSize;
         const teamRoster = unique(match.teamRoster, (p) => p.legendId);
         teamRoster.length = Math.min(teamRoster.length, maxTeammates);
         teamRoster.sort((a) => (a.isMe ? -1 : 0));
+
+        this.stopwatch.stop();
+        this.times["buildTeamRoster"] += this.stopwatch.result(false);
+        this.stopwatch.clear();
+
         return teamRoster;
     }
 
@@ -121,6 +182,10 @@ export class MatchListingComponent implements OnInit, OnDestroy {
     }
 
     private refreshUI(): void {
+        this.stopwatch2.start();
         this.cdr.detectChanges();
+        this.times["refreshUI"] += this.stopwatch2.result(false);
+        this.stopwatch2.stop();
+        this.stopwatch2.clear();
     }
 }

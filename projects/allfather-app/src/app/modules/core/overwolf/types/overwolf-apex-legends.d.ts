@@ -17,8 +17,9 @@ declare namespace overwolf.gep.ApexLegends {
         victimName: string;
         weaponName: string;
         // "Caustic Gas" ~= "knockdown"
-        // "Melee" ~= "knockdown"
-        // "Bleed Out" ~= "kill"
+        // "Melee" = "knockdown" or "kill"
+        // "Bleed Out" = "kill"
+        // "committedsuicide" need to add (need casing and spacing)
         action: "kill" | "knockdown" | "assist" | "Bleed Out" | "Melee" | "Caustic Gas" | "headshot_kill" | "Finisher";
     }
 

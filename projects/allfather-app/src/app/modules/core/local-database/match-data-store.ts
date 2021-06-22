@@ -83,7 +83,6 @@ interface Coordinates {
     x: number;
     y: number;
     z: number;
-    phaseNum: LocationPhaseNum;
 }
 
 export enum LocationPhaseNum {

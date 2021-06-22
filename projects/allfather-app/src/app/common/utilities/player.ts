@@ -1,7 +1,7 @@
 import { isEmpty } from "shared/utilities";
 
 /**
- * Get valid clan tag from player's name.
+ * Get valid clantag from player's name.
  * This is only a string parser; does not validate that the player is legitimately in the club.
  * @returns {{ clubTag: string, playerName: string }} Provides object of clubTag and playerName.
  *  - if club is not found, returns empty clubTag with player's original name.
@@ -20,15 +20,43 @@ export function getPlayerNameClubParts(playerName: string): { clubTag: string; p
  */
 export function isPlayerNameEqual(playerNameLeft?: string, playerNameRight?: string): boolean {
     if (isEmpty(playerNameLeft) || isEmpty(playerNameRight)) return false;
+    const simplifyFn = (input: string): string => input.toLowerCase().trim();
+    const extremeSimplifyFn = (input: string): string => {
+        return simplifyFn(input)
+            .replace("`1", "") // Overwolf quirk
+            .replace(/[_\W+]/gi, "");
+    };
 
-    const maybeClubPlayerNameLeft = getPlayerNameClubParts(playerNameLeft!).playerName;
-    const maybeClubPlayerNameRight = getPlayerNameClubParts(playerNameRight!).playerName;
-    return (
-        playerNameLeft === playerNameRight ||
-        playerNameLeft === maybeClubPlayerNameRight ||
-        maybeClubPlayerNameLeft === playerNameRight ||
-        maybeClubPlayerNameLeft === maybeClubPlayerNameRight
-    );
+    const clubPlayerNameLeft = getPlayerNameClubParts(playerNameLeft!).playerName;
+    const clubPlayerNameRight = getPlayerNameClubParts(playerNameRight!).playerName;
+    const clubSimpPlayerNameLeft = simplifyFn(clubPlayerNameLeft);
+    const clubSimpPlayerNameRight = simplifyFn(clubPlayerNameRight);
+    const clubExtSimpPlayerNameLeft = extremeSimplifyFn(clubPlayerNameLeft);
+    const clubExtSimpPlayerNameRight = extremeSimplifyFn(clubPlayerNameRight);
+
+    const simpPlayerNameLeft = simplifyFn(playerNameLeft!);
+    const simpPlayerNameRight = simplifyFn(playerNameRight!);
+    const extremeSimpPlayerNameLeft = extremeSimplifyFn(simpPlayerNameLeft);
+    const extremeSimpPlayerNameRight = extremeSimplifyFn(simpPlayerNameRight);
+
+    const playerNameLeftList = [
+        playerNameLeft,
+        clubPlayerNameLeft,
+        clubSimpPlayerNameLeft,
+        clubExtSimpPlayerNameLeft,
+        simpPlayerNameLeft,
+        extremeSimpPlayerNameLeft,
+    ];
+    const playerNameRightList = [
+        playerNameRight,
+        clubPlayerNameRight,
+        clubSimpPlayerNameRight,
+        clubExtSimpPlayerNameRight,
+        simpPlayerNameRight,
+        extremeSimpPlayerNameRight,
+    ];
+
+    return playerNameLeftList.some((left) => !!left && !!playerNameRightList?.includes(left));
 }
 
 /**

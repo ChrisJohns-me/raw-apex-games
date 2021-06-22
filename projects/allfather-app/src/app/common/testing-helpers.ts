@@ -35,8 +35,8 @@ export function createOverwolfSpyObj<T>(owObjPath: string, owMethodNames: string
  *  });
  */
 type OverwolfObj = typeof overwolf;
-export function createOverwolfObj(owObjPath?: string, endObj?: any): OverwolfObj {
-    if (!owObjPath) return (globalThis.overwolf = {} as OverwolfObj);
+export function createOverwolfObj(owObjPath?: string, endObj: any = {}): OverwolfObj {
+    if (!owObjPath) return (globalThis.overwolf = endObj as OverwolfObj);
 
     owObjPath = owObjPath!.replace("overwolf.", "");
     const emptyObject = owObjPath

@@ -78,12 +78,10 @@ export class MapRotationService extends AllfatherService {
         if (this.mapRotation$.value && (breakCache || isExpired)) return of(this.mapRotation$.value);
 
         return this.http.get(API_URL, { params: { version: API_VER, auth: API_KEY }, responseType: "json" }).pipe(
-            tap((response) => console.debug(`[${this.constructor.name}] getMapRotation got response: `, response)),
             map((mapRotationJSON) => new MapRotationMozambiquehereDTO(mapRotationJSON)),
-            tap((dto) => console.debug(`[${this.constructor.name}] getMapRotation converted response to DTO class`, dto)),
             map((mapRotationDTO) => mapRotationDTO.toMapRotation()),
             tap((mapRotation) => {
-                console.debug(`[${this.constructor.name}] getMapRotation converted DTO class to Custom Map Rotation class`, mapRotation);
+                console.debug(`[${this.constructor.name}] Map Rotations`, mapRotation);
                 this.mapRotation$.next(mapRotation);
                 this.updateMapRotationExpire(mapRotation);
             }),

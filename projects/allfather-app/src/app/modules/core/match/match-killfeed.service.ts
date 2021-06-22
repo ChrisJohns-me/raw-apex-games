@@ -10,11 +10,9 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
 import { AllfatherService } from "../allfather-service.abstract";
-import { PlayerService } from "../player.service";
 import { MatchRosterService } from "./match-roster.service";
 import { MatchService } from "./match.service";
 
-// TODO: Test these constants, and the usefulness of the Secondary Killfeed method.
 const KILLFEED_SECONDARY_DELAY = 1000; // Should be larger than `KILLFEED_UNIQUE_TIMEFRAME`
 const KILLFEED_UNIQUE_TIMEFRAME = 3000; // Prevents duplicates from Primary & Secondary source within this timeframe
 
@@ -23,7 +21,7 @@ const KILLFEED_UNIQUE_TIMEFRAME = 3000; // Prevents duplicates from Primary & Se
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, MatchRosterService, OverwolfGameDataService, PlayerService],
+    deps: [MatchService, MatchRosterService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchKillfeedService", MatchKillfeedService, deps),
 })
 export class MatchKillfeedService extends AllfatherService {
@@ -33,8 +31,7 @@ export class MatchKillfeedService extends AllfatherService {
     constructor(
         private readonly match: MatchService,
         private readonly matchRoster: MatchRosterService,
-        private readonly overwolfGameData: OverwolfGameDataService,
-        private readonly player: PlayerService
+        private readonly overwolfGameData: OverwolfGameDataService
     ) {
         super();
         this.setupOnMatchStart();
@@ -100,10 +97,8 @@ export class MatchKillfeedService extends AllfatherService {
                 const action = killfeed.action;
                 const isVictimKnocked = !!(action === "Melee" || action === "Caustic Gas" || action === "knockdown");
                 const isVictimEliminated = !!(
-                    action === "Bleed Out" ||
-                    action === "kill" ||
-                    action === "headshot_kill" ||
-                    action === "Finisher"
+                    // it's possible the Melee is also an elimination
+                    (action === "Bleed Out" || action === "kill" || action === "headshot_kill" || action === "Finisher")
                 );
                 if (!victim) return;
 

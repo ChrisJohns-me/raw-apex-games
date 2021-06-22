@@ -13,6 +13,7 @@ export class MockMatchRosterService implements MockedClass<MatchRosterService> {
     public teammateRoster$ = new BehaviorSubject<ExtractSubjectType<MatchRosterService["teammateRoster$"]>>(
         new MatchRoster<MatchRosterTeammate>()
     );
+    public arenasEnemyRoster$ = new BehaviorSubject<ExtractSubjectType<MatchRosterService["arenasEnemyRoster$"]>>(new MatchRoster());
     public rosterPlayerDisconnectionList$: MatchRosterService["rosterPlayerDisconnectionList$"] = new BehaviorSubject<
         ExtractSubjectType<MatchRosterService["rosterPlayerDisconnectionList$"]>
     >([]);

@@ -1,6 +1,7 @@
 <table class="table table-striped table-borderless table-dark mb-0" [ngClass]="{ 'table-hover': isMatchClickable }" *ngIf="matches?.length">
     <tbody>
         <ng-container *ngFor="let match of matches; index as i; trackBy: matchTrackBy">
+            <span [hidden]="true">{{ match?.matchId }}</span>
             <tr
                 *ngIf="match && match.matchId"
                 [ngClass]="{

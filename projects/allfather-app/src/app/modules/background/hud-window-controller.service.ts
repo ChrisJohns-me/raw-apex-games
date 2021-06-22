@@ -1,11 +1,13 @@
 import { GamePhase } from "@allfather-app/app/common/game-phase";
+import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
 import { SettingKey, SettingValue } from "@allfather-app/app/common/settings";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { combineLatest, merge, Observable, Subscription } from "rxjs";
-import { switchMap, takeUntil } from "rxjs/operators";
+import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { AllfatherService } from "../core/allfather-service.abstract";
 import { GameService } from "../core/game.service";
+import { MatchService } from "../core/match/match.service";
 import { SettingsService } from "../core/settings.service";
 import { InflictionInsightWindowService } from "../HUD/infliction-insight/windows/infliction-insight-window.service";
 import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
@@ -17,6 +19,7 @@ type HUDTriggers = {
     windowService: { open: () => Observable<void>; close: () => Observable<void> };
     requiredGamePhases: GamePhase[];
     requiredSettings: SettingKey[];
+    requiredGameModes: MatchGameModeGenericId[];
 };
 
 @Injectable({
@@ -25,6 +28,7 @@ type HUDTriggers = {
         GameService,
         InflictionInsightWindowService,
         LegendSelectAssistWindowService,
+        MatchService,
         MatchTimerWindowService,
         ReticleHelperWindowService,
         SettingsService,
@@ -38,26 +42,55 @@ export class HUDWindowControllerService extends AllfatherService {
             windowService: this.inflictionInsightWindow,
             requiredGamePhases: [GamePhase.InGame],
             requiredSettings: [SettingKey.EnableAllInGameHUD, SettingKey.EnableInGameInflictionInsightHUD],
+            requiredGameModes: [
+                MatchGameModeGenericId.Arenas,
+                MatchGameModeGenericId.BattleRoyale_Duos,
+                MatchGameModeGenericId.BattleRoyale_Trios,
+                MatchGameModeGenericId.BattleRoyale_Ranked,
+            ],
         },
         {
             windowService: this.legendSelectAssistWindow,
             requiredGamePhases: [GamePhase.LegendSelection],
             requiredSettings: [SettingKey.EnableAllLegendSelectHUD],
+            requiredGameModes: [
+                MatchGameModeGenericId.Arenas,
+                MatchGameModeGenericId.BattleRoyale_Duos,
+                MatchGameModeGenericId.BattleRoyale_Trios,
+                MatchGameModeGenericId.BattleRoyale_Ranked,
+            ],
         },
         {
             windowService: this.matchTimerWindow,
             requiredGamePhases: [GamePhase.InGame],
             requiredSettings: [SettingKey.EnableAllInGameHUD, SettingKey.EnableInGameMatchTimerHUD],
+            requiredGameModes: [
+                MatchGameModeGenericId.Arenas,
+                MatchGameModeGenericId.BattleRoyale_Duos,
+                MatchGameModeGenericId.BattleRoyale_Trios,
+                MatchGameModeGenericId.BattleRoyale_Ranked,
+            ],
         },
         {
             windowService: this.ultTimerWindow,
             requiredGamePhases: [GamePhase.InGame],
             requiredSettings: [SettingKey.EnableAllInGameHUD, SettingKey.EnableInGameUltimateTimerHUD],
+            requiredGameModes: [
+                MatchGameModeGenericId.BattleRoyale_Duos,
+                MatchGameModeGenericId.BattleRoyale_Trios,
+                MatchGameModeGenericId.BattleRoyale_Ranked,
+            ],
         },
         {
             windowService: this.reticleHelperWindow,
             requiredGamePhases: [GamePhase.InGame],
             requiredSettings: [SettingKey.EnableInGameAimingReticle],
+            requiredGameModes: [
+                MatchGameModeGenericId.Arenas,
+                MatchGameModeGenericId.BattleRoyale_Duos,
+                MatchGameModeGenericId.BattleRoyale_Trios,
+                MatchGameModeGenericId.BattleRoyale_Ranked,
+            ],
         },
     ];
 
@@ -67,6 +100,7 @@ export class HUDWindowControllerService extends AllfatherService {
         private readonly game: GameService,
         private readonly inflictionInsightWindow: InflictionInsightWindowService,
         private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
+        private readonly match: MatchService,
         private readonly matchTimerWindow: MatchTimerWindowService,
         private readonly reticleHelperWindow: ReticleHelperWindowService,
         private readonly settingsService: SettingsService,
@@ -76,10 +110,16 @@ export class HUDWindowControllerService extends AllfatherService {
     }
 
     public startWatchEvents(): void {
-        combineLatest([this.settingsService.streamAllSettings$(), this.game.phase$])
+        const genericGameModeId$ = this.match.gameMode$.pipe(
+            filter((gameMode) => !!gameMode?.gameModeGenericId && !!gameMode.isAFSupported),
+            map((gameMode) => gameMode!.gameModeGenericId as MatchGameModeGenericId)
+        );
+        combineLatest([this.settingsService.streamAllSettings$(), this.game.phase$, genericGameModeId$])
             .pipe(
                 takeUntil(this.destroy$),
-                switchMap(([settings, gamePhase]) => merge(...this.fireHUDRequirements(settings, gamePhase)))
+                switchMap(([settings, gamePhase, genericGameModeId]) =>
+                    merge(...this.fireHUDRequirements(settings, gamePhase, genericGameModeId))
+                )
             )
             .subscribe();
     }
@@ -93,8 +133,13 @@ export class HUDWindowControllerService extends AllfatherService {
      * Creates a list of actions (open or close) fro all HUD windows (based on each window's requirements)
      * @returns Array of observable actions
      */
-    private fireHUDRequirements(settings: { [key: string]: SettingValue }, gamePhase: GamePhase): Observable<void>[] {
+    private fireHUDRequirements(
+        settings: { [key: string]: SettingValue },
+        gamePhase: GamePhase,
+        genericGameModeId: MatchGameModeGenericId
+    ): Observable<void>[] {
         return this.HUDWindows.map((hud) => {
+            const meetsGameMode = hud.requiredGameModes.includes(genericGameModeId);
             const meetsGamePhase = Object.values(hud.requiredGamePhases).includes(gamePhase);
             const meetsSettings = hud.requiredSettings.every((reqSettingKey) => {
                 const keyExists = reqSettingKey in settings;
@@ -102,7 +147,7 @@ export class HUDWindowControllerService extends AllfatherService {
                 return keyExists ? savedValue : true;
             });
 
-            if (meetsGamePhase && meetsSettings) return hud.windowService.open();
+            if (meetsGameMode && meetsGamePhase && meetsSettings) return hud.windowService.open();
             else return hud.windowService.close();
         });
     }

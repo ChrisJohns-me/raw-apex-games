@@ -75,7 +75,6 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeGenericId: MatchGameModeGenericId.Arenas,
         gameModeName: MatchGameModeFriendlyName.Arenas,
         gameModeIdRegExPattern: "arenas",
-        isAFSupported: false,
         isBattleRoyaleGameMode: false,
         isArenasGameMode: true,
         activeDates: [

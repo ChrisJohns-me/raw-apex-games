@@ -98,9 +98,14 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
     constructor(private readonly cdr: ChangeDetectorRef, private readonly match: MatchService) {
         this.heatSizeRange = new FormControl(this.heatSize);
         this.mapList = unique(MatchMapList, (m) => m.mapName);
-        this.mapList = this.mapList.filter((m) =>
-            m.gameModeTypes?.some((gm) => MatchGameMode.getFromId(MatchGameModeList, gm).isAFSupported)
-        );
+        this.mapList = this.mapList.filter((m) => {
+            const hasSupportedGameMode = m.gameModeTypes?.some((genericGameModeId) => {
+                const gm = MatchGameMode.getFromId(MatchGameModeList, genericGameModeId);
+                return gm.isAFSupported;
+            });
+
+            return hasSupportedGameMode && m.isChartable;
+        });
         this.mapList = sortMatchMapList(this.mapList.filter((m) => m.isBattleRoyaleMap || m.isArenasMap));
     }
 
@@ -116,7 +121,12 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         this.getMatchList()
             .pipe(takeUntil(this.destroy$))
             .subscribe((matchList) => {
-                this.matchList = matchList;
+                this.matchList = matchList.filter((match) => {
+                    if (!match.gameModeId) return false;
+                    const gameMode = MatchGameMode.getFromId(MatchGameModeList, match.gameModeId);
+                    const foundMatchMap = this.mapList.find((m) => m.isChartable && m.mapId === match.mapId);
+                    return gameMode.isAFSupported && !!foundMatchMap;
+                });
                 this.onSelectMatchClick(matchList[0]);
                 this.refreshUI();
             });

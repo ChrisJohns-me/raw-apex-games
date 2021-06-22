@@ -84,7 +84,8 @@ export class SelectedLegendsComponent implements OnInit, OnChanges, OnDestroy {
         const target = event.target as HTMLInputElement;
         if (!(target instanceof HTMLInputElement)) return;
         const formControls = Object.entries(this.selectedLegendsFormGroup.controls);
-        formControls.forEach(([, form]) => form.setValue(target.checked));
+        formControls.forEach(([, form]) => form.setValue(target.checked, { emitEvent: false }));
+        this.selectedLegendsOutput.emit(this.selectedLegends);
     }
 
     private setupLegendsList(legendList: Legend[]): void {
@@ -99,10 +100,8 @@ export class SelectedLegendsComponent implements OnInit, OnChanges, OnDestroy {
 
     private setupSelectedLegendsChange(): void {
         this.selectedLegendsChangeSubscription?.unsubscribe();
-        this.selectedLegendsChangeSubscription = this.selectedLegendsFormGroup.valueChanges
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((change) => {
-                this.selectedLegendsOutput.emit(this.selectedLegends);
-            });
+        this.selectedLegendsChangeSubscription = this.selectedLegendsFormGroup.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+            this.selectedLegendsOutput.emit(this.selectedLegends);
+        });
     }
 }

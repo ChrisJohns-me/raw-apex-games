@@ -36,7 +36,7 @@ export class MapRotationMozambiquehereDTO {
 
     public toMapRotation(): MapRotationData {
         const convertMapRotationInfoFn = (mapIteration: MapRotationInfoDTO, gameMode?: MatchGameModeGenericId): MapRotationInfo => {
-            const matchMap = MatchMap.getFromFriendlyName(MatchMapList, mapIteration.map, gameMode);
+            const matchMap = MatchMap.getFromFriendlyName(mapIteration.map, MatchMapList, gameMode);
             console.debug(`[${this.constructor.name}] Attempting to find map based on "${mapIteration.map}" (${gameMode})`, matchMap);
             return {
                 friendlyName: mapIteration.map,

@@ -356,6 +356,11 @@
             "inGameInfoNameRegExPattern": "mp_ability_valk_skyward"
         },
         {
+            "id": "wattson",
+            "friendlyName": "Perimeter Security",
+            "inGameInfoNameRegExPattern": "mp_weapon_tesla_trap"
+        },
+        {
             "id": "grenade_thermite",
             "friendlyName": "Thermite Grenade",
             "inGameInfoNameRegExPattern": "^Thermite Grenade$",

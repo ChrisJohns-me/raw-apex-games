@@ -7,9 +7,10 @@ import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoRoster, OWMatchInfoTea
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
-import { filter, map, takeUntil } from "rxjs/operators";
+import { BehaviorSubject, combineLatest, Observable } from "rxjs";
+import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { cleanInt, findKeyByKeyRegEx, findValueByKeyRegEx, isEmpty } from "shared/utilities";
+import { unique } from "shared/utilities/primitives/array";
 import { AllfatherService } from "../allfather-service.abstract";
 import { MatchLegendSelectService } from "./match-legend-select.service";
 import { MatchService } from "./match.service";
@@ -39,26 +40,36 @@ export class MatchRosterService extends AllfatherService {
      */
     public readonly teammateRoster$ = new BehaviorSubject<MatchRoster<MatchRosterTeammate>>(new MatchRoster<MatchRosterTeammate>());
     /**
+     * Provides list of enemies in the current match (for Arenas).
+     * Emits only at the beginning of the match, or upon subscription.
+     * @returns {MatchRoster<MatchRosterTeammate>}
+     */
+    public readonly arenasEnemyRoster$ = new BehaviorSubject<MatchRoster>(new MatchRoster());
+    /**
      * @returns {RosterPlayerDisconnected[]} List of players in the match who may have disconnected.
      */
     public readonly rosterPlayerDisconnectionList$ = new BehaviorSubject<RosterPlayerDisconnection[]>([]);
     /**
-     * From Overwolf's "tabs" data
+     * Arenas: From counting number of teams in the match roster
+     * BattleRoyale: From Overwolf's "tabs" data
      * @returns {number} teams alive in the current match.
      */
     public readonly numTeams$ = new BehaviorSubject<number>(0);
     /**
-     * Inferred from Overwolf's "tabs" data.
+     * Arenas: From counting number of teams in the match roster
+     * BattleRoyale: Inferred from Overwolf's "tabs" data.
      * @returns {number} number of teams that the match started out with.
      */
     public readonly startingNumTeams$ = new BehaviorSubject<number>(0);
     /**
-     * From Overwolf's "tabs" data
+     * Arenas: From counting number of players in the match roster
+     * BattleRoyale: From Overwolf's "tabs" data
      * @returns {number} players alive in the current match; 0 if "fair-play" mode is on (<5 players remain).
      */
     public readonly numPlayers$ = new BehaviorSubject<number>(0);
     /**
-     * Inferred from Overwolf's "tabs" data.
+     * Arenas: From counting number of players in the match roster
+     * BattleRoyale: Inferred from Overwolf's "tabs" data.
      * @returns {number} number of players that the match started out with.
      */
     public readonly startingNumPlayers$ = new BehaviorSubject<number>(0);
@@ -86,7 +97,8 @@ export class MatchRosterService extends AllfatherService {
         this.rosterUpdate$ = this.setupRosterUpdate$();
         this.setupOnMatchStart();
         this.setupOnMatchEnd();
-        this.setupCounts();
+        this.setupBattleRoyaleCounts();
+        this.setupArenasEnemyRoster();
         this.setupMatchRoster();
         this.setupPlayerDisconnectionList();
         this.setupTeammateRosterPrimary();
@@ -176,12 +188,13 @@ export class MatchRosterService extends AllfatherService {
     }
 
     /**
-     * Update teams/players counters
+     * Update teams/players counters for BattleRoyale
      */
-    private setupCounts(): void {
+    private setupBattleRoyaleCounts(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
                 takeUntil(this.destroy$),
+                filter(() => !this.match.gameMode$.value?.isArenasGameMode),
                 filter((infoUpdate) => infoUpdate.feature === "match_info" && !!infoUpdate.info.match_info?.tabs),
                 map((infoUpdate) => infoUpdate.info.match_info?.tabs),
                 filter((tabs) => !isEmpty(tabs))
@@ -203,6 +216,37 @@ export class MatchRosterService extends AllfatherService {
                         this.startingNumPlayers$.next(numPlayers);
                     }
                 }
+            });
+    }
+
+    /**
+     * Sets up the enemy roster and update teams/players counters for Arenas.
+     */
+    private setupArenasEnemyRoster(): void {
+        this.match.startedEvent$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter(() => !!this.match.gameMode$.value?.isArenasGameMode && !!this.match.gameMode$.value.isAFSupported),
+                switchMap(() => combineLatest([this.matchRoster$, this.teammateRoster$])),
+                filter(([matchRoster, teammateRoster]) => !!matchRoster.allPlayers.length && !!teammateRoster.allPlayers.length)
+            )
+            .subscribe(([matchRoster, teammateRoster]) => {
+                const enemyRoster = new MatchRoster();
+
+                matchRoster.allPlayers.forEach((matchRosterPlayer) => {
+                    const foundTeammate = teammateRoster.allPlayers.find((t) => isPlayerNameEqual(t.name, matchRosterPlayer.name));
+                    if (!foundTeammate) enemyRoster.addPlayer(matchRosterPlayer);
+                });
+
+                const numEnemyTeams = unique(enemyRoster.allPlayers, (p) => p.teamId).length;
+                const numEnemyPlayers = unique(enemyRoster.allPlayers, (p) => p.rosterId).length;
+                const numTeamPlayers = unique(enemyRoster.allPlayers, (p) => p.rosterId).length;
+
+                this.numTeams$.next(numEnemyTeams + 1);
+                this.numPlayers$.next(numEnemyPlayers + numTeamPlayers);
+                this.startingNumTeams$.next(numEnemyTeams + 1);
+                this.startingNumPlayers$.next(numEnemyPlayers + numTeamPlayers);
+                this.arenasEnemyRoster$.next(enemyRoster);
             });
     }
 

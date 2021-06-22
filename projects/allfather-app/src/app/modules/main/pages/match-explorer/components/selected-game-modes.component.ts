@@ -87,7 +87,8 @@ export class SelectedGameModesComponent implements OnInit, OnChanges, OnDestroy 
         const target = event.target as HTMLInputElement;
         if (!(target instanceof HTMLInputElement)) return;
         const formControls = Object.entries(this.selectedGameModesFormGroup.controls);
-        formControls.forEach(([, form]) => form.setValue(target.checked));
+        formControls.forEach(([, form]) => form.setValue(target.checked, { emitEvent: false }));
+        this.selectedGameModesOutput.emit(this.selectedGameModes);
     }
 
     private setupGameModesList(gameModeList: MatchGameMode[]): void {
@@ -104,7 +105,7 @@ export class SelectedGameModesComponent implements OnInit, OnChanges, OnDestroy 
         this.selectedGameModesChangeSubscription?.unsubscribe();
         this.selectedGameModesChangeSubscription = this.selectedGameModesFormGroup.valueChanges
             .pipe(takeUntil(this.destroy$))
-            .subscribe((change) => {
+            .subscribe(() => {
                 this.selectedGameModesOutput.emit(this.selectedGameModes);
             });
     }

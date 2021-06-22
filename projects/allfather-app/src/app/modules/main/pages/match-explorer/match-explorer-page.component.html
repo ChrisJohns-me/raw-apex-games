@@ -3,7 +3,11 @@
         <input class="form-control bg-dark text-white" placeholder="Search..." type="text" [formControl]="searchForm" />
     </li>
     <li class="nav-item me-2">
-        <app-selected-maps [mapList]="mapList" (selectedMaps)="onSelectedMapsChange($event)" [selectAll]="resetFilters"></app-selected-maps>
+        <app-selected-maps
+            [mapGenericList]="mapGenericList"
+            (selectedMaps)="onSelectedMapsChange($event)"
+            [selectAll]="resetFilters"
+        ></app-selected-maps>
     </li>
     <li class="nav-item me-2">
         <app-selected-game-modes

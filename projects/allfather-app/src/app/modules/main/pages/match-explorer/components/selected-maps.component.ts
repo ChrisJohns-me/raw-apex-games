@@ -1,36 +1,41 @@
+import { MatchMapGenericId } from "@allfather-app/app/common/match/map/map.enum";
 import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
+/**
+ * Utilizes Map's GenericId for determining selection
+ */
 @Component({
     selector: "app-selected-maps",
     templateUrl: "./selected-maps.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
-    @Input() public mapList: MatchMap[] = [];
+    /** Input only Genericized Map List */
+    @Input() public mapGenericList: MatchMap[] = [];
     @Input() public selectAll?: Subject<void>;
     @Input() public clearAll?: Subject<void>;
     @Output("selectedMaps") public selectedMapsOutput = new EventEmitter<MatchMap[]>();
 
     public get battleRoyaleMapList(): MatchMap[] {
-        return this.mapList.filter((m) => m.isBattleRoyaleMap);
+        return this.mapGenericList.filter((m) => m.isBattleRoyaleMap);
     }
     public get arenasMapList(): MatchMap[] {
-        return this.mapList.filter((m) => m.isArenasMap);
+        return this.mapGenericList.filter((m) => m.isArenasMap);
     }
 
     public selectedMapsFormGroup!: FormGroup;
-    public get selectedBattleRoyaleMapsForms(): Array<[mapId: string, form: FormControl]> {
-        return Object.entries(this.selectedMapsFormGroup.controls).filter(([mapId]) =>
-            this.battleRoyaleMapList.map((m) => m.mapId).includes(mapId)
+    public get selectedBattleRoyaleMapsForms(): Array<[mapGenericId: string, form: FormControl]> {
+        return Object.entries(this.selectedMapsFormGroup.controls).filter(([mapGenericId]) =>
+            this.battleRoyaleMapList.map((m) => m.mapGenericId).includes(mapGenericId as MatchMapGenericId)
         ) as Array<[string, FormControl]>;
     }
-    public get selectedArenasMapsForms(): Array<[mapId: string, form: FormControl]> {
-        return Object.entries(this.selectedMapsFormGroup.controls).filter(([mapId]) =>
-            this.arenasMapList.map((m) => m.mapId).includes(mapId)
+    public get selectedArenasMapsForms(): Array<[mapGenericId: string, form: FormControl]> {
+        return Object.entries(this.selectedMapsFormGroup.controls).filter(([mapGenericId]) =>
+            this.arenasMapList.map((m) => m.mapGenericId).includes(mapGenericId as MatchMapGenericId)
         ) as Array<[string, FormControl]>;
     }
 
@@ -40,8 +45,8 @@ export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
         if (!this.everyMapsSelected && !this.someMapsSelected) return "No Maps";
         const mapsSelected = Object.entries(this.selectedMapsFormGroup.controls).filter(([, mapFormControl]) => !!mapFormControl.value);
         if (mapsSelected.length === 1) {
-            const mapId = mapsSelected[0][0];
-            const foundMap = this.mapList.find((m) => m.mapId === mapId);
+            const mapGenericId = mapsSelected[0][0];
+            const foundMap = this.mapGenericList.find((m) => m.mapGenericId === mapGenericId);
             return foundMap?.mapName ?? "One Map";
         }
 
@@ -87,13 +92,15 @@ export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
         return this.someArenasMapsSelected && !this.everyArenasMapsSelected;
     }
 
-    private get selectedMapIds(): string[] {
+    private get selectedMapGenericIds(): string[] {
         return Object.entries(this.selectedMapsFormGroup.controls)
             .filter(([, mapFormControl]) => !!mapFormControl.value)
-            .map(([mapId]) => mapId);
+            .map(([mapGenericId]) => mapGenericId);
     }
     private get selectedMaps(): MatchMap[] {
-        return this.selectedMapIds.map((mapId) => this.mapList.find((m) => m.mapId === mapId)).filter((m) => !!m) as MatchMap[];
+        return this.selectedMapGenericIds
+            .map((mapGenericId) => this.mapGenericList.find((m) => m.mapGenericId === mapGenericId))
+            .filter((m) => !!m) as MatchMap[];
     }
 
     private selectedMapsChangeSubscription?: Subscription;
@@ -102,7 +109,7 @@ export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
     constructor() {}
 
     public ngOnInit(): void {
-        this.setupMapsList(this.mapList);
+        this.setupMapsList(this.mapGenericList);
         this.setupSelectedMapsChange();
         this.selectAll?.pipe(takeUntil(this.destroy$)).subscribe(() => {
             Object.entries(this.selectedMapsFormGroup.controls).filter(([, mapFormControl]) => mapFormControl.setValue(true));
@@ -113,7 +120,7 @@ export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     public ngOnChanges(): void {
-        this.setupMapsList(this.mapList);
+        this.setupMapsList(this.mapGenericList);
         this.setupSelectedMapsChange();
     }
 
@@ -129,6 +136,7 @@ export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
 
         this.setBattleRoyaleMapsAllSelected(target.checked);
         this.setArenasMapsAllSelected(target.checked);
+        this.selectedMapsOutput.emit(this.selectedMaps);
     }
 
     public onAllBattleRoyaleMapsSelectedChange(event: Event): void {
@@ -136,6 +144,7 @@ export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
         if (!(target instanceof HTMLInputElement)) return;
 
         this.setBattleRoyaleMapsAllSelected(target.checked);
+        this.selectedMapsOutput.emit(this.selectedMaps);
     }
 
     public onAllArenasMapsSelectedChange(event: Event): void {
@@ -143,15 +152,15 @@ export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
         if (!(target instanceof HTMLInputElement)) return;
 
         this.setArenasMapsAllSelected(target.checked);
+        this.selectedMapsOutput.emit(this.selectedMaps);
     }
     //#endregion
 
     private setupMapsList(mapList: MatchMap[]): void {
         const group: Record<string, FormControl> = {};
         mapList.forEach((matchMap) => {
-            group[matchMap.mapId] = new FormControl(true);
+            group[matchMap.mapGenericId] = new FormControl(true);
         });
-
         this.selectedMapsFormGroup = new FormGroup(group);
     }
 
@@ -163,10 +172,10 @@ export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     private setBattleRoyaleMapsAllSelected(selectAll: boolean): void {
-        this.selectedBattleRoyaleMapsForms.forEach(([, form]) => form.setValue(selectAll));
+        this.selectedBattleRoyaleMapsForms.forEach(([, form]) => form.setValue(selectAll, { emitEvent: false }));
     }
 
     private setArenasMapsAllSelected(selectAll: boolean): void {
-        this.selectedArenasMapsForms.forEach(([, form]) => form.setValue(selectAll));
+        this.selectedArenasMapsForms.forEach(([, form]) => form.setValue(selectAll, { emitEvent: false }));
     }
 }

@@ -41,16 +41,16 @@
                 </div>
             </li>
             <li class="dropdown-item" *ngFor="let battleRoyaleMap of battleRoyaleMapList">
-                <div class="form-check ms-2" *ngIf="battleRoyaleMap.mapId; let battleRoyalMapId">
+                <div class="form-check ms-2" *ngIf="battleRoyaleMap.mapGenericId; let battleRoyalMapGenId">
                     <input
                         class="form-check-input"
                         type="checkbox"
-                        [formControlName]="battleRoyalMapId"
-                        [id]="battleRoyalMapId"
-                        [value]="battleRoyalMapId"
+                        [formControlName]="battleRoyalMapGenId"
+                        [id]="battleRoyalMapGenId"
+                        [value]="battleRoyalMapGenId"
                         checked
                     />
-                    <label class="form-check-label" [attr.for]="battleRoyalMapId">{{ battleRoyaleMap.mapName }}</label>
+                    <label class="form-check-label" [attr.for]="battleRoyalMapGenId">{{ battleRoyaleMap.mapName }}</label>
                 </div>
             </li>
             <li><hr class="dropdown-divider" /></li>
@@ -69,16 +69,16 @@
                 </div>
             </li>
             <li class="dropdown-item" *ngFor="let arenasMap of arenasMapList">
-                <div class="form-check ms-2" *ngIf="arenasMap.mapId; let arenasMapId">
+                <div class="form-check ms-2" *ngIf="arenasMap.mapGenericId; let arenasMapGenId">
                     <input
                         class="form-check-input"
                         type="checkbox"
-                        [formControlName]="arenasMapId"
-                        [id]="arenasMapId"
-                        [value]="arenasMapId"
+                        [formControlName]="arenasMapGenId"
+                        [id]="arenasMapGenId"
+                        [value]="arenasMapGenId"
                         checked
                     />
-                    <label class="form-check-label" [attr.for]="arenasMapId">{{ arenasMap.mapName }}</label>
+                    <label class="form-check-label" [attr.for]="arenasMapGenId">{{ arenasMap.mapName }}</label>
                 </div>
             </li>
         </ul>

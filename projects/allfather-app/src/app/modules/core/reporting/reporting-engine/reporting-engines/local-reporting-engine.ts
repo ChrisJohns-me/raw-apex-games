@@ -17,7 +17,6 @@ const RETRY_DELAY_MULTIPLIER = 12 * 1000;
  * @classdesc Saves match data to local database.
  */
 export class LocalReportingEngine implements ReportingEngine {
-    // TODO: Maybe: implements ArchivalReportingEngine {
     public engineId = ReportingEngineId.Local;
     public reportingStatus$ = new BehaviorSubject<ReportingStatus>(ReportingStatus.WAITING);
     public availableConditionOptions = [KillsConditionOption, DamageConditionOption, PlacementConditionOption, GameModeConditionOption];

@@ -2,7 +2,8 @@ import { Legend } from "@allfather-app/app/common/legend/legend";
 import { LegendList, sortLegendList } from "@allfather-app/app/common/legend/legend-list";
 import { MatchGameMode } from "@allfather-app/app/common/match/game-mode/game-mode";
 import { MatchGameModeList, sortMatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
-import { MatchMapList, sortMatchMapList } from "@allfather-app/app/common/match/map/map-list";
+import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
+import { latestGenericMap, MatchMapList, sortMatchMapList } from "@allfather-app/app/common/match/map/map-list";
 import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { AvgMatchStats, avgStats, SumMatchStats, sumStats } from "@allfather-app/app/common/utilities/match-stats";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
@@ -16,7 +17,8 @@ import { mdiFilterVariantRemove } from "@mdi/js";
 import { intervalToDuration } from "date-fns";
 import { Observable, Subject } from "rxjs";
 import { debounceTime, filter, finalize, switchMap, takeUntil } from "rxjs/operators";
-import { cleanInt } from "shared/utilities";
+import { cleanInt, isEmpty, Stopwatch } from "shared/utilities";
+import { unique } from "shared/utilities/primitives/array";
 
 type TeamRosterPlayer = NonNullable<MatchDataStore["teamRoster"]>[0];
 
@@ -27,12 +29,14 @@ type TeamRosterPlayer = NonNullable<MatchDataStore["teamRoster"]>[0];
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDestroy {
+    public stopwatch = new Stopwatch();
+    public isSearching = false;
     public isLoadingMatchList = false;
     public resetFilters = new Subject<void>();
     public get areFiltersResettable(): boolean {
         return (
             this.filteredMatchList.length < this.matchList.length ||
-            this.filteredMapList.length < this.mapList.length ||
+            this.filteredMapGenericList.length < this.mapGenericList.length ||
             this.filteredGameModeList.length < this.gameModeList.length ||
             this.filteredLegendList.length < this.legendList.length ||
             !!this.searchForm.value?.length
@@ -40,14 +44,15 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     }
     public searchForm = new FormControl();
     public matchList: MatchDataStore[] = [];
-    public mapList = sortMatchMapList(MatchMapList.filter((m) => m.isBattleRoyaleMap || m.isArenasMap));
+    /** Removes duplicate GenericIds by using the latest active map from Map list */
+    public mapGenericList: MatchMap[];
     public gameModeList = sortMatchGameModeList(
         MatchGameModeList.filter((g) => g.isAFSupported && (g.isBattleRoyaleGameMode || g.isArenasGameMode))
     );
     public legendList = sortLegendList(LegendList);
 
     public filteredMatchList: MatchDataStore[] = this.matchList;
-    public filteredMapList: MatchMap[] = this.mapList;
+    public filteredMapGenericList: MatchMap[];
     public filteredGameModeList: MatchGameMode[] = this.gameModeList;
     public filteredLegendList: Legend[] = this.legendList;
     public filteredSumStats?: SumMatchStats;
@@ -71,13 +76,22 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     public DataItem = DataItem;
     public mdiFilterVariantRemove = mdiFilterVariantRemove;
 
+    /** All BattleRoyal and Arenas Maps; includes duplicate GenericIds */
+    private _mapList = sortMatchMapList(MatchMapList.filter((m) => m.isBattleRoyaleMap || m.isArenasMap));
     private destroy$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly match: MatchService,
         private readonly reportingService: ReportingService
-    ) {}
+    ) {
+        const bloatedGenericMapList = this._mapList
+            .map((m) => latestGenericMap(m.mapGenericId, this._mapList))
+            .filter((m) => !!m) as MatchMap[];
+        const uniqueGenericMapList = unique(bloatedGenericMapList, (m) => m.mapGenericId);
+        this.mapGenericList = uniqueGenericMapList;
+        this.filteredMapGenericList = this.mapGenericList;
+    }
 
     public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item) => item.matchId ?? item.endDate;
     public durationSinceNow = (baseDate: Date): Duration => intervalToDuration({ start: baseDate, end: new Date() });
@@ -117,7 +131,7 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     }
 
     public onSelectedMapsChange(selectedMaps: MatchMap[]): void {
-        this.filteredMapList = selectedMaps;
+        this.filteredMapGenericList = selectedMaps;
         this.refreshUI();
     }
 
@@ -134,7 +148,7 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     public onSelectMatchClick(): void {}
 
     public onTeamRosterClick(teamRosterPlayer: TeamRosterPlayer): void {
-        this.searchForm.setValue(teamRosterPlayer.name);
+        this.searchForm.setValue(`"${teamRosterPlayer.name}"`);
     }
 
     //#region Setup
@@ -160,7 +174,8 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     }
 
     private setupSearchForm(): void {
-        this.searchForm.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(50)).subscribe((searchInput) => {
+        const pauseTime = 500;
+        this.searchForm.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(pauseTime)).subscribe(() => {
             this.refreshUI();
         });
     }
@@ -171,82 +186,137 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     }
 
     private refreshUI(): void {
+        this.stopwatch.start();
         this.filteredMatchList = this.matchList.filter((match) => {
-            if (this.gameModeList.length && match.gameModeId) {
-                const matchGameMode = MatchGameMode.getFromId(this.gameModeList, match.gameModeId);
-                const foundGameMode = this.filteredGameModeList.find(
-                    (gameMode) => gameMode.gameModeGenericId === matchGameMode.gameModeGenericId
-                );
-                if (!foundGameMode) return false;
-            }
-
-            if (this.mapList.length && match.mapId) {
-                const matchMap = MatchMap.getFromId(this.mapList, match.mapId);
-                if (!matchMap) return;
-                const foundMatchMap = this.filteredMapList.find((map) => map.mapGenericId === matchMap.mapGenericId);
-                if (!foundMatchMap) return false;
-            }
-
-            if (this.legendList.length && match.legendId) {
-                if (!match.legendId) return;
-                const foundLegend = this.filteredLegendList.find((legend) => legend.legendId === match.legendId);
-                if (!foundLegend) return false;
-            }
-
-            const searchInput = (this.searchForm.value as string)?.trim().toLowerCase() ?? "";
-            if (searchInput) {
-                const searchFound = this.searchMatch(searchInput, match);
-                if (!searchFound) return false;
-            }
-
-            return true;
+            return (
+                this.isMatchInGameModeFilter(match) &&
+                this.isMatchInMapFilter(match) &&
+                this.isMatchInLegendFilter(match) &&
+                this.isMatchInSearchInput(match)
+            );
         });
 
         this.filteredSumStats = sumStats(this.filteredMatchList);
         this.filteredAvgStats = avgStats(this.filteredMatchList);
 
         this.cdr.detectChanges();
+        this.stopwatch.stop();
+        console.log(`refreshUI() took ${this.stopwatch.result(false)}`);
+    }
+
+    private isMatchInGameModeFilter(match: MatchDataStore): boolean {
+        const isFilterSet = this.filteredGameModeList.length < this.gameModeList.length;
+        const isFilterEmpty = !this.filteredGameModeList.length;
+        const isGameModeEmpty = isEmpty(match.gameModeId);
+        if (!isFilterSet || isFilterEmpty || isGameModeEmpty) return true;
+
+        const matchGameMode = MatchGameMode.getFromId(this.gameModeList, match.gameModeId!);
+        const foundGameMode = this.filteredGameModeList.find((gameMode) => gameMode.gameModeGenericId === matchGameMode.gameModeGenericId);
+        return !!foundGameMode;
+    }
+
+    /** Uses map's generic ID to search match's mapID */
+    private isMatchInMapFilter(match: MatchDataStore): boolean {
+        const isFilterSet = this.filteredMapGenericList.length < this.mapGenericList.length;
+        const isFilterEmpty = !this.filteredMapGenericList.length;
+        const isMapEmpty = isEmpty(match.mapId);
+        if (!isFilterSet || isFilterEmpty || isMapEmpty) return true;
+
+        const matchMap = MatchMap.getFromId(match.mapId ?? "", this._mapList);
+        if (!matchMap) return true;
+        const foundMatchMap = this.filteredMapGenericList.find((map) => map.mapGenericId === matchMap.mapGenericId);
+        return !!foundMatchMap;
+    }
+
+    private isMatchInLegendFilter(match: MatchDataStore): boolean {
+        const isFilterSet = this.filteredLegendList.length < this.legendList.length;
+        const isFilterEmpty = !this.filteredLegendList.length;
+        const isLegendEmpty = isEmpty(match.legendId);
+        if (!isFilterSet || isFilterEmpty || isLegendEmpty) return true;
+
+        const foundLegend = this.filteredLegendList.find((legend) => legend.legendId === match.legendId);
+        return !!foundLegend;
+    }
+
+    private isMatchInSearchInput(match: MatchDataStore): boolean {
+        const searchInput = (this.searchForm.value as string)?.trim().toLowerCase() ?? "";
+        if (isEmpty(searchInput)) return true;
+        const parsedSearch = this.parseSearchInput(searchInput);
+        return (
+            this.isSearchInMatchData(parsedSearch.searchInput, match, parsedSearch.isExact) ||
+            this.isSpecialSearchFound(parsedSearch.searchInput, match, parsedSearch.isExact) ||
+            this.isSearchInStats(parsedSearch.searchInput, match)
+        );
+    }
+
+    //#region Search
+    /** Cleans search input by trimming whitespace. Checks for  */
+    private parseSearchInput(searchInput: string): { searchInput: string; isExact: boolean } {
+        searchInput = searchInput.trim().toLowerCase().replace(" ", "");
+        const isExact = searchInput.substr(0, 1) === `"` && searchInput.substr(searchInput.length - 1, 1) === `"`;
+        if (isExact) searchInput = searchInput.substring(1, searchInput.length - 1);
+        return { searchInput, isExact };
+    }
+
+    private isSearchStringFound(needle: string, haystack: string, isExact: boolean): boolean {
+        haystack = haystack.trim().toLowerCase().replace(" ", "");
+        if (isEmpty(needle) || isEmpty(haystack)) return false;
+        return isExact ? haystack === needle : haystack.includes(needle);
     }
 
     /**
-     * Returns true if a search term is found within any of the match data
+     * Search using special keywords
      */
-    private searchMatch(searchInput: string, match: MatchDataStore): boolean {
-        const isNumber = !isNaN(Number(searchInput));
-        if (isNumber) {
-            const numSearchInput = cleanInt(searchInput.replace(/[\D]+/g, ""));
-            const foundInStats =
-                (match.assists ?? 0) === numSearchInput ||
-                (match.damage ?? 0) === numSearchInput ||
-                (match.eliminations ?? 0) === numSearchInput ||
-                (match.knockdowns ?? 0) === numSearchInput ||
-                (match.placement ?? 0) === numSearchInput;
-            return foundInStats;
-        }
-
-        searchInput = searchInput.toLowerCase();
-        // Special Searches
+    private isSpecialSearchFound(searchInput: string, match: MatchDataStore, isExact: boolean): boolean {
         if (searchInput === "win" || searchInput === "wins" || searchInput === "won") {
             return match.placement === 1;
-        } else if (searchInput === "loose" || searchInput === "lost") {
+        } else if (searchInput === "lose" || searchInput === "lost") {
             return match.placement !== 1;
         } else if (searchInput === "solo") {
             return match.teamRoster?.length === 1;
+        } else if (match.gameModeId && (searchInput === "arena" || searchInput === "arenas")) {
+            const gameMode = MatchGameMode.getFromId(MatchGameModeList, match.gameModeId);
+            return gameMode.gameModeGenericId === MatchGameModeGenericId.Arenas;
+        } else if (match.gameModeId && (searchInput === "battleroyale" || searchInput === "battle royale")) {
+            const gameMode = MatchGameMode.getFromId(MatchGameModeList, match.gameModeId);
+            return (
+                gameMode.gameModeGenericId === MatchGameModeGenericId.BattleRoyale_Duos ||
+                gameMode.gameModeGenericId === MatchGameModeGenericId.BattleRoyale_Ranked ||
+                gameMode.gameModeGenericId === MatchGameModeGenericId.BattleRoyale_Trios
+            );
         }
+        return false;
+    }
 
-        const simplifyTextFn = (input: string): string => input.trim().toLowerCase().replace(" ", "");
+    private isSearchInStats(searchInput: string, match: MatchDataStore): boolean {
+        if (isNaN(Number(searchInput))) return false;
+        const numSearchInput = cleanInt(searchInput.replace(/[\D]+/g, ""));
+        const foundInStats =
+            (match.assists ?? 0) === numSearchInput ||
+            (match.damage ?? 0) === numSearchInput ||
+            (match.eliminations ?? 0) === numSearchInput ||
+            (match.knockdowns ?? 0) === numSearchInput ||
+            (match.placement ?? 0) === numSearchInput;
+        return foundInStats;
+    }
+
+    private isSearchInMatchData(searchInput: string, match: MatchDataStore, isExact: boolean): boolean {
         const getLegendNameFn = (legendId: string): Optional<string> => Legend.getName(legendId)?.toLowerCase();
 
-        const matchMap = match.mapId ? MatchMap.getFromId(this.mapList, match.mapId) : undefined;
+        const matchMap = match.mapId ? MatchMap.getFromId(match.mapId, this._mapList) : undefined;
         const gameMode = match.gameModeId ? MatchGameMode.getFromId(this.gameModeList, match.gameModeId) : undefined;
 
-        const foundInMatchRoster = !!match.matchRoster?.find((mr) => simplifyTextFn(mr.name).includes(searchInput));
-        const foundInTeamRosterLegends = !!match.teamRoster?.find((tr) => getLegendNameFn(tr.legendId)?.includes(searchInput));
-        const foundInMapName = !!matchMap?.mapName.toLowerCase().includes(searchInput);
-        const foundInMyName = !!match.myName?.toLowerCase().includes(searchInput);
-        const foundInMyLegendName = !!match.myName?.toLowerCase().includes(searchInput);
-        const foundInGameMode = !!gameMode?.gameModeName?.toLowerCase().includes(searchInput);
+        const foundInMatchRoster = !!match.matchRoster?.find((mr) => this.isSearchStringFound(searchInput, mr.name, isExact));
+        const foundInTeamRosterLegends = !!match.teamRoster?.find((tr) =>
+            this.isSearchStringFound(searchInput, getLegendNameFn(tr.legendId) ?? "", isExact)
+        );
+        const foundInMapName = !!matchMap?.mapName && this.isSearchStringFound(searchInput, matchMap.mapName, isExact);
+        const foundInMyName = !!match.myName && this.isSearchStringFound(searchInput, match.myName, isExact);
+        const foundInMyLegendName =
+            !!match.legendId && this.isSearchStringFound(searchInput, new Legend(match.legendId).name ?? "", isExact);
+        const foundInGameMode = !!gameMode?.gameModeName && this.isSearchStringFound(searchInput, gameMode.gameModeName, isExact);
 
         return foundInMatchRoster || foundInTeamRosterLegends || foundInMapName || foundInMyName || foundInMyLegendName || foundInGameMode;
     }
+    //#endregion
 }

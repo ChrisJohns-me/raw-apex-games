@@ -3,6 +3,7 @@ import { MatchMapCoordinates } from "./map-coordinates";
 import { MatchMapFriendlyName, MatchMapGenericId } from "./map.enum";
 
 type ActiveDates = Array<{
+    // Empty ([]) = Inactive
     from: Date; // Useful to also cross-reference with the current date
     to?: Date; // if undefined, map is currently active
 }>;
@@ -24,7 +25,8 @@ interface MatchMapConstructor {
     isArenasMap: boolean;
     gameModeTypes?: MatchGameModeGenericId[];
     activeDates?: ActiveDates;
-    dropshipZStart?: MatchMapCoordinates["z"];
+    zStartPos?: MatchMapCoordinates["z"];
+    isChartable?: boolean;
     chartConfig?: MatchMapChartingConfig;
 }
 export class MatchMap implements MatchMapConstructor {
@@ -35,14 +37,15 @@ export class MatchMap implements MatchMapConstructor {
     public isArenasMap: boolean;
     public gameModeTypes?: MatchGameModeGenericId[];
     public activeDates?: ActiveDates;
-    public dropshipZStart?: MatchMapCoordinates["z"]; // Useful to cross-reference with starting location
+    public zStartPos?: MatchMapCoordinates["z"]; // Useful to cross-reference with starting location
+    public isChartable?: boolean;
     public chartConfig?: MatchMapChartingConfig;
 
     public get layoutFilename(): string {
         return MatchMap.getLayoutFilename(this.mapId);
     }
     public get previewFilename(): string {
-        return MatchMap.getLayoutFilename(this.mapId);
+        return MatchMap.getPreviewFilename(this.mapGenericId);
     }
 
     public static unknownLayoutId = "unknown_map_layout";
@@ -60,20 +63,21 @@ export class MatchMap implements MatchMapConstructor {
         this.isArenasMap = ctor.isArenasMap;
         this.gameModeTypes = ctor.gameModeTypes;
         this.activeDates = ctor.activeDates;
-        this.dropshipZStart = ctor.dropshipZStart;
+        this.zStartPos = ctor.zStartPos;
+        this.isChartable = ctor.isChartable ?? true;
         this.chartConfig = ctor.chartConfig;
     }
 
     //#region Static Methods
-    public static getFromId(matchMapList: MatchMap[], mapId: string): Optional<MatchMap> {
+    public static getFromId(mapId: string, matchMapList: MatchMap[]): Optional<MatchMap> {
         const idCleanFn = (id: string): string => id.toLowerCase().replace(/[_\W]+/gi, "");
         const foundMatchMap = matchMapList.find((matchMap) => idCleanFn(matchMap.mapId) === idCleanFn(mapId));
         return foundMatchMap;
     }
 
     public static getFromFriendlyName(
-        matchMapList: MatchMap[],
         friendlyName: string,
+        matchMapList: MatchMap[],
         gameModeBaseType?: MatchGameModeGenericId
     ): Optional<MatchMap> {
         const mapList = gameModeBaseType

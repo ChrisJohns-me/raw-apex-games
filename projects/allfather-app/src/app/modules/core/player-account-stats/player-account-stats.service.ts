@@ -74,7 +74,10 @@ export class PlayerAccountStatsService extends AllfatherService {
         breakCache = false
     ): Observable<PlayerAccountStats> {
         const isExpired = new Date() > (this.cachePlayerAccountStatsExpire ?? 0);
-        if ((breakCache || isExpired) && this.cachePlayerAccountStats) return of(this.cachePlayerAccountStats);
+        if (!breakCache && !isExpired && this.cachePlayerAccountStats) {
+            console.debug(`[${this.constructor.name}] Using cache for Player Account Stats`);
+            return of(this.cachePlayerAccountStats);
+        }
 
         return this.http
             .get(API_URL, { params: { version: API_VER, auth: API_KEY, platform, player: playerName }, responseType: "json" })
@@ -83,13 +86,11 @@ export class PlayerAccountStatsService extends AllfatherService {
                 map((playerAccountStatsJSON) => new PlayerAccountStatsMozambiquehereDTO(playerAccountStatsJSON)),
                 tap((dto) => console.debug(`[${this.constructor.name}] getPlayerAccountStats converted response to DTO class`, dto)),
                 map((playerAccountStatsDTO) => playerAccountStatsDTO.toPlayerAccountStats()),
-                tap((custom) =>
+                tap((playerAccountStats) => {
                     console.debug(
                         `[${this.constructor.name}] getPlayerAccountStats converted DTO class to Custom Player Account Stats class`,
-                        custom
-                    )
-                ),
-                tap((playerAccountStats) => {
+                        playerAccountStats
+                    );
                     this.cachePlayerAccountStats = playerAccountStats;
                     this.cachePlayerAccountStatsExpire = addMilliseconds(new Date(), CACHE_EXPIRE);
                 }),

@@ -14,7 +14,7 @@
                     </tr>
                 </thead>
                 <tbody [formGroup]="inGameHUDFormGroup" (mousedown)="isEditing = true" (mouseup)="isEditing = false">
-                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.MatchTimer" (mouseout)="selectedPreviewSetting = undefined">
+                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.MatchTimer">
                         <td class="ps-4 ps-lg-5">Match Timer</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
@@ -22,7 +22,7 @@
                             </div>
                         </td>
                     </tr>
-                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.UltTimer" (mouseout)="selectedPreviewSetting = undefined">
+                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.UltTimer">
                         <td class="ps-4 ps-lg-5">Ultimate Timer</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
@@ -47,7 +47,7 @@
                         </td>
                     </tr>
                     <!-- #region Aiming Reticle -->
-                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle" (mouseout)="selectedPreviewSetting = undefined">
+                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle">
                         <td class="ps-4 ps-lg-5">Permanent Aiming Reticle</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
@@ -58,7 +58,6 @@
                     <tr
                         [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleId)?.enabled }"
                         (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
-                        (mouseout)="selectedPreviewSetting = undefined"
                     >
                         <td class="ps-4 ps-lg-5"><span class="ms-3">Reticle Shape</span></td>
                         <td class="text-end pe-5">
@@ -76,7 +75,6 @@
                     <tr
                         [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleColor)?.enabled }"
                         (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
-                        (mouseout)="selectedPreviewSetting = undefined"
                     >
                         <td class="ps-4 ps-lg-5 ms-3"><span class="ms-3">Reticle Color</span></td>
                         <td class="text-end pe-5">
@@ -100,7 +98,6 @@
                     <tr
                         [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleAlpha)?.enabled }"
                         (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
-                        (mouseout)="selectedPreviewSetting = undefined"
                     >
                         <td class="ps-4 ps-lg-5 ms-3"><span class="ms-3">Reticle Transparency</span></td>
                         <td class="text-end pe-5">
@@ -120,7 +117,6 @@
                     <tr
                         [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleDynamicHide)?.enabled }"
                         (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
-                        (mouseout)="selectedPreviewSetting = undefined"
                     >
                         <td class="ps-4 ps-lg-5"><span class="ms-3">Hide while ADS</span></td>
                         <td class="text-end pe-5">
@@ -152,10 +148,7 @@
                     </tr>
                 </thead>
                 <tbody [formGroup]="legendSelectHUDFormGroup">
-                    <tr
-                        (mouseover)="selectedPreviewSetting = SettingPreview.LegendSelectionStats"
-                        (mouseout)="selectedPreviewSetting = undefined"
-                    >
+                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.LegendSelectionStats">
                         <td class="ps-4 ps-lg-5">Legend Statistics</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
@@ -167,10 +160,7 @@
                             </div>
                         </td>
                     </tr>
-                    <tr
-                        (mouseover)="selectedPreviewSetting = SettingPreview.LegendSelectionSuggestions"
-                        (mouseout)="selectedPreviewSetting = undefined"
-                    >
+                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.LegendSelectionSuggestions">
                         <td class="ps-4 ps-lg-5">Legend Suggestions</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">

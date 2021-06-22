@@ -9,6 +9,7 @@ import { differenceInMilliseconds, format, isDate } from "date-fns";
 import { Subject } from "rxjs";
 import { JSONTryParse } from "shared/utilities";
 import { almost1 } from "./simulations/almost1";
+import { arenaModeSuddenDeath } from "./simulations/arena-mode-sudden-death";
 import { fullGame1Eventful } from "./simulations/full-game1-eventful";
 import { fullGame1Quick } from "./simulations/full-game1-quick";
 import { fullGame2_2k } from "./simulations/full-game2-2k";
@@ -63,6 +64,16 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
     public ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    public onPerformArenaModeSuddenDeathClick(speedAdjust?: number): void {
+        const commands = this.logToCommands(arenaModeSuddenDeath());
+        this.runCommands(commands, speedAdjust);
+    }
+
+    public onPerformArenasModeClick(speedAdjust?: number): void {
+        // const commands = this.logToCommands(arenaMode());
+        // this.runCommands(commands, speedAdjust);
     }
 
     public onPerformAlmost1GameClick(speedAdjust?: number): void {

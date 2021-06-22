@@ -10,13 +10,14 @@ export const MatchMapList: MatchMap[] = [
         mapId: "mp_rr_canyonlands_staging",
         isBattleRoyaleMap: false,
         isArenasMap: false,
+        isChartable: false,
         gameModeTypes: [MatchGameModeGenericId.FiringRange],
         activeDates: [
             {
                 from: new Date(0),
             },
         ],
-        dropshipZStart: -Infinity,
+        zStartPos: -Infinity,
     }),
     //#endregion
     //#region Battle Royale Maps
@@ -36,7 +37,7 @@ export const MatchMapList: MatchMap[] = [
                 from: new Date("June 23, 2020"),
             },
         ],
-        dropshipZStart: 234,
+        zStartPos: 234,
         chartConfig: {
             imageAxisScale: {
                 xStart: -373,
@@ -62,7 +63,7 @@ export const MatchMapList: MatchMap[] = [
                 from: new Date("May 04, 2021"),
             },
         ],
-        dropshipZStart: 146,
+        zStartPos: 146,
         chartConfig: {
             imageAxisScale: {
                 xStart: -450,
@@ -89,7 +90,7 @@ export const MatchMapList: MatchMap[] = [
                 to: new Date("May 03, 2021"),
             },
         ],
-        dropshipZStart: 119,
+        zStartPos: 119,
         chartConfig: {
             imageAxisScale: {
                 xStart: -520,
@@ -115,7 +116,7 @@ export const MatchMapList: MatchMap[] = [
                 from: new Date("May 04, 2021"),
             },
         ],
-        dropshipZStart: 119,
+        zStartPos: 119,
         chartConfig: {
             imageAxisScale: {
                 xStart: -520,
@@ -133,11 +134,12 @@ export const MatchMapList: MatchMap[] = [
         mapId: "mp_rr_arena_phase_runner",
         isBattleRoyaleMap: false,
         isArenasMap: true,
+        isChartable: false,
         gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
-            // {
-            //     from: new Date("May 04, 2021"),
-            // },
+            {
+                from: new Date("May 04, 2021"),
+            },
         ],
     }),
     new MatchMap({
@@ -146,11 +148,12 @@ export const MatchMapList: MatchMap[] = [
         mapId: "mp_rr_party_crasher",
         isBattleRoyaleMap: false,
         isArenasMap: true,
+        isChartable: false,
         gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
-            // {
-            //     from: new Date("May 04, 2021"),
-            // },
+            {
+                from: new Date("May 04, 2021"),
+            },
         ],
     }),
     new MatchMap({
@@ -159,6 +162,7 @@ export const MatchMapList: MatchMap[] = [
         mapId: "mp_rr_canyonlands_mu3_arena", // TODO: Check
         isBattleRoyaleMap: false,
         isArenasMap: true,
+        isChartable: false,
         gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
             // {
@@ -172,6 +176,7 @@ export const MatchMapList: MatchMap[] = [
         mapId: "mp_rr_desertlands_mu2_arena", // TODO: Check
         isBattleRoyaleMap: false,
         isArenasMap: true,
+        isChartable: false,
         gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
             // {
@@ -185,6 +190,7 @@ export const MatchMapList: MatchMap[] = [
         mapId: "mp_rr_olympus_arena", // TODO: Check
         isBattleRoyaleMap: false,
         isArenasMap: true,
+        isChartable: false,
         gameModeTypes: [MatchGameModeGenericId.Arenas],
         activeDates: [
             // {
@@ -214,4 +220,72 @@ export function sortMatchMapList(matchMapList: MatchMap[]): MatchMap[] {
         if (a.mapName.toLowerCase() > b.mapName.toLowerCase()) return 1;
         return 0;
     });
+}
+
+/**
+ * Removes duplicate Maps from the provided Map List
+ * @returns latest map based on the GenericId
+ */
+export function latestGenericMap(genericId: MatchMapGenericId, matchMapList: MatchMap[]): Optional<MatchMap> {
+    const activeDatesSortFn = (
+        a: { from: Date; to?: Date | undefined } | undefined,
+        b: { from: Date; to?: Date | undefined } | undefined
+    ): number => {
+        // Active = { from: ... }
+        const aIsActive = !!a && !!a.from && !a.to;
+        const bIsActive = !!b && !!b.from && !b.to;
+        // Maybe active = { from: ..., to: ... }
+        const aIsMaybeActive = !!a && !!a.from && !!a.to;
+        const bIsMaybeActive = !!b && !!b.from && !!b.to;
+        // Inactive = {}
+        const aIsInactive = !a;
+        const bIsInactive = !b;
+
+        if (aIsActive) {
+            if (bIsMaybeActive) return -1;
+            if (bIsInactive) return -1;
+            return b!.from.getTime() - a!.from.getTime();
+        }
+        if (aIsMaybeActive) {
+            if (bIsActive) return 1;
+            if (bIsInactive) return -1;
+            return b!.to!.getTime() - a!.to!.getTime();
+        }
+        if (aIsInactive) {
+            if (bIsActive) return 1;
+            if (bIsMaybeActive) return 1;
+        }
+        return 0;
+    };
+    const latestMapActiveDatesFn = (activeDates: Array<{ from: Date; to?: Date }>): { from: Date; to?: Date } => {
+        return activeDates.sort(activeDatesSortFn)[0];
+    };
+
+    let latestMap: Optional<MatchMap>;
+    matchMapList // Sort Descending
+        .sort((a, b) => {
+            const aLatest = a.activeDates?.length ? latestMapActiveDatesFn(a.activeDates) : undefined;
+            const bLatest = b.activeDates?.length ? latestMapActiveDatesFn(b.activeDates) : undefined;
+
+            if (aLatest && bLatest) return activeDatesSortFn(aLatest, bLatest);
+            if (!aLatest && bLatest) return -1;
+            if (aLatest && !bLatest) return 1;
+            return 0;
+        })
+        .forEach((iterationMap) => {
+            if (!iterationMap || iterationMap.mapGenericId !== genericId) return;
+            if (!latestMap) {
+                latestMap = iterationMap;
+                return;
+            }
+            const iterationMapDates = iterationMap.activeDates?.length ? latestMapActiveDatesFn(iterationMap.activeDates) : undefined;
+            const latestMapDates = latestMap?.activeDates?.length ? latestMapActiveDatesFn(latestMap.activeDates) : undefined;
+            const sortResult = activeDatesSortFn(iterationMapDates, latestMapDates);
+
+            // Iteration map is later
+            if (sortResult === -1) {
+                latestMap = iterationMap;
+            }
+        });
+    return latestMap;
 }

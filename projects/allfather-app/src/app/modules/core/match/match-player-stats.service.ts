@@ -7,6 +7,7 @@ import { BehaviorSubject } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { cleanInt, isEmpty, parseBoolean } from "shared/utilities";
 import { AllfatherService } from "../allfather-service.abstract";
+import { MatchArenasScoreboardService } from "./match-arenas-scoreboard.service";
 import { MatchPlayerInflictionService } from "./match-player-infliction.service";
 import { MatchPlayerService } from "./match-player.service";
 import { MatchService } from "./match.service";
@@ -16,7 +17,7 @@ import { MatchService } from "./match.service";
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, MatchPlayerService, MatchPlayerInflictionService, OverwolfGameDataService],
+    deps: [MatchService, MatchArenasScoreboardService, MatchPlayerService, MatchPlayerInflictionService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerStatsService", MatchPlayerStatsService, deps),
 })
 export class MatchPlayerStatsService extends AllfatherService {
@@ -26,9 +27,12 @@ export class MatchPlayerStatsService extends AllfatherService {
     public readonly myAssists$ = new BehaviorSubject<number>(0);
     /** Data from Overwolf's "tabs". Reset on match start. */
     public readonly myDamage$ = new BehaviorSubject<number>(0);
-    /** Data from Overwolf's "tabs". Reset on match start. */
+    /**
+     * Arenas: Grabbed from ArenasScoreboard service
+     * BattleRoyale: Data from Overwolf's "tabs". Reset on match start.
+     */
     public readonly myPlacement$ = new BehaviorSubject<number>(0);
-    /** Data from Overwolf's "tabs". Reset on match start. */
+    /** Data from Overwolf's "tabs". Reset on match start. May not work in Arenas. */
     public readonly victory$ = new BehaviorSubject<boolean>(false);
     /** @deprecated May not work; Feature is unavailable in game-UI. */
     public readonly mySpectators$ = new BehaviorSubject<number>(0);
@@ -37,12 +41,13 @@ export class MatchPlayerStatsService extends AllfatherService {
     /**
      * Does not take into consideration victim's HP, only the raw inflicted amount.
      * The contained damage amount will then appear to be inflated.
-     * Info directly from Overwolf's me.damage_dealt data.
+     * Info directly from Overwolf's me.totalDamageDealt data.
      */
     public readonly myTotalDamageDealt$ = new BehaviorSubject<number>(0);
 
     constructor(
         private readonly match: MatchService,
+        private readonly matchArenasScoreboard: MatchArenasScoreboardService,
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInfliction: MatchPlayerInflictionService,
         private readonly overwolfGameData: OverwolfGameDataService
@@ -53,6 +58,7 @@ export class MatchPlayerStatsService extends AllfatherService {
         this.setupTotalDamageDealt();
         this.setupVictory();
         this.setupMyKnockdowns();
+        this.setupArenasScoreboard();
     }
 
     private setupMatchStateEvents(): void {
@@ -83,8 +89,11 @@ export class MatchPlayerStatsService extends AllfatherService {
                 setAmountFn(tabs.kills, this.myEliminations$);
                 setAmountFn(tabs.assists, this.myAssists$);
                 setAmountFn(tabs.damage, this.myDamage$);
-                this.myPlacement$.next(cleanInt(tabs.teams));
                 this.mySpectators$.next(cleanInt(tabs.spectators));
+
+                if (!this.match.gameMode$.value?.isArenasGameMode) {
+                    this.myPlacement$.next(cleanInt(tabs.teams));
+                }
             });
     }
 
@@ -133,5 +142,13 @@ export class MatchPlayerStatsService extends AllfatherService {
             .subscribe(() => {
                 this.myKnockdowns$.next(this.myKnockdowns$.value + 1);
             });
+    }
+
+    private setupArenasScoreboard(): void {
+        this.matchArenasScoreboard.scoreboard$.pipe(takeUntil(this.destroy$)).subscribe((scoreboard) => {
+            if (Number.isFinite(scoreboard.placement)) {
+                this.myPlacement$.next(cleanInt(scoreboard.placement));
+            }
+        });
     }
 }
