@@ -1,6 +1,7 @@
 import { MatchInflictionEventAccum } from "@allfather-app/app/common/match/infliction-event";
 import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
+import { Configuration } from "@allfather-app/configs/config.interface";
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from "@angular/core";
 import { interval, Subject } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
@@ -22,9 +23,14 @@ export interface OpponentBanner {
 })
 export class OpponentBannerComponent implements AfterViewInit, OnDestroy {
     @Input("bannerData") public bannerData: Optional<OpponentBanner>;
+    @Input() public teamColor?: string;
+
+    public config?: Configuration;
     private destroy$ = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef, private readonly config: ConfigurationService) {}
+    constructor(private readonly cdr: ChangeDetectorRef, private readonly configuration: ConfigurationService) {
+        this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => (this.config = config));
+    }
 
     public ngAfterViewInit(): void {
         this.setupRefreshTimer();
@@ -38,7 +44,7 @@ export class OpponentBannerComponent implements AfterViewInit, OnDestroy {
     private setupRefreshTimer() {
         const shouldRefresh = () =>
             !!this.bannerData?.latestInflictionAccum?.isKnocked || !!this.bannerData?.latestInflictionAccum?.isEliminated;
-        interval(this.config.featureConfigs.inflictionInsight.refreshTime)
+        interval(1000)
             .pipe(
                 takeUntil(this.destroy$),
                 filter(() => shouldRefresh())

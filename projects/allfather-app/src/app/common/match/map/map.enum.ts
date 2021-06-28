@@ -7,7 +7,7 @@ export enum MatchMapFriendlyName {
     // Arena Maps
     PhaseRunner = "Phase Runner",
     PartyCrasher = "Party Crasher",
-    Artillary = "Artillary",
+    Artillery = "Artillery",
     ThermalStation = "Thermal Station",
     GoldenGardens = "Golden Gardens",
 }
@@ -21,7 +21,7 @@ export enum MatchMapGenericId {
     // Arena Maps
     PhaseRunner = "phaserunner",
     PartyCrasher = "partycrasher",
-    Artillary = "artillary",
+    Artillery = "artillery",
     ThermalStation = "thermalstation",
     GoldenGardens = "goldengardens",
 }

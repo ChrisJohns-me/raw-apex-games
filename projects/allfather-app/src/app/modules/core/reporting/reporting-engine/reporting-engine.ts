@@ -5,6 +5,7 @@ import { RunCondition } from "./run-condition";
 export enum ReportingEngineId {
     Local = "local",
     GoogleSheets = "googlesheets",
+    GoogleAnalytics = "googleanalytics",
     Twitter = "twitter",
 }
 

@@ -54,14 +54,13 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     }
     /** Confidence level of accuracy; HIGH, LOW, NONE */
     public get confidenceLevel(): ConfidenceLevel {
-        if (this.confidenceAmount >= this.config.featureConfigs.ultTimer.highConfidenceAmount) return ConfidenceLevel.HIGH;
-        else if (this.confidenceAmount >= this.config.featureConfigs.ultTimer.lowConfidenceAmount) return ConfidenceLevel.LOW;
+        if (this.confidenceAmount >= this.highConfidenceAmount) return ConfidenceLevel.HIGH;
+        else if (this.confidenceAmount >= this.lowConfidenceAmount) return ConfidenceLevel.LOW;
         else return ConfidenceLevel.NONE;
     }
     /** Confidence level of accuracy in percent */
     public confidenceAmount = 0;
 
-    private maxHistoryCount = this.config.featureConfigs.ultTimer.maxHistoryCount;
     private _maybeReadyDate?: Date;
 
     private get avgIncrement(): number {
@@ -75,17 +74,29 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
         return avg;
     }
     private ultimateProgressHistory: UltimateProgress[] = [];
+    //#region Config
+    private maxUltimateCooldownTime = 360000;
+    private lowConfidenceAmount = 0.35;
+    private highConfidenceAmount = 0.7;
+    private maxHistoryCount = 5;
+    //#endregion
     private readonly visibleStates$: Observable<[MatchStateChangedEvent, PlayerState, Optional<MatchLocationPhase>]>;
     private destroy$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
-        private readonly config: ConfigurationService,
+        private readonly configuration: ConfigurationService,
         private readonly match: MatchService,
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerLegend: MatchPlayerLegendService,
         private readonly matchPlayerLocation: MatchPlayerLocationService
     ) {
+        this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => {
+            this.maxUltimateCooldownTime = config.facts.maxUltimateCooldownTime;
+            this.lowConfidenceAmount = config.featureConfigs.ultTimer.lowConfidenceAmount;
+            this.highConfidenceAmount = config.featureConfigs.ultTimer.highConfidenceAmount;
+            this.maxHistoryCount = config.featureConfigs.ultTimer.maxHistoryCount;
+        });
         this.visibleStates$ = combineLatest([this.match.state$, this.matchPlayer.myState$, this.matchPlayerLocation.myLocationPhase$]).pipe(
             takeUntil(this.destroy$),
             distinctUntilChanged()
@@ -117,6 +128,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     }
 
     private setupUltimateCalculation(): void {
+        const refreshTime = 1000;
         this.visibleStates$
             .pipe(
                 filter(([stateChanged, myState]) => stateChanged.state === MatchState.Active && myState === PlayerState.Alive),
@@ -126,7 +138,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
                 map((percent) => this.calcReadyDate(percent)),
                 tap((readyDate) => (this._maybeReadyDate = readyDate)),
                 tap(() => (this.confidenceAmount = this.calcConfidenceAmount())),
-                switchMap(() => timer(0, this.config.featureConfigs.ultTimer.refreshTime))
+                switchMap(() => timer(0, refreshTime))
             )
             .subscribe(() => this.cdr.detectChanges());
     }
@@ -181,7 +193,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
 
     private calcConfidenceAmount(): number {
         let confidence = 0;
-        const maxReadyDate = addMilliseconds(new Date(), this.config.facts.maxUltimateCooldownTime);
+        const maxReadyDate = addMilliseconds(new Date(), this.maxUltimateCooldownTime);
         const historyCount = this.ultimateProgressHistory.length;
         const percentVariance = mathAverageVariance(this.ultimateProgressHistory.map((u) => u.increment));
         const timeSecVariance = mathAverageVariance(this.ultimateProgressHistory.map((u) => u.timestamp.getTime() / 1000));

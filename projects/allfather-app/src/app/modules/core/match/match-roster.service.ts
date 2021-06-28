@@ -84,16 +84,20 @@ export class MatchRosterService extends AllfatherService {
      */
     public readonly stagedTeammateRoster$ = new BehaviorSubject<MatchRoster<MatchRosterPlayer>>(new MatchRoster<MatchRosterTeammate>());
 
+    private isRosterNullPlayerDisconnect = true;
     private readonly rosterUpdate$: Observable<RosterUpdate>;
 
     constructor(
-        private readonly config: ConfigurationService,
+        private readonly configuration: ConfigurationService,
         private readonly match: MatchService,
         private readonly matchLegendSelect: MatchLegendSelectService,
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly player: PlayerService
     ) {
         super();
+        this.configuration.config$
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((config) => (this.isRosterNullPlayerDisconnect = config.assumptions.isRosterNullPlayerDisconnect));
         this.rosterUpdate$ = this.setupRosterUpdate$();
         this.setupOnMatchStart();
         this.setupOnMatchEnd();
@@ -150,7 +154,7 @@ export class MatchRosterService extends AllfatherService {
                     return rosterDeletionFn(rosterId);
                 }
             }),
-            filter((rosterUpdate) => rosterUpdate.rosterAction !== "DEL" || !this.config.assumptions.isRosterNullPlayerDisconnect)
+            filter((rosterUpdate) => rosterUpdate.rosterAction !== "DEL" || !this.isRosterNullPlayerDisconnect)
         );
     }
 

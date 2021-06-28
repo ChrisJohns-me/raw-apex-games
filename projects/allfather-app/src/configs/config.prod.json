@@ -23,7 +23,15 @@
         "enableUltTimerWindow": true,
         "enableInflictionInsightWindow": true,
         "enableReticleHelperWindow": true,
+        "enableVideoCapture": false,
         "inflictionInsight": {
+            "teamIndicatorUI": true,
+            "shieldBarUI": false,
+            "healthBarUI": false,
+            "totalDamageAmount": true,
+            "shieldDamageAmount": true,
+            "healthDamageAmount": true,
+            "platformUI": true,
             "showAssumedOpponentTeammateShields": false,
             "showAssumedOpponentTeammateHealth": false,
             "assumeKnockdownExpires": true,
@@ -34,12 +42,11 @@
             "complimentaryLegends": true
         },
         "reticleHelper": {
-            "enableAimingReticle": true
+            "aimingReticle": true
         }
     },
     "featureConfigs": {
         "inflictionInsight": {
-            "refreshTime": 1000,
             "damageResetTime": 20000
         },
         "legendSelectAssist": {
@@ -96,7 +103,6 @@
             ]
         },
         "ultTimer": {
-            "refreshTime": 1000,
             "maxHistoryCount": 5,
             "highConfidenceAmount": 0.7,
             "lowConfidenceAmount": 0.35
@@ -105,16 +111,5 @@
     "general": {
         "overwolfGameStatusUrl": "https://game-events-status.overwolf.com/${0}_prod.json"
     },
-    "overwolfQuirks": {},
-    "uiContainers": {
-        "inflictionInsight": {
-            "defaultPosition": {
-                "x": 0.5,
-                "y": 0.95
-            },
-            "positionUnit": "percent",
-            "positionXAnchor": "left",
-            "positionYAnchor": "bottom"
-        }
-    }
+    "overwolfQuirks": {}
 }

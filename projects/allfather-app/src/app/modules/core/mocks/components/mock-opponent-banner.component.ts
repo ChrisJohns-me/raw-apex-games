@@ -12,4 +12,5 @@ import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 })
 export class MockOpponentBannerComponent implements MockedClass<OpponentBannerComponent> {
     @Input("bannerData") public bannerData: Optional<OpponentBanner>;
+    @Input() public teamColor?: string;
 }

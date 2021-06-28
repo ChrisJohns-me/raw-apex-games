@@ -4,6 +4,7 @@ import { ConfigurationService } from "../core/configuration.service";
 import { FileService } from "../core/file.service";
 import { GameProcessService } from "../core/game-process.service";
 import { GameService } from "../core/game.service";
+import { GoogleAnalyticsService } from "../core/google-analytics.service";
 import { LocalDatabaseService } from "../core/local-database/local-database.service";
 import { LocalStorageService } from "../core/local-storage/local-storage.service";
 import { MapRotationService } from "../core/map-rotation/map-rotation.service";
@@ -23,6 +24,7 @@ import { OverwolfGameDataService } from "../core/overwolf";
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
 import { OverwolfFeatureStatusService } from "../core/overwolf/overwolf-feature-status.service";
 import { OverwolfInputTrackingService } from "../core/overwolf/overwolf-input-tracking.service";
+import { OverwolfProfileService } from "../core/overwolf/overwolf-profile.service";
 import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service";
 import { PlayerAccountStatsService } from "../core/player-account-stats/player-account-stats.service";
 import { PlayerLocalStatsService } from "../core/player-local-stats.service";
@@ -51,14 +53,15 @@ import { SystemTrayService } from "./system-tray.service";
         FileService,
         GameProcessService,
         GameService,
+        GoogleAnalyticsService,
         HUDWindowControllerService,
         InflictionInsightWindowService,
         LegendSelectAssistWindowService,
         LocalDatabaseService,
         LocalStorageService,
         MainWindowService,
-        MatchArenasScoreboardService,
         MapRotationService,
+        MatchArenasScoreboardService,
         MatchKillfeedService,
         MatchLegendSelectService,
         MatchMapService,
@@ -75,6 +78,7 @@ import { SystemTrayService } from "./system-tray.service";
         OverwolfFeatureStatusService,
         OverwolfGameDataService,
         OverwolfInputTrackingService,
+        OverwolfProfileService,
         OverwolfSystemTrayService,
         PlayerAccountStatsService,
         PlayerLocalStatsService,
@@ -95,6 +99,7 @@ export class SingletonServiceContainerService {
         public readonly FileService: FileService,
         public readonly GameProcessService: GameProcessService,
         public readonly GameService: GameService,
+        public readonly GoogleAnalyticsService: GoogleAnalyticsService,
         public readonly HUDWindowControllerService: HUDWindowControllerService,
         public readonly InflictionInsightWindowService: InflictionInsightWindowService,
         public readonly LegendSelectAssistWindowService: LegendSelectAssistWindowService,
@@ -119,6 +124,7 @@ export class SingletonServiceContainerService {
         public readonly OverwolfFeatureStatusService: OverwolfFeatureStatusService,
         public readonly OverwolfGameDataService: OverwolfGameDataService,
         public readonly OverwolfInputTrackingService: OverwolfInputTrackingService,
+        public readonly OverwolfProfileService: OverwolfProfileService,
         public readonly OverwolfSystemTrayService: OverwolfSystemTrayService,
         public readonly PlayerAccountStatsService: PlayerAccountStatsService,
         public readonly PlayerLocalStatsService: PlayerLocalStatsService,

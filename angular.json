@@ -52,7 +52,7 @@
                         "stylePreprocessorOptions": {
                             "includePaths": ["projects/allfather-app/src/assets/styles/"]
                         },
-                        "scripts": []
+                        "scripts": ["projects/allfather-app/src/ga.js"]
                     },
                     "configurations": {
                         "production": {

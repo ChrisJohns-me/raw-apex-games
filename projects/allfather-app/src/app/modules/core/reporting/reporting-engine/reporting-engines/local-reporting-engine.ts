@@ -66,7 +66,7 @@ export class LocalReportingEngine implements ReportingEngine {
                 .pipe(takeUntil(this.destroy$))
                 .subscribe((success) => {
                     this.reportingStatus$.next(success ? ReportingStatus.SUCCESS : ReportingStatus.FAIL);
-                    console.log(`[${this.constructor.name}] Reporting Succeeded: ${success ? "Yes" : "No :("}`);
+                    console.log(`[${this.constructor.name}] Local Reporting Succeeded: ${success ? "Yes" : "No :("}`);
                 });
         } else {
             this.reportingStatus$.next(ReportingStatus.CRITERIA_NOT_MET);
@@ -138,7 +138,7 @@ export class LocalReportingEngine implements ReportingEngine {
             legendId: getDataById("legendId")?.value?.legendId ?? "",
             killfeedHistory: getDataById("killfeedHistory")?.value ?? [],
             damageEventsHistory: getDataById("damageEventsHistory")?.value ?? [],
-            locationHistory: getDataById("locationHistory")?.value.map((loc) => mapHistory(loc)) ?? [],
+            locationHistory: getDataById("locationHistory")?.value.map((loc) => composeMapCoordinate(loc)) ?? [],
             weaponIdsHistory: getDataById("weaponIdsHistory")?.value ?? [],
             ultimateUsageDates: getDataById("ultimateUsageDates")?.value ?? [],
         };
@@ -150,7 +150,9 @@ export class LocalReportingEngine implements ReportingEngine {
 }
 
 /** Store locationHistory.phase as number */
-function mapHistory(location: ReportableDataFactoryMap["locationHistory"]["value"][0]): NonNullable<MatchDataStore["locationHistory"]>[0] {
+function composeMapCoordinate(
+    location: ReportableDataFactoryMap["locationHistory"]["value"][0]
+): NonNullable<MatchDataStore["locationHistory"]>[0] {
     return {
         timestamp: location.timestamp,
         value: {

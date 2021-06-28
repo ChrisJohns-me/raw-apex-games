@@ -1,4 +1,5 @@
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { MatchMapService } from "@allfather-app/app/modules/core/match/match-map.service";
 import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
@@ -6,6 +7,7 @@ import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/m
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/services/mock-configuration.service";
+import { MockGoogleAnalyticsService } from "@allfather-app/app/modules/core/mocks/services/mock-google-analytics.service";
 import { MockMatchMapService } from "@allfather-app/app/modules/core/mocks/services/mock-match-map.service";
 import { MockMatchPlayerLegendService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-legend.service";
 import { MockMatchPlayerLocationService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-location.service";
@@ -42,8 +44,8 @@ describe("MatchExplorerPageComponent", () => {
                 SelectedGameModesComponent,
             ],
             providers: [
-                { provide: WINDOW, useClass: BrowserWindowRef },
                 { provide: ConfigurationService, useClass: MockConfigurationService },
+                { provide: GoogleAnalyticsService, useClass: MockGoogleAnalyticsService },
                 { provide: MatchMapService, useClass: MockMatchMapService },
                 { provide: MatchPlayerLegendService, useClass: MockMatchPlayerLegendService },
                 { provide: MatchPlayerLocationService, useClass: MockMatchPlayerLocationService },
@@ -52,6 +54,7 @@ describe("MatchExplorerPageComponent", () => {
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: PlayerService, useClass: MockPlayerService },
                 { provide: ReportingService, useClass: MockReportingService },
+                { provide: WINDOW, useClass: BrowserWindowRef },
             ],
         }).compileComponents();
     });

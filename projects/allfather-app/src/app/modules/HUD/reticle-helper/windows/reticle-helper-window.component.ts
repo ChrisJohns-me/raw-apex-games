@@ -3,7 +3,7 @@ import { ConfigurationService } from "@allfather-app/app/modules/core/configurat
 import { OverwolfInputTrackingService } from "@allfather-app/app/modules/core/overwolf/overwolf-input-tracking.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { Subject } from "rxjs";
+import { combineLatest, Subject } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
 import { AimingReticle, AimingReticleList } from "../components/aiming-reticle/aiming-reticles";
 
@@ -15,24 +15,19 @@ import { AimingReticle, AimingReticleList } from "../components/aiming-reticle/a
 })
 export class ReticleHelperWindowComponent implements OnInit, OnDestroy {
     public aimingReticle: AimingReticle = AimingReticleList[0];
-    public get isAimingReticleEnabled(): boolean {
-        return this._configIsAimingReticleEnabled && this._settingIsAimingReticleEnabled;
-    }
+    public isAimingReticleEnabled = false;
     public get isAimingReticleHidden(): boolean {
-        console.debug();
-        return this._settingIsAimingReticleDynamicHide && this.isRMBPressed;
+        return this.isAimingReticleDynamicHideSetting && this.isRMBPressed;
     }
 
     private isRMBPressed = false;
-    private _configIsAimingReticleEnabled = this.config.featureFlags.reticleHelper.enableAimingReticle;
-    private _settingIsAimingReticleEnabled = false;
-    private _settingIsAimingReticleDynamicHide = false;
+    private isAimingReticleDynamicHideSetting = false;
 
     private destroy$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
-        private readonly config: ConfigurationService,
+        private readonly configuration: ConfigurationService,
         private readonly overwolfInputTracking: OverwolfInputTrackingService,
         private readonly settingsService: SettingsService
     ) {}
@@ -48,14 +43,14 @@ export class ReticleHelperWindowComponent implements OnInit, OnDestroy {
     }
 
     private setupSettingsListener(): void {
-        this.settingsService
-            .streamAllSettings$()
+        combineLatest([this.configuration.config$, this.settingsService.streamAllSettings$()])
             .pipe(takeUntil(this.destroy$))
-            .subscribe((allSettings) => {
+            .subscribe(([config, allSettings]) => {
                 const isEnabledDefaultValue = DefaultSetting.enableInGameAimingReticle as boolean;
-                this._settingIsAimingReticleEnabled = (
+                const isAimingReticleSettingEnabled = (
                     allSettings.enableInGameAimingReticle != null ? allSettings.enableInGameAimingReticle : isEnabledDefaultValue
                 ) as boolean;
+                this.isAimingReticleEnabled = isAimingReticleSettingEnabled && config.featureFlags.reticleHelper.aimingReticle;
 
                 const aimingReticle = {
                     ...AimingReticleList.find((reticle) => reticle.reticleId === allSettings.inGameAimingReticleId),
@@ -65,7 +60,7 @@ export class ReticleHelperWindowComponent implements OnInit, OnDestroy {
                 aimingReticle.alpha = allSettings.inGameAimingReticleAlpha as number;
 
                 const dynamicHideDefaultValue = DefaultSetting.inGameAimingReticleDynamicHide as boolean;
-                this._settingIsAimingReticleDynamicHide = (
+                this.isAimingReticleDynamicHideSetting = (
                     allSettings.inGameAimingReticleDynamicHide != null
                         ? allSettings.inGameAimingReticleDynamicHide
                         : dynamicHideDefaultValue

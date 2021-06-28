@@ -5,8 +5,10 @@ import { combineLatest, of, Subject } from "rxjs";
 import { catchError, filter, switchMap, takeUntil } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
 import { AllfatherService } from "../allfather-service.abstract";
+import { GoogleAnalyticsService } from "../google-analytics.service";
 import { ReportableDataManagerService } from "./reporting-engine/reportable-data-manager";
 import { ReportingEngine, ReportingEngineId, ReportingStatus } from "./reporting-engine/reporting-engine";
+import { GoogleAnalyticsReportingEngine } from "./reporting-engine/reporting-engines/google-analytics-reporting-engine";
 import { LocalReportingEngine } from "./reporting-engine/reporting-engines/local-reporting-engine";
 
 interface ReportingEvent {
@@ -19,14 +21,18 @@ interface ReportingEvent {
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, ReportableDataManagerService],
+    deps: [GoogleAnalyticsService, MatchService, ReportableDataManagerService],
     useFactory: (...deps: any[]) => SingletonServiceProviderFactory("ReportingService", ReportingService, deps),
 })
 export class ReportingService extends AllfatherService implements OnDestroy {
     public reportingEvent$ = new Subject<ReportingEvent>();
     public runningReportingEngines: ReportingEngine[] = [];
 
-    constructor(private readonly match: MatchService, private readonly reportableDataManager: ReportableDataManagerService) {
+    constructor(
+        private readonly googleAnalytics: GoogleAnalyticsService,
+        private readonly match: MatchService,
+        private readonly reportableDataManager: ReportableDataManagerService
+    ) {
         super();
         // TODO: Get settings, enable only those that are in user's settings
         this.restartEngines();
@@ -68,6 +74,7 @@ export class ReportingService extends AllfatherService implements OnDestroy {
         this.stopEngine(engineId);
         console.debug(`[${this.constructor.name}] Starting Report Engine "${engineId}"`);
         if (engineId === ReportingEngineId.Local) this.runningReportingEngines.push(this.buildLocalReportingEngine());
+        if (engineId === ReportingEngineId.GoogleAnalytics) this.runningReportingEngines.push(this.buildGoogleAnalyticsReportingEngine());
     }
 
     public stopEngine(engineId: ReportingEngineId): void {
@@ -139,5 +146,17 @@ export class ReportingService extends AllfatherService implements OnDestroy {
         const localReportingEngine = new LocalReportingEngine(this.match);
         localReportingEngine.setup(setup);
         return localReportingEngine;
+    }
+
+    private buildGoogleAnalyticsReportingEngine(): GoogleAnalyticsReportingEngine {
+        const dataItems = this.reportableDataManager.instantiatedDataItems;
+        if (isEmpty(dataItems)) throw Error(`Data items list was empty when building GA reporting engine`);
+        const setup = {
+            reportableDataList: this.reportableDataManager.instantiatedDataItems,
+            runConditions: [],
+        };
+        const gaReportingEngine = new GoogleAnalyticsReportingEngine(this.googleAnalytics);
+        gaReportingEngine.setup(setup);
+        return gaReportingEngine;
     }
 }

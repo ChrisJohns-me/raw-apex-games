@@ -157,8 +157,8 @@ export const MatchMapList: MatchMap[] = [
         ],
     }),
     new MatchMap({
-        mapName: MatchMapFriendlyName.Artillary,
-        mapGenericId: MatchMapGenericId.Artillary,
+        mapName: MatchMapFriendlyName.Artillery,
+        mapGenericId: MatchMapGenericId.Artillery,
         mapId: "mp_rr_canyonlands_mu3_arena", // TODO: Check
         isBattleRoyaleMap: false,
         isArenasMap: true,

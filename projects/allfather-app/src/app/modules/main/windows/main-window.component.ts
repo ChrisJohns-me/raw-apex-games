@@ -13,10 +13,12 @@ import {
 } from "@angular/core";
 import { Modal } from "bootstrap";
 import { interval, Subject } from "rxjs";
-import { delayWhen, filter, takeUntil } from "rxjs/operators";
+import { delayWhen, filter, map, take, takeUntil } from "rxjs/operators";
+import { isEmpty, wordsToUpperCase } from "shared/utilities";
 import { exhaustiveEnumSwitch } from "shared/utilities/switch";
 import { BackgroundService } from "../../background/background.service";
 import { ConfigLoadStatus, ConfigurationService } from "../../core/configuration.service";
+import { GoogleAnalyticsService } from "../../core/google-analytics.service";
 import { MainPage } from "../pages/main-page";
 import { MainWindowService } from "./main-window.service";
 
@@ -34,17 +36,25 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild("confirmExitModal") private confirmExitModal?: ElementRef;
     public MainPage = MainPage;
     public APP_NAME = APP_NAME;
-    public activePage: MainPage = MainPage.Dashboard;
+    public get activePage(): MainPage {
+        return this._activePage;
+    }
+    public set activePage(value: MainPage) {
+        this.trackPageChange(value);
+        this._activePage = value;
+    }
     public isLoading = false;
     public isAppStarting = false;
     public randomCaption = this.captionGenerator();
 
+    private _activePage: MainPage = MainPage.Dashboard;
     private destroy$ = new Subject<void>();
 
     constructor(
         private readonly backgroundService: BackgroundService,
         private readonly cdr: ChangeDetectorRef,
         private readonly config: ConfigurationService,
+        private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly mainWindow: MainWindowService
     ) {}
 
@@ -72,6 +82,20 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
 
     public onExitAppClick(): void {
         this.backgroundService.exitApp();
+    }
+
+    private trackPageChange(newPage: MainPage): void {
+        this.mainWindow.uiWindow
+            .windowInfo()
+            .pipe(
+                takeUntil(this.destroy$),
+                map((winInfo) => winInfo.name),
+                filter((windowName) => !isEmpty(windowName)),
+                take(1)
+            )
+            .subscribe((windowName) => {
+                this.googleAnalytics.sendPageview(`Main - ${wordsToUpperCase(newPage)}`, `/${windowName}/${newPage}`);
+            });
     }
 
     private setupLoading(): void {

@@ -81,7 +81,7 @@
     </div>
 </div>
 
-<div class="container-fluid" appFullHeight [marginBottom]="10">
+<div class="container-fluid" appFullHeight [marginBottom]="10" #matchListingContainer (scroll)="onMatchListingScroll($event)">
     <div class="row justify-content-center">
         <div class="col-12">
             <app-match-listing
@@ -91,6 +91,7 @@
                 (teamRosterClick)="onTeamRosterClick($event)"
                 [isTeamRosterPlayerClickable]="true"
                 [showDataItems]="showMatchItems"
+                [numDisplayMatches]="numDisplayMatches"
             ></app-match-listing>
         </div>
     </div>

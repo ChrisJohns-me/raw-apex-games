@@ -1,11 +1,13 @@
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { GameProcessService } from "@allfather-app/app/modules/core/game-process.service";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
 import { MapRotationService } from "@allfather-app/app/modules/core/map-rotation/map-rotation.service";
 import { MatchMapService } from "@allfather-app/app/modules/core/match/match-map.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/services/mock-configuration.service";
 import { MockGameProcessService } from "@allfather-app/app/modules/core/mocks/services/mock-game-process.service";
+import { MockGoogleAnalyticsService } from "@allfather-app/app/modules/core/mocks/services/mock-google-analytics.service";
 import { MockLocalDatabaseService } from "@allfather-app/app/modules/core/mocks/services/mock-local-database.service";
 import { MockMapRotationService } from "@allfather-app/app/modules/core/mocks/services/mock-map-rotation.service";
 import { MockMatchMapService } from "@allfather-app/app/modules/core/mocks/services/mock-match-map.service";
@@ -31,14 +33,15 @@ describe("DashboardPageComponent", () => {
             declarations: [DashboardPageComponent, LegendIconsBoardComponent, MapRotationDisplayComponent, AccountStatsDisplayComponent],
             providers: [
                 { provide: ConfigurationService, useClass: MockConfigurationService },
-                { provide: LocalDatabaseService, useClass: MockLocalDatabaseService },
-                { provide: PlayerService, useClass: MockPlayerService },
-                { provide: PlayerLocalStatsService, useClass: MockPlayerStatsService },
-                { provide: MatchMapService, useClass: MockMatchMapService },
-                { provide: MapRotationService, useClass: MockMapRotationService },
                 { provide: GameProcessService, useClass: MockGameProcessService },
+                { provide: GoogleAnalyticsService, useClass: MockGoogleAnalyticsService },
+                { provide: LocalDatabaseService, useClass: MockLocalDatabaseService },
+                { provide: MapRotationService, useClass: MockMapRotationService },
+                { provide: MatchMapService, useClass: MockMatchMapService },
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: PlayerAccountStatsService, useClass: MockPlayerAccountStatsService },
+                { provide: PlayerLocalStatsService, useClass: MockPlayerStatsService },
+                { provide: PlayerService, useClass: MockPlayerService },
             ],
         }).compileComponents();
     });

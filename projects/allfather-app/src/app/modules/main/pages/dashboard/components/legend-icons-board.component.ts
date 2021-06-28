@@ -1,4 +1,5 @@
 import { Legend } from "@allfather-app/app/common/legend/legend";
+import { generateLegendBGLinearColor } from "@allfather-app/app/common/legend/legend-list";
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from "@angular/core";
 
 type LegendIdsRow = string[];
@@ -17,4 +18,5 @@ export class LegendIconsBoardComponent {
 
     public getLegendImageName = (legendId?: string): string => Legend.getSquarePortraitFilename(legendId);
     public getLegendName = (legendId?: string): Optional<string> => Legend.getName(legendId);
+    public getLegendBGColorGradient = (legendId?: string): string => generateLegendBGLinearColor(legendId);
 }

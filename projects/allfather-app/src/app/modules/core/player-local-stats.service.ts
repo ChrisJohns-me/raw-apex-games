@@ -1,9 +1,10 @@
 import { AvgMatchStats, avgStats, complimentaryLegendsWeights, legendAvgStats } from "@allfather-app/app/common/utilities/match-stats";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { combineLatest, Observable, of } from "rxjs";
 import { filter, map, tap } from "rxjs/operators";
 import { Stopwatch } from "shared/utilities";
+import { AllfatherService } from "./allfather-service.abstract";
 import { ConfigurationService } from "./configuration.service";
 import { MatchDataStore } from "./local-database/match-data-store";
 import { MatchService } from "./match/match.service";
@@ -19,14 +20,16 @@ type LegendId = string;
     deps: [ConfigurationService, MatchService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("PlayerLocalStatsService", PlayerLocalStatsService, deps),
 })
-export class PlayerLocalStatsService {
-    private statWeights = this.config.featureConfigs.legendSelectAssist.complimentaryLegendsWeights;
+export class PlayerLocalStatsService extends AllfatherService {
     private cachedPlayerComplimentaryLegendWeights?: { legendId: string; weightScore: number }[];
     private cachedLegendComplimentaryLegendWeights = new Map<LegendId, { legendId: string; weightScore: number }[]>();
     private cachedPlayerStats?: AvgMatchStats;
     private cachedLegendStats = new Map<LegendId, AvgMatchStats>();
     private watchdogTime = 500;
-    constructor(private readonly config: ConfigurationService, private readonly match: MatchService) {}
+
+    constructor(private readonly configuration: ConfigurationService, private readonly match: MatchService) {
+        super();
+    }
 
     public clearPlayerCache(): void {
         this.cachedPlayerComplimentaryLegendWeights = undefined;
@@ -85,10 +88,13 @@ export class PlayerLocalStatsService {
 
         const stopwatch = new Stopwatch();
         stopwatch.start();
-        return this.match.getAllMatchData$(limit).pipe(
-            filter((matchList) => !!matchList && Array.isArray(matchList)),
-            map((matchList) => {
-                const weightsMap = complimentaryLegendsWeights(matchList as MatchDataStore[], this.statWeights);
+        return combineLatest([this.configuration.config$, this.match.getAllMatchData$(limit)]).pipe(
+            filter(([, matchList]) => !!matchList && Array.isArray(matchList)),
+            map(([config, matchList]) => {
+                const weightsMap = complimentaryLegendsWeights(
+                    matchList as MatchDataStore[],
+                    config.featureConfigs.legendSelectAssist.complimentaryLegendsWeights
+                );
                 const weights = Array.from(weightsMap)
                     .sort((a, b) => b[1].totalAvgWeight - a[1].totalAvgWeight)
                     .map((l) => ({ legendId: l[0], weightScore: l[1].totalAvgWeight }));
@@ -116,10 +122,14 @@ export class PlayerLocalStatsService {
 
         const stopwatch = new Stopwatch();
         stopwatch.start();
-        return this.match.getMatchDataByLegendId$(legendId, limit).pipe(
-            filter((matchList) => !!matchList && Array.isArray(matchList)),
-            map((matchList) => {
-                const legendWeightsMap = complimentaryLegendsWeights(matchList as MatchDataStore[], this.statWeights, legendId);
+        return combineLatest([this.configuration.config$, this.match.getMatchDataByLegendId$(legendId, limit)]).pipe(
+            filter(([, matchList]) => !!matchList && Array.isArray(matchList)),
+            map(([config, matchList]) => {
+                const legendWeightsMap = complimentaryLegendsWeights(
+                    matchList as MatchDataStore[],
+                    config.featureConfigs.legendSelectAssist.complimentaryLegendsWeights,
+                    legendId
+                );
                 const legendWeights = Array.from(legendWeightsMap)
                     .sort((a, b) => b[1].totalAvgWeight - a[1].totalAvgWeight)
                     .map((l) => ({ legendId: l[0], weightScore: l[1].totalAvgWeight }));

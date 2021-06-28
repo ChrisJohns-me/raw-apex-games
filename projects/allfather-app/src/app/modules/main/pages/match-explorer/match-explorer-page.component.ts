@@ -6,21 +6,32 @@ import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mod
 import { latestGenericMap, MatchMapList, sortMatchMapList } from "@allfather-app/app/common/match/map/map-list";
 import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { AvgMatchStats, avgStats, SumMatchStats, sumStats } from "@allfather-app/app/common/utilities/match-stats";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { ReportingEngineId, ReportingStatus } from "@allfather-app/app/modules/core/reporting/reporting-engine/reporting-engine";
 import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { DataItem } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, TrackByFunction } from "@angular/core";
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    OnDestroy,
+    OnInit,
+    TrackByFunction,
+    ViewChild,
+} from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { mdiFilterVariantRemove } from "@mdi/js";
 import { intervalToDuration } from "date-fns";
 import { Observable, Subject } from "rxjs";
 import { debounceTime, filter, finalize, switchMap, takeUntil } from "rxjs/operators";
-import { cleanInt, isEmpty, Stopwatch } from "shared/utilities";
+import { cleanInt, isEmpty } from "shared/utilities";
 import { unique } from "shared/utilities/primitives/array";
 
 type TeamRosterPlayer = NonNullable<MatchDataStore["teamRoster"]>[0];
+const DEFAULT_NUM_ROWS = 25;
 
 @Component({
     selector: "app-match-explorer-page",
@@ -28,10 +39,11 @@ type TeamRosterPlayer = NonNullable<MatchDataStore["teamRoster"]>[0];
     styleUrls: ["./match-explorer-page.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDestroy {
-    public stopwatch = new Stopwatch();
+export class MatchExplorerPageComponent implements OnInit, OnDestroy {
+    @ViewChild("matchListingContainer") public matchListingContainer?: ElementRef;
     public isSearching = false;
     public isLoadingMatchList = false;
+    public numDisplayMatches = DEFAULT_NUM_ROWS;
     public resetFilters = new Subject<void>();
     public get areFiltersResettable(): boolean {
         return (
@@ -78,10 +90,13 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
 
     /** All BattleRoyal and Arenas Maps; includes duplicate GenericIds */
     private _mapList = sortMatchMapList(MatchMapList.filter((m) => m.isBattleRoyaleMap || m.isArenasMap));
+    /** Num rows to add when user reaches the bottom of the scroll */
+    private numAddRowsScroll = 25;
     private destroy$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
+        private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly match: MatchService,
         private readonly reportingService: ReportingService
     ) {
@@ -111,8 +126,6 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
             });
     }
 
-    public ngAfterViewInit(): void {}
-
     public ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
@@ -122,6 +135,7 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     public onResetClick(): void {
         this.searchForm.reset("", { emitEvent: false });
         this.resetFilters.next();
+        this.numDisplayMatches = DEFAULT_NUM_ROWS;
         this.refreshUI();
     }
 
@@ -151,6 +165,18 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
         this.searchForm.setValue(`"${teamRosterPlayer.name}"`);
     }
 
+    public onMatchListingScroll(event: Event): void {
+        const requiredBottomDistance = 100;
+        const target = event.target as HTMLDivElement;
+        const distanceFromBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
+        const hasMoreRowsToDisplay = this.numDisplayMatches <= this.filteredMatchList.length;
+
+        if (!hasMoreRowsToDisplay) return;
+        if (distanceFromBottom < requiredBottomDistance) {
+            this.numDisplayMatches += this.numAddRowsScroll;
+        }
+    }
+
     //#region Setup
     private setupLiveMatchListeners(): void {
         // Match started event
@@ -174,8 +200,11 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     }
 
     private setupSearchForm(): void {
-        const pauseTime = 500;
+        const pauseTime = 250;
         this.searchForm.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(pauseTime)).subscribe(() => {
+            const searchInput = this.searchForm.value;
+            if (searchInput?.trim().toLowerCase() === "") this.numAddRowsScroll = DEFAULT_NUM_ROWS;
+            this.googleAnalytics.sendEvent("Match Explorer", "Matches Search", searchInput);
             this.refreshUI();
         });
     }
@@ -186,7 +215,6 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
     }
 
     private refreshUI(): void {
-        this.stopwatch.start();
         this.filteredMatchList = this.matchList.filter((match) => {
             return (
                 this.isMatchInGameModeFilter(match) &&
@@ -200,8 +228,6 @@ export class MatchExplorerPageComponent implements OnInit, AfterViewInit, OnDest
         this.filteredAvgStats = avgStats(this.filteredMatchList);
 
         this.cdr.detectChanges();
-        this.stopwatch.stop();
-        console.log(`refreshUI() took ${this.stopwatch.result(false)}`);
     }
 
     private isMatchInGameModeFilter(match: MatchDataStore): boolean {

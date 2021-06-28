@@ -7,6 +7,7 @@ import { BackgroundService } from "../../background/background.service";
 import { ConfigurationService } from "../../core/configuration.service";
 import { FileService } from "../../core/file.service";
 import { GameProcessService } from "../../core/game-process.service";
+import { GoogleAnalyticsService } from "../../core/google-analytics.service";
 import { LocalDatabaseService } from "../../core/local-database/local-database.service";
 import { MapRotationService } from "../../core/map-rotation/map-rotation.service";
 import { MatchMapService } from "../../core/match/match-map.service";
@@ -16,6 +17,7 @@ import { MockBackgroundService } from "../../core/mocks/services/mock-background
 import { MockConfigurationService } from "../../core/mocks/services/mock-configuration.service";
 import { MockFileService } from "../../core/mocks/services/mock-file.service";
 import { MockGameProcessService } from "../../core/mocks/services/mock-game-process.service";
+import { MockGoogleAnalyticsService } from "../../core/mocks/services/mock-google-analytics.service";
 import { MockLocalDatabaseService } from "../../core/mocks/services/mock-local-database.service";
 import { MockMainWindowService } from "../../core/mocks/services/mock-main-window.service";
 import { MockMapRotationService } from "../../core/mocks/services/mock-map-rotation.service";
@@ -31,7 +33,7 @@ import { SettingsService } from "../../core/settings.service";
 import { BrowserWindowRef, WINDOW } from "../../core/window.service";
 import { NavbarComponent } from "../components/navbar.component";
 import { ChartingPageComponent } from "../pages/charting/charting-page.component";
-import { DailyAverageGraphComponent } from "../pages/charting/components/daily-average-graph.component";
+import { LineGraphComponent } from "../pages/charting/components/line-graph.component";
 import { AccountStatsDisplayComponent } from "../pages/dashboard/components/account-stats-display.component";
 import { LegendIconsBoardComponent } from "../pages/dashboard/components/legend-icons-board.component";
 import { MapRotationDisplayComponent } from "../pages/dashboard/components/map-rotation-display.component";
@@ -50,7 +52,7 @@ describe("MainWindowComponent", () => {
             imports: [ReactiveFormsModule, NoopAnimationsModule],
             declarations: [
                 ChartingPageComponent,
-                DailyAverageGraphComponent,
+                LineGraphComponent,
                 DashboardPageComponent,
                 IconComponent,
                 LegendIconsBoardComponent,
@@ -64,20 +66,21 @@ describe("MainWindowComponent", () => {
                 FullHeightDirective,
             ],
             providers: [
-                { provide: WINDOW, useClass: BrowserWindowRef },
                 { provide: BackgroundService, useClass: MockBackgroundService },
                 { provide: ConfigurationService, useClass: MockConfigurationService },
-                { provide: MainWindowService, useClass: MockMainWindowService },
-                { provide: LocalDatabaseService, useClass: MockLocalDatabaseService },
-                { provide: PlayerService, useClass: MockPlayerService },
                 { provide: FileService, useClass: MockFileService },
-                { provide: SettingsService, useClass: MockSettingsService },
-                { provide: MatchMapService, useClass: MockMatchMapService },
-                { provide: PlayerLocalStatsService, useClass: MockPlayerStatsService },
-                { provide: MapRotationService, useClass: MockMapRotationService },
                 { provide: GameProcessService, useClass: MockGameProcessService },
+                { provide: GoogleAnalyticsService, useClass: MockGoogleAnalyticsService },
+                { provide: LocalDatabaseService, useClass: MockLocalDatabaseService },
+                { provide: MainWindowService, useClass: MockMainWindowService },
+                { provide: MapRotationService, useClass: MockMapRotationService },
+                { provide: MatchMapService, useClass: MockMatchMapService },
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: PlayerAccountStatsService, useClass: MockPlayerStatsService },
+                { provide: PlayerLocalStatsService, useClass: MockPlayerStatsService },
+                { provide: PlayerService, useClass: MockPlayerService },
+                { provide: SettingsService, useClass: MockSettingsService },
+                { provide: WINDOW, useClass: BrowserWindowRef },
             ],
         }).compileComponents();
     });

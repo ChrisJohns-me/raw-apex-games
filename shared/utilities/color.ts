@@ -198,6 +198,32 @@ export function hsvToRgb(h: number, s: number, v: number): [r: number, g: number
     return [r * 255, g * 255, b * 255];
 }
 
+/**
+ * Converts an HSV color value to RGB HEX.
+ * Assumes h, s, and l are contained in the set [0, 1] and
+ * returns hex code RGB.
+ *
+ * @param   Number  h       The hue
+ * @param   Number  s       The saturation
+ * @param   Number  l       The lightness
+ * @return  string          The RGB representation in Hex
+ */
+export function hslToHex(h: number, s: number, l: number): string {
+    // num: 0-255
+    const numToHex = (num: number): string => {
+        let hex = Number(num).toString(16);
+        if (hex.length < 2) hex = "0" + hex;
+        return hex;
+    };
+
+    const rgb = hslToRgb(h, s, l);
+
+    const red = numToHex(Math.round(rgb[0]));
+    const green = numToHex(Math.round(rgb[1]));
+    const blue = numToHex(Math.round(rgb[2]));
+    return `${red}${green}${blue}`;
+}
+
 //#region CSS Color Filter generator
 export function hexToCSSFilter(hex: string): string {
     const rgb = hexToRgb(hex);

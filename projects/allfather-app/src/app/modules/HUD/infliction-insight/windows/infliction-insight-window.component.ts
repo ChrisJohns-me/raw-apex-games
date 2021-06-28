@@ -4,6 +4,7 @@ import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player
 import { MatchRosterTeam } from "@allfather-app/app/common/match/roster-team";
 import { MatchState } from "@allfather-app/app/common/match/state";
 import { PlayerState } from "@allfather-app/app/common/player-state";
+import { generateTeamColorList } from "@allfather-app/app/common/team-color-generator";
 import { InflictionAggregator } from "@allfather-app/app/common/utilities/infliction-aggregator";
 import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
@@ -13,7 +14,7 @@ import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/matc
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { PlayerService } from "@allfather-app/app/modules/core/player.service";
+import { Configuration } from "@allfather-app/configs/config.interface";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { addMilliseconds } from "date-fns";
 import { combineLatest, interval, merge, Observable, Subject } from "rxjs";
@@ -57,31 +58,36 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         });
     }
     public opponentBannerList: OpponentBanner[] = [];
+    public rgbTeamColors: string[] = generateTeamColorList(65);
+    private config: Configuration;
 
-    private readonly inflictionAggregator = new InflictionAggregator({
-        expireAggregateMs: this.config.featureConfigs.inflictionInsight.damageResetTime,
-        emitOnExpire: true,
-    });
+    private readonly inflictionAggregator;
     private acceptingResetEvents = false;
     private destroy$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
-        private readonly config: ConfigurationService,
+        private readonly configuration: ConfigurationService,
         private readonly match: MatchService,
         private readonly matchKillfeed: MatchKillfeedService,
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInfliction: MatchPlayerInflictionService,
         private readonly matchPlayerLocation: MatchPlayerLocationService,
-        private readonly matchRoster: MatchRosterService,
-        private readonly player: PlayerService
-    ) {}
+        private readonly matchRoster: MatchRosterService
+    ) {
+        this.config = this.configuration.defaultConfig;
+        this.inflictionAggregator = new InflictionAggregator({
+            expireAggregateMs: this.config.featureConfigs.inflictionInsight.damageResetTime,
+            emitOnExpire: true,
+        });
+    }
 
     public trackByFn(index: number, banner: OpponentBanner): string {
         return banner.rosterPlayer.name;
     }
 
     public ngOnInit(): void {
+        this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => (this.config = config));
         this.setupOnMatchStart();
         this.setupOnMatchEnd();
         this.setupInflictionEventList();

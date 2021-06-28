@@ -46,8 +46,9 @@ export class MockUIContainerComponent implements MockedClass<UIContainerComponen
         return this._primaryTitle ? `${APP_NAME} - ${this._primaryTitle}` : APP_NAME;
     }
     @Input() public secondaryTitle = "";
-    public state: WindowState = WindowState.Normal;
+    @Input() public enablePageviewTracking = true;
 
+    public state: WindowState = WindowState.Normal;
     public isDev = false;
     public WindowState = WindowState;
     public mdiCogOutline = mdiCogOutline;

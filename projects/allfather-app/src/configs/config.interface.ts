@@ -48,7 +48,22 @@ export interface FeatureFlags {
     enableUltTimerWindow: boolean;
     enableInflictionInsightWindow: boolean;
     enableReticleHelperWindow: boolean;
+    enableVideoCapture: boolean;
     inflictionInsight: {
+        /** Visualize teams */
+        teamIndicatorUI: boolean;
+        /** Visualize the damage amount to shield */
+        shieldBarUI: boolean;
+        /** Visualize the damage amount to health */
+        healthBarUI: boolean;
+        /** Shield + Health damage text */
+        totalDamageAmount: boolean;
+        /** Shield damage text */
+        shieldDamageAmount: boolean;
+        /** Health damage text */
+        healthDamageAmount: boolean;
+        /** Opponent's platform icon */
+        platformUI: boolean;
         /** Show non-damaged teammates' shields */
         showAssumedOpponentTeammateShields: boolean;
         /** Show non-damaged teammates' health */
@@ -61,7 +76,7 @@ export interface FeatureFlags {
         complimentaryLegends: boolean;
     };
     reticleHelper: {
-        enableAimingReticle: boolean;
+        aimingReticle: boolean;
     };
 }
 
@@ -70,8 +85,6 @@ export interface FeatureFlags {
  */
 export interface FeatureConfigs {
     inflictionInsight: {
-        /** Time in ms to force refresh the UI */
-        refreshTime: number;
         /** Time in ms before damage accumulation is reset */
         damageResetTime: number;
     };
@@ -106,8 +119,6 @@ export interface FeatureConfigs {
         }[];
     };
     ultTimer: {
-        /** Time in ms to force refresh the UI */
-        refreshTime: number;
         /** Number of percents to keep for calculation */
         maxHistoryCount: number;
         /** Minimum percent amount of confidence that the ready date is deemed accurate */
@@ -123,17 +134,3 @@ export interface General {
 }
 
 export interface OverwolfQuirks {}
-
-export type ConfigPositionXAnchor = "left" | "center" | "right";
-export type ConfigPositionYAnchor = "top" | "middle" | "bottom";
-export interface ConfigWindowPosition {
-    x: number;
-    y: number;
-}
-export interface UIContainers {
-    inflictionInsight: {
-        defaultPosition: ConfigWindowPosition;
-        positionXAnchor: ConfigPositionXAnchor;
-        positionYAnchor: ConfigPositionYAnchor;
-    };
-}

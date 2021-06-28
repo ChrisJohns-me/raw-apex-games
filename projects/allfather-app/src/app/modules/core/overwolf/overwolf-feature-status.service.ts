@@ -22,7 +22,7 @@ export class OverwolfFeatureStatusService implements OnDestroy {
     private destroy$ = new Subject<void>();
 
     constructor(
-        private readonly config: ConfigurationService,
+        private readonly configuration: ConfigurationService,
         private readonly http: HttpClient,
         @Inject(OW_CONFIG) private readonly owConfig: OWConfig
     ) {
@@ -66,8 +66,13 @@ export class OverwolfFeatureStatusService implements OnDestroy {
      * @returns Empty on HTTP errors or JSON deserialization errors.
      */
     public getFeatureStatusList$(): Observable<FeatureStatusList> {
-        const url = this.config.general.overwolfGameStatusUrl.replace("${0}", this.owConfig.APEXLEGENDSCLASSID.toString());
-        return this.http.get(url, { responseType: "json" }).pipe(
+        const gameStatusUrl$ = this.configuration.config$.pipe(
+            map((config) => config.general.overwolfGameStatusUrl.replace("${0}", this.owConfig.APEXLEGENDSCLASSID.toString()))
+        );
+
+        return gameStatusUrl$.pipe(
+            takeUntil(this.destroy$),
+            switchMap((gameStatusUrl) => this.http.get(gameStatusUrl, { responseType: "json" })),
             map((gameDataStatusJSON) => new OverwolfGameDataStatusDTO(gameDataStatusJSON)),
             map((gameDataStatusDTO) => gameDataStatusDTO.toFeatureStatusList()),
             retryWhen((errors) => this.retry$(errors)),

@@ -130,7 +130,7 @@ export class HUDWindowControllerService extends AllfatherService {
     }
 
     /**
-     * Creates a list of actions (open or close) fro all HUD windows (based on each window's requirements)
+     * Creates a list of actions (open or close) for all HUD windows (based on each window's requirements)
      * @returns Array of observable actions
      */
     private fireHUDRequirements(

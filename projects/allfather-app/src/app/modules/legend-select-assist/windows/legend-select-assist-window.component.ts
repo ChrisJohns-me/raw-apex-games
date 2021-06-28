@@ -3,8 +3,8 @@ import { DefaultSetting, SettingKey } from "@allfather-app/app/common/settings";
 import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { Subject, Subscription } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { combineLatest, of, Subject, Subscription } from "rxjs";
+import { switchMap, takeUntil } from "rxjs/operators";
 import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { SettingsService } from "../../core/settings.service";
 import { LegendIconRow } from "../legend-select-icon-row.interface";
@@ -16,27 +16,17 @@ import { LegendIconRow } from "../legend-select-icon-row.interface";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
-    public isVisible = false;
     public focusedLegendId?: string;
     public legendStats?: AvgMatchStats;
-    public legendIconRows: LegendIconRow[] = this.config.featureConfigs.legendSelectAssist.legendRows;
+    public legendIconRows: LegendIconRow[] = [];
     public complimentaryLegendWeights: { legendId: string; weightScore: number }[] = [];
-    public minLegendStatsMatches = this.config.featureConfigs.legendSelectAssist.minLegendStatsMatches;
-    public minShowComplimentaryLegendsMatches = this.config.featureConfigs.legendSelectAssist.minShowComplimentaryLegendsMatches;
-    public get isLegendStatsEnabled(): boolean {
-        return this._configIsLegendStatsEnabled && this._settingIsLegendStatsEnabled;
-    }
-    public get isComplimentaryLegendsEnabled(): boolean {
-        return this._configIsComplimentaryLegendsEnabled && this._settingIsComplimentaryLegendsEnabled;
-    }
+    public minLegendStatsMatches = 1;
+    public minShowComplimentaryLegendsMatches = 10;
+    public isLegendStatsEnabled = false;
+    public isComplimentaryLegendsEnabled = false;
     public get focusedLegendName(): Optional<string> {
         return this.focusedLegendId ? Legend.getName(this.focusedLegendId) : undefined;
     }
-
-    public _configIsLegendStatsEnabled = this.config.featureFlags.legendSelectAssist.legendStats;
-    public _configIsComplimentaryLegendsEnabled = this.config.featureFlags.legendSelectAssist.complimentaryLegends;
-    public _settingIsLegendStatsEnabled = false;
-    public _settingIsComplimentaryLegendsEnabled = false;
 
     private legendStatsSubscription?: Subscription;
     private complimentaryLegendsSubscription?: Subscription;
@@ -44,13 +34,14 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
-        private readonly config: ConfigurationService,
+        private readonly configuration: ConfigurationService,
         private readonly playerStats: PlayerLocalStatsService,
         private readonly settingsService: SettingsService
     ) {}
 
     public ngOnInit(): void {
         this.playerStats.clearLegendCache();
+        this.setupLegendIconRows();
         this.setupSettingsListener();
     }
 
@@ -68,10 +59,12 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
 
     public showLegendStats(legendId: string): void {
         this.legendStatsSubscription?.unsubscribe();
-        const limit = this.config.featureConfigs.legendSelectAssist.limitLegendStatsMatches;
-
-        this.legendStatsSubscription = this.playerStats
-            .getLegendStats$(legendId, limit)
+        this.legendStatsSubscription = this.configuration.config$
+            .pipe(
+                switchMap((config) =>
+                    this.playerStats.getLegendStats$(legendId, config.featureConfigs.legendSelectAssist.limitLegendStatsMatches)
+                )
+            )
             .pipe(takeUntil(this.destroy$))
             .subscribe((avgStats) => {
                 this.legendStats = avgStats;
@@ -81,34 +74,68 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
 
     public showComplimentaryLegends(legendId: string): void {
         this.complimentaryLegendsSubscription?.unsubscribe();
-        const limit = this.config.featureConfigs.legendSelectAssist.limitComplimentaryLegendsMatches;
-
-        this.complimentaryLegendsSubscription = this.playerStats
-            .getLegendComplimentaryLegendWeights$(legendId, limit)
+        this.complimentaryLegendsSubscription = this.configuration.config$
+            .pipe(
+                switchMap((config) =>
+                    combineLatest([
+                        of(config),
+                        this.playerStats.getLegendComplimentaryLegendWeights$(
+                            legendId,
+                            config.featureConfigs.legendSelectAssist.limitComplimentaryLegendsMatches
+                        ),
+                    ])
+                )
+            )
             .pipe(takeUntil(this.destroy$))
-            .subscribe((legendWeights) => {
-                const limitedLegendWeights = legendWeights.slice(0, this.config.featureConfigs.legendSelectAssist.maxComplimentaryLegends);
+            .subscribe(([config, legendWeights]) => {
+                const limitedLegendWeights = legendWeights.slice(0, config.featureConfigs.legendSelectAssist.maxComplimentaryLegends);
                 this.complimentaryLegendWeights = limitedLegendWeights;
                 this.cdr.detectChanges();
             });
     }
 
+    private setupLegendIconRows(): void {
+        this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => {
+            this.legendIconRows = config.featureConfigs.legendSelectAssist.legendRows;
+        });
+    }
+
+    /**
+     * Listens to changes from Settings
+     */
     private setupSettingsListener(): void {
-        this.settingsService
-            .streamSetting$<boolean>(SettingKey.EnableLegendSelectLegendStats)
+        combineLatest([this.configuration.config$, this.settingsService.streamSetting$<boolean>(SettingKey.EnableLegendSelectLegendStats)])
             .pipe(takeUntil(this.destroy$))
-            .subscribe((setting) => {
+            .subscribe(([config, setting]) => {
                 const defaultValue = DefaultSetting.enableLegendSelectLegendStats as boolean;
-                this._settingIsLegendStatsEnabled = setting?.value != null ? setting.value : defaultValue;
+                const isSettingEnabled = setting?.value != null ? setting.value : defaultValue;
+                const isConfigEnabled = config.featureFlags.legendSelectAssist.legendStats;
+                this.isLegendStatsEnabled = isSettingEnabled && isConfigEnabled;
+                console.debug(`
+                ## LegendSelectLegendStats ##
+                DefaultValue: ${defaultValue}
+                Setting: ${isSettingEnabled}
+                Config: ${isConfigEnabled}
+                `);
                 this.cdr.detectChanges();
             });
 
-        this.settingsService
-            .streamSetting$<boolean>(SettingKey.EnableLegendSelectLegendSuggestions)
+        combineLatest([
+            this.configuration.config$,
+            this.settingsService.streamSetting$<boolean>(SettingKey.EnableLegendSelectLegendSuggestions),
+        ])
             .pipe(takeUntil(this.destroy$))
-            .subscribe((setting) => {
+            .subscribe(([config, setting]) => {
                 const defaultValue = DefaultSetting.enableLegendSelectLegendSuggestions as boolean;
-                this._settingIsComplimentaryLegendsEnabled = setting?.value != null ? setting.value : defaultValue;
+                const isSettingEnabled = setting?.value != null ? setting.value : defaultValue;
+                const isConfigEnabled = config.featureFlags.legendSelectAssist.complimentaryLegends;
+                this.isComplimentaryLegendsEnabled = isSettingEnabled && isConfigEnabled;
+                console.debug(`
+                ## LegendSelectLegendComplimentary ##
+                DefaultValue: ${defaultValue}
+                Setting: ${isSettingEnabled}
+                Config: ${isConfigEnabled}
+                `);
                 this.cdr.detectChanges();
             });
     }

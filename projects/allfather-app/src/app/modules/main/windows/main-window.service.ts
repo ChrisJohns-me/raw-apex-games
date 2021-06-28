@@ -15,8 +15,8 @@ export class MainWindowService implements OnDestroy {
     /** App is still initializing; ie. booting up the app */
     public isStarting$ = new BehaviorSubject<boolean>(false);
     public isRequestingExit$ = new BehaviorSubject<boolean>(false);
+    public readonly uiWindow = new UIWindow(WindowName.Main);
 
-    private readonly uiWindow = new UIWindow(WindowName.Main);
     private destroy$ = new Subject<void>();
 
     public ngOnDestroy(): void {

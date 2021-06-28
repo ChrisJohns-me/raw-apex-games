@@ -4,6 +4,7 @@ import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
 import { PlayerState } from "@allfather-app/app/common/player-state";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { MatchKillfeedService } from "@allfather-app/app/modules/core/match/match-killfeed.service";
 import { MatchPlayerInflictionService } from "@allfather-app/app/modules/core/match/match-player-infliction.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
@@ -13,6 +14,7 @@ import { MatchService } from "@allfather-app/app/modules/core/match/match.servic
 import { MockOpponentBannerComponent } from "@allfather-app/app/modules/core/mocks/components/mock-opponent-banner.component";
 import { MockUIContainerComponent } from "@allfather-app/app/modules/core/mocks/components/mock-ui-container.component";
 import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/services/mock-configuration.service";
+import { MockGoogleAnalyticsService } from "@allfather-app/app/modules/core/mocks/services/mock-google-analytics.service";
 import { MockmatchKillfeedService } from "@allfather-app/app/modules/core/mocks/services/mock-match-killfeed.service";
 import { MockMatchPlayerInflictionService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-infliction.service";
 import { MockMatchPlayerLocationService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-location.service";
@@ -21,6 +23,7 @@ import { MockMatchRosterService } from "@allfather-app/app/modules/core/mocks/se
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
 import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-player.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
+import { Configuration } from "@allfather-app/configs/config.interface";
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { of } from "rxjs";
@@ -32,7 +35,7 @@ describe("InflictionInsightWindowComponent", () => {
     let sut: InflictionInsightWindowComponent;
     let fixture: ComponentFixture<InflictionInsightWindowComponent>;
     let scheduler: TestScheduler;
-    let config: ConfigurationService;
+    let config: MockConfigurationService;
     let matchPlayerInflictionService: MatchPlayerInflictionService;
     let matchPlayerLocationService: MatchPlayerLocationService;
     let matchPlayerService: MatchPlayerService;
@@ -44,12 +47,14 @@ describe("InflictionInsightWindowComponent", () => {
             providers: [
                 { provide: ChangeDetectorRef, useValue: {} },
                 { provide: ConfigurationService, useClass: MockConfigurationService },
-                { provide: MatchService, useClass: MockMatchService },
+                { provide: GoogleAnalyticsService, useClass: MockGoogleAnalyticsService },
                 { provide: MatchKillfeedService, useClass: MockmatchKillfeedService },
-                { provide: MatchPlayerService, useClass: MockMatchPlayerService },
                 { provide: MatchPlayerInflictionService, useClass: MockMatchPlayerInflictionService },
                 { provide: MatchPlayerLocationService, useClass: MockMatchPlayerLocationService },
+                { provide: MatchPlayerService, useClass: MockMatchPlayerService },
                 { provide: MatchRosterService, useClass: MockMatchRosterService },
+                { provide: MatchService, useClass: MockMatchService },
+                { provide: MatchService, useClass: MockMatchService },
                 { provide: PlayerService, useClass: MockPlayerService },
             ],
         }).compileComponents();
@@ -63,7 +68,7 @@ describe("InflictionInsightWindowComponent", () => {
         });
         fixture = TestBed.createComponent(InflictionInsightWindowComponent);
         sut = fixture.componentInstance;
-        config = TestBed.inject(ConfigurationService);
+        config = TestBed.inject(ConfigurationService) as unknown as MockConfigurationService;
         matchPlayerInflictionService = TestBed.inject(MatchPlayerInflictionService);
         matchPlayerLocationService = TestBed.inject(MatchPlayerLocationService);
         matchPlayerService = TestBed.inject(MatchPlayerService);
@@ -87,6 +92,14 @@ describe("InflictionInsightWindowComponent", () => {
             state: MatchState.Active,
             matchId: "test",
         };
+        const mockConfig = {
+            featureFlags: {
+                inflictionInsight: {
+                    assumeKnockdownExpires: true,
+                },
+            },
+        };
+        config.mockSetConfig(mockConfig as Configuration);
 
         // Act
         matchService.startedEvent$.next(startEvent);
@@ -211,10 +224,18 @@ describe("InflictionInsightWindowComponent", () => {
                 state: MatchState.Active,
                 matchId: "test",
             };
-            config.assumptions.opponentShieldDefault = 76;
-            config.assumptions.opponentHealthDefault = 101;
-            config.facts.maxShield = 130;
-            config.facts.maxHealth = 101;
+            const mockConfig = {
+                assumptions: {
+                    opponentShieldDefault: 76,
+                    opponentHealthDefault: 101,
+                },
+                facts: {
+                    maxShield: 130,
+                    maxHealth: 101,
+                },
+            };
+            config.mockSetConfig(mockConfig as Configuration);
+
             matchService.startedEvent$.next(startEvent);
             matchService.state$.next(startEvent);
             matchPlayerService.myState$.next(PlayerState.Alive);
@@ -271,10 +292,18 @@ describe("InflictionInsightWindowComponent", () => {
                 state: MatchState.Active,
                 matchId: "test",
             };
-            config.assumptions.opponentShieldDefault = 26;
-            config.assumptions.opponentHealthDefault = 92;
-            config.facts.maxShield = 151;
-            config.facts.maxHealth = 142;
+            const mockConfig = {
+                assumptions: {
+                    opponentShieldDefault: 26,
+                    opponentHealthDefault: 92,
+                },
+                facts: {
+                    maxShield: 151,
+                    maxHealth: 142,
+                },
+            };
+            config.mockSetConfig(mockConfig as Configuration);
+
             matchService.startedEvent$.next(startEvent);
             matchService.state$.next(startEvent);
             matchPlayerService.myState$.next(PlayerState.Alive);
@@ -331,10 +360,18 @@ describe("InflictionInsightWindowComponent", () => {
                 state: MatchState.Active,
                 matchId: "test",
             };
-            config.assumptions.opponentShieldDefault = 26;
-            config.assumptions.opponentHealthDefault = 92;
-            config.facts.maxShield = 151;
-            config.facts.maxHealth = 142;
+
+            const mockConfig = {
+                assumptions: {
+                    opponentShieldDefault: 26,
+                    opponentHealthDefault: 92,
+                },
+                facts: {
+                    maxShield: 151,
+                    maxHealth: 142,
+                },
+            };
+            config.mockSetConfig(mockConfig as Configuration);
             matchService.startedEvent$.next(startEvent);
             matchService.state$.next(startEvent);
             matchPlayerService.myState$.next(PlayerState.Alive);
@@ -385,11 +422,22 @@ describe("InflictionInsightWindowComponent", () => {
     it("resets/hides damage aggregate sum to one opponent after a timeout period", fakeAsync(() => {
         // Arrange
         const victim = { name: "ShieldANDHealthDamage", isMe: false };
-        config.assumptions.opponentShieldDefault = 26;
-        config.assumptions.opponentHealthDefault = 92;
-        config.facts.maxShield = 151;
-        config.facts.maxHealth = 142;
-        config.featureConfigs.inflictionInsight.damageResetTime = 5000;
+        const mockConfig = {
+            assumptions: {
+                opponentShieldDefault: 26,
+                opponentHealthDefault: 92,
+            },
+            facts: {
+                maxShield: 151,
+                maxHealth: 142,
+            },
+            featureConfigs: {
+                inflictionInsight: {
+                    damageResetTime: 5000,
+                },
+            },
+        };
+        config.mockSetConfig(mockConfig as Configuration);
         const startEvent: MatchStateChangedEvent = {
             startDate: new Date("2020-01-01T00:00:00"),
             state: MatchState.Active,

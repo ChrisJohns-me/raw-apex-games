@@ -1,86 +1,217 @@
-$base-height: 75px;
-$base-width: 400px;
+$base-height: 70px;
+$base-width: 90%;
 $main-transparency: 0.9;
 $indirect-transparency: 0.75;
 $knocked-transparency: 0.6;
 $eliminated-transparency: 0.6;
 
 .banner-container {
-    border: 3px solid #e7e1cd;
-    background: linear-gradient(45deg, #000000, #e7e1cd);
+    position: relative;
     height: $base-height;
     width: $base-width;
+    margin-left: auto;
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+    padding-left: 5%;
     font-family: "Quantico", sans-serif;
     color: #ffffff;
     opacity: $main-transparency;
 
     .banner {
+        position: relative;
         display: flex;
         height: 100%;
     }
 
+    .banner-border,
+    .banner-background,
+    .team-indicator,
+    .platform-icon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: $main-transparency;
+    }
+
+    .team-indicator {
+        left: -5.5%;
+        background: #e7e1cd;
+        clip-path: polygon(5% 0%, 7% 0%, 4% 25%, 13.5% 100%, 11.5% 100%, 2% 25%);
+    }
+
+    .platform-icon {
+        top: unset;
+        bottom: 5%;
+        left: -2.5%;
+        width: 4.5vw;
+        height: 4.5vw;
+
+        img {
+            height: 100%;
+            width: 100%;
+        }
+    }
+
+    .banner-border {
+        background-color: #e7e1cd;
+        clip-path: polygon(
+            3% 0%,
+            90% 0%,
+            100% 80%,
+            97% 100%,
+            10% 100%,
+            0% 25%,
+            3% 0%,
+            calc(3% + 1px) 3px,
+            3px 25%,
+            calc(10% + 1.5px) calc(100% - 2px),
+            calc(97% - 1px) calc(100% - 2px),
+            calc(100% - 3px) 80%,
+            calc(90% - 1px) 3px,
+            3% 3px
+        );
+    }
+
+    .banner-background {
+        clip-path: polygon(3% 0%, 90% 0%, 100% 80%, 97% 100%, 10% 100%, 0% 25%);
+        background: linear-gradient(45deg, #000000, #e7e1cd);
+
+        &.indirect-banner {
+            opacity: $indirect-transparency;
+        }
+
+        &.knocked {
+            background: linear-gradient(45deg, #501111, #411712);
+            color: red;
+            opacity: $knocked-transparency;
+        }
+
+        &.eliminated {
+            $dot-size: 3px;
+            $dot-space: 12px;
+            $bg-color: #000000;
+            $dot-color: #161616cc;
+            background: linear-gradient(90deg, $bg-color ($dot-space - $dot-size), transparent 1%) center,
+                linear-gradient($bg-color ($dot-space - $dot-size), transparent 1%) center, $dot-color;
+            background-size: $dot-space $dot-space;
+            border-color: green;
+            color: #ffffff;
+            opacity: $eliminated-transparency;
+
+            &.beacon-timed-out {
+                $color1: #353535;
+                $color2: #000000;
+                background-image: linear-gradient(
+                    120deg,
+                    $color1 25%,
+                    $color2 25%,
+                    $color2 50%,
+                    $color1 50%,
+                    $color1 75%,
+                    $color2 75%,
+                    $color2 100%
+                );
+                background-size: 46.19px 80px;
+                border-color: grey;
+                color: lightgray;
+            }
+        }
+    }
+
     &.indirect-banner {
-        opacity: $indirect-transparency;
+        .banner-background {
+            opacity: $indirect-transparency;
+        }
     }
 
     &.knocked {
-        background: linear-gradient(45deg, #501111, #411712);
-        color: red;
-        opacity: $knocked-transparency;
+        .banner-background {
+            background: linear-gradient(45deg, #501111, #411712);
+            color: red;
+            opacity: $knocked-transparency;
+        }
     }
 
     &.eliminated {
-        $dot-size: 3px;
-        $dot-space: 12px;
-        $bg-color: #000000;
-        $dot-color: #161616cc;
-        background: linear-gradient(90deg, $bg-color ($dot-space - $dot-size), transparent 1%) center,
-            linear-gradient($bg-color ($dot-space - $dot-size), transparent 1%) center, $dot-color;
-        background-size: $dot-space $dot-space;
-        border-color: green;
-        color: #ffffff;
-        opacity: $eliminated-transparency;
+        .banner-background {
+            $dot-size: 3px;
+            $dot-space: 12px;
+            $bg-color: #000000;
+            $dot-color: #161616cc;
+            background: linear-gradient(90deg, $bg-color ($dot-space - $dot-size), transparent 1%) center,
+                linear-gradient($bg-color ($dot-space - $dot-size), transparent 1%) center, $dot-color;
+            background-size: $dot-space $dot-space;
+            border-color: green;
+            color: #ffffff;
+            opacity: $eliminated-transparency;
 
-        &.beacon-timed-out {
-            $color1: #353535;
-            $color2: #000000;
-            background-image: linear-gradient(
-                120deg,
-                $color1 25%,
-                $color2 25%,
-                $color2 50%,
-                $color1 50%,
-                $color1 75%,
-                $color2 75%,
-                $color2 100%
-            );
-            background-size: 46.19px 80px;
-            border-color: grey;
-            color: lightgray;
+            &.beacon-timed-out {
+                $color1: #353535;
+                $color2: #000000;
+                background-image: linear-gradient(
+                    120deg,
+                    $color1 25%,
+                    $color2 25%,
+                    $color2 50%,
+                    $color1 50%,
+                    $color1 75%,
+                    $color2 75%,
+                    $color2 100%
+                );
+                background-size: 46.19px 80px;
+                border-color: grey;
+                color: lightgray;
+            }
         }
     }
 }
 
-.damage {
+.total-damage {
     display: flex;
-    height: 100%;
-    width: 25%;
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
     text-transform: uppercase;
+    height: 100%;
+    width: 20%;
 
-    .damage-header {
-        font-size: $base-height * 0.1;
+    &-header {
+        font-size: 2vw;
     }
 
-    .damage-footer {
-        font-size: $base-height * 0.14;
+    &-footer {
+        font-size: 2.5vw;
     }
 
-    .damage-sum {
-        font-size: $base-height * 0.32;
-        line-height: $base-height * 0.24;
+    &-sum {
+        font-size: 5.5vw;
+        line-height: 4vw;
+    }
+}
+
+.split-damage-container {
+    display: flex;
+    text-transform: uppercase;
+    height: 100%;
+    margin-right: 20%;
+
+    .split-damage {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        flex: 1 1 50%;
+
+        &-header {
+            font-size: 2vw;
+            line-height: 2vw;
+        }
+
+        &-sum {
+            font-size: 4vw;
+            line-height: 4vw;
+        }
     }
 }
 
@@ -89,12 +220,13 @@ $eliminated-transparency: 0.6;
     flex-direction: column;
     justify-content: space-evenly;
     flex: 1 0 auto;
-    padding: $base-height * 0.04 0;
+    padding: 1vw 2vw;
 
     .player-name {
-        font-size: $base-height * 0.2;
-        line-height: $base-height * 0.25;
+        font-size: 4vw;
+        line-height: 4.5vw;
         margin-top: $base-height * 0.05;
+        margin-bottom: $base-height * 0.05;
     }
 
     .player-shield-container {
@@ -140,8 +272,9 @@ $eliminated-transparency: 0.6;
     }
 
     .player-status-container {
-        font-size: $base-height * 0.2; // 16px
-        line-height: $base-height * 0.25;
+        font-size: 3vw;
+        line-height: 3.5vw;
+        margin-top: $base-height * 0.05;
         margin-bottom: $base-height * 0.05;
         font-weight: bold;
     }

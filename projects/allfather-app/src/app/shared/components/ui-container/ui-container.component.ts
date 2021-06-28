@@ -1,9 +1,10 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
+import { OverwolfProfileService } from "@allfather-app/app/modules/core/overwolf/overwolf-profile.service";
 import { UIWindow, WindowState } from "@allfather-app/app/modules/core/_refactor/ui-window";
 import { MainPage } from "@allfather-app/app/modules/main/pages/main-page";
 import { MainWindowService } from "@allfather-app/app/modules/main/windows/main-window.service";
-import { ConfigPositionXAnchor, ConfigPositionYAnchor } from "@allfather-app/configs/config.interface";
 import { environment } from "@allfather-app/environments/environment";
 import {
     AfterViewInit,
@@ -19,8 +20,11 @@ import {
 import { Title } from "@angular/platform-browser";
 import { mdiCogOutline, mdiWindowClose, mdiWindowMaximize, mdiWindowMinimize, mdiWindowRestore } from "@mdi/js";
 import { Observable, Subject } from "rxjs";
-import { finalize, map, shareReplay, switchMap, takeUntil, tap } from "rxjs/operators";
-import { mathClamp } from "shared/utilities";
+import { filter, finalize, map, shareReplay, switchMap, take, takeUntil, tap } from "rxjs/operators";
+import { isEmpty, mathClamp } from "shared/utilities";
+
+export type ConfigPositionXAnchor = "left" | "center" | "right";
+export type ConfigPositionYAnchor = "top" | "middle" | "bottom";
 
 type WindowPositionInput = {
     // x, y: percent
@@ -37,6 +41,8 @@ type WindowSizeInput = {
     widthPercent: number;
     heightPercent: number;
 };
+
+const TITLE_SUFFIX = " (Alpha)";
 
 @Component({
     selector: "app-ui-container",
@@ -56,13 +62,14 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     /** If min/max are not set, default to the width/height percent */
     @Input() public size?: WindowSizeInput;
     @Input() public set primaryTitle(value: string) {
-        this.titleService.setTitle(value ? `${value} - ${APP_NAME}` : APP_NAME);
+        this.titleService.setTitle(value ? `${value} - ${APP_NAME}${TITLE_SUFFIX}` : `${APP_NAME}${TITLE_SUFFIX}`);
         this._primaryTitle = value;
     }
     public get primaryTitle(): string {
-        return this._primaryTitle ? `${APP_NAME} - ${this._primaryTitle}` : APP_NAME;
+        return this._primaryTitle ? `${APP_NAME} - ${this._primaryTitle}${TITLE_SUFFIX}` : `${APP_NAME}${TITLE_SUFFIX}`;
     }
     @Input() public secondaryTitle = "";
+    @Input() public enablePageviewTracking = true;
 
     public state: WindowState = WindowState.Normal;
     public isDev = environment.DEV;
@@ -80,9 +87,11 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
+        private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly mainWindow: MainWindowService,
         private readonly overwolfGameData: OverwolfGameDataService,
-        private readonly titleService: Title
+        private readonly titleService: Title,
+        private readonly overwolfProfile: OverwolfProfileService
     ) {
         this.titleService.setTitle(APP_NAME);
     }
@@ -95,26 +104,9 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     public ngAfterViewInit(): void {
-        // Set default size (is DPI unaware)
-        this.uiWindow
-            .getMonitor()
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((monitor) => {
-                const standardDPI = 96;
-                const dpiAdjustedWidth = (monitor.width * standardDPI) / monitor.dpiX;
-                const dpiAdjustedHeight = (monitor.height * standardDPI) / monitor.dpiY;
-
-                if (this.size) {
-                    this.setMinSizeByPercent(dpiAdjustedWidth, dpiAdjustedHeight, this.size?.minWidthPercent, this.size?.minHeightPercent);
-                    this.setSizeByPercent(dpiAdjustedWidth, dpiAdjustedHeight, this.size.widthPercent, this.size.heightPercent);
-                }
-            });
-
-        this.overwolfGameData.gameInfo$.pipe(takeUntil(this.destroy$)).subscribe((gameInfo) => {
-            if (!gameInfo) return;
-            this.onResolutionChange(gameInfo);
-            this.updatePosition();
-        });
+        this.setupPageviewTracking();
+        this.setupDefaultSize();
+        this.setupDefaultPosition();
         this.getState()
             .pipe(
                 takeUntil(this.destroy$),
@@ -171,6 +163,47 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         if (!this.isContentDraggable) return;
         if (!(event instanceof MouseEvent)) return;
         this.onDrag(event);
+    }
+
+    private setupPageviewTracking(): void {
+        UIWindow.getCurrentWindow()
+            .pipe(
+                takeUntil(this.destroy$),
+                filter(() => this.enablePageviewTracking),
+                map((winInfo) => winInfo.name),
+                filter((windowName) => !isEmpty(windowName)),
+                take(1)
+            )
+            .subscribe((windowName) => {
+                const title = !isEmpty(this.primaryTitle) ? this.primaryTitle : windowName;
+                const path = `/${windowName}`;
+                this.googleAnalytics.sendPageview(title, path);
+            });
+    }
+
+    private setupDefaultSize(): void {
+        // Set default size (is DPI unaware)
+        this.uiWindow
+            .getMonitor()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((monitor) => {
+                const standardDPI = 96;
+                const dpiAdjustedWidth = (monitor.width * standardDPI) / monitor.dpiX;
+                const dpiAdjustedHeight = (monitor.height * standardDPI) / monitor.dpiY;
+
+                if (this.size) {
+                    this.setMinSizeByPercent(dpiAdjustedWidth, dpiAdjustedHeight, this.size?.minWidthPercent, this.size?.minHeightPercent);
+                    this.setSizeByPercent(dpiAdjustedWidth, dpiAdjustedHeight, this.size.widthPercent, this.size.heightPercent);
+                }
+            });
+    }
+
+    private setupDefaultPosition(): void {
+        this.overwolfGameData.gameInfo$.pipe(takeUntil(this.destroy$)).subscribe((gameInfo) => {
+            if (!gameInfo) return;
+            this.onResolutionChange(gameInfo);
+            this.updatePosition();
+        });
     }
 
     private getState(): Observable<WindowState> {

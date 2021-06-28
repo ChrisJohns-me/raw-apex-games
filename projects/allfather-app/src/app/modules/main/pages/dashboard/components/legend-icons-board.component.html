@@ -1,6 +1,7 @@
 <div class="legend-icon-row" *ngFor="let legendRow of legendIconRows" (mouseleave)="onLegendUnhover.next()">
     <div
         class="legend-icon-hitbox tilt"
+        [style.background]="getLegendBGColorGradient(legendId)"
         *ngFor="let legendId of legendRow"
         (mouseover)="onLegendHover.next(legendId)"
         (click)="onLegendClick.next(legendId)"

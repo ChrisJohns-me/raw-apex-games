@@ -5,4 +5,6 @@ export const environment: typeof ProdEnvironment = {
     PROD: false,
     DEV: true,
     allowDevTools: true,
+    forceLocalConfig: true,
+    gaID: "UA-196720756-2",
 };

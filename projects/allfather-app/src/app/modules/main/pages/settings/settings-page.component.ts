@@ -1,9 +1,12 @@
 import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
+import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { FileService } from "@allfather-app/app/modules/core/file.service";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
 import { SettingsDataStore } from "@allfather-app/app/modules/core/local-database/settings-data-store";
+import { OverwolfProfileService } from "@allfather-app/app/modules/core/overwolf/overwolf-profile.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { AimingReticle, AimingReticleList } from "@allfather-app/app/modules/HUD/reticle-helper/components/aiming-reticle/aiming-reticles";
+import { Configuration } from "@allfather-app/configs/config.interface";
 import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
@@ -20,6 +23,7 @@ enum SettingPreview {
     AimingReticle = "aimingreticle",
     MatchTimer = "matchtimer",
     UltTimer = "ulttimer",
+    InflictionInsight = "inflictioninsight",
     LegendSelectionStats = "legendselectionstats",
     LegendSelectionSuggestions = "legendselectionsuggestions",
 }
@@ -41,6 +45,7 @@ enum AimingReticlePreview {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsPageComponent implements OnInit, OnDestroy {
+    public config?: Configuration;
     //#region Forms
     public settingsForm = this.formBuilder.group({
         [SettingKey.EnableAllInGameHUD]: false,
@@ -108,11 +113,15 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
+        private readonly configuration: ConfigurationService,
         private readonly fileService: FileService,
         private readonly formBuilder: FormBuilder,
         private readonly localDatabase: LocalDatabaseService,
+        private readonly overwolfProfile: OverwolfProfileService,
         private readonly settingsService: SettingsService
-    ) {}
+    ) {
+        this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => (this.config = config));
+    }
 
     public ngOnInit(): void {
         this.setupInGameHUDForm();

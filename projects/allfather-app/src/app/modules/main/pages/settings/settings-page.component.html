@@ -14,7 +14,10 @@
                     </tr>
                 </thead>
                 <tbody [formGroup]="inGameHUDFormGroup" (mousedown)="isEditing = true" (mouseup)="isEditing = false">
-                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.MatchTimer">
+                    <tr
+                        *ngIf="config?.featureFlags?.enableMatchTimerWindow"
+                        (mouseover)="selectedPreviewSetting = SettingPreview.MatchTimer"
+                    >
                         <td class="ps-4 ps-lg-5">Match Timer</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
@@ -22,7 +25,7 @@
                             </div>
                         </td>
                     </tr>
-                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.UltTimer">
+                    <tr *ngIf="config?.featureFlags?.enableUltTimerWindow" (mouseover)="selectedPreviewSetting = SettingPreview.UltTimer">
                         <td class="ps-4 ps-lg-5">Ultimate Timer</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
@@ -34,7 +37,10 @@
                             </div>
                         </td>
                     </tr>
-                    <tr>
+                    <tr
+                        *ngIf="config?.featureFlags?.enableInflictionInsightWindow"
+                        (mouseover)="selectedPreviewSetting = SettingPreview.InflictionInsight"
+                    >
                         <td class="ps-4 ps-lg-5">Infliction Insight</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
@@ -47,96 +53,107 @@
                         </td>
                     </tr>
                     <!-- #region Aiming Reticle -->
-                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle">
-                        <td class="ps-4 ps-lg-5">Permanent Aiming Reticle</td>
-                        <td class="text-end pe-5">
-                            <div class="form-check form-switch d-inline-flex">
-                                <input class="form-check-input" type="checkbox" [formControlName]="SettingKey.EnableInGameAimingReticle" />
-                            </div>
-                        </td>
-                    </tr>
-                    <tr
-                        [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleId)?.enabled }"
-                        (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
-                    >
-                        <td class="ps-4 ps-lg-5"><span class="ms-3">Reticle Shape</span></td>
-                        <td class="text-end pe-5">
-                            <select
-                                class="form-select form-select-sm bg-secondary text-white"
-                                [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleId)?.enabled }"
-                                [formControlName]="SettingKey.InGameAimingReticleId"
-                            >
-                                <option *ngFor="let aimingReticle of AimingReticleList" [ngValue]="aimingReticle.reticleId">
-                                    {{ aimingReticle.friendlyName }}
-                                </option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr
-                        [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleColor)?.enabled }"
-                        (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
-                    >
-                        <td class="ps-4 ps-lg-5 ms-3"><span class="ms-3">Reticle Color</span></td>
-                        <td class="text-end pe-5">
-                            <input
-                                type="color"
-                                class="form-control form-control-sm form-control-color bg-secondary"
-                                [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleColor)?.enabled }"
-                                id="aimingReticleColorInput"
-                                [formControlName]="SettingKey.InGameAimingReticleColor"
-                                (focus)="isEditing = true"
-                                (blur)="isEditing = false"
-                                (mousedown)="isEditing = true"
-                                (mouseup)="isEditing = false"
-                                (mouseover)="isEditing = true"
-                                (mouseout)="isEditing = false"
-                                (mouseenter)="isEditing = true"
-                                (mouseleave)="isEditing = false"
-                            />
-                        </td>
-                    </tr>
-                    <tr
-                        [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleAlpha)?.enabled }"
-                        (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
-                    >
-                        <td class="ps-4 ps-lg-5 ms-3"><span class="ms-3">Reticle Transparency</span></td>
-                        <td class="text-end pe-5">
-                            <input
-                                type="range"
-                                class="form-range form-control-sm"
-                                min="0.1"
-                                max="1"
-                                step="0.05"
-                                id="aimingReticleAlphaInput"
-                                [formControlName]="SettingKey.InGameAimingReticleAlpha"
-                                (focus)="isEditing = true"
-                                (blur)="isEditing = false"
-                            />
-                        </td>
-                    </tr>
-                    <tr
-                        [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleDynamicHide)?.enabled }"
-                        (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
-                    >
-                        <td class="ps-4 ps-lg-5"><span class="ms-3">Hide while ADS</span></td>
-                        <td class="text-end pe-5">
-                            <div class="form-check form-switch d-inline-flex">
+                    <ng-container *ngIf="config?.featureFlags?.enableReticleHelperWindow">
+                        <tr (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle">
+                            <td class="ps-4 ps-lg-5">Permanent Aiming Reticle</td>
+                            <td class="text-end pe-5">
+                                <div class="form-check form-switch d-inline-flex">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        [formControlName]="SettingKey.EnableInGameAimingReticle"
+                                    />
+                                </div>
+                            </td>
+                        </tr>
+                        <tr
+                            [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleId)?.enabled }"
+                            (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
+                        >
+                            <td class="ps-4 ps-lg-5"><span class="ms-3">Reticle Shape</span></td>
+                            <td class="text-end pe-5">
+                                <select
+                                    class="form-select form-select-sm bg-secondary text-white"
+                                    [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleId)?.enabled }"
+                                    [formControlName]="SettingKey.InGameAimingReticleId"
+                                >
+                                    <option *ngFor="let aimingReticle of AimingReticleList" [ngValue]="aimingReticle.reticleId">
+                                        {{ aimingReticle.friendlyName }}
+                                    </option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr
+                            [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleColor)?.enabled }"
+                            (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
+                        >
+                            <td class="ps-4 ps-lg-5 ms-3"><span class="ms-3">Reticle Color</span></td>
+                            <td class="text-end pe-5">
                                 <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    (change)="selectedAimingReticleBackground = AimingReticlePreview.NoWeapon"
-                                    [formControlName]="SettingKey.InGameAimingReticleDynamicHide"
+                                    type="color"
+                                    class="form-control form-control-sm form-control-color bg-secondary"
+                                    [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleColor)?.enabled }"
+                                    id="aimingReticleColorInput"
+                                    [formControlName]="SettingKey.InGameAimingReticleColor"
+                                    (focus)="isEditing = true"
+                                    (blur)="isEditing = false"
+                                    (mousedown)="isEditing = true"
+                                    (mouseup)="isEditing = false"
+                                    (mouseover)="isEditing = true"
+                                    (mouseout)="isEditing = false"
+                                    (mouseenter)="isEditing = true"
+                                    (mouseleave)="isEditing = false"
                                 />
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
+                        <tr
+                            [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleAlpha)?.enabled }"
+                            (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
+                        >
+                            <td class="ps-4 ps-lg-5 ms-3"><span class="ms-3">Reticle Transparency</span></td>
+                            <td class="text-end pe-5">
+                                <input
+                                    type="range"
+                                    class="form-range form-control-sm"
+                                    min="0.1"
+                                    max="1"
+                                    step="0.05"
+                                    id="aimingReticleAlphaInput"
+                                    [formControlName]="SettingKey.InGameAimingReticleAlpha"
+                                    (focus)="isEditing = true"
+                                    (blur)="isEditing = false"
+                                />
+                            </td>
+                        </tr>
+                        <tr
+                            [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.InGameAimingReticleDynamicHide)?.enabled }"
+                            (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle"
+                        >
+                            <td class="ps-4 ps-lg-5"><span class="ms-3">Hide while ADS</span></td>
+                            <td class="text-end pe-5">
+                                <div class="form-check form-switch d-inline-flex">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        (change)="selectedAimingReticleBackground = AimingReticlePreview.NoWeapon"
+                                        [formControlName]="SettingKey.InGameAimingReticleDynamicHide"
+                                    />
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
                     <!-- #endregion -->
                 </tbody>
             </table>
             <!-- #endregion -->
 
             <!-- #region Legend Select -->
-            <table class="table table-dark table-striped table-hover">
+            <table
+                class="table table-dark table-striped table-hover"
+                *ngIf="
+                    config?.featureFlags?.legendSelectAssist?.legendStats || config?.featureFlags?.legendSelectAssist?.complimentaryLegends
+                "
+            >
                 <thead>
                     <tr>
                         <td class="align-middle"><h5 class="m-2">Legend Selection Screen</h5></td>
@@ -148,7 +165,10 @@
                     </tr>
                 </thead>
                 <tbody [formGroup]="legendSelectHUDFormGroup">
-                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.LegendSelectionStats">
+                    <tr
+                        *ngIf="config?.featureFlags?.legendSelectAssist?.legendStats"
+                        (mouseover)="selectedPreviewSetting = SettingPreview.LegendSelectionStats"
+                    >
                         <td class="ps-4 ps-lg-5">Legend Statistics</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
@@ -160,7 +180,10 @@
                             </div>
                         </td>
                     </tr>
-                    <tr (mouseover)="selectedPreviewSetting = SettingPreview.LegendSelectionSuggestions">
+                    <tr
+                        *ngIf="config?.featureFlags?.legendSelectAssist?.complimentaryLegends"
+                        (mouseover)="selectedPreviewSetting = SettingPreview.LegendSelectionSuggestions"
+                    >
                         <td class="ps-4 ps-lg-5">Legend Suggestions</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
@@ -174,7 +197,6 @@
                     </tr>
                 </tbody>
             </table>
-
             <!-- #endregion -->
 
             <!-- #region Export/Import -->
@@ -213,6 +235,10 @@
                 <div class="preview-container">
                     <div *ngIf="selectedPreviewSetting === SettingPreview.MatchTimer" class="preview-image preview-match-timer"></div>
                     <div *ngIf="selectedPreviewSetting === SettingPreview.UltTimer" class="preview-image preview-ult-timer"></div>
+                    <div
+                        *ngIf="selectedPreviewSetting === SettingPreview.InflictionInsight"
+                        class="preview-image preview-infliction-insight"
+                    ></div>
                     <div
                         *ngIf="selectedPreviewSetting === SettingPreview.AimingReticle && aimingReticlePreview"
                         class="preview-image preview-aiming-reticle-container"

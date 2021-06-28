@@ -1,6 +1,6 @@
 <table class="table table-striped table-borderless table-dark mb-0" [ngClass]="{ 'table-hover': isMatchClickable }" *ngIf="matches?.length">
     <tbody>
-        <ng-container *ngFor="let match of matches; index as i; trackBy: matchTrackBy">
+        <ng-container *ngFor="let match of matches.slice(0, numDisplayMatches); index as i; trackBy: matchTrackBy">
             <span [hidden]="true">{{ match?.matchId }}</span>
             <tr
                 *ngIf="match && match.matchId"
@@ -34,6 +34,7 @@
                                 'teammate-legend-portrait': !teammate.isMe,
                                 clickable: isTeamRosterPlayerClickable
                             }"
+                            [style.backgroundColor]="getLegendBGColor(teammate.legendId)"
                             [src]="'../../../assets/images/legend-portraits/medium/' + getLegendImageName(teammate.legendId)"
                             [title]="teammate.name"
                             [alt]="teammate.name + ' playing ' + (getLegendName(teammate.legendId) ?? 'N/A')"

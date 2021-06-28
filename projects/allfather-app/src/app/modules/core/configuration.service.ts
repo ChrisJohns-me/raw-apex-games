@@ -1,19 +1,11 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
-import {
-    Assumptions,
-    Common,
-    Configuration,
-    Facts,
-    FeatureConfigs,
-    FeatureFlags,
-    General,
-    OverwolfQuirks,
-} from "@allfather-app/configs/config.interface";
+import { Configuration } from "@allfather-app/configs/config.interface";
 import ConfigJSONData from "@allfather-app/configs/config.json";
+import { environment } from "@allfather-app/environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
-import { BehaviorSubject, Observable, of, Subject } from "rxjs";
-import { catchError, map, takeUntil, tap, timeout } from "rxjs/operators";
+import { BehaviorSubject, Observable, of, ReplaySubject, Subject } from "rxjs";
+import { catchError, map, takeUntil, timeout } from "rxjs/operators";
 import { isEmpty } from "shared/utilities";
 
 export enum ConfigLoadStatus {
@@ -25,47 +17,27 @@ export enum ConfigLoadStatus {
     LoadedFallback,
 }
 
+const CONFIG_URL = environment.DEV ? `https://allfather.app/config.prod.json` : `https://allfather.app/config.prod.json`;
+
 @Injectable({
     providedIn: "root",
     deps: [HttpClient],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("ConfigurationService", ConfigurationService, deps),
 })
-export class ConfigurationService implements Configuration, OnDestroy {
+export class ConfigurationService implements OnDestroy {
+    public config$ = new ReplaySubject<Configuration>(1);
     public loadStatus$ = new BehaviorSubject<ConfigLoadStatus>(ConfigLoadStatus.NotStarted);
-
-    public assumptions!: Assumptions;
-    public common!: Common;
-    public facts!: Facts;
-    public featureConfigs!: FeatureConfigs;
-    public featureFlags!: FeatureFlags;
-    public general!: General;
-    public overwolfQuirks!: OverwolfQuirks;
+    /**
+     * Can be used as a default source of the configuration until the primary config observable completes.
+     * And/or used as for non-vital configuration values.
+     */
+    public defaultConfig: Configuration = {} as Configuration;
 
     private destroy$ = new Subject<void>();
 
     constructor(private readonly http: HttpClient) {
-        this.loadAppConfig().pipe(takeUntil(this.destroy$)).subscribe();
-    }
-
-    public loadAppConfig(): Observable<ConfigLoadStatus> {
-        if (this.loadStatus$.value === ConfigLoadStatus.Loaded) return of(ConfigLoadStatus.Loaded);
-        if (this.loadStatus$.value === ConfigLoadStatus.LoadedFallback) return of(ConfigLoadStatus.LoadedFallback);
-
-        this.loadStatus$.next(ConfigLoadStatus.Loading);
-
-        // return this.http
-        //     .get<Configuration>("config.json")
-
-        return of(ConfigJSONData).pipe(
-            timeout(30000),
-            tap((configData) => this.bootstrapData(configData)),
-            map((configData) => {
-                if (!isEmpty(configData) && !isEmpty(this.common)) return ConfigLoadStatus.Loaded;
-                else return ConfigLoadStatus.Failed;
-            }),
-            catchError(() => of(ConfigLoadStatus.Failed)),
-            tap((status) => this.loadStatus$.next(status))
-        );
+        this.loadDefaultConfig();
+        this.load$().pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     public ngOnDestroy(): void {
@@ -73,9 +45,50 @@ export class ConfigurationService implements Configuration, OnDestroy {
         this.destroy$.complete();
     }
 
-    private bootstrapData(configData: Configuration): void {
-        Object.entries(configData).forEach(([key, value]) => {
-            (this as any)[key] = value;
+    public load$(): Observable<ConfigLoadStatus> {
+        if (this.loadStatus$.value === ConfigLoadStatus.Loaded) return of(ConfigLoadStatus.Loaded);
+        if (this.loadStatus$.value === ConfigLoadStatus.LoadedFallback) return of(ConfigLoadStatus.LoadedFallback);
+
+        this.loadStatus$.next(ConfigLoadStatus.Loading);
+
+        if (environment.forceLocalConfig) {
+            console.info(`Using local configuration`);
+            this.config$.next(this.defaultConfig);
+            this.config$.complete();
+            this.loadStatus$.next(ConfigLoadStatus.LoadedFallback);
+            return of(this.loadStatus$.value);
+        }
+
+        let isFallbackConfig = false;
+        return this.getAPIConfig().pipe(
+            takeUntil(this.destroy$),
+            catchError((err) => {
+                console.warn(`Error while trying to load configuration from API; ${err}`);
+                isFallbackConfig = true;
+                return of(this.defaultConfig);
+            }),
+            map((configData) => {
+                if (!isEmpty(configData) && !isEmpty(configData.common)) {
+                    console.info(`Using hosted configuration`);
+                    this.config$.next(configData);
+                    this.config$.complete();
+                    this.loadStatus$.next(isFallbackConfig ? ConfigLoadStatus.LoadedFallback : ConfigLoadStatus.Loaded);
+                } else {
+                    this.loadStatus$.next(ConfigLoadStatus.Failed);
+                }
+                return this.loadStatus$.value;
+            })
+        );
+    }
+
+    private getAPIConfig(): Observable<Configuration> {
+        return this.http.get<Configuration>(CONFIG_URL).pipe(timeout(30000));
+    }
+
+    private loadDefaultConfig(): void {
+        if (isEmpty(this.defaultConfig)) this.defaultConfig = {} as Configuration;
+        Object.entries(ConfigJSONData).forEach(([key, value]) => {
+            (this.defaultConfig as any)[key] = value;
         });
     }
 }

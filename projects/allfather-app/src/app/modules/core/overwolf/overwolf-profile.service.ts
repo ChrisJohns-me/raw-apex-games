@@ -1,0 +1,22 @@
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
+import { AllfatherService } from "../allfather-service.abstract";
+import { ProfileDelegate } from "./api/profile/profile-delegate";
+
+/**
+ * @class OverwolfProfileService
+ * @classdesc Wrapper for Overwolf's "overwolf.profile." API namespace.
+ */
+@Injectable({
+    providedIn: "root",
+    deps: [],
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("OverwolfProfileService", OverwolfProfileService, deps),
+})
+export class OverwolfProfileService extends AllfatherService {
+    private profileDelegate = new ProfileDelegate();
+
+    public getCurrentUser(): Observable<overwolf.profile.GetCurrentUserResult> {
+        return this.profileDelegate.getCurrentUser();
+    }
+}

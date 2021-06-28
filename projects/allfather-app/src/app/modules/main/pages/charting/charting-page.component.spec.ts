@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatchService } from "../../../core/match/match.service";
 import { MockMatchService } from "../../../core/mocks/services/mock-match.service";
 import { ChartingPageComponent } from "./charting-page.component";
-import { DailyAverageGraphComponent } from "./components/daily-average-graph.component";
+import { LineGraphComponent } from "./components/line-graph.component";
 
 describe("ChartingPageComponent", () => {
     let component: ChartingPageComponent;
@@ -10,7 +10,7 @@ describe("ChartingPageComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [ChartingPageComponent, DailyAverageGraphComponent],
+            declarations: [ChartingPageComponent, LineGraphComponent],
             providers: [{ provide: MatchService, useClass: MockMatchService }],
         }).compileComponents();
     });

@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { DailyAverageGraphComponent } from "./daily-average-graph.component";
+import { LineGraphComponent } from "./line-graph.component";
 
-describe("DailyAverageGraphComponent", () => {
-    let component: DailyAverageGraphComponent;
-    let fixture: ComponentFixture<DailyAverageGraphComponent>;
+describe("LineGraphComponent", () => {
+    let component: LineGraphComponent;
+    let fixture: ComponentFixture<LineGraphComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [DailyAverageGraphComponent],
+            declarations: [LineGraphComponent],
             providers: [],
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(DailyAverageGraphComponent);
+        fixture = TestBed.createComponent(LineGraphComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

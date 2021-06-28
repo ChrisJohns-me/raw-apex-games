@@ -31,6 +31,7 @@
     [isDesktopWindow]="false"
     [isTitlebarDraggable]="true"
     [isContentDraggable]="true"
+    [enablePageviewTracking]="false"
 >
     <div class="loading-splash-bg" id="loading-container">
         <div class="loading-splash-container">
@@ -48,6 +49,7 @@
         [isDesktopWindow]="true"
         [isTitlebarDraggable]="true"
         [isContentDraggable]="false"
+        [enablePageviewTracking]="false"
     >
         <app-navbar (navPage)="goToPage($event)" [currentPage]="activePage"></app-navbar>
         <ng-container [ngSwitch]="activePage">

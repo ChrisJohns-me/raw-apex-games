@@ -3,14 +3,14 @@
     [isContentDraggable]="true"
     primaryTitle="Infliction Insight"
     [position]="{ xPercent: 0, yPercent: 0, xAnchor: 'right', yAnchor: 'middle' }"
-    [size]="{ widthPercent: 0.15625, heightPercent: 0.316 }"
+    [size]="{ widthPercent: 0.15625, heightPercent: 0.5 }"
 >
     <header>
         <span class="header-title">Infliction Insight</span>
     </header>
     <div class="infliction-insight-container">
         <div *ngFor="let banner of sortedOpponentBannerList; index as i; trackBy: trackByFn">
-            <app-opponent-banner [bannerData]="banner"></app-opponent-banner>
+            <app-opponent-banner [bannerData]="banner" [teamColor]="rgbTeamColors[banner.rosterPlayer.teamId ?? -1]"></app-opponent-banner>
         </div>
     </div>
 </app-ui-container>

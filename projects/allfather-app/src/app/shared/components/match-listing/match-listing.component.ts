@@ -1,3 +1,4 @@
+import { getLegendBGColor } from "@allfather-app/app/common/legend/legend-list";
 import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
 import { Rank } from "@allfather-app/app/common/rank/rank";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
@@ -48,6 +49,7 @@ export enum DataItem {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatchListingComponent implements OnInit, OnDestroy {
+    @Input() public numDisplayMatches = Infinity;
     @Input() public showDataItems: DataItem[] = [];
     @Input() public isLiveMatch = false;
     @Input() public set matches(value: MatchDataStore[]) {
@@ -67,11 +69,14 @@ export class MatchListingComponent implements OnInit, OnDestroy {
     /** Tipping point to show date played in different formats. */
     public relativeTime = 6 * 60 * 60 * 1000;
 
+    private maxSquadSize = 3;
     private tooltipList: Tooltip[] = [];
     private _matches: MatchDataStore[] = [];
     private destroy$ = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef, private readonly config: ConfigurationService) {}
+    constructor(private readonly cdr: ChangeDetectorRef, private readonly configuration: ConfigurationService) {
+        this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => (this.maxSquadSize = config.facts.maxSquadSize));
+    }
 
     public isFunction = (value: unknown): boolean => typeof value === "function";
     public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item) => item.matchId;
@@ -82,6 +87,7 @@ export class MatchListingComponent implements OnInit, OnDestroy {
     public getLegendImageName = (legendId?: string): string => Legend.getSquarePortraitFilename(legendId);
     public getLegendName = (legendId?: string): Optional<string> => Legend.getName(legendId);
     public getRankFromScore = (rankScore: number): Optional<Rank> => new Rank({ score: rankScore });
+    public getLegendBGColor = (legendId?: string): string => getLegendBGColor(legendId);
     public isRecent = (baseDate?: Date): boolean => !!baseDate && differenceInMilliseconds(new Date(), baseDate) <= MATCH_RECENT_TIME;
 
     public ngOnInit(): void {
@@ -103,9 +109,8 @@ export class MatchListingComponent implements OnInit, OnDestroy {
      */
     public buildTeamRoster(match: MatchDataStore): MatchDataStore["teamRoster"] {
         if (isEmpty(match?.teamRoster)) return [];
-        const maxTeammates = this.config.facts.maxSquadSize;
         const teamRoster = unique(match.teamRoster, (p) => p.legendId);
-        teamRoster.length = Math.min(teamRoster.length, maxTeammates);
+        teamRoster.length = Math.min(teamRoster.length, this.maxSquadSize);
         teamRoster.sort((a) => (a.isMe ? -1 : 0));
         return teamRoster;
     }

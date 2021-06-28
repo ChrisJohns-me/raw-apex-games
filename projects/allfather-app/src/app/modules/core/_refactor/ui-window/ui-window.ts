@@ -81,6 +81,10 @@ export class UIWindow {
         return this.obtain().pipe(map(() => undefined));
     }
 
+    public windowInfo(): Observable<UIWindowInfo> {
+        return this.obtain();
+    }
+
     public minimize(): Observable<void> {
         return this.obtain().pipe(mergeMap((window) => this.minimizeInternal(window.id)));
     }

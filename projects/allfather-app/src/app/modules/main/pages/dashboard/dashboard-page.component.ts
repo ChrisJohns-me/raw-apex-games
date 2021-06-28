@@ -1,5 +1,6 @@
 import { Legend } from "@allfather-app/app/common/legend/legend";
 import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { Subject, Subscription } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
@@ -22,17 +23,11 @@ const NUM_SUGGESTED_WEAPONS = 2;
 })
 export class DashboardPageComponent implements OnInit {
     public focusedLegendId?: string;
-    public legendIdsRows: LegendIdsRow[] = this.getLegendIdsRows();
+    public legendIdsRows: LegendIdsRow[] = [];
     public myStats?: AvgMatchStats;
     public legendStats?: AvgMatchStats;
     public myComplimentaryLegendWeights?: { legendId: string; weightScore: number }[];
     public legendComplimentaryLegendWeights?: { legendId: string; weightScore: number }[];
-    public get isLegendStatsEnabled(): boolean {
-        return this._configIsLegendStatsEnabled && this._settingIsLegendStatsEnabled;
-    }
-    public get isComplimentaryLegendsEnabled(): boolean {
-        return this._configIsComplimentaryLegendsEnabled && this._settingIsComplimentaryLegendsEnabled;
-    }
     public get focusedLegendName(): Optional<string> {
         return this.focusedLegendId ? Legend.getName(this.focusedLegendId) : undefined;
     }
@@ -50,19 +45,20 @@ export class DashboardPageComponent implements OnInit {
 
     private legendStatsSubscription?: Subscription;
     private complimentaryLegendsSubscription?: Subscription;
-    private _configIsLegendStatsEnabled = this.config.featureFlags.legendSelectAssist.legendStats;
-    private _configIsComplimentaryLegendsEnabled = this.config.featureFlags.legendSelectAssist.complimentaryLegends;
-    private _settingIsLegendStatsEnabled = false;
-    private _settingIsComplimentaryLegendsEnabled = false;
     private destroy$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
-        private readonly config: ConfigurationService,
+        private readonly configuration: ConfigurationService,
+        private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly localDatabase: LocalDatabaseService,
         private readonly player: PlayerService,
         private readonly playerStats: PlayerLocalStatsService
-    ) {}
+    ) {
+        this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => {
+            this.legendIdsRows = config.featureConfigs.legendSelectAssist.legendRows.map((iconRows) => iconRows.legendIds);
+        });
+    }
 
     public getLegendName = (legendId?: string): Optional<string> => Legend.getName(legendId);
 
@@ -77,6 +73,7 @@ export class DashboardPageComponent implements OnInit {
         this.showLegendStats(legendId);
         this.showComplimentaryLegends(legendId);
         this.focusedLegendId = legendId;
+        this.googleAnalytics.sendEvent("Dashboard", "Legend Icon Hover", legendId);
         this.cdr.detectChanges();
     }
 
@@ -129,14 +126,6 @@ export class DashboardPageComponent implements OnInit {
                 this.myComplimentaryLegendWeights = limitedLegendWeights;
                 this.cdr.detectChanges();
             });
-    }
-
-    /**
-     * Uses just the legendIds of legend rows from the config file.
-     */
-    private getLegendIdsRows(): LegendIdsRow[] {
-        const legendSelectIconRows = this.config.featureConfigs.legendSelectAssist.legendRows;
-        return legendSelectIconRows.map((iconRows) => iconRows.legendIds);
     }
 
     private setupPlayerName(): void {

@@ -4,6 +4,7 @@
             <div class="selected-border">
                 <img
                     class="legend-portrait"
+                    [style.backgroundColor]="getLegendBGColor(legendWeight.legendId)"
                     [src]="'../../../../assets/images/legend-portraits/medium/' + getLegendImageName(legendWeight.legendId)"
                     alt=""
                 />

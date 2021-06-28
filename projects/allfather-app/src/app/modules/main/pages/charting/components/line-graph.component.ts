@@ -58,12 +58,12 @@ Chart.register(
 );
 
 @Component({
-    selector: "app-daily-average-graph",
-    templateUrl: "./daily-average-graph.component.html",
-    styleUrls: ["./daily-average-graph.component.scss"],
+    selector: "app-line-graph",
+    templateUrl: "./line-graph.component.html",
+    styleUrls: ["./line-graph.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DailyAverageGraphComponent implements OnChanges {
+export class LineGraphComponent implements OnChanges {
     @Input() public matchList: MatchDataStore[] = [];
 
     private dateKeyFormat = "MMM dd";

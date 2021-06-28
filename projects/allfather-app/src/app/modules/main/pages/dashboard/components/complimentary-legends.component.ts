@@ -1,4 +1,5 @@
 import { Legend } from "@allfather-app/app/common/legend/legend";
+import { getLegendBGColor } from "@allfather-app/app/common/legend/legend-list";
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 
 @Component({
@@ -15,4 +16,5 @@ export class ComplimentaryLegendsComponent {
         return this.legendId ? Legend.getName(this.legendId) : undefined;
     }
     public getLegendImageName = (legendId: string): string => Legend.getSquarePortraitFilename(legendId);
+    public getLegendBGColor = (legendId?: string): string => getLegendBGColor(legendId);
 }

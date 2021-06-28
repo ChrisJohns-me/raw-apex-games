@@ -1,3 +1,4 @@
+import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { of } from "rxjs";
 import { PlayerLocalStatsService } from "../../player-local-stats.service";
 
@@ -27,5 +28,13 @@ export class MockPlayerStatsService implements MockedClass<PlayerLocalStatsServi
         breakCache = false
     ): ReturnType<PlayerLocalStatsService["getLegendComplimentaryLegendWeights$"]> {
         return of();
+    }
+
+    public isFeatureDepAvailable(featureName: OverwolfFeatureDep): boolean {
+        return true;
+    }
+
+    public areAllFeatureDepsAvailable(): boolean {
+        return true;
     }
 }

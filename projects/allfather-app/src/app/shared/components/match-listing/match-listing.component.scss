@@ -8,6 +8,7 @@
         &.legend-portrait {
             display: inline-block;
             transition: all 150ms ease;
+            border-radius: 5px;
 
             &.my-legend-portrait {
                 max-width: 60px;
@@ -53,6 +54,7 @@ sub.max-placement {
     &-sign {
         font-weight: lighter;
         bottom: -0.075em;
+        left: -0.2rem;
     }
 
     &-digit {
