@@ -1,0 +1,25 @@
+@import "window-styles";
+
+.card-title {
+    margin: 0;
+}
+
+.stat-group {
+    color: white;
+    font-family: "Quantico", sans-serif;
+    text-transform: uppercase;
+    text-align: center;
+    margin: calc(0.01rem + 1vw) 0;
+
+    .stat-digit {
+        font-size: calc(0.25rem + 2.5vw);
+        line-height: calc(0.25rem + 2.5vw);
+        margin: 0;
+    }
+
+    .stat-title {
+        font-size: 0.9vw;
+        line-height: 0.9vw;
+        margin: 0;
+    }
+}

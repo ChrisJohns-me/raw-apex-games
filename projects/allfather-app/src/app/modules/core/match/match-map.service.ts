@@ -1,12 +1,12 @@
-import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
-import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
+import { MapRotationService } from "@allfather-app/app/modules/core/map-rotation/map-rotation.service";
 import { Injectable } from "@angular/core";
+import { MatchMapList } from "@shared-app/match/map/map-list";
+import { MatchMap } from "@shared-app/match/map/match-map";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { isEmpty } from "common/utilities/";
 import { BehaviorSubject, Observable, of } from "rxjs";
 import { filter, map, mergeMap, switchMap, takeUntil } from "rxjs/operators";
-import { isEmpty } from "shared/utilities";
-import { AllfatherService } from "../allfather-service.abstract";
-import { MapRotationService } from "../map-rotation/map-rotation.service";
 import { MatchPlayerLocationService } from "./match-player-location.service";
 import { MatchService } from "./match.service";
 
@@ -15,7 +15,7 @@ import { MatchService } from "./match.service";
     deps: [MatchService, MapRotationService, MatchPlayerLocationService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchMapService", MatchMapService, deps),
 })
-export class MatchMapService extends AllfatherService {
+export class MatchMapService extends BaseService {
     /**
      * Emits Match's Map at the beginning of a match.
      * (Primary) Inferred by the player's starting Z location.

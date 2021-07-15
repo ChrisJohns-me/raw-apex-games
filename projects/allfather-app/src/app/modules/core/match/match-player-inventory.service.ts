@@ -1,13 +1,13 @@
-import { InventorySlots } from "@allfather-app/app/common/inventory-slots";
-import { Item } from "@allfather-app/app/common/items/item";
-import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
-import { OverwolfGameDataService, OWInfoUpdates2Event, OWMatchInfoMeInventory } from "@allfather-app/app/modules/core/overwolf";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
+import { InventorySlots } from "@shared-app/inventory-slots";
+import { Item } from "@shared-app/items/item";
+import { WeaponItem } from "@shared-app/items/weapon-item";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { OverwolfGameDataService, OWInfoUpdates2Event, OWMatchInfoMeInventory } from "@shared-app/services/overwolf";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { cleanInt, findKeyByKeyRegEx } from "common/utilities/";
 import { BehaviorSubject, Observable } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
-import { cleanInt, findKeyByKeyRegEx } from "shared/utilities";
-import { AllfatherService } from "../allfather-service.abstract";
 import { MatchService } from "./match.service";
 
 /**
@@ -18,7 +18,7 @@ import { MatchService } from "./match.service";
     deps: [MatchService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerInventoryService", MatchPlayerInventoryService, deps),
 })
-export class MatchPlayerInventoryService extends AllfatherService {
+export class MatchPlayerInventoryService extends BaseService {
     /** Local player's current weapon, throwable, inventory, ultimate, etc. item in use */
     public readonly myInUseItem$ = new BehaviorSubject<Optional<Item>>(undefined);
     /** Local player's current weapons */

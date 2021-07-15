@@ -1,0 +1,19 @@
+<div class="sidebar-container bg-dark">
+    <ul class="nav flex-column">
+        <li class="nav-item" *ngFor="let navPage of navPages">
+            <a href class="nav-link" [ngClass]="{ active: currentPage == navPage.page }" (click)="goToPage(navPage.page)">
+                <icon [path]="navPage.icon"></icon>
+                {{ navPage.title }}
+            </a>
+        </li>
+    </ul>
+
+    <ul class="nav flex-column">
+        <li class="nav-item" *ngFor="let subPage of subPages">
+            <a href class="nav-link" [ngClass]="{ active: currentPage == subPage.page }" (click)="goToPage(subPage.page)">
+                <icon [path]="subPage.icon"></icon>
+                {{ subPage.title }}
+            </a>
+        </li>
+    </ul>
+</div>

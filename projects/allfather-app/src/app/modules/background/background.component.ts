@@ -5,6 +5,7 @@ import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MainWindowService } from "../main/windows/main-window.service";
 import { BackgroundService } from "./background.service";
+import { CaptureControllerService } from "./capture-controller.service";
 import { HUDWindowControllerService } from "./hud-window-controller.service";
 import { SystemTrayService } from "./system-tray.service";
 
@@ -17,6 +18,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     private readonly destroy$ = new Subject<void>();
 
     constructor(
+        private readonly captureController: CaptureControllerService,
         private readonly hudWindowController: HUDWindowControllerService,
         private readonly mainWindow: MainWindowService,
         private readonly systemTray: SystemTrayService,
@@ -30,6 +32,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     public ngOnInit(): void {
         this.setupUIWindows();
         this.hudWindowController.startWatchEvents();
+        // this.captureController.startWatchEvents();
     }
 
     public ngOnDestroy(): void {

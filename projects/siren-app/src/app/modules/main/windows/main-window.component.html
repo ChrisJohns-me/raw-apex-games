@@ -1,0 +1,71 @@
+<!-- #region Confirm Exit Modal -->
+<div class="modal fade" tabindex="-1" #confirmExitModal>
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Exit {{ APP_NAME }}?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    In-game cheater detection and reporting will not be enabled.<br />
+                    Are you sure?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" (click)="onExitAppClick()">Exit</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- #endregion -->
+<app-ui-container
+    @fadeInOut
+    @scaleInOut
+    *ngIf="isLoading || isAppStarting"
+    [injectBootstrapCSS]="true"
+    [primaryTitle]="'Siren - Loading...'"
+    [isMaximizable]="false"
+    [isMinimizable]="false"
+    [isDesktopWindow]="false"
+    [isTitlebarDraggable]="true"
+    [isContentDraggable]="true"
+    [enablePageviewTracking]="false"
+>
+    <div class="loading-splash-bg" id="loading-container">
+        <div class="loading-splash-container">
+            <img class="badge-logo mt-5" src="../../../../assets/images/siren_badge_logo_lg.webp" alt="Siren Logo" />
+            <h1 class="mt-2">Siren</h1>
+            <!-- <h1 class="loading-title mt-5 text-muted">Loading...</h1> -->
+        </div>
+    </div>
+    <div class="caption-text">{{ randomCaption }}</div>
+</app-ui-container>
+
+<ng-container *ngIf="!isLoading">
+    <app-ui-container
+        [primaryTitle]="''"
+        [injectBootstrapCSS]="true"
+        [isDesktopWindow]="true"
+        [isTitlebarDraggable]="true"
+        [isContentDraggable]="false"
+        [enablePageviewTracking]="false"
+    >
+        <div class="main-container">
+            <div class="sidebar">
+                <app-sidebar (navPage)="goToPage($event)" [currentPage]="activePage"></app-sidebar>
+            </div>
+            <div class="mainpage" [ngSwitch]="activePage">
+                <app-my-reports-page *ngSwitchCase="MainPage.MyReports"></app-my-reports-page>
+                <app-reported-players-page
+                    *ngSwitchCase="MainPage.LatestReports"
+                    [view]="reportedPlayersPageView"
+                ></app-reported-players-page>
+                <app-settings-page *ngSwitchCase="MainPage.Settings"></app-settings-page>
+
+                <app-dashboard-page *ngSwitchDefault></app-dashboard-page>
+            </div>
+        </div>
+    </app-ui-container>
+</ng-container>

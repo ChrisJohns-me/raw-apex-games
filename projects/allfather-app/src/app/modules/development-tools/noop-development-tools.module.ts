@@ -1,5 +1,5 @@
-import { SharedModule } from "@allfather-app/app/shared/shared.module";
 import { ChangeDetectionStrategy, Component, NgModule } from "@angular/core";
+import { SharedAppModule } from "@shared-app/shared-app.module";
 
 /**
  * The purpose of this module is to replace the
@@ -24,7 +24,7 @@ export class NoopDevelopmentToolsWindowComponent {}
 
 @NgModule({
     declarations: [NoopDevelopmentToolsWindowComponent],
-    imports: [SharedModule],
+    imports: [SharedAppModule],
     exports: [NoopDevelopmentToolsWindowComponent],
 })
 export class NoopDevelopmentToolsModule {}

@@ -1,12 +1,3 @@
-import { MatchInflictionEventAccum } from "@allfather-app/app/common/match/infliction-event";
-import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
-import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
-import { MatchRosterTeam } from "@allfather-app/app/common/match/roster-team";
-import { MatchState } from "@allfather-app/app/common/match/state";
-import { PlayerState } from "@allfather-app/app/common/player-state";
-import { generateTeamColorList } from "@allfather-app/app/common/team-color-generator";
-import { InflictionAggregator } from "@allfather-app/app/common/utilities/infliction-aggregator";
-import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchKillfeedService } from "@allfather-app/app/modules/core/match/match-killfeed.service";
 import { MatchPlayerInflictionService } from "@allfather-app/app/modules/core/match/match-player-infliction.service";
@@ -16,10 +7,19 @@ import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { Configuration } from "@allfather-app/configs/config.interface";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { MatchInflictionEventAccum } from "@shared-app/match/infliction-event";
+import { MatchLocationPhase } from "@shared-app/match/location";
+import { MatchRosterPlayer } from "@shared-app/match/roster-player";
+import { MatchRosterTeam } from "@shared-app/match/roster-team";
+import { MatchState } from "@shared-app/match/state";
+import { PlayerState } from "@shared-app/player-state";
+import { generateTeamColorList } from "@shared-app/team-color-generator";
+import { InflictionAggregator } from "@shared-app/utilities/infliction-aggregator";
+import { isPlayerNameEqual } from "@shared-app/utilities/player";
+import { isEmpty, mathClamp } from "common/utilities/";
 import { addMilliseconds } from "date-fns";
 import { combineLatest, interval, merge, Observable, Subject } from "rxjs";
 import { delay, delayWhen, distinctUntilChanged, filter, map, pairwise, share, takeUntil, tap } from "rxjs/operators";
-import { isEmpty, mathClamp } from "shared/utilities";
 import { OpponentBanner } from "../components/opponent-banner/opponent-banner.component";
 
 @Component({

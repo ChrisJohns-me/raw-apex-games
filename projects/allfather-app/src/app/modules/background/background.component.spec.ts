@@ -1,10 +1,12 @@
+import { MockBackgroundService } from "@allfather-app/app/modules/core/mocks/mock-background.service";
+import { MockMainWindowService } from "@allfather-app/app/modules/core/mocks/mock-main-window.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Title } from "@angular/platform-browser";
-import { MockBackgroundService } from "../core/mocks/services/mock-background.service";
-import { MockMainWindowService } from "../core/mocks/services/mock-main-window.service";
+import { MockCaptureControllerService } from "@shared-app/mocks/services/mock-capture-controller.service";
 import { MainWindowService } from "../main/windows/main-window.service";
 import { BackgroundComponent } from "./background.component";
 import { BackgroundService } from "./background.service";
+import { CaptureControllerService } from "./capture-controller.service";
 import { HUDWindowControllerService } from "./hud-window-controller.service";
 import { SystemTrayService } from "./system-tray.service";
 
@@ -26,6 +28,7 @@ describe("BackgroundComponent", () => {
         await TestBed.configureTestingModule({
             declarations: [BackgroundComponent],
             providers: [
+                { provide: CaptureControllerService, useClass: MockCaptureControllerService },
                 { provide: HUDWindowControllerService, useClass: MockHUDWindowControllerService },
                 { provide: MainWindowService, useClass: MockMainWindowService },
                 { provide: SystemTrayService, useClass: MockSystemTrayService },

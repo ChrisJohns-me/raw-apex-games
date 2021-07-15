@@ -282,12 +282,8 @@
         },
         "general": {
             "type": "object",
-            "properties": {
-                "overwolfGameStatusUrl": {
-                    "type": "string"
-                }
-            },
-            "required": ["overwolfGameStatusUrl"]
+            "properties": {},
+            "required": []
         },
         "overwolfQuirks": {
             "type": "object"

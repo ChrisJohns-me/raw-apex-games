@@ -1,9 +1,9 @@
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { MockUIContainerComponent } from "@allfather-app/app/modules/core/mocks/components/mock-ui-container.component";
-import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
+import { MockMatchService } from "@allfather-app/app/modules/core/mocks/mock-match.service";
 import { MatchTimerWindowComponent } from "@allfather-app/app/modules/HUD/match-timer/windows/match-timer-window.component";
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { MockUIContainerComponent } from "@shared-app/mocks/components/mock-ui-container.component";
 import { TestScheduler } from "rxjs/testing";
 
 describe("Win Game Scenario", () => {

@@ -1,10 +1,15 @@
-import { AvgMatchStats, avgStats, complimentaryLegendsWeights, legendAvgStats } from "@allfather-app/app/common/utilities/match-stats";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
+import {
+    AvgMatchStats,
+    avgStats,
+    complimentaryLegendsWeights,
+    legendAvgStats,
+} from "@allfather-app/app/modules/core/utilities/match-stats";
 import { Injectable } from "@angular/core";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { Stopwatch } from "common/utilities/";
 import { combineLatest, Observable, of } from "rxjs";
 import { filter, map, tap } from "rxjs/operators";
-import { Stopwatch } from "shared/utilities";
-import { AllfatherService } from "./allfather-service.abstract";
 import { ConfigurationService } from "./configuration.service";
 import { MatchDataStore } from "./local-database/match-data-store";
 import { MatchService } from "./match/match.service";
@@ -20,7 +25,7 @@ type LegendId = string;
     deps: [ConfigurationService, MatchService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("PlayerLocalStatsService", PlayerLocalStatsService, deps),
 })
-export class PlayerLocalStatsService extends AllfatherService {
+export class PlayerLocalStatsService extends BaseService {
     private cachedPlayerComplimentaryLegendWeights?: { legendId: string; weightScore: number }[];
     private cachedLegendComplimentaryLegendWeights = new Map<LegendId, { legendId: string; weightScore: number }[]>();
     private cachedPlayerStats?: AvgMatchStats;

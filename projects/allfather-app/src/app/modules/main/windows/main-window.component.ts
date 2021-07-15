@@ -1,6 +1,4 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
-import { fadeInOutAnimation } from "@allfather-app/app/shared/animations/fade-in-out.animation";
-import { scaleInOutAnimationFactory } from "@allfather-app/app/shared/animations/scale-in-out-factory.animation";
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -11,14 +9,16 @@ import {
     OnInit,
     ViewChild,
 } from "@angular/core";
+import { GoogleAnalyticsService } from "@shared-app/services/google-analytics.service";
+import { fadeInOutAnimation } from "@shared/animations/fade-in-out.animation";
+import { scaleInOutAnimationFactory } from "@shared/animations/scale-in-out-factory.animation";
 import { Modal } from "bootstrap";
+import { isEmpty, wordsToUpperCase } from "common/utilities/";
+import { exhaustiveEnumSwitch } from "common/utilities/switch";
 import { interval, Subject } from "rxjs";
 import { delayWhen, filter, map, take, takeUntil } from "rxjs/operators";
-import { isEmpty, wordsToUpperCase } from "shared/utilities";
-import { exhaustiveEnumSwitch } from "shared/utilities/switch";
 import { BackgroundService } from "../../background/background.service";
 import { ConfigLoadStatus, ConfigurationService } from "../../core/configuration.service";
-import { GoogleAnalyticsService } from "../../core/google-analytics.service";
 import { MainPage } from "../pages/main-page";
 import { MainWindowService } from "./main-window.service";
 

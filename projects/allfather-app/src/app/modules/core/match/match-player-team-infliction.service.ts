@@ -1,10 +1,10 @@
-import { MatchInflictionEvent } from "@allfather-app/app/common/match/infliction-event";
-import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
+import { MatchKillfeedService } from "@allfather-app/app/modules/core/match/match-killfeed.service";
 import { Injectable } from "@angular/core";
+import { MatchInflictionEvent } from "@shared-app/match/infliction-event";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { isPlayerNameEqual } from "@shared-app/utilities/player";
 import { Observable, partition } from "rxjs";
-import { AllfatherService } from "../allfather-service.abstract";
-import { MatchKillfeedService } from "./match-killfeed.service";
 import { MatchRosterService } from "./match-roster.service";
 
 /**
@@ -17,7 +17,7 @@ import { MatchRosterService } from "./match-roster.service";
     useFactory: (...deps: unknown[]) =>
         SingletonServiceProviderFactory("MatchPlayerTeamInflictionService", MatchPlayerTeamInflictionService, deps),
 })
-export class MatchPlayerTeamInflictionService extends AllfatherService {
+export class MatchPlayerTeamInflictionService extends BaseService {
     /** Local user's team's Killfeed event stream */
     public readonly myTeamKillfeedEvent$: Observable<MatchInflictionEvent>;
     /** Eliminations/knockdown event stream for all players except the local user's team */

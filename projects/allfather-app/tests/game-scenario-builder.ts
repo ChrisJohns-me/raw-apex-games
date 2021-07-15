@@ -1,7 +1,7 @@
-import { MockOverwolfAPI } from "@allfather-app/app/modules/core/mocks/mock-overwolf-api";
+import { MockOverwolfAPI } from "@shared-app/mocks/mock-overwolf-api";
+import { unique } from "common/utilities/primitives/array";
 import { addMilliseconds, addMinutes, subMilliseconds } from "date-fns";
 import seedrandom from "seedrandom";
-import { unique } from "shared/utilities/primitives/array";
 import { NIL, v5 as uuid } from "uuid";
 import { GameScenario } from "./game-scenario";
 

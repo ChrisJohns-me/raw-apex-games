@@ -1,0 +1,10 @@
+{
+  "meanstack-1-config": {
+    "status": {
+      "success": {}
+    }
+  },
+  "environment": {
+    "dev": "true"
+  }
+}

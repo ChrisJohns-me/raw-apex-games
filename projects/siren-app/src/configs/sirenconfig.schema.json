@@ -1,0 +1,28 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "common": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        },
+        "featureFlags": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        },
+        "featureConfigs": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        },
+        "general": {
+            "type": "object",
+            "properties": {},
+            "required": []
+        }
+    },
+    "required": ["common", "featureFlags", "general"],
+    "additionalProperties": false
+}

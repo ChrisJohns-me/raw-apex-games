@@ -1,0 +1,7 @@
+{
+    "$schema": "./config.schema.json",
+    "common": {},
+    "featureFlags": {},
+    "featureConfigs": {},
+    "general": {}
+}

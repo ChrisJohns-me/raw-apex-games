@@ -1,24 +1,24 @@
-import { Legend } from "@allfather-app/app/common/legend/legend";
-import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
-import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
-import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
+import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
+import { Legend } from "@shared-app/legend/legend";
+import { MatchLocationPhase } from "@shared-app/match/location";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { OverwolfGameDataService } from "@shared-app/services/overwolf";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { isPlayerNameEqual } from "@shared-app/utilities/player";
+import { mathClamp } from "common/utilities/";
 import { BehaviorSubject, combineLatest, of, Subject } from "rxjs";
 import { distinctUntilChanged, filter, map, pairwise, switchMap, takeUntil, tap } from "rxjs/operators";
-import { mathClamp } from "shared/utilities";
-import { AllfatherService } from "../allfather-service.abstract";
 import { MatchLegendSelectService } from "./match-legend-select.service";
 import { MatchPlayerLocationService } from "./match-player-location.service";
-import { MatchService } from "./match.service";
 
 @Injectable({
     providedIn: "root",
     deps: [MatchService, MatchLegendSelectService, MatchPlayerLocationService, OverwolfGameDataService, PlayerService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerLegendService", MatchPlayerLegendService, deps),
 })
-export class MatchPlayerLegendService extends AllfatherService {
+export class MatchPlayerLegendService extends BaseService {
     public readonly myLegend$ = new BehaviorSubject<Optional<Legend>>(undefined);
     /** Percent of current Ultimate Cooldown; after player has landed. */
     public readonly myUltimateCooldown$ = new Subject<number>();

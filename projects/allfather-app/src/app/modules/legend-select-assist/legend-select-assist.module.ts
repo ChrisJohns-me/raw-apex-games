@@ -1,6 +1,7 @@
-import { SharedModule } from "@allfather-app/app/shared/shared.module";
+import { AllfatherSharedModule } from "@allfather-app/app/shared/allfather-shared.module";
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
+import { SharedAppModule } from "@shared-app/shared-app.module";
 import { LegendSelectComplimentaryLegendsComponent } from "./components/legend-select-complimentary-legends.component";
 import { LegendSelectIconsBoardComponent } from "./components/legend-select-icons-board.component";
 import { LegendStatsComponent } from "./components/legend-stats.component";
@@ -13,7 +14,7 @@ import { LegendSelectAssistWindowComponent } from "./windows/legend-select-assis
         LegendSelectIconsBoardComponent,
         LegendStatsComponent,
     ],
-    imports: [SharedModule, ReactiveFormsModule],
+    imports: [ReactiveFormsModule, SharedAppModule, AllfatherSharedModule],
     exports: [LegendSelectAssistWindowComponent],
 })
 export class LegendSelectAssistWindowModule {}

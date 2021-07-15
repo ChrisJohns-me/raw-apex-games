@@ -1,14 +1,14 @@
-import { GamePhase } from "@allfather-app/app/common/game-phase";
-import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
 import { SettingKey, SettingValue } from "@allfather-app/app/common/settings";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
+import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { Injectable } from "@angular/core";
+import { GamePhase } from "@shared-app/game-phase";
+import { MatchGameModeGenericId } from "@shared-app/match/game-mode/game-mode.enum";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { combineLatest, merge, Observable, Subscription } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
-import { AllfatherService } from "../core/allfather-service.abstract";
 import { GameService } from "../core/game.service";
 import { MatchService } from "../core/match/match.service";
-import { SettingsService } from "../core/settings.service";
 import { InflictionInsightWindowService } from "../HUD/infliction-insight/windows/infliction-insight-window.service";
 import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
 import { ReticleHelperWindowService } from "../HUD/reticle-helper/windows/reticle-helper-window.service";
@@ -36,7 +36,7 @@ type HUDTriggers = {
     ],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("HUDWindowControllerService", HUDWindowControllerService, deps),
 })
-export class HUDWindowControllerService extends AllfatherService {
+export class HUDWindowControllerService extends BaseService {
     private HUDWindows: HUDTriggers[] = [
         {
             windowService: this.inflictionInsightWindow,

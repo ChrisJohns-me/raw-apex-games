@@ -1,15 +1,15 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { environment } from "@allfather-app/environments/environment";
 import { Injectable } from "@angular/core";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { OWSystemTrayMenuItem } from "@shared-app/services/overwolf";
+import { OverwolfExtensionsService } from "@shared-app/services/overwolf/overwolf-extensions.service";
+import { OverwolfSystemTrayService } from "@shared-app/services/overwolf/overwolf-system-tray.service";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { exhaustiveEnumSwitch } from "common/utilities/switch";
 import { of } from "rxjs";
 import { catchError, takeUntil } from "rxjs/operators";
-import { exhaustiveEnumSwitch } from "shared/utilities/switch";
-import { AllfatherService } from "../core/allfather-service.abstract";
-import { OWSystemTrayMenuItem } from "../core/overwolf";
-import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
-import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service";
-import { WindowName } from "../core/_refactor/ui-window";
+import { WindowName } from "../core/window-name";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
 import { InflictionInsightWindowService } from "../HUD/infliction-insight/windows/infliction-insight-window.service";
 import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
@@ -83,7 +83,7 @@ const FOOTER_MENUITEMS: OWSystemTrayMenuItem[] = [
     ],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("SystemTrayService", SystemTrayService, deps),
 })
-export class SystemTrayService extends AllfatherService {
+export class SystemTrayService extends BaseService {
     private menuItems: OWSystemTrayMenuItem[] = [];
 
     constructor(

@@ -1,8 +1,8 @@
 import { DefaultSetting } from "@allfather-app/app/common/settings";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
-import { OverwolfInputTrackingService } from "@allfather-app/app/modules/core/overwolf/overwolf-input-tracking.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { OverwolfInputTrackingService } from "@shared-app/services/overwolf/overwolf-input-tracking.service";
 import { combineLatest, Subject } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
 import { AimingReticle, AimingReticleList } from "../components/aiming-reticle/aiming-reticles";

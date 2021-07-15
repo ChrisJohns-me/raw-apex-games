@@ -1,13 +1,13 @@
-import { GameProcessService } from "@allfather-app/app/modules/core/game-process.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { MockGameProcessService } from "@allfather-app/app/modules/core/mocks/services/mock-game-process.service";
-import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
-import { MockPlayerStatsService } from "@allfather-app/app/modules/core/mocks/services/mock-player-stats.service";
-import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-player.service";
-import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats.service";
+import { MockMatchService } from "@allfather-app/app/modules/core/mocks/mock-match.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { MockGameProcessService } from "@shared-app/mocks/services/mock-game-process.service";
+import { MockPlayerStatsService } from "@shared-app/mocks/services/mock-player-stats.service";
+import { MockPlayerService } from "@shared-app/mocks/services/mock-player.service";
+import { GameProcessService } from "@shared-app/services/game-process.service";
+import { PlayerAccountStatsService } from "@shared-app/services/player-account-stats/player-account-stats.service";
 import { AccountStatsDisplayComponent } from "./account-stats-display.component";
 
 describe("AccountStatsDisplayComponent", () => {

@@ -1,4 +1,4 @@
-import { MatchRosterTeammate } from "@allfather-app/app/common/match/roster-teammate";
+import { MatchRosterTeammate } from "@shared-app/match/roster-teammate";
 import { map } from "rxjs/operators";
 import { MatchRosterService } from "../../../match/match-roster.service";
 import { ReportableDataSnapshot } from "../reportable-data";

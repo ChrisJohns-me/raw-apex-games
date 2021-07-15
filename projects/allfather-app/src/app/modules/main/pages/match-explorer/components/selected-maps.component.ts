@@ -1,7 +1,7 @@
-import { MatchMapGenericId } from "@allfather-app/app/common/match/map/map.enum";
-import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
+import { MatchMapGenericId } from "@shared-app/match/map/map.enum";
+import { MatchMap } from "@shared-app/match/map/match-map";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 

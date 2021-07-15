@@ -1,7 +1,7 @@
-import { MapRotationData } from "@allfather-app/app/common/match/map/map-rotation-data";
-import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { MapRotationService } from "@allfather-app/app/modules/core/map-rotation/map-rotation.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { MapRotationData } from "@shared-app/match/map/map-rotation-data";
+import { MatchMap } from "@shared-app/match/map/match-map";
 import { differenceInMilliseconds, isFuture, isPast } from "date-fns";
 import addMinutes from "date-fns/addMinutes";
 import { BehaviorSubject, interval, of, Subject, timer } from "rxjs";

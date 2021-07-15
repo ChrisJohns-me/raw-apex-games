@@ -1,12 +1,12 @@
-import { MatchState } from "@allfather-app/app/common/match/state";
-import { PlayerState } from "@allfather-app/app/common/player-state";
-import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
+import { MatchState } from "@shared-app/match/state";
+import { PlayerState } from "@shared-app/player-state";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { OverwolfGameDataService } from "@shared-app/services/overwolf";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { cleanInt, isEmpty, parseBoolean } from "common/utilities/";
 import { BehaviorSubject } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
-import { cleanInt, isEmpty, parseBoolean } from "shared/utilities";
-import { AllfatherService } from "../allfather-service.abstract";
 import { MatchArenasScoreboardService } from "./match-arenas-scoreboard.service";
 import { MatchPlayerInflictionService } from "./match-player-infliction.service";
 import { MatchPlayerService } from "./match-player.service";
@@ -20,7 +20,7 @@ import { MatchService } from "./match.service";
     deps: [MatchService, MatchArenasScoreboardService, MatchPlayerService, MatchPlayerInflictionService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerStatsService", MatchPlayerStatsService, deps),
 })
-export class MatchPlayerStatsService extends AllfatherService {
+export class MatchPlayerStatsService extends BaseService {
     /** Data from Overwolf's "tabs". Reset on match start. */
     public readonly myEliminations$ = new BehaviorSubject<number>(0);
     /** Data from Overwolf's "tabs". Reset on match start. */

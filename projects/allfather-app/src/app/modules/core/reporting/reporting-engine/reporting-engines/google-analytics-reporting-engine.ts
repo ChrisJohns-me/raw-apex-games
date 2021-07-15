@@ -1,7 +1,7 @@
-import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
+import { MatchLocationPhase } from "@shared-app/match/location";
+import { GoogleAnalyticsService } from "@shared-app/services/google-analytics.service";
 import { differenceInMinutes } from "date-fns";
 import { BehaviorSubject, Subject } from "rxjs";
-import { GoogleAnalyticsService } from "../../../google-analytics.service";
 import { DamageConditionOption, GameModeConditionOption, KillsConditionOption, PlacementConditionOption } from "../condition-options";
 import { ReportableDataFactoryMap } from "../reportable-data";
 import { ReportingEngine, ReportingEngineId, ReportingStatus } from "../reporting-engine";

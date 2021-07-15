@@ -1,19 +1,19 @@
-import { MatchRoster } from "@allfather-app/app/common/match/roster";
-import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
-import { MatchRosterTeammate } from "@allfather-app/app/common/match/roster-teammate";
-import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
-import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoRoster, OWMatchInfoTeammate } from "@allfather-app/app/modules/core/overwolf";
+import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
+import { MatchRoster } from "@shared-app/match/roster";
+import { MatchRosterPlayer } from "@shared-app/match/roster-player";
+import { MatchRosterTeammate } from "@shared-app/match/roster-teammate";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoRoster, OWMatchInfoTeammate } from "@shared-app/services/overwolf";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { isPlayerNameEqual } from "@shared-app/utilities/player";
+import { cleanInt, findKeyByKeyRegEx, findValueByKeyRegEx, isEmpty } from "common/utilities";
+import { unique } from "common/utilities/primitives/array";
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
-import { cleanInt, findKeyByKeyRegEx, findValueByKeyRegEx, isEmpty } from "shared/utilities";
-import { unique } from "shared/utilities/primitives/array";
-import { AllfatherService } from "../allfather-service.abstract";
 import { MatchLegendSelectService } from "./match-legend-select.service";
-import { MatchService } from "./match.service";
 
 type RosterUpdate = { rosterId: number; rosterItem: Optional<OWMatchInfoRoster>; rosterAction: "ADD" | "DEL" };
 type RosterPlayerDisconnection = { timestamp: Date; rosterPlayer: OWMatchInfoRoster };
@@ -26,7 +26,7 @@ type RosterPlayerDisconnection = { timestamp: Date; rosterPlayer: OWMatchInfoRos
     deps: [ConfigurationService, MatchService, MatchLegendSelectService, OverwolfGameDataService, PlayerService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchRosterService", MatchRosterService, deps),
 })
-export class MatchRosterService extends AllfatherService {
+export class MatchRosterService extends BaseService {
     /**
      * Provides list of players in the current match.
      * Emits only at the beginning of the match, or upon subscription.

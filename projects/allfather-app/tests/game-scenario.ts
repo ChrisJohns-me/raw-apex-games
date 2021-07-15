@@ -1,7 +1,7 @@
-import { MockOverwolfAPI } from "@allfather-app/app/modules/core/mocks/mock-overwolf-api";
+import { MockOverwolfAPI } from "@shared-app/mocks/mock-overwolf-api";
+import { JSONTryParse } from "common/utilities/";
+import { unique } from "common/utilities/primitives/array";
 import { addMilliseconds, differenceInMilliseconds } from "date-fns";
-import { JSONTryParse } from "shared/utilities";
-import { unique } from "shared/utilities/primitives/array";
 
 const MAX_DURATION = 3600000;
 

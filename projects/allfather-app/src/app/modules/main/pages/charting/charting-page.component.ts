@@ -1,8 +1,8 @@
+import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
+import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { Observable, Subject } from "rxjs";
 import { finalize, takeUntil } from "rxjs/operators";
-import { MatchDataStore } from "../../../core/local-database/match-data-store";
-import { MatchService } from "../../../core/match/match.service";
 
 @Component({
     selector: "app-charting-page",

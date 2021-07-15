@@ -1,12 +1,12 @@
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Configuration } from "@allfather-app/configs/config.interface";
 import ConfigJSONData from "@allfather-app/configs/config.json";
 import { environment } from "@allfather-app/environments/environment";
 import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { isEmpty } from "common/utilities/";
 import { BehaviorSubject, Observable, of, ReplaySubject, Subject } from "rxjs";
 import { catchError, map, takeUntil, timeout } from "rxjs/operators";
-import { isEmpty } from "shared/utilities";
 
 export enum ConfigLoadStatus {
     NotStarted,

@@ -1,15 +1,15 @@
-import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
-import { MatchInflictionEvent } from "@allfather-app/app/common/match/infliction-event";
-import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
-import { PlayerState } from "@allfather-app/app/common/player-state";
-import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
-import { OverwolfGameDataService, OWGameEventKillFeed } from "@allfather-app/app/modules/core/overwolf";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
+import { WeaponItem } from "@shared-app/items/weapon-item";
+import { MatchInflictionEvent } from "@shared-app/match/infliction-event";
+import { MatchRosterPlayer } from "@shared-app/match/roster-player";
+import { PlayerState } from "@shared-app/player-state";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { OverwolfGameDataService, OWGameEventKillFeed } from "@shared-app/services/overwolf";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { isPlayerNameEqual } from "@shared-app/utilities/player";
+import { isEmpty } from "common/utilities/";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
-import { isEmpty } from "shared/utilities";
-import { AllfatherService } from "../allfather-service.abstract";
 import { MatchRosterService } from "./match-roster.service";
 import { MatchService } from "./match.service";
 
@@ -24,7 +24,7 @@ const KILLFEED_UNIQUE_TIMEFRAME = 3000; // Prevents duplicates from Primary & Se
     deps: [MatchService, MatchRosterService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchKillfeedService", MatchKillfeedService, deps),
 })
-export class MatchKillfeedService extends AllfatherService {
+export class MatchKillfeedService extends BaseService {
     public readonly killfeedEvent$ = new Subject<MatchInflictionEvent>();
     public readonly killfeedEventHistory$ = new BehaviorSubject<MatchInflictionEvent[]>([]);
 

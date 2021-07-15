@@ -1,15 +1,15 @@
-import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
-import { ArenasScoreboard } from "@allfather-app/app/common/match/arenas-scoreboard";
-import { MatchInflictionEvent } from "@allfather-app/app/common/match/infliction-event";
-import { MatchRoster } from "@allfather-app/app/common/match/roster";
-import { MatchRosterTeammate } from "@allfather-app/app/common/match/roster-teammate";
-import { PlayerState } from "@allfather-app/app/common/player-state";
-import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
+import { OverwolfFeatureDep } from "@shared-app/feature-status";
+import { ArenasScoreboard } from "@shared-app/match/arenas-scoreboard";
+import { MatchInflictionEvent } from "@shared-app/match/infliction-event";
+import { MatchRoster } from "@shared-app/match/roster";
+import { MatchRosterTeammate } from "@shared-app/match/roster-teammate";
+import { PlayerState } from "@shared-app/player-state";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { isPlayerNameEqual } from "@shared-app/utilities/player";
 import { BehaviorSubject, combineLatest, Subject } from "rxjs";
 import { filter, pairwise, switchMap, takeUntil } from "rxjs/operators";
-import { AllfatherService } from "../allfather-service.abstract";
 import { MatchKillfeedService } from "./match-killfeed.service";
 import { MatchPlayerService } from "./match-player.service";
 import { MatchRosterService } from "./match-roster.service";
@@ -32,7 +32,7 @@ import { MatchService } from "./match.service";
     deps: [MatchService, MatchKillfeedService, MatchPlayerService, MatchRosterService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchArenasScoreboardService", MatchArenasScoreboardService, deps),
 })
-export class MatchArenasScoreboardService extends AllfatherService {
+export class MatchArenasScoreboardService extends BaseService {
     /** 0 = not in Arenas Match */
     public currentRoundNum$ = new BehaviorSubject<number>(0);
     public roundLoseEvent$ = new Subject<void>();

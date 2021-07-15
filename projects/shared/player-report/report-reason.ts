@@ -1,0 +1,15 @@
+export enum ReportReason {
+    Aimbot = "aimbot",
+    WallESP = "wallesp",
+    Macros = "macros",
+    Movement = "movement",
+    DisrespectfulBehavior = "disrespectfulbehavior",
+    Harassment = "harassment",
+    Sabatoge = "sabatoge",
+    StreamSniping = "streamsniping",
+    TeamSniping = "teamsniping",
+    Boosting = "boosting",
+    Teaming = "teaming",
+    Glitches = "glitches",
+    AFK = "afk",
+}

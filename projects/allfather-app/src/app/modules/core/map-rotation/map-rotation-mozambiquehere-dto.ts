@@ -1,8 +1,8 @@
-import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
-import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
-import { MapRotationData, MapRotationInfo } from "@allfather-app/app/common/match/map/map-rotation-data";
-import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
-import { cleanInt } from "shared/utilities";
+import { MatchGameModeGenericId } from "@shared-app/match/game-mode/game-mode.enum";
+import { MatchMapList } from "@shared-app/match/map/map-list";
+import { MapRotationData, MapRotationInfo } from "@shared-app/match/map/map-rotation-data";
+import { MatchMap } from "@shared-app/match/map/match-map";
+import { cleanInt } from "common/utilities/";
 
 interface MapRotationInfoDTO {
     map: string; // "Olympus"

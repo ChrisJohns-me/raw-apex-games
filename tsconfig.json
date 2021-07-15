@@ -30,8 +30,20 @@
       "@allfather-app/*": [
         "projects/allfather-app/src/*"
       ],
+      "@siren-app/*": [
+        "projects/siren-app/src/*"
+      ],
       "@allfather-web/*": [
         "projects/allfather-web/src/*"
+      ],
+      "@siren-web/*": [
+        "projects/siren-web/src/*"
+      ],
+      "@shared/*": [
+        "projects/shared/*"
+      ],
+      "@shared-app/*": [
+        "projects/shared-app/*"
       ]
     }
   },

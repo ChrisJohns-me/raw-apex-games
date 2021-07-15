@@ -1,9 +1,7 @@
 import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
-import { FileService } from "@allfather-app/app/modules/core/file.service";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
 import { SettingsDataStore } from "@allfather-app/app/modules/core/local-database/settings-data-store";
-import { OverwolfProfileService } from "@allfather-app/app/modules/core/overwolf/overwolf-profile.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { AimingReticle, AimingReticleList } from "@allfather-app/app/modules/HUD/reticle-helper/components/aiming-reticle/aiming-reticles";
 import { Configuration } from "@allfather-app/configs/config.interface";
@@ -11,6 +9,8 @@ import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { mdiAttachment } from "@mdi/js";
+import { FileService } from "@shared-app/services/file.service";
+import { OverwolfProfileService } from "@shared-app/services/overwolf/overwolf-profile.service";
 import format from "date-fns/format";
 import "dexie-export-import";
 import { importInto, ImportOptions } from "dexie-export-import";
@@ -106,7 +106,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     public mdiAttachment = mdiAttachment;
     //#endregion
 
-    private dbExportFilename = `${environment.DEV ? "DEV_" : ""}allfather_db_${format(new Date(), "yyyy_dd_MM")}.json`;
+    private dbExportFilename = `${environment.DEV ? "DEV_" : ""}allfather_db_${format(new Date(), "yyyy_MM_dd")}.json`;
     private dbExportDirectory = "db_export";
     private _isSaving = false;
     private destroy$ = new Subject<void>();

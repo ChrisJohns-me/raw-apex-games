@@ -1,0 +1,145 @@
+<div class="row py-4">
+    <div class="col-auto">
+        <button class="btn btn-warning" type="button" (click)="onCustomInjectClick()">Inject Custom Game Events</button>
+    </div>
+    <div class="col text-end">
+        <button class="btn btn-sm btn-success mx-2" type="button" (click)="onPerformFullQuickGameClick()">Full Game (Quick)</button>
+        <button class="btn btn-sm btn-primary mx-2" type="button" (click)="onResetToInGameClick()">Reset to In-Game</button>
+        <button class="btn btn-sm btn-secondary mx-2" type="button" (click)="onResetToLobbyClick()">Reset to Lobby</button>
+    </div>
+</div>
+<form [formGroup]="fullGameForm">
+    <div class="row border py-4">
+        <h4>Full Games</h4>
+        <div class="col-4 col-12-lg">
+            <label for="speedRange" class="form-label">Speed (x{{ speedAdjust }})</label>
+            <input type="range" class="form-range" min="0.25" max="100" step="0.25" id="speedRange" formControlName="speedAdjust" />
+        </div>
+        <div class="col-12">
+            <button class="btn btn-sm btn-outline-secondary mx-2" type="button" (click)="onPerformArenasModeClick(speedAdjust)">
+                "Arenas Mode"
+            </button>
+            <button class="btn btn-sm btn-outline-secondary mx-2" type="button" (click)="onPerformArenaModeSuddenDeathClick(speedAdjust)">
+                "Arenas Mode - Sudden Death"
+            </button>
+            <button class="btn btn-sm btn-outline-primary mx-2" type="button" (click)="onPerformFullGame1Click(speedAdjust)">
+                "Eventful"
+            </button>
+            <button class="btn btn-sm btn-outline-primary mx-2" type="button" (click)="onPerformStupidGame1FullGameClick(speedAdjust)">
+                "Stupid"
+            </button>
+            <button class="btn btn-sm btn-outline-primary mx-2" type="button" (click)="onPerformFullGame2Click(speedAdjust)">"2k"</button>
+            <button class="btn btn-sm btn-outline-primary mx-2" type="button" (click)="onPerformValkUltGameClick(speedAdjust)">
+                "valk ult"
+            </button>
+            <button class="btn btn-sm btn-outline-primary mx-2" type="button" (click)="onPerformAlmost1GameClick(speedAdjust)">
+                "almost won"
+            </button>
+        </div>
+    </div>
+</form>
+
+<form [formGroup]="rosterActionsForm">
+    <fieldset [disabled]="!(matchRoster.matchRoster$ | async)?.allPlayers?.length">
+        <div class="row border m-3 ms-0 pt-2 pb-4">
+            <div class="col-12">
+                <h3>Roster Actions</h3>
+            </div>
+            <div class="col-lg-3 col-md-6 col-12">
+                <select class="form-select" formControlName="playerSelected">
+                    <option *ngFor="let player of matchRoster.matchRoster$.value.allPlayers" [ngValue]="player">
+                        {{ player.name }}
+                    </option>
+                </select>
+            </div>
+            <div class="w-100 m-2"></div>
+            <div class="col-6">
+                <h6>Kill Feed</h6>
+                <button
+                    class="btn btn-outline-warning"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onKillfeedKnockeddownClick(rosterPlayerSelected, true)"
+                >
+                    Knock Down
+                </button>
+                <button
+                    class="btn btn-outline-danger"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onKillfeedEliminatedClick(rosterPlayerSelected, true)"
+                >
+                    Eliminate</button
+                ><br />
+                <button
+                    class="btn btn-outline-warning"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onKillfeedKnockeddownClick(rosterPlayerSelected)"
+                >
+                    Knock Down (by me)
+                </button>
+                <button
+                    class="btn btn-outline-danger"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onKillfeedEliminatedClick(rosterPlayerSelected)"
+                >
+                    Eliminate (by me)
+                </button>
+            </div>
+            <div class="col-6">
+                <h6>Inflictions</h6>
+                <label for="damageRange" class="form-label">Damage</label>
+                <input type="range" class="form-range" min="0" max="200" id="damageRange" value="20" formControlName="damageAmount" />
+                <br />
+                <button
+                    class="btn btn-outline-dark"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onInflictDamageClick(rosterPlayerSelected, damageAmount, true)"
+                >
+                    Shield Damage ({{ damageAmount }})
+                </button>
+                <button
+                    class="btn btn-outline-dark"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onInflictDamageClick(rosterPlayerSelected, damageAmount, false)"
+                >
+                    Health Damage ({{ damageAmount }})
+                </button>
+                <button
+                    class="btn btn-outline-warning"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onInflictKnockClick(rosterPlayerSelected)"
+                >
+                    Knock
+                </button>
+                <button
+                    class="btn btn-outline-danger"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onInflictEliminateClick(rosterPlayerSelected)"
+                >
+                    Eliminate
+                </button>
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+<div class="row">
+    <div class="col">
+        <h6>Last Simulated Event</h6>
+        <div class="log-container">
+            <div class="log-area bg-light border p-2" id="gameLog" #gameLog>
+                <ng-container *ngIf="latestCommand">
+                    <span>[{{ latestCommand.timestamp | date: "yyyy-MM-dd hh:mm:ss.SSS aa" }}]&nbsp;</span>
+                    <span>{{ latestCommand.command | json }}</span>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>

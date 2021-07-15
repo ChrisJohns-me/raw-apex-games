@@ -1,12 +1,12 @@
-import { Legend } from "@allfather-app/app/common/legend/legend";
-import { MatchState } from "@allfather-app/app/common/match/state";
-import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoLegendSelect } from "@allfather-app/app/modules/core/overwolf";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
+import { Legend } from "@shared-app/legend/legend";
+import { MatchState } from "@shared-app/match/state";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoLegendSelect } from "@shared-app/services/overwolf";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { findValueByKeyRegEx, isEmpty } from "common/utilities/";
 import { Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
-import { findValueByKeyRegEx, isEmpty } from "shared/utilities";
-import { AllfatherService } from "../allfather-service.abstract";
 import { MatchService } from "./match.service";
 
 /**
@@ -17,7 +17,7 @@ import { MatchService } from "./match.service";
     deps: [MatchService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchLegendSelectService", MatchLegendSelectService, deps),
 })
-export class MatchLegendSelectService extends AllfatherService {
+export class MatchLegendSelectService extends BaseService {
     /**
      * Emits non-empty object for legend selection data any time there is a new legend selected for a player.
      * From Overwolf's "matchInfo.legendSelect_" data.

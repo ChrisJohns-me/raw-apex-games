@@ -136,7 +136,7 @@
             },
             "hud-infliction-insight": {
                 "file": "index.html",
-                "in_game_only": false,
+                "in_game_only": true,
                 "resizable": false,
                 "transparent": true,
                 "show_in_taskbar": false,
@@ -159,11 +159,11 @@
             },
             "hud-reticle-helper": {
                 "file": "index.html",
-                "in_game_only": false,
+                "in_game_only": true,
                 "resizable": false,
                 "transparent": true,
                 "disable_blur": true,
-                "show_in_taskbar": true,
+                "show_in_taskbar": false,
                 "clickthrough": true,
                 "mute": true,
                 "popup_blocker": true,

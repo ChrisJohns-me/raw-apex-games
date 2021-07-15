@@ -1,20 +1,20 @@
-import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
-import { MatchInflictionEvent } from "@allfather-app/app/common/match/infliction-event";
-import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
-import { PlayerState } from "@allfather-app/app/common/player-state";
-import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
-import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
+import { MatchKillfeedService } from "@allfather-app/app/modules/core/match/match-killfeed.service";
+import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
+import { WeaponItem } from "@shared-app/items/weapon-item";
+import { MatchInflictionEvent } from "@shared-app/match/infliction-event";
+import { MatchRosterPlayer } from "@shared-app/match/roster-player";
+import { PlayerState } from "@shared-app/player-state";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { OverwolfGameDataService } from "@shared-app/services/overwolf";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { isPlayerNameEqual } from "@shared-app/utilities/player";
+import { cleanInt, isEmpty, parseBoolean } from "common/utilities/";
 import { Observable, partition, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
-import { cleanInt, isEmpty, parseBoolean } from "shared/utilities";
-import { AllfatherService } from "../allfather-service.abstract";
-import { MatchKillfeedService } from "./match-killfeed.service";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
 import { MatchPlayerService } from "./match-player.service";
-import { MatchRosterService } from "./match-roster.service";
 
 /**
  * @classdesc Provides local player damage/knockdown/kill/damage events
@@ -32,7 +32,7 @@ import { MatchRosterService } from "./match-roster.service";
     ],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerInflictionService", MatchPlayerInflictionService, deps),
 })
-export class MatchPlayerInflictionService extends AllfatherService {
+export class MatchPlayerInflictionService extends BaseService {
     /** Local user's Killfeed event stream */
     public readonly myKillfeedEvent$: Observable<MatchInflictionEvent>;
     /** Eliminations/knockdown event stream for all players except the local user */

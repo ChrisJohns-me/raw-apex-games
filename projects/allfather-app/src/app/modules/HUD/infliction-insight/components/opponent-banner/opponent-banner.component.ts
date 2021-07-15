@@ -1,8 +1,8 @@
-import { MatchInflictionEventAccum } from "@allfather-app/app/common/match/infliction-event";
-import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { Configuration } from "@allfather-app/configs/config.interface";
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from "@angular/core";
+import { MatchInflictionEventAccum } from "@shared-app/match/infliction-event";
+import { MatchRosterPlayer } from "@shared-app/match/roster-player";
 import { interval, Subject } from "rxjs";
 import { filter, takeUntil } from "rxjs/operators";
 

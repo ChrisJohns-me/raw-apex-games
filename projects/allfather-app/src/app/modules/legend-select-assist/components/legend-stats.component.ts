@@ -1,4 +1,4 @@
-import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
+import { AvgMatchStats } from "@allfather-app/app/modules/core/utilities/match-stats";
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 
 @Component({

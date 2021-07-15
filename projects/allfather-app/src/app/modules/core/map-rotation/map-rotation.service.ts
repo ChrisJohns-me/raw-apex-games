@@ -1,16 +1,16 @@
-import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
-import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
-import { MapRotationData, MapRotationInfo } from "@allfather-app/app/common/match/map/map-rotation-data";
-import { MatchMapFriendlyName, MatchMapGenericId } from "@allfather-app/app/common/match/map/map.enum";
-import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { MatchGameModeGenericId } from "@shared-app/match/game-mode/game-mode.enum";
+import { MatchMapList } from "@shared-app/match/map/map-list";
+import { MapRotationData, MapRotationInfo } from "@shared-app/match/map/map-rotation-data";
+import { MatchMapFriendlyName, MatchMapGenericId } from "@shared-app/match/map/map.enum";
+import { MatchMap } from "@shared-app/match/map/match-map";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { GameProcessService } from "@shared-app/services/game-process.service";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { addMinutes } from "date-fns";
 import { BehaviorSubject, combineLatest, Observable, of, throwError, timer } from "rxjs";
 import { delay, filter, map, mergeMap, retryWhen, switchMap, takeUntil, tap } from "rxjs/operators";
-import { AllfatherService } from "../allfather-service.abstract";
-import { GameProcessService } from "../game-process.service";
 import { MatchService } from "../match/match.service";
 import { MapRotationMozambiquehereDTO } from "./map-rotation-mozambiquehere-dto";
 
@@ -31,7 +31,7 @@ const RETRY_MULTIPLIER = 5000;
     deps: [GameProcessService, HttpClient, MatchService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MapRotationService", MapRotationService, deps),
 })
-export class MapRotationService extends AllfatherService {
+export class MapRotationService extends BaseService {
     public readonly mapRotation$ = new BehaviorSubject<Optional<MapRotationData>>(undefined);
 
     private cacheMapRotationExpire?: Date;

@@ -1,0 +1,43 @@
+<ng-container *ngIf="injectBootstrapCSS">
+    <app-bootstrap-css-injector></app-bootstrap-css-injector>
+</ng-container>
+
+<section
+    class="titlebar"
+    *ngIf="isDesktopWindow"
+    [ngClass]="{ 'titlebar-developer': isDev }"
+    (dblclick)="onTitlebarDoubleClick($event)"
+    (mousedown)="onTitlebarMouseDown($event)"
+>
+    <div class="titlebar-icon">
+        <img src="../../../../assets/images/siren_badge_border_logo_md.webp" alt="" />
+    </div>
+
+    <div class="titlebar-primary-title">
+        <span class="primary-title" [innerText]="primaryTitle"></span>
+    </div>
+
+    <div class="titlebar-secondary-title">
+        <span class="secondary-title" [innerText]="secondaryTitle"></span>
+    </div>
+
+    <div class="titlebar-controls">
+        <!-- <button class="btn px-1" type="button" (click)="onSettingsButtonClick()">
+            <icon [path]="mdiCogOutline"></icon>
+        </button> -->
+        <button class="btn px-1" type="button" (click)="onMinimizeButtonClick()">
+            <icon [path]="mdiWindowMinimize"></icon>
+        </button>
+        <button class="btn px-1" type="button" (click)="onMaximizeButtonClick()">
+            <icon [path]="mdiWindowMaximize" *ngIf="state !== WindowState.Maximized"></icon>
+            <icon [path]="mdiWindowRestore" *ngIf="state === WindowState.Maximized"></icon>
+        </button>
+        <button class="btn px-1" type="button" (click)="onCloseButtonClick()">
+            <icon [path]="mdiWindowClose"></icon>
+        </button>
+    </div>
+</section>
+
+<section class="body" [ngClass]="{ 'desktop-window': isDesktopWindow }" (mousedown)="onContentMouseDown($event)">
+    <ng-content></ng-content>
+</section>

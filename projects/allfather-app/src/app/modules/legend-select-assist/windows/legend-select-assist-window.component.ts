@@ -1,12 +1,12 @@
-import { Legend } from "@allfather-app/app/common/legend/legend";
 import { DefaultSetting, SettingKey } from "@allfather-app/app/common/settings";
-import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
+import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
+import { AvgMatchStats } from "@allfather-app/app/modules/core/utilities/match-stats";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { Legend } from "@shared-app/legend/legend";
 import { combineLatest, of, Subject, Subscription } from "rxjs";
 import { switchMap, takeUntil } from "rxjs/operators";
 import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
-import { SettingsService } from "../../core/settings.service";
 import { LegendIconRow } from "../legend-select-icon-row.interface";
 
 @Component({

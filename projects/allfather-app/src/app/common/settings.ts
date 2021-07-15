@@ -1,6 +1,6 @@
 import { AimingReticleList } from "../modules/HUD/reticle-helper/components/aiming-reticle/aiming-reticles";
 
-export type SettingValue = BasicPrimitive;
+export type SettingValue = BasicPrimitive | BasicPrimitive[];
 export type AllSettings = { [key in SettingKey]: SettingValue };
 
 export enum SettingKey {

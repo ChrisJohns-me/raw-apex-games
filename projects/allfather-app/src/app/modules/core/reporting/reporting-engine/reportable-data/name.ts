@@ -1,4 +1,4 @@
-import { ExtractSubjectType } from "shared/types/rxjs-utilities";
+import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { PlayerService } from "../../../player.service";
 import { ReportableDataSnapshot } from "../reportable-data";
 

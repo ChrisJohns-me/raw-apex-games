@@ -1,17 +1,17 @@
-import { MatchGameMode } from "@allfather-app/app/common/match/game-mode/game-mode";
-import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
-import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
-import { TriggerConditions } from "@allfather-app/app/common/utilities/trigger-conditions";
-import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
+import { MatchGameMode } from "@shared-app/match/game-mode/game-mode";
+import { MatchGameModeList } from "@shared-app/match/game-mode/game-mode-list";
+import { MatchState, MatchStateChangedEvent } from "@shared-app/match/state";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "@shared-app/services/overwolf";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { TriggerConditions } from "@shared-app/utilities/trigger-conditions";
+import { isEmpty } from "common/utilities";
 import { differenceInMilliseconds, isDate } from "date-fns";
 import { IndexableType } from "dexie";
 import { BehaviorSubject, defer, from, merge, Observable, of, Subject, throwError } from "rxjs";
 import { filter, map, take, takeUntil, tap, timeoutWith } from "rxjs/operators";
-import { isEmpty } from "shared/utilities";
 import { v4 as uuid, validate as uuidValidate } from "uuid";
-import { AllfatherService } from "../allfather-service.abstract";
 import { LocalDatabaseService } from "../local-database/local-database.service";
 import { MatchDataStore } from "../local-database/match-data-store";
 
@@ -26,7 +26,7 @@ const MATCHID_TIMEOUT = 5000;
     deps: [LocalDatabaseService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchService", MatchService, deps),
 })
-export class MatchService extends AllfatherService {
+export class MatchService extends BaseService {
     /** Provided by Overwolf's psuedo_match_id */
     public readonly matchId$ = new BehaviorSubject<string>("");
     /** Emits changed state only when match has started */

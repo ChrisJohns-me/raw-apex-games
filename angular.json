@@ -143,6 +143,146 @@
                 }
             }
         },
+        "sirenApp": {
+            "projectType": "application",
+            "schematics": {
+                "@schematics/angular:component": {
+                    "changeDetection": "OnPush",
+                    "style": "scss"
+                },
+                "@schematics/angular:application": {
+                    "strict": true
+                }
+            },
+            "root": "projects/siren-app",
+            "sourceRoot": "projects/siren-app/src",
+            "prefix": "app",
+            "architect": {
+                "build": {
+                    "builder": "ngx-build-plus:browser",
+                    "options": {
+                        "allowedCommonJsDependencies": ["zone.js/dist/zone-error"],
+                        "outputPath": "dist/sirenApp_dev",
+                        "index": "projects/siren-app/src/index.html",
+                        "main": "projects/siren-app/src/main.ts",
+                        "polyfills": "projects/siren-app/src/polyfills.ts",
+                        "tsConfig": "projects/siren-app/tsconfig.app.json",
+                        "aot": true,
+                        "assets": [
+                            {
+                                "glob": "**/*",
+                                "input": "projects/siren-app/src/overwolf/dev/",
+                                "output": "/"
+                            },
+                            {
+                                "glob": "config.json",
+                                "input": "projects/siren-app/src/configs/",
+                                "output": "/"
+                            },
+                            "projects/siren-app/src/assets/images",
+                            "projects/siren-app/src/assets/svgs",
+                            "projects/siren-app/src/assets/fonts"
+                        ],
+                        "optimization": true,
+                        "sourceMap": true,
+                        "namedChunks": true,
+                        "vendorChunk": true,
+                        "buildOptimizer": false,
+                        "styles": ["projects/siren-app/src/styles.scss"],
+                        "stylePreprocessorOptions": {
+                            "includePaths": ["projects/siren-app/src/assets/styles/"]
+                        },
+                        "scripts": ["projects/siren-app/src/ga.js"]
+                    },
+                    "configurations": {
+                        "production": {
+                            "outputPath": "dist/sirenApp",
+                            "fileReplacements": [
+                                {
+                                    "replace": "projects/siren-app/src/environments/environment.ts",
+                                    "with": "projects/siren-app/src/environments/environment.prod.ts"
+                                },
+                                {
+                                    "replace": "projects/siren-app/src/configs/config.json",
+                                    "with": "projects/siren-app/src/configs/config.prod.json"
+                                }
+                            ],
+                            "assets": [
+                                {
+                                    "glob": "**/*",
+                                    "input": "projects/siren-app/src/overwolf/prod/",
+                                    "output": "/"
+                                },
+                                "projects/siren-app/src/assets/images",
+                                "projects/siren-app/src/assets/svgs",
+                                "projects/siren-app/src/assets/fonts"
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "sourceMap": false,
+                            "namedChunks": false,
+                            "extractLicenses": false,
+                            "vendorChunk": false,
+                            "buildOptimizer": true,
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "2.5mb",
+                                    "maximumError": "5mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "500kb",
+                                    "maximumError": "1mb"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "projects/siren-app/test.ts",
+                        "polyfills": "projects/siren-app/src/polyfills.ts",
+                        "tsConfig": "projects/siren-app/tsconfig.spec.json",
+                        "karmaConfig": "projects/siren-app/karma.conf.js",
+                        "assets": [
+                            "projects/siren-app/src/assets/images",
+                            "projects/siren-app/src/assets/svgs",
+                            "projects/siren-app/src/assets/fonts"
+                        ],
+                        "styles": ["projects/siren-app/src/styles.scss"],
+                        "stylePreprocessorOptions": {
+                            "includePaths": ["projects/siren-app/src/assets/styles/"]
+                        },
+                        "scripts": []
+                    }
+                },
+                "lint": {
+                    "builder": "@angular-devkit/build-angular:tslint",
+                    "options": {
+                        "tsConfig": [
+                            "projects/siren-app/tsconfig.app.json",
+                            "projects/siren-app/tsconfig.spec.json",
+                            "projects/siren-app/e2e/tsconfig.json"
+                        ],
+                        "exclude": ["**/node_modules/**"]
+                    }
+                },
+                "e2e": {
+                    "builder": "@angular-devkit/build-angular:protractor",
+                    "options": {
+                        "protractorConfig": "projects/siren-app/e2e/protractor.conf.js",
+                        "devServerTarget": "sirenApp:serve"
+                    },
+                    "configurations": {
+                        "production": {
+                            "devServerTarget": "sirenApp:serve:production"
+                        }
+                    }
+                }
+            }
+        },
         "allfatherWeb": {
             "projectType": "application",
             "schematics": {

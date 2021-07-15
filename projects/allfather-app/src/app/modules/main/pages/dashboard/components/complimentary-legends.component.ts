@@ -1,6 +1,6 @@
-import { Legend } from "@allfather-app/app/common/legend/legend";
-import { getLegendBGColor } from "@allfather-app/app/common/legend/legend-list";
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
+import { Legend } from "@shared-app/legend/legend";
+import { getLegendBGColor } from "@shared-app/legend/legend-list";
 
 @Component({
     selector: "app-complimentary-legends",

@@ -1,6 +1,6 @@
+import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
+import { MockMatchService } from "@allfather-app/app/modules/core/mocks/mock-match.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MatchService } from "../../../core/match/match.service";
-import { MockMatchService } from "../../../core/mocks/services/mock-match.service";
 import { ChartingPageComponent } from "./charting-page.component";
 import { LineGraphComponent } from "./components/line-graph.component";
 

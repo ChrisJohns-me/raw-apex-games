@@ -1,7 +1,7 @@
-import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
-import { MatchMapGenericId } from "@allfather-app/app/common/match/map/map.enum";
-import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { fakeAsync } from "@angular/core/testing";
+import { MatchMapList } from "@shared-app/match/map/map-list";
+import { MatchMapGenericId } from "@shared-app/match/map/map.enum";
+import { supressConsoleLog } from "@shared-app/testing-helpers";
 import { MapRotationMozambiquehereDTO } from "./map-rotation-mozambiquehere-dto";
 
 describe("MapRotationMozambiquehereDTO", () => {

@@ -1,19 +1,19 @@
 import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
+import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
+import { SettingsDataStore } from "@allfather-app/app/modules/core/local-database/settings-data-store";
 import { Injectable } from "@angular/core";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { IndexableType } from "dexie";
 import { defer, from, merge, Observable, of, throwError } from "rxjs";
 import { filter, map, switchMap } from "rxjs/operators";
-import { AllfatherService } from "./allfather-service.abstract";
-import { LocalDatabaseService } from "./local-database/local-database.service";
-import { SettingsDataStore } from "./local-database/settings-data-store";
 
 @Injectable({
     providedIn: "root",
     deps: [LocalDatabaseService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("SettingsService", SettingsService, deps),
 })
-export class SettingsService extends AllfatherService {
+export class SettingsService extends BaseService {
     constructor(private readonly localDatabase: LocalDatabaseService) {
         super();
     }

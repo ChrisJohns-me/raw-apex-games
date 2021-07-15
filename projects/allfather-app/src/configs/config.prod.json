@@ -108,8 +108,6 @@
             "lowConfidenceAmount": 0.35
         }
     },
-    "general": {
-        "overwolfGameStatusUrl": "https://game-events-status.overwolf.com/${0}_prod.json"
-    },
+    "general": {},
     "overwolfQuirks": {}
 }

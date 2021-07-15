@@ -1,6 +1,6 @@
-import { MatchState } from "@allfather-app/app/common/match/state";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { MatchState } from "@shared-app/match/state";
 import { isValid } from "date-fns";
 import { Subject, timer } from "rxjs";
 import { delay, filter, switchMap, takeUntil, tap } from "rxjs/operators";

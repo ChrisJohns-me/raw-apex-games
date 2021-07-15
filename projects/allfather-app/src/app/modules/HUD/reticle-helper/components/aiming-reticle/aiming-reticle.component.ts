@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
-import { hexToCSSFilter } from "shared/utilities/color";
+import { hexToCSSFilter } from "common/utilities/color";
 import { AimingReticle } from "./aiming-reticles";
 
 @Component({

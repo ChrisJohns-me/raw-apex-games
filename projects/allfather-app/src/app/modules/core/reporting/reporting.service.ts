@@ -1,11 +1,11 @@
-import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
+import { BaseService } from "@shared-app/services/base-service.abstract";
+import { GoogleAnalyticsService } from "@shared-app/services/google-analytics.service";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
+import { isEmpty } from "common/utilities/";
 import { combineLatest, of, Subject } from "rxjs";
 import { catchError, filter, switchMap, takeUntil } from "rxjs/operators";
-import { isEmpty } from "shared/utilities";
-import { AllfatherService } from "../allfather-service.abstract";
-import { GoogleAnalyticsService } from "../google-analytics.service";
+import { MatchService } from "../match/match.service";
 import { ReportableDataManagerService } from "./reporting-engine/reportable-data-manager";
 import { ReportingEngine, ReportingEngineId, ReportingStatus } from "./reporting-engine/reporting-engine";
 import { GoogleAnalyticsReportingEngine } from "./reporting-engine/reporting-engines/google-analytics-reporting-engine";
@@ -24,7 +24,7 @@ interface ReportingEvent {
     deps: [GoogleAnalyticsService, MatchService, ReportableDataManagerService],
     useFactory: (...deps: any[]) => SingletonServiceProviderFactory("ReportingService", ReportingService, deps),
 })
-export class ReportingService extends AllfatherService implements OnDestroy {
+export class ReportingService extends BaseService implements OnDestroy {
     public reportingEvent$ = new Subject<ReportingEvent>();
     public runningReportingEngines: ReportingEngine[] = [];
 

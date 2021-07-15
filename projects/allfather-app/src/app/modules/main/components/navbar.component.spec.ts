@@ -1,5 +1,5 @@
-import { IconComponent } from "@allfather-app/app/shared/components/icon/icon.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { IconComponent } from "@shared/components/icon/icon.component";
 import { NavbarComponent } from "./navbar.component";
 
 describe("NavbarComponent", () => {

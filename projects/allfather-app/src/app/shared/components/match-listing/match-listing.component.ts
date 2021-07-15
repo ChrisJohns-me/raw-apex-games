@@ -1,6 +1,3 @@
-import { getLegendBGColor } from "@allfather-app/app/common/legend/legend-list";
-import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
-import { Rank } from "@allfather-app/app/common/rank/rank";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import {
@@ -14,15 +11,18 @@ import {
     Output,
     TrackByFunction,
 } from "@angular/core";
+import { Legend } from "@shared-app/legend/legend";
+import { getLegendBGColor } from "@shared-app/legend/legend-list";
+import { MatchGameMode } from "@shared-app/match/game-mode/game-mode";
+import { MatchGameModeList } from "@shared-app/match/game-mode/game-mode-list";
+import { MatchMapList } from "@shared-app/match/map/map-list";
+import { Rank } from "@shared-app/rank/rank";
 import { Tooltip } from "bootstrap";
+import { isEmpty } from "common/utilities/";
+import { unique } from "common/utilities/primitives/array";
 import { differenceInMilliseconds, intervalToDuration } from "date-fns";
 import { interval, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { isEmpty } from "shared/utilities";
-import { unique } from "shared/utilities/primitives/array";
-import { Legend } from "../../../common/legend/legend";
-import { MatchGameMode } from "../../../common/match/game-mode/game-mode";
-import { MatchMapList } from "../../../common/match/map/map-list";
 
 const REFRESH_TIME = 1 * 60 * 1000;
 const MATCH_RECENT_TIME = 3 * 60 * 1000;

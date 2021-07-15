@@ -1,13 +1,15 @@
-import { Legend } from "@allfather-app/app/common/legend/legend";
-import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
-import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
+import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
+import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
+import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
+import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-local-stats.service";
+import { PlayerService } from "@allfather-app/app/modules/core/player.service";
+import { AvgMatchStats } from "@allfather-app/app/modules/core/utilities/match-stats";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { Legend } from "@shared-app/legend/legend";
+import { GoogleAnalyticsService } from "@shared-app/services/google-analytics.service";
+import { PlayerAccountStatsService } from "@shared-app/services/player-account-stats/player-account-stats.service";
 import { Subject, Subscription } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
-import { ConfigurationService } from "../../../core/configuration.service";
-import { LocalDatabaseService } from "../../../core/local-database/local-database.service";
-import { PlayerLocalStatsService } from "../../../core/player-local-stats.service";
-import { PlayerService } from "../../../core/player.service";
 
 type LegendIdsRow = string[];
 
@@ -52,12 +54,43 @@ export class DashboardPageComponent implements OnInit {
         private readonly configuration: ConfigurationService,
         private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly localDatabase: LocalDatabaseService,
+        private readonly matchRoster: MatchRosterService,
         private readonly player: PlayerService,
+        private readonly playerAccountStats: PlayerAccountStatsService,
         private readonly playerStats: PlayerLocalStatsService
     ) {
         this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => {
             this.legendIdsRows = config.featureConfigs.legendSelectAssist.legendRows.map((iconRows) => iconRows.legendIds);
         });
+
+        // TODO: Remove, used for testing
+        // const getMozambiqueherePlatform = (hw?: PlatformHardware): MozambiqueherePlatform => {
+        //     switch (hw) {
+        //         case PlatformHardware.PlayStation:
+        //             return MozambiqueherePlatform.PS4;
+        //         case PlatformHardware.Xbox:
+        //             return MozambiqueherePlatform.X1;
+        //         case PlatformHardware.Switch:
+        //             return MozambiqueherePlatform.Switch;
+        //         default:
+        //             return MozambiqueherePlatform.PC;
+        //     }
+        // };
+        // this.matchRoster.matchRoster$
+        //     .pipe(
+        //         takeUntil(this.destroy$),
+        //         map((matchRoster) => {
+        //             return matchRoster.allPlayers.map((p) => ({
+        //                 playerName: p.name,
+        //                 platform: getMozambiqueherePlatform(p.platformHardware),
+        //             }));
+        //         }),
+        //         switchMap((players) => this.playerAccountStats.getBulkPlayerAccountStats$(players))
+        //     )
+        //     .subscribe((accountStatsArr: PlayerAccountStats[]) => {
+        //         console.log(">>> Received Array of Player Account Stats");
+        //         console.log(accountStatsArr);
+        //     });
     }
 
     public getLegendName = (legendId?: string): Optional<string> => Legend.getName(legendId);

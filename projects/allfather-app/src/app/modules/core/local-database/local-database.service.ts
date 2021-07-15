@@ -1,5 +1,6 @@
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
+import { APP_NAME } from "@allfather-app/app/common/app";
 import { Injectable } from "@angular/core";
+import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import Dexie from "dexie";
 import { exportDB } from "dexie-export-import";
 /** @see https://dexie.org/docs/Observable/Dexie.Observable */
@@ -33,6 +34,7 @@ export class LocalDatabaseService extends Dexie {
 
     constructor() {
         super(DATABASE_NAME);
+        console.log(`[${this.constructor.name}] (${APP_NAME}) Setting up local database: "${DATABASE_NAME}"`);
         this.handleVersions();
         this.handleDataPopulation();
 

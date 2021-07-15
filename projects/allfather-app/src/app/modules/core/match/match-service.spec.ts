@@ -1,9 +1,9 @@
-import { MockOverwolfGameDataService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-game-data.service";
-import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { TestBed } from "@angular/core/testing";
+import { MockOverwolfGameDataService } from "@shared-app/mocks/services/mock-overwolf-game-data.service";
+import { OverwolfGameDataService } from "@shared-app/services/overwolf";
 import { TestScheduler } from "rxjs/testing";
 import { LocalDatabaseService } from "../local-database/local-database.service";
-import { MockLocalDatabaseService } from "../mocks/services/mock-local-database.service";
+import { MockLocalDatabaseService } from "../mocks/mock-local-database.service";
 import { MatchService } from "./match.service";
 
 describe("MatchService", () => {

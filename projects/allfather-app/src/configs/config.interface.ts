@@ -128,9 +128,6 @@ export interface FeatureConfigs {
     };
 }
 
-export interface General {
-    /** ${0} = Overwolf Game ID */
-    overwolfGameStatusUrl: string;
-}
+export interface General {}
 
 export interface OverwolfQuirks {}

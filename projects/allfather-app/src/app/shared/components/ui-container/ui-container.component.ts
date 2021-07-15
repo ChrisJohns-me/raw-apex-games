@@ -1,8 +1,4 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
-import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
-import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
-import { OverwolfProfileService } from "@allfather-app/app/modules/core/overwolf/overwolf-profile.service";
-import { UIWindow, WindowState } from "@allfather-app/app/modules/core/_refactor/ui-window";
 import { MainPage } from "@allfather-app/app/modules/main/pages/main-page";
 import { MainWindowService } from "@allfather-app/app/modules/main/windows/main-window.service";
 import { environment } from "@allfather-app/environments/environment";
@@ -19,9 +15,13 @@ import {
 } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { mdiCogOutline, mdiWindowClose, mdiWindowMaximize, mdiWindowMinimize, mdiWindowRestore } from "@mdi/js";
+import { GoogleAnalyticsService } from "@shared-app/services/google-analytics.service";
+import { OverwolfGameDataService } from "@shared-app/services/overwolf";
+import { OverwolfProfileService } from "@shared-app/services/overwolf/overwolf-profile.service";
+import { UIWindow, WindowState } from "@shared-app/_refactor/ui-window";
+import { isEmpty, mathClamp } from "common/utilities/";
 import { Observable, Subject } from "rxjs";
 import { filter, finalize, map, shareReplay, switchMap, take, takeUntil, tap } from "rxjs/operators";
-import { isEmpty, mathClamp } from "shared/utilities";
 
 export type ConfigPositionXAnchor = "left" | "center" | "right";
 export type ConfigPositionYAnchor = "top" | "middle" | "bottom";
