@@ -4,7 +4,7 @@
 
         <app-development-tools-window *ngSwitchCase="WindowName.DevelopmentTools"></app-development-tools-window>
         <app-main-window *ngSwitchCase="WindowName.Main"></app-main-window>
-        <app-hud-death-window *ngSwitchCase="WindowName.HUDDeath"></app-hud-death-window>
+        <app-hud-report-player-window *ngSwitchCase="WindowName.HUDReportPlayer"></app-hud-report-player-window>
         <app-hud-notification-window *ngSwitchCase="WindowName.HUDNotification"></app-hud-notification-window>
 
         <div *ngSwitchDefault>Could not match window with name: {{ winInfo.name }}</div>

@@ -2,6 +2,6 @@ export enum WindowName {
     Background = "background",
     DevelopmentTools = "development-tools",
     HUDNotification = "hud-notification",
-    HUDDeath = "hud-death",
+    HUDReportPlayer = "hud-report-player",
     Main = "main",
 }

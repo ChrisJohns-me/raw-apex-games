@@ -1,0 +1,72 @@
+<app-ui-container
+    primaryTitle="Report Player"
+    [injectBootstrapCSS]="true"
+    [isDesktopWindow]="false"
+    [isContentDraggable]="true"
+    [position]="{ xPercent: 0, yPercent: 0, xAnchor: 'left', yAnchor: 'middle' }"
+    [size]="{ widthPercent: 0.15, heightPercent: 0.5 }"
+>
+    <div
+        class="report-player-container"
+        (mouseover)="pauseAutoDismiss()"
+        (mouseout)="unpauseAutoDismiss()"
+        (mousedown)="cancelAutoDismiss()"
+        *ngIf="killedBy"
+    >
+        <div class="countdown-bar-container" *ngIf="!isAutoDismissCanceled && !isAutoDismissPaused">
+            <app-countdown-bar [endDate]="autoDismissDate"></app-countdown-bar>
+        </div>
+        <div class="report-player-close">
+            <button type="button" class="btn-close" (click)="onDismissClick()"></button>
+        </div>
+
+        <div class="report-player-content py-4 px-3">
+            <h1 class="report-player-title text-center mb-3">Killed by {{ killedBy.name }}</h1>
+            <div class="row" *ngIf="!startReportForm">
+                <div class="col-auto">
+                    <button class="btn btn-outline-secondary w-100" type="button" (click)="startReportForm = true">
+                        Report to {{ APP_NAME }}
+                    </button>
+                </div>
+                <div class="col">
+                    <button class="btn btn-outline-secondary w-100" type="button" (click)="onDismissClick()">Dismiss</button>
+                </div>
+            </div>
+
+            <!-- #region Report Player Form -->
+            <div class="" *ngIf="startReportForm">
+                <h5>Report a player to the Siren database</h5>
+
+                <form [formGroup]="reportForm">
+                    <select class="form-select" formControlName="reason">
+                        <option value="" selected disabled>Report Reason</option>
+                        <option *ngFor="let reportReason of reportReasonOpts" [ngValue]="reportReason[1]">
+                            {{ reportReason[0] }}
+                        </option>
+                    </select>
+
+                    <div class="form-check my-3">
+                        <input class="form-check-input" type="checkbox" value="" id="agreement1Checkbox" formControlName="agreement1" />
+                        <label class="form-check-label" for="agreement1Checkbox">
+                            <small>
+                                I {{ myName ? "(" + myName + "), " : "" }} understand that I am reporting the player "{{ killedBy.name }}"{{
+                                    friendlySelectedReportReason ? ' for "' + friendlySelectedReportReason + '"' : ""
+                                }}.
+                            </small>
+                        </label>
+                    </div>
+
+                    <div class="form-check my-3">
+                        <input class="form-check-input" type="checkbox" value="" id="agreement2Checkbox" formControlName="agreement2" />
+                        <label class="form-check-label" for="agreement2Checkbox">
+                            <small>I understand that frivolous or malicious reports will delegitimize my future reports.</small>
+                        </label>
+                    </div>
+
+                    <button class="btn btn-primary" type="button" (click)="onSubmitReportClick()">Submit Report to Siren</button>
+                </form>
+            </div>
+            <!-- #endregion -->
+        </div>
+    </div>
+</app-ui-container>

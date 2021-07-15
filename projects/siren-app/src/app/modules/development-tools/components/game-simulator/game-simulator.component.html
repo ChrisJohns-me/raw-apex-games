@@ -87,6 +87,14 @@
                 >
                     Eliminate (by me)
                 </button>
+                <button
+                    class="btn btn-danger"
+                    type="button"
+                    [disabled]="!rosterPlayerSelected"
+                    (click)="onKillfeedKilledByClick(rosterPlayerSelected)"
+                >
+                    Be Killed By
+                </button>
             </div>
             <div class="col-6">
                 <h6>Inflictions</h6>

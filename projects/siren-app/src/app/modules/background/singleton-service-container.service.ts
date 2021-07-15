@@ -24,6 +24,7 @@ import { SettingsService } from "../core/settings.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
 import { HUDNotificationWindowService } from "../hud-notification/windows/hud-notification-window.service";
 import { HUDNotificationService } from "../hud-notification/windows/hud-notification.service";
+import { HUDReportPlayerWindowService } from "../hud-report-player/windows/hud-report-player-window.service";
 import { MainWindowService } from "../main/windows/main-window.service";
 import { HUDWindowControllerService } from "./hud-window-controller.service";
 import { SystemTrayService } from "./system-tray.service";
@@ -43,6 +44,7 @@ import { SystemTrayService } from "./system-tray.service";
         GoogleAnalyticsService,
         HUDNotificationService,
         HUDNotificationWindowService,
+        HUDReportPlayerWindowService,
         HUDWindowControllerService,
         LocalDatabaseService,
         LocalStorageService,
@@ -76,6 +78,7 @@ export class SingletonServiceContainerService {
         public readonly GoogleAnalyticsService: GoogleAnalyticsService,
         public readonly HUDNotificationService: HUDNotificationService,
         public readonly HUDNotificationWindowService: HUDNotificationWindowService,
+        public readonly HUDReportPlayerWindowService: HUDReportPlayerWindowService,
         public readonly HUDWindowControllerService: HUDWindowControllerService,
         public readonly LocalDatabaseService: LocalDatabaseService,
         public readonly LocalStorageService: LocalStorageService,

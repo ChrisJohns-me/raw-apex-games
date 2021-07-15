@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { ReplaySubject } from "rxjs";
-import { Notification } from "../notification";
+import { HUDNotification } from "../hud-notification";
 
 /**
  * @classdesc Used to pass notifications to the component
@@ -12,5 +12,5 @@ import { Notification } from "../notification";
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("HUDNotificationService", HUDNotificationService, deps),
 })
 export class HUDNotificationService {
-    public readonly notification$ = new ReplaySubject<Notification>(1);
+    public readonly notification$ = new ReplaySubject<HUDNotification>(1);
 }

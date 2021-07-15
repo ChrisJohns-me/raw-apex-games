@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MatchRosterPlayer } from "@shared-app/match/roster-player";
+import { PlayerState } from "@shared-app/player-state";
 import { OWGameEvent } from "@shared-app/services/overwolf";
 import { ExposedOverwolfGameDataService } from "@shared-app/services/overwolf-exposed-data.service";
+import { MatchPlayerService } from "@siren-app/app/modules/core/match/match-player.service";
 import { MatchRosterService } from "@siren-app/app/modules/core/match/match-roster.service";
 import { PlayerService } from "@siren-app/app/modules/core/player.service";
 import { JSONTryParse } from "common/utilities/";
@@ -53,6 +55,7 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
     constructor(
         private cdr: ChangeDetectorRef,
         private readonly exposedOverwolfData: ExposedOverwolfGameDataService,
+        private readonly matchPlayer: MatchPlayerService,
         private readonly player: PlayerService,
         public readonly matchRoster: MatchRosterService
     ) {}
@@ -160,6 +163,33 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
                 command: killfeedEvent,
             },
         ];
+
+        this.runCommands(commands);
+    }
+
+    public onKillfeedKilledByClick(player?: MatchRosterPlayer): void {
+        if (!player) return;
+        const attackerName: string = player.name;
+        const victimName: Optional<string> = this.player.myName$.value;
+
+        const killfeedEvent: OWGameEvent = {
+            name: "kill_feed",
+            data: `{
+                "local_player_name": "${this.player.myName$.value}",
+                "attackerName": "${attackerName}",
+                "victimName": "${victimName}",
+                "weaponName": "energy_ar",
+                "action": "kill"
+            }`,
+        };
+        const commands: Command[] = [
+            {
+                timestamp: new Date(0),
+                command: killfeedEvent,
+            },
+        ];
+
+        this.matchPlayer.myState$.next(PlayerState.Eliminated);
 
         this.runCommands(commands);
     }

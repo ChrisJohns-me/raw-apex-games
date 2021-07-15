@@ -215,7 +215,6 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         if (target?.tagName === "INPUT") {
             return;
         }
-        event.preventDefault();
         this.obtained$?.pipe(takeUntil(this.destroy$)).subscribe(() => this.uiWindow.dragMove());
     }
 
@@ -267,11 +266,14 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         const widthPixel = Math.round(screenWidth * widthPercentClamp);
         const heightPixel = Math.round(screenHeight * heightPercentClamp);
 
+        if (isEmpty(this.uiWindow.name)) {
+            console.error(`[${this.constructor.name}] Unable to setSizeByPercent; window name is empty`);
+            return;
+        }
         console.log(
             `Setting "${this.uiWindow.name}" size to: ${widthPixel}px (${widthPercentClamp * 100}%) width,  ` +
                 `${heightPixel}px (${heightPercentClamp * 100}%) height`
         );
-
         this.uiWindow.changeSize(widthPixel, heightPixel).pipe(takeUntil(this.destroy$)).subscribe();
     }
 
@@ -292,12 +294,16 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
             heightPixel = Math.round(screenHeight * heightPercentClamp);
         }
 
+        if (isEmpty(this.uiWindow.name)) {
+            console.error(`[${this.constructor.name}] Unable to setSizeByPercent; window name is empty`);
+            return;
+        }
+
         console.log(
             `Setting "${this.uiWindow.name}" MIN size to: ${widthPixel}px ${
                 widthPercentClamp ? widthPercentClamp * 100 + "% " : ""
             }width,  ` + `${heightPixel}px ${heightPercentClamp ? heightPercentClamp * 100 + "% " : ""}height`
         );
-
         this.uiWindow.setMinSize(widthPixel, heightPixel).pipe(takeUntil(this.destroy$)).subscribe();
     }
 

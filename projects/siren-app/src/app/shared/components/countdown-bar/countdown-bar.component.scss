@@ -1,0 +1,11 @@
+@import "hud-styles";
+
+.progress-bar-container,
+.progress-bar {
+    width: 100%;
+    height: 100%;
+}
+
+.progress-bar {
+    transition: width 1s linear;
+}

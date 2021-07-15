@@ -2,8 +2,18 @@
     [isDesktopWindow]="false"
     [isContentDraggable]="true"
     primaryTitle="Notification"
-    [position]="{ xPercent: 0.0625, yPercent: 0.0125, xAnchor: 'left', yAnchor: 'top' }"
-    [size]="{ widthPercent: 0.0625, heightPercent: 0.0347 }"
+    [position]="{ xPercent: 0, yPercent: 0, xAnchor: 'left', yAnchor: 'middle' }"
+    [size]="{ widthPercent: 0.2, heightPercent: 0.1 }"
 >
-    <div class="notification-container"></div>
+    <div class="notification-background" (mouseover)="pauseAutoDismiss()" (mouseout)="restartAutoDismiss()" *ngIf="title || body">
+        <div class="notification-countdown-bar" *ngIf="!isAutoDismissPaused">
+            <app-countdown-bar [endDate]="autoDismissDate"></app-countdown-bar>
+        </div>
+        <div class="notification-container">
+            <div class="notification-content">
+                <h1 class="notification-header" *ngIf="title">{{ title }}</h1>
+                <p class="notification-body" *ngIf="body">{{ body }}</p>
+            </div>
+        </div>
+    </div>
 </app-ui-container>

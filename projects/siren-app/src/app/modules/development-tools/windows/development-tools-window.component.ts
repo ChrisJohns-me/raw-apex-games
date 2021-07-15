@@ -4,7 +4,7 @@ import { ExposedOverwolfGameDataService } from "@shared-app/services/overwolf-ex
 import { OverwolfExtensionsService } from "@shared-app/services/overwolf/overwolf-extensions.service";
 import { Subject } from "rxjs";
 
-type MainTab = "simulate" | "report";
+type MainTab = "simulate" | "report" | "notification";
 
 @Component({
     selector: "app-development-tools-window",
@@ -14,7 +14,7 @@ type MainTab = "simulate" | "report";
 })
 export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     public selectedMainTab: MainTab = "simulate";
-    public mainTabOptions: MainTab[] = ["simulate", "report"];
+    public mainTabOptions: MainTab[] = ["simulate", "report", "notification"];
 
     public infoUpdates$: Subject<OWInfoUpdates2Event>;
     public newGameEvent$: Subject<OWGameEvent>;

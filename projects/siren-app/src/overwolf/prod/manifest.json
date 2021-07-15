@@ -60,87 +60,13 @@
                     "height": 1440
                 }
             },
-            "hud-match-timer": {
-                "file": "index.html",
-                "in_game_only": true,
-                "resizable": false,
-                "transparent": true,
-                "show_in_taskbar": false,
-                "clickthrough": true,
-                "mute": true,
-                "popup_blocker": true,
-                "allow_local_file_access": true,
-                "size": {
-                    "width": 200,
-                    "height": 50
-                },
-                "min_size": {
-                    "width": 200,
-                    "height": 50
-                },
-                "max_size": {
-                    "width": 200,
-                    "height": 50
-                }
-            },
-            "hud-ult-timer": {
-                "file": "index.html",
-                "in_game_only": true,
-                "resizable": false,
-                "transparent": true,
-                "show_in_taskbar": false,
-                "clickthrough": true,
-                "mute": true,
-                "popup_blocker": true,
-                "allow_local_file_access": true,
-                "size": {
-                    "width": 200,
-                    "height": 50
-                },
-                "min_size": {
-                    "width": 200,
-                    "height": 50
-                },
-                "max_size": {
-                    "width": 200,
-                    "height": 50
-                },
-                "start_position": {
-                    "top": 0,
-                    "left": 0
-                }
-            },
-            "hud-infliction-insight": {
+            "hud-notification": {
                 "file": "index.html",
                 "in_game_only": true,
                 "resizable": false,
                 "transparent": true,
                 "show_in_taskbar": false,
                 "clickthrough": false,
-                "mute": true,
-                "popup_blocker": true,
-                "allow_local_file_access": true,
-                "size": {
-                    "width": 400,
-                    "height": 455
-                },
-                "min_size": {
-                    "width": 400,
-                    "height": 455
-                },
-                "max_size": {
-                    "width": 400,
-                    "height": 455
-                }
-            },
-            "hud-reticle-helper": {
-                "file": "index.html",
-                "in_game_only": true,
-                "resizable": false,
-                "transparent": true,
-                "disable_blur": true,
-                "show_in_taskbar": false,
-                "clickthrough": true,
                 "mute": true,
                 "popup_blocker": true,
                 "allow_local_file_access": true,
@@ -153,27 +79,24 @@
                     "left": 0
                 }
             },
-            "legend-select-assist": {
+            "hud-report-player": {
                 "file": "index.html",
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "show_in_taskbar": false,
+                "disable_blur": true,
+                "show_in_taskbar": true,
                 "clickthrough": false,
                 "mute": true,
                 "popup_blocker": true,
                 "allow_local_file_access": true,
                 "size": {
-                    "width": 1440,
-                    "height": 1440
+                    "width": 1,
+                    "height": 1
                 },
-                "min_size": {
-                    "width": 1440,
-                    "height": 1440
-                },
-                "max_size": {
-                    "width": 1440,
-                    "height": 1440
+                "start_position": {
+                    "top": 0,
+                    "left": 0
                 }
             }
         },

@@ -1,16 +1,16 @@
 import { Injectable } from "@angular/core";
 import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { UIWindow } from "@shared-app/_refactor/ui-window";
-import { WindowName } from "@siren-app/app/modules/core/window-name";
 import { Observable } from "rxjs";
+import { WindowName } from "../../core/window-name";
 
 @Injectable({
     providedIn: "root",
     deps: [],
-    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("HUDDeathWindowService", HUDDeathWindowService, deps),
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("HUDReportPlayerWindowService", HUDReportPlayerWindowService, deps),
 })
-export class HUDDeathWindowService {
-    private readonly uiWindow = new UIWindow(WindowName.HUDDeath);
+export class HUDReportPlayerWindowService {
+    private readonly uiWindow = new UIWindow(WindowName.HUDReportPlayer);
 
     public open(): Observable<void> {
         return this.uiWindow.restore();

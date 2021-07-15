@@ -1,0 +1,13 @@
+<h3>Notifications</h3>
+<div class="row">
+    <div class="col">
+        <form [formGroup]="notificationForm">
+            Title: <input class="form-control" type="text" formControlName="title" /><br />
+            Content Body: <input class="form-control" type="text" formControlName="body" /><br />
+
+            <label for="durationRange" class="form-label">Duration ({{ notificationForm.get("durationSeconds")?.value }} sec)</label>
+            <input type="range" class="form-range" min="1" max="180" step="1" id="durationRange" formControlName="durationSeconds" /><br />
+            <button class="btn btn-primary" type="button" (click)="onReportPlayerFormSubmit()">Create Notification</button>
+        </form>
+    </div>
+</div>

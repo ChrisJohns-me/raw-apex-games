@@ -8,4 +8,4 @@ import { HUDNotificationWindowComponent } from "./windows/hud-notification-windo
     imports: [SharedAppModule, SirenSharedModule],
     exports: [HUDNotificationWindowComponent],
 })
-export class HUDNotificationWindowModule {}
+export class HUDNotificationModule {}

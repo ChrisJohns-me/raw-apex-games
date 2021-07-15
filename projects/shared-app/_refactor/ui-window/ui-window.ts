@@ -140,11 +140,12 @@ export class UIWindow {
 
     public changeSize(width: number, height: number): Observable<void> {
         const promise = new Promise<void>((resolve, reject) => {
+            if (!this.name) return reject(`Unable to change window size; UIWindow name was empty`);
             overwolf.windows.changeSize(this.name, Math.round(width), Math.round(height), (result) => {
                 if (result.success) {
                     resolve();
                 } else {
-                    reject(result.error);
+                    reject(`UIWindow.changeSize() error: ${result.error}`);
                 }
             });
         });
@@ -166,10 +167,12 @@ export class UIWindow {
 
     public changePosition(left: number, top: number): Observable<void> {
         const promise = new Promise<void>((resolve, reject) => {
+            if (!this.name) return reject(`Unable to change window size; UIWindow name was empty`);
             overwolf.windows.changePosition(this.name, Math.round(left), Math.round(top), (result) => {
                 if (result.success) {
                     resolve();
                 } else {
+                    reject(`UIWindow.changePosition() error: ${result.error}`);
                     reject(result.error);
                 }
             });
@@ -219,6 +222,7 @@ export class UIWindow {
             if (this.name) {
                 overwolf.windows.obtainDeclaredWindow(this.name, process);
             } else {
+                console.log(`No window name, obtaining current window`);
                 overwolf.windows.getCurrentWindow(process);
             }
         });

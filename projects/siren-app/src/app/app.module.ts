@@ -8,8 +8,8 @@ import { AppComponent } from "./app.component";
 import { BackgroundModule } from "./modules/background/background.module";
 import { DevelopmentToolsModule } from "./modules/development-tools/development-tools.module";
 import { NoopDevelopmentToolsModule } from "./modules/development-tools/noop-development-tools.module";
-import { HUDDeathWindowModule } from "./modules/hud-death/hud-death.module";
-import { HUDNotificationWindowModule } from "./modules/hud-notification/hud-notification.module";
+import { HUDNotificationModule } from "./modules/hud-notification/hud-notification.module";
+import { HUDReportPlayerModule } from "./modules/hud-report-player/hud-report-player.module";
 import { MainModule } from "./modules/main/main.module";
 
 @NgModule({
@@ -20,8 +20,8 @@ import { MainModule } from "./modules/main/main.module";
         MainModule,
         environment.allowDevTools ? DevelopmentToolsModule : NoopDevelopmentToolsModule,
         HttpClientModule,
-        HUDDeathWindowModule,
-        HUDNotificationWindowModule,
+        HUDReportPlayerModule,
+        HUDNotificationModule,
         OverwolfModule,
     ],
     providers: [WINDOW_PROVIDERS],

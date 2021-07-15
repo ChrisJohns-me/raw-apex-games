@@ -1,10 +1,10 @@
 import { OverwolfFeatureDep } from "@shared-app/feature-status";
 import { ReplaySubject } from "rxjs";
-import { Notification } from "../../hud-notification/notification";
+import { HUDNotification } from "../../hud-notification/hud-notification";
 import { HUDNotificationService } from "../../hud-notification/windows/hud-notification.service";
 
 export class MockHUDNotificationService implements MockedClass<HUDNotificationService> {
-    public notification$ = new ReplaySubject<Notification>();
+    public notification$ = new ReplaySubject<HUDNotification>();
 
     public isFeatureDepAvailable(featureName: OverwolfFeatureDep): boolean {
         return true;

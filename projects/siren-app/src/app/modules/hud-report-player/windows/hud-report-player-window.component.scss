@@ -1,0 +1,37 @@
+@import "hud-styles";
+
+::ng-deep body {
+    background: transparent !important;
+}
+
+:host {
+    color: white;
+}
+
+.report-player-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.countdown-bar-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 0.5vh;
+}
+
+.report-player-container {
+    display: block;
+    width: 100%;
+    background-color: rgba(25, 25, 25, 0.95);
+}
+
+.report-player-content {
+}
+
+.report-player-title {
+    font-family: "Quantico", sans-serif;
+}

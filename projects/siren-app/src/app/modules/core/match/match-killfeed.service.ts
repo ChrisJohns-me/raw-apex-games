@@ -8,7 +8,7 @@ import { OverwolfGameDataService, OWGameEventKillFeed } from "@shared-app/servic
 import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { isPlayerNameEqual } from "@shared-app/utilities/player";
 import { isEmpty } from "common/utilities/";
-import { BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject, ReplaySubject, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { MatchRosterService } from "./match-roster.service";
 import { MatchService } from "./match.service";
@@ -22,6 +22,8 @@ import { MatchService } from "./match.service";
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchKillfeedService", MatchKillfeedService, deps),
 })
 export class MatchKillfeedService extends BaseService {
+    /** Provides the player who killed the local player */
+    public readonly killedByEvent$ = new ReplaySubject<MatchRosterPlayer>(1);
     public readonly killfeedEvent$ = new Subject<MatchInflictionEvent>();
     public readonly killfeedEventHistory$ = new BehaviorSubject<MatchInflictionEvent[]>([]);
 
@@ -33,6 +35,7 @@ export class MatchKillfeedService extends BaseService {
         super();
         this.setupOnMatchStart();
         this.setupKillfeed();
+        this.setupKilledByEvent();
     }
 
     /**
@@ -111,6 +114,20 @@ export class MatchKillfeedService extends BaseService {
                 this.killfeedEvent$.next(newKillfeedEvent);
                 const newkillfeedEventHistory = [...this.killfeedEventHistory$.value, newKillfeedEvent];
                 this.killfeedEventHistory$.next(newkillfeedEventHistory);
+            });
+    }
+
+    /** Watches killfeed to determine the player who killed the local player */
+    private setupKilledByEvent(): void {
+        this.killfeedEvent$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((killfeedEvent) => killfeedEvent.victim.isMe && !!killfeedEvent.isElimination),
+                map((killfeedEvent) => killfeedEvent.attacker)
+            )
+            .subscribe((killedByPlayer) => {
+                if (isEmpty(killedByPlayer)) return;
+                this.killedByEvent$.next(killedByPlayer);
             });
     }
 }
