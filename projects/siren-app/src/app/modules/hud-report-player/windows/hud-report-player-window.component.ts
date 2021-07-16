@@ -1,13 +1,18 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { MatchRosterPlayer } from "@shared-app/match/roster-player";
+import { OverwolfProfileService } from "@shared-app/services/overwolf/overwolf-profile.service";
 import { ReportReason } from "@shared/player-report/report-reason";
+import { generateRosterHash } from "@shared/roster-hash";
 import { APP_NAME } from "@siren-app/app/common/app";
+import { isEmpty } from "common/utilities";
 import { addMilliseconds } from "date-fns";
-import { Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
+import { of, Subject } from "rxjs";
+import { catchError, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { MatchKillfeedService } from "../../core/match/match-killfeed.service";
+import { MatchRosterService } from "../../core/match/match-roster.service";
 import { PlayerService } from "../../core/player.service";
+import { ReportedPlayersService } from "../../core/report-list/report-list.service";
 import { HUDReportPlayerWindowService } from "./hud-report-player-window.service";
 
 const AUTO_DISMISS_TIMEOUT = 20000;
@@ -38,12 +43,26 @@ export class HUDReportPlayerWindowComponent implements OnInit, OnDestroy {
     public startReportForm = false;
     public reportForm = new FormGroup({
         reason: new FormControl("", [Validators.required]),
-        agreement1: new FormControl(false, [Validators.required]),
-        agreement2: new FormControl(false, [Validators.required]),
+        agreement1: new FormControl(false, [Validators.requiredTrue]),
+        agreement2: new FormControl(false, [Validators.requiredTrue]),
     });
+    public reportingSuccess = false;
+    public reportingFailed = false;
+    public reportingFailedMsg?: string;
+    public get reportingInProgress(): boolean {
+        return this._reportingInProgress;
+    }
+    public set reportingInProgress(value: boolean) {
+        if (value) this.reportForm.disable();
+        else this.reportForm.enable();
+        this._reportingInProgress = value;
+    }
+
+    private _reportingInProgress = false;
 
     public get friendlySelectedReportReason(): string {
-        return this.reportForm.value?.reason ?? "";
+        const reasonKey = this.reportForm.value?.reason;
+        return Object.entries(ReportReason).find(([, value]) => value === reasonKey)?.[0] ?? "";
     }
 
     private deathDate?: Date;
@@ -54,13 +73,15 @@ export class HUDReportPlayerWindowComponent implements OnInit, OnDestroy {
         private readonly cdr: ChangeDetectorRef,
         private readonly hudReportPlayerWindow: HUDReportPlayerWindowService,
         private readonly matchKillfeed: MatchKillfeedService,
-        private readonly player: PlayerService
+        private readonly matchRoster: MatchRosterService,
+        private readonly overwolfProfile: OverwolfProfileService,
+        private readonly player: PlayerService,
+        private readonly reportedPlayers: ReportedPlayersService
     ) {}
 
     public ngOnInit(): void {
         this.watchKilledByEvent();
         this.setupMyName();
-        console.log(this.reportReasonOpts);
     }
 
     public ngOnDestroy(): void {
@@ -68,7 +89,79 @@ export class HUDReportPlayerWindowComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    public onSubmitReportClick(): void {}
+    public onSubmitReportClick(): void {
+        this.reportingInProgress = true;
+        this.reportingFailed = false;
+        this.reportingSuccess = false;
+
+        const reportedPlayerInGameUsername = this.killedBy?.name ?? "";
+        const reportedReason = (Object.entries(ReportReason).find(([, value]) => value === this.reportForm.value?.reason)?.[1] ??
+            "") as ReportReason;
+        const rosterHash = generateRosterHash(this.matchRoster.matchRoster$.value.allPlayers.map((roster) => roster.name));
+        const myInGameUsername = this.player.myName$.value ?? "";
+        let myOverwolfUsername: string;
+        this.overwolfProfile
+            .getCurrentUser()
+            .pipe(
+                takeUntil(this.destroy$),
+                tap((overwolfProfile) => (myOverwolfUsername = overwolfProfile.username ?? "")),
+                map(() => {
+                    // Validate before reporting
+                    if (isEmpty(reportedPlayerInGameUsername)) {
+                        this.reportingFailedMsg = `Player's username is missing`;
+                        return false;
+                    }
+                    if (isEmpty(reportedReason) || !Object.values(ReportReason).includes(reportedReason)) {
+                        this.reportingFailedMsg = `Reporting reason is missing`;
+                        return false;
+                    }
+                    if (isEmpty(rosterHash)) {
+                        this.reportingFailedMsg = `Required match information is missing`;
+                        return false;
+                    }
+                    if (isEmpty(myOverwolfUsername)) {
+                        this.reportingFailedMsg = `Your Overwolf username is missing`;
+                        return false;
+                    }
+                    if (isEmpty(myInGameUsername)) {
+                        this.reportingFailedMsg = `Your in-game username is missing`;
+                        return false;
+                    }
+                    return true;
+                }),
+                tap((dataIsValid) => {
+                    this.reportingFailed = !dataIsValid;
+                    this.reportingInProgress = dataIsValid;
+                    this.cdr.detectChanges();
+                }),
+                filter((dataIsValid) => dataIsValid),
+                switchMap(() =>
+                    this.reportedPlayers.reportPlayer$(
+                        reportedPlayerInGameUsername,
+                        reportedReason,
+                        rosterHash,
+                        myOverwolfUsername,
+                        myInGameUsername
+                    )
+                ),
+                catchError((err) => {
+                    this.reportingFailed = true;
+                    this.reportingFailedMsg = err.message;
+                    this.reportingInProgress = false;
+                    this.reportingSuccess = false;
+                    this.cdr.detectChanges();
+                    return of(undefined);
+                })
+            )
+            .subscribe((reportedPlayerId) => {
+                if (!isEmpty(reportedPlayerId)) {
+                    this.reportingSuccess = true;
+                    this.reportingFailed = false;
+                    this.reportingInProgress = false;
+                    this.cdr.detectChanges();
+                }
+            });
+    }
 
     public onDismissClick(): void {
         this.hudReportPlayerWindow.close().pipe(takeUntil(this.destroy$)).subscribe();

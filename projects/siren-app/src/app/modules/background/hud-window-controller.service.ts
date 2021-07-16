@@ -4,7 +4,7 @@ import { GameProcessService } from "@shared-app/services/game-process.service";
 import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { APP_NAME } from "@siren-app/app/common/app";
 import { Subscription } from "rxjs";
-import { filter, switchMap, takeUntil, tap } from "rxjs/operators";
+import { filter, switchMap, takeUntil } from "rxjs/operators";
 import { MatchKillfeedService } from "../core/match/match-killfeed.service";
 import { HUDNotification } from "../hud-notification/hud-notification";
 import { HUDNotificationWindowService } from "../hud-notification/windows/hud-notification-window.service";
@@ -61,7 +61,6 @@ export class HUDWindowControllerService extends BaseService {
     private watchKilledByEvent(): void {
         this.matchKillfeed.killedByEvent$
             .pipe(
-                tap((event) => console.log(`received killedby Event`, event)),
                 takeUntil(this.destroy$),
                 switchMap(() => this.hudReportPlayerWindow.open())
             )
