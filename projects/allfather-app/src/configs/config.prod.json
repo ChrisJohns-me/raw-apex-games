@@ -20,9 +20,9 @@
     },
     "featureFlags": {
         "enableMatchTimerWindow": true,
-        "enableUltTimerWindow": true,
+        "enableUltTimerWindow": false,
         "enableInflictionInsightWindow": true,
-        "enableReticleHelperWindow": true,
+        "enableReticleHelperWindow": false,
         "enableVideoCapture": false,
         "inflictionInsight": {
             "teamIndicatorUI": true,
@@ -52,7 +52,7 @@
         "legendSelectAssist": {
             "minLegendStatsMatches": 1,
             "maxComplimentaryLegends": 3,
-            "minShowComplimentaryLegendsMatches": 10,
+            "minShowComplimentaryLegendsMatches": 100,
             "limitLegendStatsMatches": 250,
             "limitComplimentaryLegendsMatches": 500,
             "complimentaryLegendsWeights": {

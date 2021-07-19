@@ -170,7 +170,7 @@ export function sumStats(matchList: MatchDataStore[]): SumMatchStats {
  *  { numMatches: 99, avgWins: 0.042, avgPlacement: 7, avgDamage: 420, avgEliminations: 1.02, avgKnockdowns: 2.34 }
  */
 export function legendAvgStats(matchList: MatchDataStore[], legendId: string): AvgMatchStats {
-    const legendMatchList = matchList.filter((m) => m.teamRoster?.find((tr) => !!tr.isMe && tr.legendId === legendId));
+    const legendMatchList = matchList.filter((m) => !!m && m.teamRoster?.find((tr) => !!tr.isMe && tr.legendId === legendId));
     const sumLegendStats = legendMatchList.reduce(reduceMatchStats, {} as SumMatchStats);
     const legendAvgStats = calcAvgStats(sumLegendStats);
     return legendAvgStats;

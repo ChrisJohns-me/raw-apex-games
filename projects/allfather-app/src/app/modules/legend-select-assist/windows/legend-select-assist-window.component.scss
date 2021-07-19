@@ -4,6 +4,15 @@
     display: block;
 }
 
+.game-mode-header {
+    font-size: 1.5vw;
+    color: white;
+    font-family: "Quantico", sans-serif;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: 4vw;
+}
+
 .more-matches-container {
     display: flex;
     flex-direction: column;

@@ -5,9 +5,14 @@
     [position]="{ xPercent: 0, yPercent: 0, xAnchor: 'right', yAnchor: 'top' }"
     [size]="{ widthPercent: 0.5625, heightPercent: 1 }"
 >
+    <ng-container *ngIf="(legendGameModeStats?.numMatches ?? 0) > 0">
+        <h3 class="game-mode-header" *ngIf="!isArenasGameMode">Battle Royale</h3>
+        <h3 class="game-mode-header" *ngIf="isArenasGameMode">Arenas</h3>
+    </ng-container>
+
     <app-legend-stats
-        [legendStats]="legendStats"
-        *ngIf="isLegendStatsEnabled && (legendStats?.numMatches ?? 0) >= minLegendStatsMatches"
+        *ngIf="isLegendStatsEnabled && (legendGameModeStats?.numMatches ?? 0) >= minLegendStatsMatches"
+        [legendStats]="legendGameModeStats"
     ></app-legend-stats>
 
     <app-legend-select-icons-board
@@ -19,7 +24,7 @@
     <app-legend-select-complimentary-legends
         [complimentaryLegendWeights]="complimentaryLegendWeights"
         [legendId]="focusedLegendId"
-        *ngIf="isComplimentaryLegendsEnabled && (legendStats?.numMatches ?? 0) >= minShowComplimentaryLegendsMatches"
+        *ngIf="isComplimentaryLegendsEnabled && (legendGameModeStats?.numMatches ?? 0) >= minShowComplimentaryLegendsMatches"
     ></app-legend-select-complimentary-legends>
 
     <div
