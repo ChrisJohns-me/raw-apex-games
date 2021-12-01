@@ -36,7 +36,7 @@
     "@svgdotjs/svg.js": "^3.0.16",
     "bootstrap": "^5.0.1",
     "bootswatch": "^5.0.1",
-    "chart.js": "^3.3.0",
+    "chart.js": "^3.6.1",
     "chartjs-adapter-date-fns": "^2.0.0",
     "d3": "^6.7.0",
     "d3-contour": "^2.0.0",
