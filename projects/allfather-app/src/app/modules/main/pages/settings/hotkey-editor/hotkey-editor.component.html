@@ -1,0 +1,11 @@
+<input
+    *ngIf="hotkey"
+    class="form-hotkey form-control form-control-sm"
+    type="text"
+    [value]="displayValue"
+    (click)="onClick()"
+    (keydown)="onKeyDown($event)"
+    (keyup)="onKeyUp($event)"
+    (blur)="onBlur()"
+    readonly
+/>

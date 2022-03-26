@@ -5,6 +5,8 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MockUIContainerComponent } from "@shared-app/mocks/components/mock-ui-container.component";
 import { MockPlayerStatsService } from "@shared-app/mocks/services/mock-player-stats.service";
 import { ConfigurationService } from "../../core/configuration.service";
+import { MatchService } from "../../core/match/match.service";
+import { MockMatchService } from "../../core/mocks/mock-match.service";
 import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { LegendSelectAssistWindowComponent } from "./legend-select-assist-window.component";
 
@@ -17,6 +19,7 @@ describe("LegendSelectAssistWindowComponent", () => {
             declarations: [LegendSelectAssistWindowComponent, MockUIContainerComponent],
             providers: [
                 { provide: ConfigurationService, useClass: MockConfigurationService },
+                { provide: MatchService, useClass: MockMatchService },
                 { provide: PlayerLocalStatsService, useClass: MockPlayerStatsService },
                 { provide: SettingsService, useClass: MockSettingsService },
             ],

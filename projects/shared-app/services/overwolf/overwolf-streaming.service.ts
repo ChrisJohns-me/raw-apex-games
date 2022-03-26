@@ -3,7 +3,14 @@ import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.p
 import { Observable, Subject } from "rxjs";
 import { BaseService } from "../base-service.abstract";
 import { StreamingDelegate } from "./api/streaming/streaming-delegate";
-import { OWStopStreamingEvent, OWStreamEvent, OWStreamSettings, OWVideoSplitedEvent } from "./types/overwolf-types";
+import {
+    OWStopStreamingEvent,
+    OWStopStreamingResult,
+    OWStreamEvent,
+    OWStreamResult,
+    OWStreamSettings,
+    OWVideoSplitedEvent,
+} from "./types/overwolf-types";
 
 /**
  * @class OverwolfStreamingService
@@ -35,11 +42,11 @@ export class OverwolfStreamingService extends BaseService {
 
     private streamingDelegate = new StreamingDelegate();
 
-    public start(streamSettings: OWStreamSettings): Observable<OWStreamEvent> {
+    public start(streamSettings: OWStreamSettings): Observable<OWStreamResult> {
         return this.streamingDelegate.start(streamSettings);
     }
 
-    public stop(streamId: number): Observable<OWStreamEvent | OWStopStreamingEvent> {
+    public stop(streamId: number): Observable<OWStopStreamingResult> {
         return this.streamingDelegate.stop(streamId);
     }
 }

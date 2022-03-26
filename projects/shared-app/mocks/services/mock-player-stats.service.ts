@@ -1,6 +1,8 @@
 import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-local-stats.service";
+import { AvgMatchStats } from "@allfather-app/app/modules/core/utilities/match-stats";
 import { OverwolfFeatureDep } from "@shared-app/feature-status";
-import { of } from "rxjs";
+import { MatchGameModeGenericId } from "@shared-app/match/game-mode/game-mode.enum";
+import { Observable, of } from "rxjs";
 
 export class MockPlayerStatsService implements MockedClass<PlayerLocalStatsService> {
     public clearPlayerCache(): void {}
@@ -11,7 +13,24 @@ export class MockPlayerStatsService implements MockedClass<PlayerLocalStatsServi
         return of();
     }
 
+    public getPlayerGameModeGenericStats$(
+        gameModeGenericIds: MatchGameModeGenericId[],
+        limit?: number,
+        breakCache?: boolean
+    ): Observable<AvgMatchStats> {
+        return of();
+    }
+
     public getLegendStats$(legendId: string, limit?: number, breakCache = false): ReturnType<PlayerLocalStatsService["getLegendStats$"]> {
+        return of();
+    }
+
+    public getLegendGameModeGenericStats$(
+        legendId: string,
+        gameModeGenericIds: MatchGameModeGenericId[],
+        limit?: number,
+        breakCache?: boolean
+    ): Observable<AvgMatchStats> {
         return of();
     }
 

@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { isEmpty } from "common/utilities";
-import { BehaviorSubject, Observable, of, Subject } from "rxjs";
-import { takeUntil, tap } from "rxjs/operators";
+import { BehaviorSubject, Observable, of, Subject, throwError } from "rxjs";
+import { takeUntil, tap, timeout } from "rxjs/operators";
 import { BaseService } from "../base-service.abstract";
-import { OWStopStreamingEvent, OWStreamEvent } from "../overwolf";
+import { OWStopStreamingResult, OWStreamResult } from "../overwolf";
 import { OverwolfStreamingService } from "../overwolf/overwolf-streaming.service";
 import { VideoRecordingSettings } from "./video-recording-settings";
 
@@ -47,14 +47,59 @@ export class VideoRecordingService extends BaseService {
         this.settings = settings;
     }
 
-    public startVideoRecording(): Observable<OWStreamEvent> {
+    /**
+     * Starts video recording.
+     * @throws {string} error message
+     */
+    public startVideoRecording(): Observable<OWStreamResult> {
+        if (this.streamId) return throwError(`Stream already in progress`);
         const owVideoSettings = this.settings.toOverwolfStreamSettings();
-        return this.overwolfStreaming.start(owVideoSettings).pipe(tap((streamEvent) => (this.streamId = streamEvent.stream_id)));
+        return this.overwolfStreaming.start(owVideoSettings).pipe(
+            tap((streamResult) => {
+                if (!isEmpty(streamResult.error) || !streamResult.success) {
+                    const stateEvent = { status: VideoRecordingStatus.FAIL };
+                    this.state$.next(stateEvent);
+                    throw new Error(streamResult.error ?? `Unable to start video recording`);
+                }
+
+                const stateEvent = {
+                    status: VideoRecordingStatus.IN_PROGRESS,
+                    startDate: new Date(),
+                };
+                this.startedEvent$.next(stateEvent);
+                this.state$.next(stateEvent);
+                this.streamId = streamResult.stream_id;
+                console.log(`[${this.constructor.name}] Video recording started: "${this.streamId}"`);
+            })
+        );
     }
 
-    public stopVideoRecording(): Observable<OWStreamEvent | OWStopStreamingEvent> {
+    /**
+     * Stops video recording.
+     * @throws {string} error message
+     */
+    public stopVideoRecording(): Observable<OWStopStreamingResult> {
         if (isEmpty(this.streamId)) return of();
-        return this.overwolfStreaming.stop(this.streamId!);
+        return this.overwolfStreaming.stop(this.streamId!).pipe(
+            timeout(15000),
+            tap((streamResult) => {
+                if (!isEmpty(streamResult.error) || !streamResult.success) {
+                    const stateEvent = { status: VideoRecordingStatus.FAIL };
+                    this.state$.next(stateEvent);
+                    throw new Error(streamResult.error ?? `Unable to stop/save video recording`);
+                }
+
+                const stateEvent = {
+                    status: VideoRecordingStatus.SUCCESS,
+                    startDate: new Date(),
+                    endDate: new Date(),
+                };
+                this.endedEvent$.next(stateEvent);
+                this.state$.next(stateEvent);
+                console.log(`[${this.constructor.name}] Video recording stopped: "${this.streamId}"`);
+                this.streamId = undefined;
+            })
+        );
     }
 
     private setupEvents(): void {

@@ -70,6 +70,8 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
     @Input() public secondaryTitle = "";
     @Input() public enablePageviewTracking = true;
+    /** If function is not provided, the window will be closed */
+    @Input("onCloseButtonClick") public onCloseFn?: () => void;
 
     public state: WindowState = WindowState.Normal;
     public isDev = environment.DEV;
@@ -144,7 +146,11 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     public onCloseButtonClick(): void {
-        this.close();
+        if (typeof this.onCloseFn === "function") {
+            this.onCloseFn();
+        } else {
+            this.close();
+        }
     }
 
     public onTitlebarMouseDown(event: Event): void {
@@ -267,7 +273,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         const heightPixel = Math.round(screenHeight * heightPercentClamp);
 
         if (isEmpty(this.uiWindow.name)) {
-            console.error(`[${this.constructor.name}] Unable to setSizeByPercent; window name is empty`);
+            console.warn(`[${this.constructor.name}] Unable to setSizeByPercent; window name is empty`);
             return;
         }
         console.log(

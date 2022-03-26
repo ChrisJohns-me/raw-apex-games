@@ -12,8 +12,8 @@ export class StreamingDelegate {
         return startObs(streamSettings);
     }
 
-    public stop(streamId: number): Observable<overwolf.streaming.StreamResult | overwolf.streaming.StopStreamingResult> {
+    public stop(streamId: number): Observable<overwolf.streaming.StopStreamingResult> {
         const stopObs = bindCallback(overwolf.streaming.stop);
-        return stopObs(streamId);
+        return stopObs(streamId) as unknown as Observable<overwolf.streaming.StopStreamingResult>;
     }
 }

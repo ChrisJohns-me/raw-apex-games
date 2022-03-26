@@ -51,6 +51,7 @@
         [isTitlebarDraggable]="true"
         [isContentDraggable]="false"
         [enablePageviewTracking]="false"
+        [onCloseButtonClick]="onCloseButtonClick"
     >
         <app-navbar (navPage)="goToPage($event)" [currentPage]="activePage"></app-navbar>
         <ng-container [ngSwitch]="activePage">

@@ -5,11 +5,13 @@ import { AvgMatchStats } from "@allfather-app/app/modules/core/utilities/match-s
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { Legend } from "@shared-app/legend/legend";
 import { MatchGameModeList } from "@shared-app/match/game-mode/game-mode-list";
-import { combineLatest, of, Subject, Subscription } from "rxjs";
+import { combineLatest, Observable, of, Subject, Subscription } from "rxjs";
 import { map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { MatchService } from "../../core/match/match.service";
 import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { LegendIconRow } from "../legend-select-icon-row.interface";
+
+const AUTO_REFRESH_TIME = 1000;
 
 @Component({
     selector: "app-legend-select-assist-window",
@@ -32,8 +34,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
         return this.focusedLegendId ? Legend.getName(this.focusedLegendId) : undefined;
     }
 
-    private legendStatsSubscription?: Subscription;
-    private complimentaryLegendsSubscription?: Subscription;
+    private hoverLegendSubscription?: Subscription;
     private brGameModeIds = MatchGameModeList.filter((gm) => gm.isBattleRoyaleGameMode).map((gm) => gm.gameModeGenericId);
     private arenasGameModeIds = MatchGameModeList.filter((gm) => gm.isArenasGameMode).map((gm) => gm.gameModeGenericId);
     private destroy$ = new Subject<void>();
@@ -58,82 +59,71 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     }
 
     public hoverLegend(legendId: string): void {
-        this.showComplimentaryLegends(legendId);
-        this.showLegendStats(legendId);
-        this.showLegendGameModeStats(legendId);
+        this.hoverLegendSubscription?.unsubscribe();
+        this.hoverLegendSubscription = combineLatest([
+            this.getLegendStats$(legendId),
+            this.getLegendGameModeStats$(legendId),
+            this.getComplimentaryLegends$(legendId),
+        ])
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(([legendStats, legendGameModeStats, complimentaryLegendWeights]) => {
+                if (legendId !== this.focusedLegendId) return;
+                this.legendStats = legendStats;
+                this.legendGameModeStats = legendGameModeStats;
+                this.complimentaryLegendWeights = complimentaryLegendWeights;
+                this.refreshUI();
+            });
         this.focusedLegendId = legendId;
-        this.cdr.detectChanges();
+        this.refreshUI();
     }
 
-    public showLegendStats(legendId: string): void {
-        this.legendStatsSubscription?.unsubscribe();
-        this.legendStatsSubscription = this.configuration.config$
-            .pipe(
-                switchMap((config) =>
-                    this.playerStats.getLegendStats$(legendId, config.featureConfigs.legendSelectAssist.limitLegendStatsMatches)
-                )
+    public getLegendStats$(legendId: string): Observable<AvgMatchStats> {
+        return this.configuration.config$.pipe(
+            switchMap((config) =>
+                this.playerStats.getLegendStats$(legendId, config.featureConfigs.legendSelectAssist.limitLegendStatsMatches)
             )
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((avgStats) => {
-                this.legendStats = avgStats;
-                this.cdr.detectChanges();
-            });
+        );
     }
 
-    public showLegendGameModeStats(legendId: string): void {
-        this.legendStatsSubscription?.unsubscribe();
-
+    public getLegendGameModeStats$(legendId: string): Observable<AvgMatchStats> {
         let limitLegendStatsMatches = 0;
-        this.legendStatsSubscription = this.configuration.config$
-            .pipe(
-                tap((config) => (limitLegendStatsMatches = config.featureConfigs.legendSelectAssist.limitLegendStatsMatches)),
-                switchMap(() => this.match.gameMode$),
-                map((gameMode) => (this.isArenasGameMode = !!gameMode?.isArenasGameMode)),
-                switchMap((isArenasGameMode) => {
-                    return this.playerStats.getLegendGameModeGenericStats$(
-                        legendId,
-                        isArenasGameMode ? this.arenasGameModeIds : this.brGameModeIds,
-                        limitLegendStatsMatches
-                    );
-                })
-            )
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((avgStats) => {
-                this.legendGameModeStats = avgStats;
-                this.cdr.detectChanges();
-            });
+        return this.configuration.config$.pipe(
+            tap((config) => (limitLegendStatsMatches = config.featureConfigs.legendSelectAssist.limitLegendStatsMatches)),
+            switchMap(() => this.match.gameMode$),
+            map((gameMode) => (this.isArenasGameMode = !!gameMode?.isArenasGameMode)),
+            switchMap((isArenasGameMode) => {
+                return this.playerStats.getLegendGameModeGenericStats$(
+                    legendId,
+                    isArenasGameMode ? this.arenasGameModeIds : this.brGameModeIds,
+                    limitLegendStatsMatches
+                );
+            })
+        );
     }
 
-    public showComplimentaryLegends(legendId: string): void {
-        this.complimentaryLegendsSubscription?.unsubscribe();
-        this.complimentaryLegendsSubscription = this.configuration.config$
-            .pipe(
-                tap(
-                    (config) =>
-                        (this.minShowComplimentaryLegendsMatches =
-                            config.featureConfigs.legendSelectAssist.minShowComplimentaryLegendsMatches)
-                ),
-                switchMap((config) =>
-                    combineLatest([
-                        of(config),
-                        this.playerStats.getLegendComplimentaryLegendWeights$(
-                            legendId,
-                            config.featureConfigs.legendSelectAssist.limitComplimentaryLegendsMatches
-                        ),
-                    ])
-                )
-            )
-            .pipe(takeUntil(this.destroy$))
-            .subscribe(([config, legendWeights]) => {
-                const limitedLegendWeights = legendWeights.slice(0, config.featureConfigs.legendSelectAssist.maxComplimentaryLegends);
-                this.complimentaryLegendWeights = limitedLegendWeights;
-                this.cdr.detectChanges();
-            });
+    public getComplimentaryLegends$(legendId: string): Observable<{ legendId: string; weightScore: number }[]> {
+        return this.configuration.config$.pipe(
+            tap(
+                (config) =>
+                    (this.minShowComplimentaryLegendsMatches = config.featureConfigs.legendSelectAssist.minShowComplimentaryLegendsMatches)
+            ),
+            switchMap((config) =>
+                combineLatest([
+                    of(config),
+                    this.playerStats.getLegendComplimentaryLegendWeights$(
+                        legendId,
+                        config.featureConfigs.legendSelectAssist.limitComplimentaryLegendsMatches
+                    ),
+                ])
+            ),
+            map(([config, legendWeights]) => legendWeights.slice(0, config.featureConfigs.legendSelectAssist.maxComplimentaryLegends))
+        );
     }
 
     private setupLegendIconRows(): void {
         this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => {
             this.legendIconRows = config.featureConfigs.legendSelectAssist.legendRows;
+            this.refreshUI();
         });
     }
 
@@ -148,7 +138,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
                 const isSettingEnabled = setting?.value != null ? setting.value : defaultValue;
                 const isConfigEnabled = config.featureFlags.legendSelectAssist.legendStats;
                 this.isLegendStatsEnabled = isSettingEnabled && isConfigEnabled;
-                this.cdr.detectChanges();
+                this.refreshUI();
             });
 
         combineLatest([
@@ -161,7 +151,19 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
                 const isSettingEnabled = setting?.value != null ? setting.value : defaultValue;
                 const isConfigEnabled = config.featureFlags.legendSelectAssist.complimentaryLegends;
                 this.isComplimentaryLegendsEnabled = isSettingEnabled && isConfigEnabled;
-                this.cdr.detectChanges();
+                this.refreshUI();
             });
+    }
+
+    /**
+     * Refreshes the UI by forcing a refresh with delay to compensate for
+     * intense work from gathering data from the database.
+     */
+    private refreshUI(): void {
+        this.cdr.detectChanges();
+        // setTimeout(() => this.cdr.detectChanges(), 1);
+        // setTimeout(() => this.cdr.detectChanges(), 100);
+        // setTimeout(() => this.cdr.detectChanges(), 500);
+        // setTimeout(() => this.cdr.detectChanges(), 1000);
     }
 }

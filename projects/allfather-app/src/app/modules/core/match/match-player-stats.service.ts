@@ -13,7 +13,7 @@ import { MatchPlayerService } from "./match-player.service";
 import { MatchService } from "./match.service";
 
 /**
- * @classdesc Provides damage/knockdown/kill, etc. count updates
+ * @classdesc Provides damage/deaths/knockdown/kill, etc. count updates
  */
 @Injectable({
     providedIn: "root",
@@ -23,6 +23,8 @@ import { MatchService } from "./match.service";
 export class MatchPlayerStatsService extends BaseService {
     /** Data from Overwolf's "tabs". Reset on match start. */
     public readonly myEliminations$ = new BehaviorSubject<number>(0);
+    /** Inferred from Overwolf event. Reset on match start. */
+    public readonly myDeaths$ = new BehaviorSubject<number>(0);
     /** Data from Overwolf's "tabs". Reset on match start. */
     public readonly myAssists$ = new BehaviorSubject<number>(0);
     /** Data from Overwolf's "tabs". Reset on match start. */
@@ -56,6 +58,7 @@ export class MatchPlayerStatsService extends BaseService {
         this.setupMatchStateEvents();
         this.setupInfoTabs();
         this.setupTotalDamageDealt();
+        this.setupDeaths();
         this.setupVictory();
         this.setupMyKnockdowns();
         this.setupArenasScoreboard();
@@ -65,6 +68,7 @@ export class MatchPlayerStatsService extends BaseService {
         this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.myDamage$.next(0);
             this.myEliminations$.next(0);
+            this.myDeaths$.next(0);
             this.myAssists$.next(0);
             this.mySpectators$.next(0);
             this.myPlacement$.next(0);
@@ -105,6 +109,17 @@ export class MatchPlayerStatsService extends BaseService {
                 map((infoUpdate) => cleanInt(infoUpdate.info.me?.totalDamageDealt))
             )
             .subscribe((totalDamageDealt) => this.myTotalDamageDealt$.next(totalDamageDealt));
+    }
+
+    private setupDeaths(): void {
+        this.overwolfGameData.newGameEvent$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((gameEvent) => gameEvent.name === "death")
+            )
+            .subscribe(() => {
+                this.myDeaths$.next(this.myDeaths$.value + 1);
+            });
     }
 
     private setupVictory(): void {

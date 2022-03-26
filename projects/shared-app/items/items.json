@@ -330,6 +330,11 @@
             "inGameEventNameRegExPattern": "cover_wall$"
         },
         {
+            "id": "mirage_heirloom",
+            "friendlyName": "Mirage \"Too Much Witt\" Heirloom",
+            "inGameInfoNameRegExPattern": "mp_weapon_mirage_statue_primary"
+        },
+        {
             "id": "bangalore_creeping_barrage",
             "friendlyName": "Creeping Barrage",
             "inGameInfoNameRegExPattern": "^Rolling Thunder$",
@@ -359,6 +364,11 @@
             "id": "wattson",
             "friendlyName": "Perimeter Security",
             "inGameInfoNameRegExPattern": "mp_weapon_tesla_trap"
+        },
+        {
+            "id": "wraith_into_the_void",
+            "friendlyName": "Into the Void",
+            "inGameInfoNameRegExPattern": "Into the Void"
         },
         {
             "id": "grenade_thermite",

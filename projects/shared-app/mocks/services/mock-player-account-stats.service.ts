@@ -7,8 +7,7 @@ export class MockPlayerAccountStatsService implements MockedClass<PlayerAccountS
     public clearCache(): void {}
 
     public getBulkPlayerAccountStats$(
-        playerNames: string[],
-        platform: MozambiqueherePlatform
+        players: { playerName: string; platform: MozambiqueherePlatform }[]
     ): ReturnType<PlayerAccountStatsService["getBulkPlayerAccountStats$"]> {
         return of();
     }

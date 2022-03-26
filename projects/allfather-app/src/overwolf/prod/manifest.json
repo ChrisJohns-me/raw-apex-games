@@ -5,7 +5,7 @@
     "meta": {
         "name": "Allfather",
         "author": "Chris Johns",
-        "version": "0.0.1",
+        "version": "0.0.3",
         "minimum-overwolf-version": "0.165.0",
         "minimum-gep-version": "0.165.0",
         "description": "Allfather, give me sight!",
@@ -230,11 +230,11 @@
             "matches": [
                 "http://*.allfather.app",
                 "https://*.allfather.app",
+                "http://*.mozambiquehe.re",
+                "https://*.mozambiquehe.re",
                 "http://*.overwolf.com",
                 "https://*.overwolf.com",
                 "https://overwolf.github.io",
-                "https://*.tracker.gg",
-                "https://thetrackernetwork.com",
                 "https://*.google-analytics.com",
                 "http://*.google-analytics.com",
                 "https://www.googleapis.com",

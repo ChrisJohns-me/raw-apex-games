@@ -84,6 +84,10 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         this.backgroundService.exitApp();
     }
 
+    public onCloseButtonClick(): void {
+        this.mainWindow.isRequestingExit$.next(true);
+    }
+
     private trackPageChange(newPage: MainPage): void {
         this.mainWindow.uiWindow
             .windowInfo()

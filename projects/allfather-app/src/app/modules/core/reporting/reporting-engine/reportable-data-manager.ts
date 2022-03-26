@@ -14,6 +14,7 @@ import { ReportableDataFactoryMap } from "./reportable-data";
 import { AssistsDataFactory } from "./reportable-data/assists";
 import { DamageDataFactory } from "./reportable-data/damage";
 import { DamageEventsHistoryDataFactory } from "./reportable-data/damage-events-history";
+import { DeathsDataFactory } from "./reportable-data/deaths";
 import { EliminationsDataFactory } from "./reportable-data/eliminations";
 import { GameModeDataFactory } from "./reportable-data/game-mode";
 import { KillfeedHistoryDataFactory } from "./reportable-data/killfeed-history";
@@ -88,6 +89,7 @@ export class ReportableDataManagerService {
             DamageDataFactory(this.matchPlayerStats.myDamage$),
             DamageEventsHistoryDataFactory(this.matchPlayerInfliction.myDamageEvent$),
             EliminationsDataFactory(this.matchPlayerStats.myEliminations$),
+            DeathsDataFactory(this.matchPlayerStats.myDeaths$),
             GameModeDataFactory(this.match.gameMode$),
             KillfeedHistoryDataFactory(this.matchKillfeed.killfeedEvent$),
             KnockdownsDataFactory(this.matchPlayerStats.myKnockdowns$),
@@ -100,6 +102,7 @@ export class ReportableDataManagerService {
                 myAssistsObs: this.matchPlayerStats.myAssists$,
                 myDamageObs: this.matchPlayerStats.myDamage$,
                 myEliminationsObs: this.matchPlayerStats.myEliminations$,
+                myDeathsObs: this.matchPlayerStats.myDeaths$,
                 myKnockdownsObs: this.matchPlayerStats.myKnockdowns$,
                 myPlacementObs: this.matchPlayerStats.myPlacement$,
                 startingNumTeamsObs: this.matchRoster.startingNumTeams$,

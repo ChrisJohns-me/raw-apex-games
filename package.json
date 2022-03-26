@@ -1,6 +1,6 @@
 {
     "name": "allfather",
-    "version": "0.0.1-alpha.1",
+    "version": "0.0.3",
     "engines": {
         "node": ">= 14.0.0"
     },
@@ -16,11 +16,6 @@
         "affunc:serve-dev": "cd projects/allfather-func/functions && npm run serve",
         "affunc:deploy-dev": "",
         "affunc:deploy-prod": "",
-        "sirenapp:test": "ng test --project=sirenApp",
-        "sirenapp:e2e": "ng e2e --project=sirenApp",
-        "sirenapp:serve-debug": "ng build --project=sirenApp --watch --plugin ~./projects/siren-app/webpack.partial.dev.js --optimization false",
-        "sirenapp:serve-dev": "ng build --project=sirenApp --watch --plugin ~./projects/siren-app/webpack.partial.dev.js",
-        "sirenapp:build-prod": "ng build --project=sirenApp --configuration production",
         "web:test": "ng test --project=allfatherWeb",
         "web:e2e": "ng e2e --project=allfatherWeb",
         "web:serve-dev": "ng build --watch --project=allfatherWeb",

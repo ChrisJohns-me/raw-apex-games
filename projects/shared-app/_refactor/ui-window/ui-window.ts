@@ -141,7 +141,15 @@ export class UIWindow {
     public changeSize(width: number, height: number): Observable<void> {
         const promise = new Promise<void>((resolve, reject) => {
             if (!this.name) return reject(`Unable to change window size; UIWindow name was empty`);
-            overwolf.windows.changeSize(this.name, Math.round(width), Math.round(height), (result) => {
+
+            const sizeSettings: overwolf.windows.ChangeWindowSizeParams = {
+                window_id: this.name,
+                width: Math.round(width),
+                height: Math.round(height),
+                auto_dpi_resize: false, // TODO: Check if this is needed
+            };
+
+            overwolf.windows.changeSize(sizeSettings, (result) => {
                 if (result.success) {
                     resolve();
                 } else {

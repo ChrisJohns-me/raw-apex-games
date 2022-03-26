@@ -7,6 +7,7 @@ export class MockMatchPlayerStatsService implements MockedClass<MatchPlayerStats
     public myEliminations$: MatchPlayerStatsService["myEliminations$"] = new BehaviorSubject<
         ExtractSubjectType<MatchPlayerStatsService["myEliminations$"]>
     >(0);
+    public myDeaths$: BehaviorSubject<number> = new BehaviorSubject<ExtractSubjectType<MatchPlayerStatsService["myDeaths$"]>>(0);
     public myAssists$: MatchPlayerStatsService["myAssists$"] = new BehaviorSubject<
         ExtractSubjectType<MatchPlayerStatsService["myAssists$"]>
     >(0);

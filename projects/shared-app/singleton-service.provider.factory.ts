@@ -8,7 +8,6 @@
 import { WindowName as AllfatherWindowName } from "@allfather-app/app/modules/core/window-name";
 import { environment } from "@allfather-app/environments/environment";
 import { Provider } from "@angular/core";
-import { WindowName as SirenWindowName } from "@siren-app/app/modules/core/window-name";
 import { take } from "rxjs/operators";
 import { UIWindow } from "./_refactor/ui-window";
 
@@ -61,7 +60,7 @@ function validateIsBackgroundWindow(referenceKey: string): void {
     UIWindow.getCurrentWindow()
         .pipe(take(1))
         .subscribe((currentWindow) => {
-            if (currentWindow.name !== AllfatherWindowName.Background && currentWindow.name !== SirenWindowName.Background) {
+            if (currentWindow.name !== AllfatherWindowName.Background) {
                 const errMsg = `[SingletonServiceProvider] "${referenceKey}" Singleton Service is not instantiated on the Background Window; is instantiated on "${currentWindow.name}"`;
                 if (environment.DEV) throw new Error(errMsg);
                 console.error(errMsg);

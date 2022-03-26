@@ -61,6 +61,33 @@ export const MatchMapList: MatchMap[] = [
         activeDates: [
             {
                 from: new Date("May 04, 2021"),
+                to: new Date("August 03, 2021"),
+            },
+        ],
+        zStartPos: 146,
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -450,
+                xEnd: 450,
+                yStart: -450,
+                yEnd: 450,
+            },
+        },
+    }),
+    new MatchMap({
+        mapName: MatchMapFriendlyName.WorldsEdge,
+        mapGenericId: MatchMapGenericId.WorldsEdge,
+        mapId: "mp_rr_desertlands_mu3",
+        isBattleRoyaleMap: true,
+        isArenasMap: false,
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
+        activeDates: [
+            {
+                from: new Date("August 03, 2021"),
             },
         ],
         zStartPos: 146,
@@ -216,6 +243,20 @@ export const MatchMapList: MatchMap[] = [
         mapName: MatchMapFriendlyName.Overflow,
         mapGenericId: MatchMapGenericId.Overflow,
         mapId: "mp_rr_aqueduct", // TODO: Check
+        isBattleRoyaleMap: false,
+        isArenasMap: true,
+        isChartable: false,
+        gameModeTypes: [MatchGameModeGenericId.Arenas],
+        activeDates: [
+            // {
+            //     from: new Date("August 01, 2021"),
+            // },
+        ],
+    }),
+    new MatchMap({
+        mapName: MatchMapFriendlyName.Oasis,
+        mapGenericId: MatchMapGenericId.Oasis,
+        mapId: "mp_rr_oasis", // TODO: Check
         isBattleRoyaleMap: false,
         isArenasMap: true,
         isChartable: false,

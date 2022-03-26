@@ -29,6 +29,7 @@ export interface MatchDataStore {
     teamRoster?: TeamRosterPlayer[];
     ultimateUsageDates?: Stream<Date>;
     weaponIdsHistory?: TimestampedStream<WeaponIds>;
+    deaths?: number;
 }
 
 type Stream<T> = T[];

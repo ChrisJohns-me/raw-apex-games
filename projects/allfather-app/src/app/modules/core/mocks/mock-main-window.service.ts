@@ -1,6 +1,7 @@
 import { MainPage } from "@allfather-app/app/modules/main/pages/main-page";
 import { MainWindowService } from "@allfather-app/app/modules/main/windows/main-window.service";
 import { MockUIWindow } from "@shared-app/mocks/components/mock-ui-window";
+import { UIWindow } from "@shared-app/_refactor/ui-window";
 import { BehaviorSubject, of } from "rxjs";
 
 export class MockMainWindowService implements MockedClass<MainWindowService> {

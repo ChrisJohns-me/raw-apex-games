@@ -2,15 +2,10 @@ import { MapRotationService } from "@allfather-app/app/modules/core/map-rotation
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { MapRotationData } from "@shared-app/match/map/map-rotation-data";
 import { MatchMap } from "@shared-app/match/map/match-map";
-import { differenceInMilliseconds, isFuture, isPast } from "date-fns";
+import { isFuture, isPast } from "date-fns";
 import addMinutes from "date-fns/addMinutes";
-import { BehaviorSubject, interval, of, Subject, timer } from "rxjs";
-import { expand, filter, switchMap, takeUntil, tap } from "rxjs/operators";
-
-/** Allow time to pass and Maps to rotate, before re-retrieving map rotation data */
-const ROLLOVER_FETCH_DELAY = 10 * 1000;
-/** Used if a dynamic poll time cannot be determined */
-const DEFAULT_POLL_TIME = 10 * 60 * 1000;
+import { interval, Subject } from "rxjs";
+import { filter, takeUntil } from "rxjs/operators";
 
 @Component({
     selector: "app-map-rotation-display",
@@ -23,8 +18,6 @@ export class MapRotationDisplayComponent implements OnInit, OnDestroy {
 
     /** Enables change detection to run every second; otherwise every minute */
     private fastUIRefresh = true;
-    /** Timer to fetch map rotation */
-    private mapRotationPollTimer$ = new BehaviorSubject<number>(0);
 
     private destroy$ = new Subject<void>();
 
@@ -36,7 +29,7 @@ export class MapRotationDisplayComponent implements OnInit, OnDestroy {
     public isPast = isPast;
 
     public ngOnInit(): void {
-        this.setupMapRotationPolling();
+        this.setupMapRotation();
         this.setupUIRefreshTimer();
     }
 
@@ -45,40 +38,14 @@ export class MapRotationDisplayComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    private setupMapRotationPolling(): void {
-        const handleDataFn = (rotationData: MapRotationData) => {
-            const now = new Date();
+    /**
+     * Checks once a minute to see if the map rotation data needs to be updated.
+     */
+    private setupMapRotation(): void {
+        this.mapRotation.mapRotation$.pipe(takeUntil(this.destroy$)).subscribe((rotationData) => {
             this.mapRotationData = rotationData;
             this.fastUIRefresh = true; // Temporarily turn on fast refreshing after data is fetched
-            const soonestMapInfo = MapRotationData.getSoonestMapRotationInfo(rotationData);
-            const newDelay =
-                soonestMapInfo?.endDate && soonestMapInfo.endDate > now
-                    ? differenceInMilliseconds(soonestMapInfo.endDate, now) + ROLLOVER_FETCH_DELAY
-                    : DEFAULT_POLL_TIME;
-            console.debug(
-                `[${this.constructor.name}] Checking map rotation in ${Math.round(newDelay / 1000)} seconds; ` +
-                    `soonest map change "${soonestMapInfo?.friendlyName}" at ${soonestMapInfo?.startDate}`
-            );
-            this.mapRotationPollTimer$.next(newDelay);
-        };
-
-        const loopOperator = (timeMs: number) =>
-            expand(() =>
-                timer(timeMs).pipe(
-                    switchMap(() => this.mapRotation.getMapRotation$()),
-                    tap((mapRotation) => handleDataFn(mapRotation))
-                )
-            );
-
-        this.mapRotationPollTimer$
-            .pipe(
-                takeUntil(this.destroy$),
-                switchMap((delayTimeMs) => {
-                    delayTimeMs = delayTimeMs >= 0 ? delayTimeMs : DEFAULT_POLL_TIME;
-                    return of("start").pipe(loopOperator(delayTimeMs));
-                })
-            )
-            .subscribe();
+        });
     }
 
     private setupUIRefreshTimer(): void {

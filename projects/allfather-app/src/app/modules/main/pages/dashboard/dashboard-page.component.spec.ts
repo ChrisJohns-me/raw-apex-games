@@ -13,13 +13,18 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MockGameProcessService } from "@shared-app/mocks/services/mock-game-process.service";
 import { MockGoogleAnalyticsService } from "@shared-app/mocks/services/mock-google-analytics.service";
 import { MockMapRotationService } from "@shared-app/mocks/services/mock-map-rotation.service";
+import { MockOverwolfGameDataService } from "@shared-app/mocks/services/mock-overwolf-game-data.service";
+import { MockOverwolfProfileService } from "@shared-app/mocks/services/mock-overwolf-profile.service";
 import { MockPlayerAccountStatsService } from "@shared-app/mocks/services/mock-player-account-stats.service";
 import { MockPlayerStatsService } from "@shared-app/mocks/services/mock-player-stats.service";
 import { MockPlayerService } from "@shared-app/mocks/services/mock-player.service";
 import { GameProcessService } from "@shared-app/services/game-process.service";
 import { GoogleAnalyticsService } from "@shared-app/services/google-analytics.service";
+import { OverwolfGameDataService } from "@shared-app/services/overwolf";
+import { OverwolfProfileService } from "@shared-app/services/overwolf/overwolf-profile.service";
 import { PlayerAccountStatsService } from "@shared-app/services/player-account-stats/player-account-stats.service";
 import { AccountStatsDisplayComponent } from "./components/account-stats-display.component";
+import { ComplimentaryLegendsComponent } from "./components/complimentary-legends.component";
 import { LegendIconsBoardComponent } from "./components/legend-icons-board.component";
 import { MapRotationDisplayComponent } from "./components/map-rotation-display.component";
 import { DashboardPageComponent } from "./dashboard-page.component";
@@ -30,7 +35,13 @@ describe("DashboardPageComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [DashboardPageComponent, LegendIconsBoardComponent, MapRotationDisplayComponent, AccountStatsDisplayComponent],
+            declarations: [
+                AccountStatsDisplayComponent,
+                ComplimentaryLegendsComponent,
+                DashboardPageComponent,
+                LegendIconsBoardComponent,
+                MapRotationDisplayComponent,
+            ],
             providers: [
                 { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: GameProcessService, useClass: MockGameProcessService },
@@ -39,6 +50,8 @@ describe("DashboardPageComponent", () => {
                 { provide: MapRotationService, useClass: MockMapRotationService },
                 { provide: MatchMapService, useClass: MockMatchMapService },
                 { provide: MatchService, useClass: MockMatchService },
+                { provide: OverwolfGameDataService, useClass: MockOverwolfGameDataService },
+                { provide: OverwolfProfileService, useClass: MockOverwolfProfileService },
                 { provide: PlayerAccountStatsService, useClass: MockPlayerAccountStatsService },
                 { provide: PlayerLocalStatsService, useClass: MockPlayerStatsService },
                 { provide: PlayerService, useClass: MockPlayerService },

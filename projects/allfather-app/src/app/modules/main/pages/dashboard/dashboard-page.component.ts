@@ -1,14 +1,13 @@
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
-import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-local-stats.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { AvgMatchStats } from "@allfather-app/app/modules/core/utilities/match-stats";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { Legend } from "@shared-app/legend/legend";
+import { MatchGameModeGenericId } from "@shared-app/match/game-mode/game-mode.enum";
 import { GoogleAnalyticsService } from "@shared-app/services/google-analytics.service";
-import { PlayerAccountStatsService } from "@shared-app/services/player-account-stats/player-account-stats.service";
-import { Subject, Subscription } from "rxjs";
+import { combineLatest, Observable, Subject, Subscription } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 
 type LegendIdsRow = string[];
@@ -26,8 +25,10 @@ const NUM_SUGGESTED_WEAPONS = 2;
 export class DashboardPageComponent implements OnInit {
     public focusedLegendId?: string;
     public legendIdsRows: LegendIdsRow[] = [];
-    public myStats?: AvgMatchStats;
-    public legendStats?: AvgMatchStats;
+    public myBattleRoyaleStats?: AvgMatchStats;
+    public myArenasStats?: AvgMatchStats;
+    public legendBattleRoyaleStats?: AvgMatchStats;
+    public legendArenasStats?: AvgMatchStats;
     public myComplimentaryLegendWeights?: { legendId: string; weightScore: number }[];
     public legendComplimentaryLegendWeights?: { legendId: string; weightScore: number }[];
     public get focusedLegendName(): Optional<string> {
@@ -38,6 +39,7 @@ export class DashboardPageComponent implements OnInit {
         avgDamage: 0,
         avgDuration: 0,
         avgEliminations: 0,
+        avgDeaths: 0,
         avgAssists: 0,
         avgKnockdowns: 0,
         avgPlacement: 0,
@@ -45,8 +47,7 @@ export class DashboardPageComponent implements OnInit {
         numMatches: 0,
     };
 
-    private legendStatsSubscription?: Subscription;
-    private complimentaryLegendsSubscription?: Subscription;
+    private hoverLegendSubscription?: Subscription;
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -54,9 +55,7 @@ export class DashboardPageComponent implements OnInit {
         private readonly configuration: ConfigurationService,
         private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly localDatabase: LocalDatabaseService,
-        private readonly matchRoster: MatchRosterService,
         private readonly player: PlayerService,
-        private readonly playerAccountStats: PlayerAccountStatsService,
         private readonly playerStats: PlayerLocalStatsService
     ) {
         this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => {
@@ -103,49 +102,75 @@ export class DashboardPageComponent implements OnInit {
     }
 
     public hoverLegend(legendId: string): void {
-        this.showLegendStats(legendId);
-        this.showComplimentaryLegends(legendId);
         this.focusedLegendId = legendId;
+        this.hoverLegendSubscription?.unsubscribe();
+        this.hoverLegendSubscription = combineLatest([
+            this.getBattleRoyaleLegendStats$(legendId),
+            this.getArenasLegendStats$(legendId),
+            this.getComplimentaryLegends$(legendId),
+        ])
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(([legendBattleRoyaleStats, legendArenasStats, legendComplimentaryLegendWeights]) => {
+                // this.focusedLegendId = legendId;
+                if (legendId !== this.focusedLegendId) return;
+                this.legendBattleRoyaleStats = legendBattleRoyaleStats;
+                this.legendArenasStats = legendArenasStats;
+                this.legendComplimentaryLegendWeights = legendComplimentaryLegendWeights;
+                this.cdr.detectChanges();
+            });
         this.googleAnalytics.sendEvent("Dashboard", "Legend Icon Hover", legendId);
-        this.cdr.detectChanges();
     }
 
     public unhoverLegend(): void {
         this.focusedLegendId = undefined;
-        this.legendStats = undefined;
+        this.legendBattleRoyaleStats = undefined;
+        this.legendArenasStats = undefined;
         this.legendComplimentaryLegendWeights = undefined;
         this.cdr.detectChanges();
     }
 
-    public showLegendStats(legendId: string): void {
-        this.legendStatsSubscription?.unsubscribe();
-        this.legendStatsSubscription = this.playerStats
-            .getLegendStats$(legendId)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((avgStats) => {
-                this.legendStats = avgStats;
-                this.cdr.detectChanges();
-            });
+    public getBattleRoyaleLegendStats$(legendId: string): Observable<AvgMatchStats> {
+        return this.playerStats.getLegendGameModeGenericStats$(legendId, [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ]);
     }
 
-    public showComplimentaryLegends(legendId: string): void {
-        this.complimentaryLegendsSubscription?.unsubscribe();
-        this.complimentaryLegendsSubscription = this.playerStats
+    public getArenasLegendStats$(legendId: string): Observable<AvgMatchStats> {
+        return this.playerStats.getLegendGameModeGenericStats$(legendId, [MatchGameModeGenericId.Arenas]);
+    }
+
+    public getComplimentaryLegends$(legendId: string): Observable<{ legendId: string; weightScore: number }[]> {
+        return this.playerStats
             .getLegendComplimentaryLegendWeights$(legendId)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((legendWeights) => {
-                const limitedLegendWeights = legendWeights.slice(0, NUM_LEGEND_SUGGESTED_LEGENDS);
-                this.legendComplimentaryLegendWeights = limitedLegendWeights;
-                this.cdr.detectChanges();
-            });
+            .pipe(map((legendWeights) => legendWeights.slice(0, NUM_LEGEND_SUGGESTED_LEGENDS)));
     }
 
     private refreshMyStats(): void {
+        // Battle Royale Stats
         this.playerStats
-            .getPlayerStats$(undefined, true)
+            .getPlayerGameModeGenericStats$(
+                [
+                    MatchGameModeGenericId.BattleRoyale_Duos,
+                    MatchGameModeGenericId.BattleRoyale_Trios,
+                    MatchGameModeGenericId.BattleRoyale_Ranked,
+                ],
+                undefined,
+                true
+            )
             .pipe(takeUntil(this.destroy$))
             .subscribe((avgStats) => {
-                this.myStats = avgStats;
+                this.myBattleRoyaleStats = avgStats;
+                this.cdr.detectChanges();
+            });
+
+        // Arena Stats
+        this.playerStats
+            .getPlayerGameModeGenericStats$([MatchGameModeGenericId.Arenas], undefined, true)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((avgStats) => {
+                this.myArenasStats = avgStats;
                 this.cdr.detectChanges();
             });
     }

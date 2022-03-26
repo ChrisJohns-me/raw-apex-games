@@ -14,8 +14,9 @@ import { BehaviorSubject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { MatchRosterService } from "./match/match-roster.service";
 import { MatchService } from "./match/match.service";
-/** Amount of time to set GamePhase to "Pregame". */
-const PREGAME_DELAY = 4500;
+
+/** Amount of delay time to set GamePhase to "Pregame", after first legend is selected */
+const PREGAME_DELAY = 20000;
 
 /**
  * @classdesc Provides general information about the game and it's meta state
@@ -43,11 +44,14 @@ export class GameService extends BaseService {
     private setupPhase(): void {
         const setNewPhaseFn = (newPhase?: GamePhase): void => {
             if (newPhase && newPhase !== this.phase$.value && super.areAllFeatureDepsAvailable()) {
-                if (newPhase !== GamePhase.PreGame) this.phase$.next(newPhase);
-                else
+                // Delay setting PreGame to wait x seconds after first legend is selected
+                if (newPhase === GamePhase.PreGame) {
                     setTimeout(() => {
                         if (this.phase$.value === GamePhase.LegendSelection) this.phase$.next(newPhase);
                     }, PREGAME_DELAY);
+                } else {
+                    this.phase$.next(newPhase);
+                }
             }
         };
 
@@ -63,11 +67,7 @@ export class GameService extends BaseService {
             [GamePhase.PreGame]: (infoUpdate) =>
                 !!infoUpdate?.info &&
                 this.phase$.value === GamePhase.LegendSelection &&
-                !!(
-                    infoUpdate.info.match_info?.legendSelect_0?.lead ||
-                    infoUpdate.info.match_info?.legendSelect_1?.lead ||
-                    infoUpdate.info.match_info?.legendSelect_2?.lead
-                ),
+                !isEmpty(findValueByKeyRegEx(infoUpdate?.info?.match_info, /^legendSelect/)),
             [GamePhase.InGame]: (infoUpdate, matchState) => matchState === MatchState.Active,
         });
 

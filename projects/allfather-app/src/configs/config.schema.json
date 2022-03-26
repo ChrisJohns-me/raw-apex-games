@@ -209,6 +209,9 @@
                                 "eliminationWeight": {
                                     "type": "number"
                                 },
+                                "deathWeight": {
+                                    "type": "number"
+                                },
                                 "knockdownWeight": {
                                     "type": "number"
                                 },

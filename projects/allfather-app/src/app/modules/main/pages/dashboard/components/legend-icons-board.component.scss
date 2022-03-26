@@ -12,13 +12,14 @@ $skewX: -30deg;
 .legend-icon-row {
     display: flex;
     width: 100%;
+    padding: 0.5% 0;
     align-content: flex-start;
     justify-content: center;
 }
 
 .legend-icon-hitbox {
     width: 100%;
-    margin: 0.5%;
+    margin: 0 0.5%;
     border: 0.15rem solid #67708a88;
     opacity: 0.85;
     transition: all 0.1s linear;
@@ -54,7 +55,7 @@ $skewX: -30deg;
         font-family: "Quantico";
         text-align: center;
         text-transform: uppercase;
-        font-size: calc(2px + 0.7vw);
+        font-size: calc(2px + 0.6vw);
         font-weight: 700;
     }
 }

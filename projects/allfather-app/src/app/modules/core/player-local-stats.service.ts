@@ -49,6 +49,7 @@ export class PlayerLocalStatsService extends BaseService {
     public clearLegendCache(): void {
         this.cachedLegendComplimentaryLegendWeights = new Map();
         this.cachedLegendStats = new Map();
+        this.cachedLegendGameModeGenericStats = new Map();
     }
 
     public getPlayerStats$(limit?: number, breakCache = false): Observable<AvgMatchStats> {
@@ -59,6 +60,28 @@ export class PlayerLocalStatsService extends BaseService {
         stopwatch.start();
         return this.match.getAllMatchData$(limit).pipe(
             filter((matchList) => !!matchList && Array.isArray(matchList)),
+            map((matchList) => avgStats(matchList as MatchDataStore[])),
+            tap((avgStats) => {
+                this.cachedPlayerStats = avgStats;
+                stopwatch.stop();
+                stopwatch.watchdog(this.watchdogTime, (time) => `"Player Stats Calculation (limit ${limit})" took ${time}ms`);
+            })
+        );
+    }
+
+    public getPlayerGameModeGenericStats$(
+        gameModeGenericIds: MatchGameModeGenericId[],
+        limit?: number,
+        breakCache = false
+    ): Observable<AvgMatchStats> {
+        const cachedResult = this.cachedPlayerStats;
+        if (!breakCache && cachedResult) return of(cachedResult);
+
+        const stopwatch = new Stopwatch();
+        stopwatch.start();
+        return this.match.getAllMatchData$(limit).pipe(
+            filter((matchList) => !!matchList && Array.isArray(matchList)),
+            map((matchList) => this.filterMatchListByGameModes(matchList, gameModeGenericIds)),
             map((matchList) => avgStats(matchList as MatchDataStore[])),
             tap((avgStats) => {
                 this.cachedPlayerStats = avgStats;
@@ -91,25 +114,18 @@ export class PlayerLocalStatsService extends BaseService {
         limit?: number,
         breakCache = false
     ): Observable<AvgMatchStats> {
-        const cachedResult = this.cachedLegendGameModeGenericStats.get(legendId);
+        const cachedUniqueId = `${gameModeGenericIds.join("-")}-${legendId}`;
+        const cachedResult = this.cachedLegendGameModeGenericStats.get(cachedUniqueId);
         if (!breakCache && cachedResult) return of(cachedResult);
 
         const stopwatch = new Stopwatch();
         stopwatch.start();
         return this.match.getMatchDataByLegendId$(legendId, limit).pipe(
             filter((matchList) => !!matchList && Array.isArray(matchList) && matchList.length > 0),
-            map((matchList) =>
-                matchList
-                    .map((match) => {
-                        if (!match.gameModeId) return;
-                        const gameMode = MatchGameMode.getFromId(MatchGameModeList, match.gameModeId);
-                        return gameModeGenericIds.includes(gameMode.gameModeGenericId) ? match : undefined;
-                    })
-                    .filter((match) => !!match)
-            ),
+            map((matchList) => this.filterMatchListByGameModes(matchList, gameModeGenericIds)),
             map((matchList) => legendAvgStats(matchList as MatchDataStore[], legendId)),
             tap((avgStats) => {
-                this.cachedLegendGameModeGenericStats.set(legendId, avgStats);
+                this.cachedLegendGameModeGenericStats.set(cachedUniqueId, avgStats);
                 stopwatch.stop();
                 stopwatch.watchdog(
                     this.watchdogTime,
@@ -188,5 +204,17 @@ export class PlayerLocalStatsService extends BaseService {
                 );
             })
         );
+    }
+
+    private filterMatchListByGameModes(matchList: MatchDataStore[], gameModeGenericIds: MatchGameModeGenericId[]): MatchDataStore[] {
+        if (!matchList || !Array.isArray(matchList)) return [];
+
+        return matchList
+            .map((match) => {
+                if (!match.gameModeId) return undefined;
+                const gameMode = MatchGameMode.getFromId(MatchGameModeList, match.gameModeId);
+                return gameModeGenericIds.includes(gameMode.gameModeGenericId) ? match : undefined;
+            })
+            .filter((match) => !!match) as MatchDataStore[];
     }
 }

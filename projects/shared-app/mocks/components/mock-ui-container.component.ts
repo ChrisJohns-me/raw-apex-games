@@ -1,5 +1,4 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
-import { WindowState } from "@allfather-app/app/modules/core/_refactor/ui-window";
 import {
     ConfigPositionXAnchor,
     ConfigPositionYAnchor,
@@ -8,6 +7,7 @@ import {
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { mdiCogOutline, mdiWindowClose, mdiWindowMaximize, mdiWindowMinimize, mdiWindowRestore } from "@mdi/js";
+import { WindowState } from "@shared-app/_refactor/ui-window";
 
 type WindowPositionInput = {
     // x, y: percent
@@ -50,6 +50,7 @@ export class MockUIContainerComponent implements MockedClass<UIContainerComponen
     }
     @Input() public secondaryTitle = "";
     @Input() public enablePageviewTracking = true;
+    @Input("onCloseButtonClick") public onCloseFn?: () => void;
 
     public state: WindowState = WindowState.Normal;
     public isDev = false;

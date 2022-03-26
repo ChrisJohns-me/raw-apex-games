@@ -18,7 +18,7 @@ const API_URL = "https://api.mozambiquehe.re/maprotation";
 const API_KEY = "8J4oHb78a1It2tGVBjg2";
 const API_VER = 2;
 
-const MAX_RETRY_COUNT = 3;
+const MAX_RETRY_COUNT = 5;
 const RETRY_MULTIPLIER = 5000;
 
 /**
@@ -38,13 +38,14 @@ export class MapRotationService extends BaseService {
 
     constructor(private readonly gameProcess: GameProcessService, private readonly http: HttpClient, private readonly match: MatchService) {
         super();
-        this.setupAutoMapRotation();
+        this.setupBackgroundAutoMapRotation();
+        this.setupObserverAutoMapRotation();
     }
 
     public getCurrentMapFromGameMode(gameModeType: MatchGameModeGenericId): Optional<MatchMap> {
         const now = new Date();
-        const currInfo = this.mapRotationInfo(this.mapRotation$.value, "current", gameModeType);
-        const nextInfo = this.mapRotationInfo(this.mapRotation$.value, "next", gameModeType);
+        const currInfo = this.getMapRotationInfo(this.mapRotation$.value, "current", gameModeType);
+        const nextInfo = this.getMapRotationInfo(this.mapRotation$.value, "next", gameModeType);
 
         if (currInfo?.matchMap) {
             if (!currInfo.startDate && !currInfo.endDate && !nextInfo?.startDate && !nextInfo?.endDate) {
@@ -66,7 +67,7 @@ export class MapRotationService extends BaseService {
     }
 
     public getNextMap(gameModeType: MatchGameModeGenericId): Optional<MatchMap> {
-        return this.mapRotationInfo(this.mapRotation$.value, "next", gameModeType)?.matchMap;
+        return this.getMapRotationInfo(this.mapRotation$.value, "next", gameModeType)?.matchMap;
     }
 
     /**
@@ -75,7 +76,7 @@ export class MapRotationService extends BaseService {
      */
     public getMapRotation$(breakCache = false): Observable<MapRotationData> {
         const isExpired = new Date() > (this.cacheMapRotationExpire ?? 0);
-        if (this.mapRotation$.value && (breakCache || isExpired)) return of(this.mapRotation$.value);
+        if (this.mapRotation$.value && (breakCache || !isExpired)) return of(this.mapRotation$.value);
 
         return this.http.get(API_URL, { params: { version: API_VER, auth: API_KEY }, responseType: "json" }).pipe(
             map((mapRotationJSON) => new MapRotationMozambiquehereDTO(mapRotationJSON)),
@@ -91,24 +92,40 @@ export class MapRotationService extends BaseService {
 
     /**
      * Auto-retrieves map rotation data based on GameMode.
-     * Only if game process is started.
+     * Only if game process is started and a game mode is set.
      */
-    private setupAutoMapRotation(): void {
+    private setupBackgroundAutoMapRotation(): void {
         const updateMapRotationTime = 5 * 60 * 1000;
         timer(0, updateMapRotationTime)
             .pipe(
-                tap(() => console.debug(`[${this.constructor.name}] setupAutoMapRotation Running Map Rotation check...`)),
                 takeUntil(this.destroy$),
                 switchMap(() => combineLatest([this.gameProcess.isRunning$, this.match.gameMode$])),
-                tap(([isRunning, gameMode]) =>
-                    console.debug(`[${this.constructor.name}] setupAutoMapRotation Game is Running: ${isRunning}; Game Mode: ${gameMode}`)
-                ),
                 filter(([isRunning, gameMode]) => !!isRunning && !!gameMode?.gameModeGenericId),
+                tap(() => console.debug(`[${this.constructor.name}] Game is running; Checking Map Rotation...`)),
                 switchMap(([, gameMode]) => combineLatest([this.getMapRotation$(), of(gameMode!)]))
             )
             .subscribe(([mapRotation, gameMode]) => {
-                console.debug(`[${this.constructor.name}] setupAutoMapRotation Got Map Rotation Data`, mapRotation, gameMode);
-                this.mapRotationInfo(mapRotation, "current", gameMode.gameModeGenericId!);
+                console.debug(`[${this.constructor.name}] Got Map Rotation Data`, mapRotation, gameMode);
+                this.getMapRotationInfo(mapRotation, "current", gameMode.gameModeGenericId!);
+            });
+    }
+
+    /**
+     * Auto-retrieves map rotation `mapRotation$` field has a listener.
+     * Checks if map rotation is expired every x seconds.
+     */
+    private setupObserverAutoMapRotation(): void {
+        const updateMapRotationTime = 30 * 1000;
+        timer(1000, updateMapRotationTime)
+            .pipe(
+                takeUntil(this.destroy$),
+                filter(() => this.mapRotation$.observers.length > 0),
+                tap(() => console.debug(`[${this.constructor.name}] Observer is awaiting mapRotation info; Running Map Rotation check...`)),
+                switchMap(() => this.getMapRotation$())
+            )
+            .subscribe((mapRotationInfo) => {
+                console.debug(`[${this.constructor.name}] Got Map Rotation Data`);
+                this.mapRotation$.next(mapRotationInfo);
             });
     }
 
@@ -127,7 +144,7 @@ export class MapRotationService extends BaseService {
         console.debug(`[${this.constructor.name}] New mapRotationExpire : ${this.cacheMapRotationExpire}`);
     }
 
-    private mapRotationInfo(
+    private getMapRotationInfo(
         mapRotation: Optional<MapRotationData>,
         iteration: "next" | "current",
         gameModeType: MatchGameModeGenericId

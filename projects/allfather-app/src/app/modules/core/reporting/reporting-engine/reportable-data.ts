@@ -2,6 +2,7 @@ import { isObservable, Observable, Subscription, Timestamp } from "rxjs";
 import { AssistsDataFactory } from "./reportable-data/assists";
 import { DamageDataFactory } from "./reportable-data/damage";
 import { DamageEventsHistoryDataFactory } from "./reportable-data/damage-events-history";
+import { DeathsDataFactory } from "./reportable-data/deaths";
 import { EliminationsDataFactory } from "./reportable-data/eliminations";
 import { GameModeDataFactory } from "./reportable-data/game-mode";
 import { KillfeedHistoryDataFactory } from "./reportable-data/killfeed-history";
@@ -26,6 +27,7 @@ export interface ReportableDataFactoryMap {
     damage: ReturnType<typeof DamageDataFactory>;
     damageEventsHistory: ReturnType<typeof DamageEventsHistoryDataFactory>;
     eliminations: ReturnType<typeof EliminationsDataFactory>;
+    deaths: ReturnType<typeof DeathsDataFactory>;
     gameMode: ReturnType<typeof GameModeDataFactory>;
     killfeedHistory: ReturnType<typeof KillfeedHistoryDataFactory>;
     knockdowns: ReturnType<typeof KnockdownsDataFactory>;

@@ -105,6 +105,7 @@ export interface FeatureConfigs {
             placementWeight: number;
             damageWeight: number;
             eliminationWeight: number;
+            deathWeight: number;
             assistWeight: number;
             knockdownWeight: number;
             durationWeight: number;
