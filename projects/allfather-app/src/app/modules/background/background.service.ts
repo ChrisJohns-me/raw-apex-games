@@ -46,7 +46,7 @@ export class BackgroundService implements OnDestroy {
             map((winName) => new UIWindow(winName)),
             mergeMap((uiWindow) => uiWindow.close()),
             catchError((err) => {
-                console.error(`[BackgroundService] Closing All windows error:`, err);
+                console.warn(`[BackgroundService] Closing All windows warning:`, err);
                 return of(undefined);
             })
         );

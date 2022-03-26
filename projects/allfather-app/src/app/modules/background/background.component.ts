@@ -6,6 +6,7 @@ import { takeUntil } from "rxjs/operators";
 import { MainWindowService } from "../main/windows/main-window.service";
 import { BackgroundService } from "./background.service";
 import { CaptureControllerService } from "./capture-controller.service";
+import { HotkeyService } from "./hotkey.service";
 import { HUDWindowControllerService } from "./hud-window-controller.service";
 import { SystemTrayService } from "./system-tray.service";
 
@@ -19,6 +20,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
 
     constructor(
         private readonly captureController: CaptureControllerService,
+        private readonly hotkeyService: HotkeyService,
         private readonly hudWindowController: HUDWindowControllerService,
         private readonly mainWindow: MainWindowService,
         private readonly systemTray: SystemTrayService,

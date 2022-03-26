@@ -1,5 +1,7 @@
 import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
+import { HotkeyService } from "@allfather-app/app/modules/background/hotkey.service";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
+import { Hotkey } from "@allfather-app/app/modules/core/hotkey";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
 import { SettingsDataStore } from "@allfather-app/app/modules/core/local-database/settings-data-store";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
@@ -10,7 +12,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { mdiAttachment } from "@mdi/js";
 import { FileService } from "@shared-app/services/file.service";
-import { OverwolfProfileService } from "@shared-app/services/overwolf/overwolf-profile.service";
 import format from "date-fns/format";
 import "dexie-export-import";
 import { importInto, ImportOptions } from "dexie-export-import";
@@ -46,7 +47,10 @@ enum AimingReticlePreview {
 })
 export class SettingsPageComponent implements OnInit, OnDestroy {
     public config?: Configuration;
+    public hotkeys?: Hotkey[] = [];
+    public editingHotkey: Hotkey | undefined;
     //#region Forms
+    public hotKeyFormGroup = this.formBuilder.group({});
     public settingsForm = this.formBuilder.group({
         [SettingKey.EnableAllInGameHUD]: false,
         inGameHUDFormGroup: this.formBuilder.group({
@@ -116,14 +120,15 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         private readonly configuration: ConfigurationService,
         private readonly fileService: FileService,
         private readonly formBuilder: FormBuilder,
+        private readonly hotkeyService: HotkeyService,
         private readonly localDatabase: LocalDatabaseService,
-        private readonly overwolfProfile: OverwolfProfileService,
         private readonly settingsService: SettingsService
     ) {
         this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => (this.config = config));
     }
 
     public ngOnInit(): void {
+        this.setupHotKeyForm();
         this.setupInGameHUDForm();
         this.setupLegendSelectHUDForm();
         this.setupSettingsListener();
@@ -173,6 +178,10 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
                 console.debug(`>>> Finished Import.`);
                 this.isImportingLocalDatabase = false;
             });
+    }
+
+    public onHotkeyChange(hotkey: Hotkey): void {
+        this.hotkeyService.assignHotKey(hotkey).subscribe(() => this.refreshHotkeys());
     }
 
     private setupSettingsListener(): void {
@@ -226,6 +235,19 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             this.cdr.detectChanges();
         }, 10);
     }
+
+    //#region HotKeys
+    private setupHotKeyForm(): void {
+        this.refreshHotkeys();
+    }
+
+    private refreshHotkeys(): void {
+        this.hotkeyService.getGameHotkeys().subscribe((hotkeys) => {
+            this.hotkeys = hotkeys;
+            this.cdr.detectChanges();
+        });
+    }
+    //#endregion
 
     //#region In Game HUD
     private setupInGameHUDForm(): void {

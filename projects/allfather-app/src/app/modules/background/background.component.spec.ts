@@ -3,10 +3,12 @@ import { MockMainWindowService } from "@allfather-app/app/modules/core/mocks/moc
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Title } from "@angular/platform-browser";
 import { MockCaptureControllerService } from "@shared-app/mocks/services/mock-capture-controller.service";
+import { MockHotkeyService } from "../core/mocks/mock-hotkey.service";
 import { MainWindowService } from "../main/windows/main-window.service";
 import { BackgroundComponent } from "./background.component";
 import { BackgroundService } from "./background.service";
 import { CaptureControllerService } from "./capture-controller.service";
+import { HotkeyService } from "./hotkey.service";
 import { HUDWindowControllerService } from "./hud-window-controller.service";
 import { SystemTrayService } from "./system-tray.service";
 
@@ -29,6 +31,7 @@ describe("BackgroundComponent", () => {
             declarations: [BackgroundComponent],
             providers: [
                 { provide: CaptureControllerService, useClass: MockCaptureControllerService },
+                { provide: HotkeyService, useClass: MockHotkeyService },
                 { provide: HUDWindowControllerService, useClass: MockHUDWindowControllerService },
                 { provide: MainWindowService, useClass: MockMainWindowService },
                 { provide: SystemTrayService, useClass: MockSystemTrayService },

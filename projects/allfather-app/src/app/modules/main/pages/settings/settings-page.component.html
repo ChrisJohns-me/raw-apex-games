@@ -1,6 +1,25 @@
 <div class="container-xl">
     <div class="row">
         <div class="col-6 col-xl-5" appFullHeight>
+            <!-- #region Hotkeys -->
+            <table class="table table-dark table-striped table-hover mt-4">
+                <thead>
+                    <tr>
+                        <td class="align-middle" colspan="2"><h5 class="m-2">Hotkeys</h5></td>
+                    </tr>
+                </thead>
+                <tbody [formGroup]="hotKeyFormGroup">
+                    <tr *ngFor="let hotkey of hotkeys">
+                        <td class="ps-4 ps-lg-5">{{ hotkey.friendlyName }}</td>
+                        <td class="text-end px-5">
+                            <app-hotkey-editor [hotkey]="hotkey" (hotkeyChange)="onHotkeyChange($event)"></app-hotkey-editor>
+                        </td>
+                    </tr>
+                    <!-- #endregion -->
+                </tbody>
+            </table>
+            <!-- #endregion -->
+
             <!-- #region In-Game HUD -->
             <table class="table table-dark table-striped table-hover mt-4">
                 <thead>

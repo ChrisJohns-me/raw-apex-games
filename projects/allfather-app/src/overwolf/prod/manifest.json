@@ -217,10 +217,10 @@
             }
         ],
         "hotkeys": {
-            "showhide": {
+            "toggle_main": {
                 "title": "Show/Hide In-Game Window",
                 "action-type": "toggle",
-                "default": "Ctrl+F"
+                "default": "Alt+F"
             }
         },
         "protocol_override_domains": {
