@@ -153,6 +153,32 @@ export const MatchMapList: MatchMap[] = [
             },
         },
     }),
+    new MatchMap({
+        mapName: MatchMapFriendlyName.StormPoint,
+        mapGenericId: MatchMapGenericId.StormPoint,
+        mapId: "mp_rr_stormpoint",
+        isBattleRoyaleMap: true,
+        isArenasMap: false,
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
+        activeDates: [
+            {
+                from: new Date("Nov 02, 2021"),
+            },
+        ],
+        zStartPos: 0,
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -600,
+                xEnd: 600,
+                yStart: -600,
+                yEnd: 600,
+            },
+        },
+    }),
     //#endregion
     //#region Arena Maps
     new MatchMap({

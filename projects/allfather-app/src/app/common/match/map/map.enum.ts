@@ -3,6 +3,7 @@ export enum MatchMapFriendlyName {
     // Battle Royale Maps
     KingsCanyon = "Kings Canyon",
     Olympus = "Olympus",
+    StormPoint = "Storm Point",
     WorldsEdge = "World's Edge",
     // Arena Maps
     Artillery = "Artillery",
@@ -20,6 +21,7 @@ export enum MatchMapGenericId {
     // Battle Royale Maps
     KingsCanyon = "kingscanyon",
     Olympus = "olympus",
+    StormPoint = "stormpoint",
     WorldsEdge = "worldsedge",
     // Arena Maps
     Artillery = "artillery",

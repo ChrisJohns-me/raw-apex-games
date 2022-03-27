@@ -3,8 +3,8 @@
     "manifest_version": 1,
     "type": "WebApp",
     "meta": {
-        "name": "Sample App",
-        "author": "Overwolf",
+        "name": "Allfather [DEV]",
+        "author": "Chris Johns",
         "version": "0.0.3",
         "minimum-overwolf-version": "0.165.0",
         "minimum-gep-version": "0.165.0",

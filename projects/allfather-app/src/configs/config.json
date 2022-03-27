@@ -67,39 +67,47 @@
             },
             "legendRows": [
                 {
-                    "top": 26.11,
-                    "right": 11.11,
+                    "top": 26.15,
+                    "right": 16.55,
                     "legendIds": [
                         "#character_bloodhound_NAME",
                         "#character_gibraltar_NAME",
                         "#character_lifeline_NAME",
                         "#character_pathfinder_NAME",
-                        "#character_wraith_NAME",
-                        "#character_bangalore_NAME"
+                        "#character_wraith_NAME"
                     ]
                 },
                 {
-                    "top": 37.84,
-                    "right": 14.93,
+                    "top": 37.75,
+                    "right": 20.3,
                     "legendIds": [
+                        "#character_bangalore_NAME",
                         "#character_caustic_NAME",
                         "#character_mirage_NAME",
                         "#character_octane_NAME",
-                        "#character_wattson_NAME",
-                        "#character_crypto_NAME",
-                        "#character_revenant_NAME"
+                        "#character_wattson_NAME"
                     ]
                 },
                 {
-                    "top": 49.44,
-                    "right": 18.54,
+                    "top": 49.37,
+                    "right": 24,
                     "legendIds": [
+                        "#character_crypto_NAME",
+                        "#character_revenant_NAME",
                         "#character_loba_NAME",
                         "#character_rampart_NAME",
-                        "#character_horizon_NAME",
+                        "#character_horizon_NAME"
+                    ]
+                },
+                {
+                    "top": 61,
+                    "right": 27.7,
+                    "legendIds": [
                         "#character_fuse_NAME",
                         "#character_valkyrie_NAME",
-                        "#character_seer_NAME"
+                        "#character_seer_NAME",
+                        "#character_ash_NAME",
+                        "#character_madmaggie_NAME"
                     ]
                 }
             ]
