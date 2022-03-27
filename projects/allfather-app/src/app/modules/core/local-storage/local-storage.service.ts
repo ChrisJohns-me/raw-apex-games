@@ -1,7 +1,7 @@
+import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
+import { WINDOW } from "@allfather-app/app/common/services/window.service";
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Inject, Injectable } from "@angular/core";
-import { BaseService } from "@shared-app/services/base-service.abstract";
-import { WINDOW } from "@shared-app/services/window.service";
-import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { LocalStorageKeys } from "./local-storage-keys";
 
 /**

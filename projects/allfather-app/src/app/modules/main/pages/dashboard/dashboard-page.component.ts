@@ -1,12 +1,12 @@
+import { Legend } from "@allfather-app/app/common/legend/legend";
+import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
+import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
 import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-local-stats.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { AvgMatchStats } from "@allfather-app/app/modules/core/utilities/match-stats";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
-import { Legend } from "@shared-app/legend/legend";
-import { MatchGameModeGenericId } from "@shared-app/match/game-mode/game-mode.enum";
-import { GoogleAnalyticsService } from "@shared-app/services/google-analytics.service";
 import { combineLatest, Observable, Subject, Subscription } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 

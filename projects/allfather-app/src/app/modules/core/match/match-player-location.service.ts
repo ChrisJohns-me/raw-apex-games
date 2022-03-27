@@ -1,10 +1,10 @@
+import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
+import { MatchMapCoordinates } from "@allfather-app/app/common/match/map/map-coordinates";
+import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
+import { OverwolfGameDataService, OWInfoUpdates2Event } from "@allfather-app/app/common/services/overwolf";
+import { TriggerConditions } from "@allfather-app/app/common/utilities/trigger-conditions";
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
-import { MatchLocationPhase } from "@shared-app/match/location";
-import { MatchMapCoordinates } from "@shared-app/match/map/map-coordinates";
-import { BaseService } from "@shared-app/services/base-service.abstract";
-import { OverwolfGameDataService, OWInfoUpdates2Event } from "@shared-app/services/overwolf";
-import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
-import { TriggerConditions } from "@shared-app/utilities/trigger-conditions";
 import { cleanInt } from "common/utilities/";
 import { BehaviorSubject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";

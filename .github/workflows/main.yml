@@ -13,14 +13,14 @@ jobs:
             - name: Setup
               run: npm ci --verbose
 
-            - name: Test Shared
+            - name: Test Common
               run: |
-                  npm run shared:test -- --watch=false --browsers=ChromeHeadless --single-run
+                  npm run common:test -- --watch=false --browsers=ChromeHeadless --single-run
 
             - name: Test App
               run: |
-                  npm run app:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+                  npm run afapp:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
 
             - name: Test Web
               run: |
-                  npm run web:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+                  npm run afweb:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI

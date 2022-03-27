@@ -1,3 +1,4 @@
+import { FileService } from "@allfather-app/app/common/services/file.service";
 import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
 import { HotkeyService } from "@allfather-app/app/modules/background/hotkey.service";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
@@ -11,7 +12,6 @@ import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { mdiAttachment } from "@mdi/js";
-import { FileService } from "@shared-app/services/file.service";
 import format from "date-fns/format";
 import "dexie-export-import";
 import { importInto, ImportOptions } from "dexie-export-import";

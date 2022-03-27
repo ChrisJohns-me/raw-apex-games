@@ -1,4 +1,4 @@
-import { MatchLocationPhase } from "@shared-app/match/location";
+import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { isEmpty } from "common/utilities/";
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { delay, mapTo, mergeMap, retryWhen, takeUntil } from "rxjs/operators";

@@ -1,9 +1,9 @@
-import { MockBackgroundService } from "@allfather-app/app/modules/core/mocks/mock-background.service";
-import { MockMainWindowService } from "@allfather-app/app/modules/core/mocks/mock-main-window.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Title } from "@angular/platform-browser";
-import { MockCaptureControllerService } from "@shared-app/mocks/services/mock-capture-controller.service";
-import { MockHotkeyService } from "../core/mocks/mock-hotkey.service";
+import { MockBackgroundService } from "../core/mocks/services/mock-background.service";
+import { MockCaptureControllerService } from "../core/mocks/services/mock-capture-controller.service";
+import { MockHotkeyService } from "../core/mocks/services/mock-hotkey.service";
+import { MockMainWindowService } from "../core/mocks/services/mock-main-window.service";
 import { MainWindowService } from "../main/windows/main-window.service";
 import { BackgroundComponent } from "./background.component";
 import { BackgroundService } from "./background.service";

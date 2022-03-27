@@ -1,6 +1,6 @@
+import { MatchGameMode } from "@allfather-app/app/common/match/game-mode/game-mode";
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
-import { MatchGameMode } from "@shared-app/match/game-mode/game-mode";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 

@@ -1,27 +1,26 @@
+import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
+import { MatchState } from "@allfather-app/app/common/match/state";
+import { PlayerState } from "@allfather-app/app/common/player-state";
+import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/mock-configuration.service";
-import { MockMatchPlayerLegendService } from "@allfather-app/app/modules/core/mocks/mock-match-player-legend.service";
-import { MockMatchPlayerLocationService } from "@allfather-app/app/modules/core/mocks/mock-match-player-location.service";
-import { MockMatchPlayerService } from "@allfather-app/app/modules/core/mocks/mock-match-player.service";
-import { MockMatchService } from "@allfather-app/app/modules/core/mocks/mock-match.service";
+import { MockUIContainerComponent } from "@allfather-app/app/modules/core/mocks/components/mock-ui-container.component";
+import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/services/mock-configuration.service";
+import { MockMatchPlayerLegendService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-legend.service";
+import { MockMatchPlayerLocationService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-location.service";
+import { MockMatchPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player.service";
+import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from "@angular/core/testing";
-import { MatchLocationPhase } from "@shared-app/match/location";
-import { MatchState } from "@shared-app/match/state";
-import { MockUIContainerComponent } from "@shared-app/mocks/components/mock-ui-container.component";
-import { PlayerState } from "@shared-app/player-state";
-import { supressConsoleLog } from "@shared-app/testing-helpers";
 import { CustomFormatDistanceToNowPipe } from "@shared/pipes/custom-format-distance-to-now.pipe";
 import { differenceInMilliseconds } from "date-fns";
 import { of } from "rxjs";
 import { filter, mapTo, take, tap } from "rxjs/operators";
 import { TestScheduler } from "rxjs/testing";
 import seedrandom from "seedrandom";
-// import * as seedrandom from "seedrandom";
 import { UltTimerWindowComponent } from "./ult-timer-window.component";
 
 const percentsArr = [...Array(21).keys()].map((n) => n * 0.05); // 0 to 1 in 0.05 increments

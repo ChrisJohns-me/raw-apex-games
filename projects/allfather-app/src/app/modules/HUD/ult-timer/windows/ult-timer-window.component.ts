@@ -1,3 +1,6 @@
+import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
+import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
+import { PlayerState } from "@allfather-app/app/common/player-state";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
@@ -5,9 +8,6 @@ import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { formatPercent } from "@angular/common";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { MatchLocationPhase } from "@shared-app/match/location";
-import { MatchState, MatchStateChangedEvent } from "@shared-app/match/state";
-import { PlayerState } from "@shared-app/player-state";
 import { mathAverage, mathAverageRate, mathAverageVariance, mathClamp } from "common/utilities/";
 import { addMilliseconds, differenceInSeconds, format, formatDistanceToNowStrict, isFuture, isValid } from "date-fns";
 import { combineLatest, Observable, Subject, timer } from "rxjs";

@@ -1,6 +1,6 @@
+import { Rank } from "@allfather-app/app/common/rank/rank";
+import { RankNext } from "@allfather-app/app/common/rank/rank-next";
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
-import { Rank } from "@shared-app/rank/rank";
-import { RankNext } from "@shared-app/rank/rank-next";
 
 @Component({
     selector: "app-rank-icon",

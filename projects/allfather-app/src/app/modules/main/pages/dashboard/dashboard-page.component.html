@@ -23,7 +23,11 @@
                     <div class="card">
                         <div class="card-header">
                             <h6 class="card-title">
-                                BATTLE ROYALE STATS ({{ ((focusedLegendId ? legendBattleRoyaleStats?.numMatches : myBattleRoyaleStats?.numMatches) ?? 0) | number:'1.0':'en-US' }}
+                                <!-- BATTLE ROYALE STATS -->
+                                STATS ({{
+                                    (focusedLegendId ? legendBattleRoyaleStats?.numMatches : myBattleRoyaleStats?.numMatches) ?? 0
+                                        | number: "1.0":"en-US"
+                                }}
                                 {{
                                     (focusedLegendId ? legendBattleRoyaleStats?.numMatches : myBattleRoyaleStats?.numMatches) == 1
                                         ? "match"
@@ -41,19 +45,32 @@
                                 </div>
                                 <div class="col-3 stat-group">
                                     <h1 class="stat-digit">
-                                        {{ ((stats?.avgEliminations ?? 0) >= 0 && (stats?.avgEliminations ?? 0) <= 100 ? stats.avgEliminations : 0) | number: "1.2-2" }}
+                                        {{
+                                            ((stats?.avgEliminations ?? 0) >= 0 && (stats?.avgEliminations ?? 0) <= 100
+                                                ? stats.avgEliminations
+                                                : 0
+                                            ) | number: "1.2-2"
+                                        }}
                                     </h1>
                                     <h5 class="stat-title">Kill Rate</h5>
                                 </div>
                                 <div class="col-3 stat-group">
                                     <h1 class="stat-digit">
-                                        {{ ((stats?.avgKnockdowns ?? 0) >= 0 && (stats?.avgKnockdowns ?? 0) <= 100 ? stats.avgKnockdowns : 0) | number: "1.2-2" }}
+                                        {{
+                                            ((stats?.avgKnockdowns ?? 0) >= 0 && (stats?.avgKnockdowns ?? 0) <= 100
+                                                ? stats.avgKnockdowns
+                                                : 0
+                                            ) | number: "1.2-2"
+                                        }}
                                     </h1>
                                     <h5 class="stat-title">Knockdown Rate</h5>
                                 </div>
                                 <div class="col-3 stat-group">
                                     <h1 class="stat-digit">
-                                        {{ ((stats?.avgDamage ?? 0) >= 0 && (stats?.avgDamage ?? 0) <= 50000 ? stats.avgDamage : 0) | number: "1.0-0" }}
+                                        {{
+                                            ((stats?.avgDamage ?? 0) >= 0 && (stats?.avgDamage ?? 0) <= 50000 ? stats.avgDamage : 0)
+                                                | number: "1.0-0"
+                                        }}
                                     </h1>
                                     <h5 class="stat-title">Avg Damage</h5>
                                 </div>
@@ -65,7 +82,7 @@
             <!-- #endregion -->
 
             <!-- #region Your Arenas Stats / Legend Stats -->
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col">
                     <div class="card">
                         <div class="card-header">
@@ -108,7 +125,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <!-- #endregion -->
 
             <!-- #region Suggestions -->

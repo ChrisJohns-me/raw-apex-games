@@ -1,6 +1,6 @@
 import { MapRotationService } from "@allfather-app/app/modules/core/map-rotation/map-rotation.service";
+import { MockMapRotationService } from "@allfather-app/app/modules/core/mocks/services/mock-map-rotation.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MockMapRotationService } from "@shared-app/mocks/services/mock-map-rotation.service";
 import { MapRotationDisplayComponent } from "./map-rotation-display.component";
 
 describe("MapRotationDisplayComponent", () => {

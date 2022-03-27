@@ -1,7 +1,7 @@
+import { OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/common/services/overwolf";
+import { ExposedOverwolfGameDataService } from "@allfather-app/app/common/services/overwolf-exposed-data.service";
+import { OverwolfExtensionsService } from "@allfather-app/app/common/services/overwolf/overwolf-extensions.service";
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
-import { OWGameEvent, OWInfoUpdates2Event } from "@shared-app/services/overwolf";
-import { ExposedOverwolfGameDataService } from "@shared-app/services/overwolf-exposed-data.service";
-import { OverwolfExtensionsService } from "@shared-app/services/overwolf/overwolf-extensions.service";
 import { Subject } from "rxjs";
 
 type MainTab = "simulate" | "logs";

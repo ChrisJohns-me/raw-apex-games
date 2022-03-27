@@ -1,3 +1,5 @@
+import { MatchGameMode } from "@allfather-app/app/common/match/game-mode/game-mode";
+import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
@@ -7,8 +9,6 @@ import { MatchService } from "@allfather-app/app/modules/core/match/match.servic
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { MatchGameMode } from "@shared-app/match/game-mode/game-mode";
-import { MatchGameModeList } from "@shared-app/match/game-mode/game-mode-list";
 import { merge, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 

@@ -1,9 +1,9 @@
+import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { MockMatchService } from "@allfather-app/app/modules/core/mocks/mock-match.service";
+import { MockUIContainerComponent } from "@allfather-app/app/modules/core/mocks/components/mock-ui-container.component";
+import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from "@angular/core/testing";
-import { MatchState, MatchStateChangedEvent } from "@shared-app/match/state";
-import { MockUIContainerComponent } from "@shared-app/mocks/components/mock-ui-container.component";
 import { addMilliseconds } from "date-fns";
 import { TestScheduler } from "rxjs/testing";
 import { MatchTimerWindowComponent } from "./match-timer-window.component";

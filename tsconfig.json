@@ -35,9 +35,6 @@
       ],
       "@shared/*": [
         "projects/shared/*"
-      ],
-      "@shared-app/*": [
-        "projects/shared-app/*"
       ]
     }
   },

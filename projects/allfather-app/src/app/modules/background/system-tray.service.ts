@@ -1,11 +1,11 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
+import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
+import { OWSystemTrayMenuItem } from "@allfather-app/app/common/services/overwolf";
+import { OverwolfExtensionsService } from "@allfather-app/app/common/services/overwolf/overwolf-extensions.service";
+import { OverwolfSystemTrayService } from "@allfather-app/app/common/services/overwolf/overwolf-system-tray.service";
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { environment } from "@allfather-app/environments/environment";
 import { Injectable } from "@angular/core";
-import { BaseService } from "@shared-app/services/base-service.abstract";
-import { OWSystemTrayMenuItem } from "@shared-app/services/overwolf";
-import { OverwolfExtensionsService } from "@shared-app/services/overwolf/overwolf-extensions.service";
-import { OverwolfSystemTrayService } from "@shared-app/services/overwolf/overwolf-system-tray.service";
-import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { exhaustiveEnumSwitch } from "common/utilities/switch";
 import { of } from "rxjs";
 import { catchError, takeUntil } from "rxjs/operators";

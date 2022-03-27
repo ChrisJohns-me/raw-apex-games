@@ -1,3 +1,11 @@
+import { Legend } from "@allfather-app/app/common/legend/legend";
+import { LegendList, sortLegendList } from "@allfather-app/app/common/legend/legend-list";
+import { MatchGameMode } from "@allfather-app/app/common/match/game-mode/game-mode";
+import { MatchGameModeList, sortMatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
+import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
+import { latestGenericMap, MatchMapList, sortMatchMapList } from "@allfather-app/app/common/match/map/map-list";
+import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
+import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { ReportingEngineId, ReportingStatus } from "@allfather-app/app/modules/core/reporting/reporting-engine/reporting-engine";
@@ -16,14 +24,6 @@ import {
 } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { mdiFilterVariantRemove } from "@mdi/js";
-import { Legend } from "@shared-app/legend/legend";
-import { LegendList, sortLegendList } from "@shared-app/legend/legend-list";
-import { MatchGameMode } from "@shared-app/match/game-mode/game-mode";
-import { MatchGameModeList, sortMatchGameModeList } from "@shared-app/match/game-mode/game-mode-list";
-import { MatchGameModeGenericId } from "@shared-app/match/game-mode/game-mode.enum";
-import { latestGenericMap, MatchMapList, sortMatchMapList } from "@shared-app/match/map/map-list";
-import { MatchMap } from "@shared-app/match/map/match-map";
-import { GoogleAnalyticsService } from "@shared-app/services/google-analytics.service";
 import { cleanInt, isEmpty } from "common/utilities/";
 import { unique } from "common/utilities/primitives/array";
 import { intervalToDuration } from "date-fns";

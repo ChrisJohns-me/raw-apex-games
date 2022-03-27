@@ -1,6 +1,6 @@
+import { Legend } from "@allfather-app/app/common/legend/legend";
+import { generateLegendBGLinearColor } from "@allfather-app/app/common/legend/legend-list";
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from "@angular/core";
-import { Legend } from "@shared-app/legend/legend";
-import { generateLegendBGLinearColor } from "@shared-app/legend/legend-list";
 
 type LegendIdsRow = string[];
 

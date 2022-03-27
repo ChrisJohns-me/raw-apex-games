@@ -1,8 +1,8 @@
 <div class="row">
-    <div class="col px-1" *ngIf="mapRotationData?.arenasPubs">
+    <!-- <div class="col px-1" *ngIf="mapRotationData?.arenasPubs">
         <h4 class="group-title">Arenas</h4>
         <ng-container *ngTemplateOutlet="gameModeMaps; context: { $implicit: mapRotationData!.arenasPubs! }"></ng-container>
-    </div>
+    </div> -->
     <div class="col px-1" *ngIf="mapRotationData?.battleRoyalePubs">
         <h4 class="group-title">Trios / Duos</h4>
         <ng-container *ngTemplateOutlet="gameModeMaps; context: { $implicit: mapRotationData!.battleRoyalePubs! }"></ng-container>
@@ -73,7 +73,7 @@
                 }}
             </h3>
         </div>
-        <div class="map-name-row text-shadow-sm" *ngIf="!isLoading">{{ mapInfo?.friendlyName ?? '' }}</div>
+        <div class="map-name-row text-shadow-sm" *ngIf="!isLoading">{{ mapInfo?.friendlyName ?? "" }}</div>
         <div class="map-name-row text-shadow-sm" *ngIf="isLoading">Loading...</div>
     </div>
 </ng-template>

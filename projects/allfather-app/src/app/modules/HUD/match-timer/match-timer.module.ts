@@ -1,11 +1,11 @@
 import { AllfatherSharedModule } from "@allfather-app/app/shared/allfather-shared.module";
 import { NgModule } from "@angular/core";
-import { SharedAppModule } from "@shared-app/shared-app.module";
+import { SharedModule } from "@shared/shared.module";
 import { MatchTimerWindowComponent } from "./windows/match-timer-window.component";
 
 @NgModule({
     declarations: [MatchTimerWindowComponent],
-    imports: [SharedAppModule, AllfatherSharedModule],
+    imports: [AllfatherSharedModule, SharedModule],
     exports: [MatchTimerWindowComponent],
 })
 export class MatchTimerWindowModule {}

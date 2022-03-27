@@ -1,45 +1,53 @@
 <h3 class="text-center my-4" *ngIf="!myAccountStats">No Account stats loaded</h3>
-<div class="py-3 px-4" *ngIf="myAccountStats?.rank">
-    <div class="text-center" [ngClass]="'rank-' + cleanCSSClassName(myAccountStats?.rank?.tierName) + '-color'">
+<div class="py-3 px-4" *ngIf="myAccountStats?.rank; let rank">
+    <div class="text-center" [ngClass]="'rank-' + cleanCSSClassName(rank?.tierName) + '-color'">
         <h4 class="m-0">Your current rank is:</h4>
         <h2 class="m-0 rank-title">
-            <span>{{ (myAccountStats?.rank?.tierName | uppercase) ?? "Loading" }}</span>
-            <span class="roman-numeral"> {{ myAccountStats?.rank?.tierDivision }}</span>
+            <span>{{ (rank?.tierName | uppercase) ?? "Loading" }}</span>
+            <span class="roman-numeral"> {{ rank?.tierDivision }}</span>
         </h2>
-        <h3 class="m-0 rank-score" *ngIf="myAccountStats?.rank?.score">{{ myAccountStats!.rank!.score }} RP</h3>
+        <h3 class="m-0 rank-score" *ngIf="rank?.score">{{ myAccountStats!.rank!.score | number }} RP</h3>
     </div>
 
     <div *ngIf="!myAccountStats?.nextRank">
         <!-- Next Rank could not be loaded -->
-        <app-rank-icon class="rank-icon current" [rank]="myAccountStats?.rank"></app-rank-icon>
+        <app-rank-icon class="rank-icon current" [rank]="rank"></app-rank-icon>
     </div>
 
-    <div class="rank-progress-container" *ngIf="myAccountStats?.nextRank">
+    <div class="rank-progress-container" *ngIf="myAccountStats?.nextRank; let nextRank">
         <div>
-            <app-rank-icon class="rank-icon current" [rank]="myAccountStats?.rank"></app-rank-icon>
-            <h3 class="tier-progress-score current" [ngClass]="'rank-' + cleanCSSClassName(myAccountStats?.rank?.tierName) + '-color'">
-                {{ myAccountStats?.rank?.tierDivisionMinScore }} RP
+            <app-rank-icon class="rank-icon current" [rank]="rank"></app-rank-icon>
+            <h3
+                class="tier-progress-score current"
+                *ngIf="rank?.tierDivisionMinScore && nextRank?.tierDivisionMinScore !== Infinity"
+                [ngClass]="'rank-' + cleanCSSClassName(rank?.tierName) + '-color'"
+            >
+                {{ rank?.tierDivisionMinScore | number }} RP
             </h3>
         </div>
-        <div class="tier-progress-bar" [ngClass]="'rank-' + cleanCSSClassName(myAccountStats?.rank?.tierName) + '-bgcolor'">
+        <div class="tier-progress-bar" [ngClass]="'rank-' + cleanCSSClassName(rank?.tierName) + '-bgcolor'">
             <span
                 class="tier-progress"
-                *ngIf="myAccountStats?.nextRank?.tierDivisionProgressPercent; let progressPercent"
+                *ngIf="nextRank?.tierDivisionProgressPercent; let progressPercent"
                 [style.width.%]="progressPercent * 100"
-                [ngClass]="'rank-' + cleanCSSClassName(myAccountStats?.rank?.tierName) + '-bgcolor'"
+                [ngClass]="'rank-' + cleanCSSClassName(rank?.tierName) + '-bgcolor'"
             ></span>
         </div>
         <div>
-            <app-rank-icon class="rank-icon next" [rank]="myAccountStats?.nextRank"></app-rank-icon>
-            <h3 class="tier-progress-score next" [ngClass]="'rank-' + cleanCSSClassName(myAccountStats?.nextRank?.tierName) + '-color'">
-                {{ myAccountStats?.nextRank?.tierDivisionMinScore }} RP
+            <app-rank-icon class="rank-icon next" [rank]="nextRank"></app-rank-icon>
+            <h3
+                class="tier-progress-score next"
+                *ngIf="nextRank?.tierDivisionMinScore && nextRank!.tierDivisionMinScore > 0 && nextRank!.tierDivisionMinScore < Infinity"
+                [ngClass]="'rank-' + cleanCSSClassName(nextRank?.tierName) + '-color'"
+            >
+                {{ nextRank?.tierDivisionMinScore | number }} RP
             </h3>
         </div>
     </div>
 
-    <div class="text-center" *ngIf="myAccountStats?.nextRank">
+    <div class="score-distance-container" *ngIf="myAccountStats?.nextRank?.tierDivisionDistance ?? 0 > 0">
         <h5 class="m-0">You need</h5>
-        <h3 class="m-0 rank-score">+{{ myAccountStats?.nextRank?.tierDivisionDistance }} RP</h3>
+        <h3 class="m-0 rank-score">+{{ myAccountStats?.nextRank?.tierDivisionDistance | number }} RP</h3>
     </div>
 
     <!-- BattlePass: {{ myAccountStats.battlePass?.level }} -->

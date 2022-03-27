@@ -1,5 +1,5 @@
+import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { supressConsoleLog } from "@shared-app/testing-helpers";
 import { BootstrapCSSInjectorComponent } from "./bootstrap-css-injector.component";
 
 describe("BootstrapCSSInjectorComponent", () => {

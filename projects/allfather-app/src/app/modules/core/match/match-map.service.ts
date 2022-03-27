@@ -1,9 +1,9 @@
+import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
+import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
+import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
 import { MapRotationService } from "@allfather-app/app/modules/core/map-rotation/map-rotation.service";
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
-import { MatchMapList } from "@shared-app/match/map/map-list";
-import { MatchMap } from "@shared-app/match/map/match-map";
-import { BaseService } from "@shared-app/services/base-service.abstract";
-import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { isEmpty } from "common/utilities/";
 import { BehaviorSubject, Observable, of } from "rxjs";
 import { filter, map, mergeMap, switchMap, takeUntil } from "rxjs/operators";

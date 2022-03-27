@@ -1,10 +1,10 @@
+import { PlayerAccountStats } from "@allfather-app/app/common/player-account-stats";
+import { GameProcessService } from "@allfather-app/app/common/services/game-process.service";
+import { MozambiqueherePlatform } from "@allfather-app/app/common/services/player-account-stats/player-account-stats-mozambiquehere-dto";
+import { PlayerAccountStatsService } from "@allfather-app/app/common/services/player-account-stats/player-account-stats.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { PlayerAccountStats } from "@shared-app/player-account-stats";
-import { GameProcessService } from "@shared-app/services/game-process.service";
-import { MozambiqueherePlatform } from "@shared-app/services/player-account-stats/player-account-stats-mozambiquehere-dto";
-import { PlayerAccountStatsService } from "@shared-app/services/player-account-stats/player-account-stats.service";
 import { isEmpty } from "common/utilities/";
 import { Observable, Subject, timer } from "rxjs";
 import { filter, switchMap, take, takeUntil, tap } from "rxjs/operators";
@@ -19,6 +19,7 @@ const STATS_FAST_POLL_DELAY = 15 * 1000;
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountStatsDisplayComponent implements OnInit, OnDestroy {
+    public Infinity = Infinity;
     public myAccountStats?: PlayerAccountStats;
 
     private latestAccountStatsVersion?: number;
@@ -108,6 +109,7 @@ export class AccountStatsDisplayComponent implements OnInit, OnDestroy {
     private handleAccountStatsData(accountStats: PlayerAccountStats): void {
         this.myAccountStats = accountStats;
         this.latestAccountStatsVersion = accountStats.statsVersion;
+
         this.cdr.detectChanges();
     }
 }

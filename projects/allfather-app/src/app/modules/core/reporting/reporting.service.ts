@@ -1,7 +1,7 @@
+import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
+import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
-import { BaseService } from "@shared-app/services/base-service.abstract";
-import { GoogleAnalyticsService } from "@shared-app/services/google-analytics.service";
-import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { isEmpty } from "common/utilities/";
 import { combineLatest, of, Subject } from "rxjs";
 import { catchError, filter, switchMap, takeUntil } from "rxjs/operators";

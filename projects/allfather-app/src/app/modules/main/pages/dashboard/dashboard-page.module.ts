@@ -2,7 +2,7 @@ import { AllfatherSharedModule } from "@allfather-app/app/shared/allfather-share
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import { SharedAppModule } from "@shared-app/shared-app.module";
+import { SharedModule } from "@shared/shared.module";
 import { AccountStatsDisplayComponent } from "./components/account-stats-display.component";
 import { ComplimentaryLegendsComponent } from "./components/complimentary-legends.component";
 import { LegendIconsBoardComponent } from "./components/legend-icons-board.component";
@@ -17,7 +17,7 @@ import { DashboardPageComponent } from "./dashboard-page.component";
         LegendIconsBoardComponent,
         MapRotationDisplayComponent,
     ],
-    imports: [CommonModule, ReactiveFormsModule, SharedAppModule, AllfatherSharedModule],
+    imports: [CommonModule, ReactiveFormsModule, AllfatherSharedModule, SharedModule],
     providers: [],
     exports: [DashboardPageComponent],
 })

@@ -1,6 +1,6 @@
+import { Legend } from "@allfather-app/app/common/legend/legend";
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
-import { Legend } from "@shared-app/legend/legend";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 

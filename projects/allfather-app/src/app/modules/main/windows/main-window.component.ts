@@ -1,4 +1,5 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
+import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -9,7 +10,6 @@ import {
     OnInit,
     ViewChild,
 } from "@angular/core";
-import { GoogleAnalyticsService } from "@shared-app/services/google-analytics.service";
 import { fadeInOutAnimation } from "@shared/animations/fade-in-out.animation";
 import { scaleInOutAnimationFactory } from "@shared/animations/scale-in-out-factory.animation";
 import { Modal } from "bootstrap";

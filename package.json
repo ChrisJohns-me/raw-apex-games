@@ -6,8 +6,8 @@
     },
     "scripts": {
         "preinstall": "npm i -g firebase-tools @angular/cli",
-        "test": "npm run app:test -- --no-watch && npm run web:test -- --no-watch && npm run shared:test -- --single-run",
-        "shared:test": "karma start ./shared/karma.conf.js",
+        "test": "npm run afapp:test -- --no-watch && npm run afweb:test -- --no-watch && npm run common:test -- --single-run",
+        "common:test": "karma start ./common/karma.conf.js",
         "afapp:test": "ng test --project=allfatherApp",
         "afapp:e2e": "ng e2e --project=allfatherApp",
         "afapp:serve-debug": "ng build --project=allfatherApp --watch --plugin ~./projects/allfather-app/webpack.partial.dev.js --optimization false",
@@ -16,10 +16,10 @@
         "affunc:serve-dev": "cd projects/allfather-func/functions && npm run serve",
         "affunc:deploy-dev": "",
         "affunc:deploy-prod": "",
-        "web:test": "ng test --project=allfatherWeb",
-        "web:e2e": "ng e2e --project=allfatherWeb",
-        "web:serve-dev": "ng build --watch --project=allfatherWeb",
-        "web:build-prod": "ng build --project=allfatherWeb --configuration production"
+        "afweb:test": "ng test --project=allfatherWeb",
+        "afweb:e2e": "ng e2e --project=allfatherWeb",
+        "afweb:serve-dev": "ng build --watch --project=allfatherWeb",
+        "afweb:build-prod": "ng build --project=allfatherWeb --configuration production"
     },
     "browserslist": [
         "chrome >= 83"

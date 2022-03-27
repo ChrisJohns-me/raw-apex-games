@@ -1,8 +1,8 @@
+import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
+import { OverwolfGameDataService, OWGameEventKillFeed } from "@allfather-app/app/common/services/overwolf";
+import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
-import { BaseService } from "@shared-app/services/base-service.abstract";
-import { OverwolfGameDataService, OWGameEventKillFeed } from "@shared-app/services/overwolf";
-import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
-import { isPlayerNameEqual } from "@shared-app/utilities/player";
 import { isEmpty } from "common/utilities/";
 import { BehaviorSubject, defer, from, iif, merge, Observable, of } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";

@@ -1,3 +1,11 @@
+import { FeatureState, FeatureStatusList } from "@allfather-app/app/common/feature-status";
+import { GamePhase } from "@allfather-app/app/common/game-phase";
+import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
+import { MatchState } from "@allfather-app/app/common/match/state";
+import { PlayerState } from "@allfather-app/app/common/player-state";
+import { GameProcessService } from "@allfather-app/app/common/services/game-process.service";
+import { ExposedOverwolfGameDataService } from "@allfather-app/app/common/services/overwolf-exposed-data.service";
+import { OverwolfFeatureStatusService } from "@allfather-app/app/common/services/overwolf/overwolf-feature-status.service";
 import { GameService } from "@allfather-app/app/modules/core/game.service";
 import { MatchMapService } from "@allfather-app/app/modules/core/match/match-map.service";
 import { MatchPlayerInventoryService } from "@allfather-app/app/modules/core/match/match-player-inventory.service";
@@ -9,14 +17,6 @@ import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { FeatureState, FeatureStatusList } from "@shared-app/feature-status";
-import { GamePhase } from "@shared-app/game-phase";
-import { MatchLocationPhase } from "@shared-app/match/location";
-import { MatchState } from "@shared-app/match/state";
-import { PlayerState } from "@shared-app/player-state";
-import { GameProcessService } from "@shared-app/services/game-process.service";
-import { ExposedOverwolfGameDataService } from "@shared-app/services/overwolf-exposed-data.service";
-import { OverwolfFeatureStatusService } from "@shared-app/services/overwolf/overwolf-feature-status.service";
 import { interval, Subject, Subscription, timer } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { v4 as uuid } from "uuid";

@@ -1,10 +1,10 @@
+import { GamePhase } from "@allfather-app/app/common/game-phase";
+import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
+import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
 import { SettingKey, SettingValue } from "@allfather-app/app/common/settings";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
-import { GamePhase } from "@shared-app/game-phase";
-import { MatchGameModeGenericId } from "@shared-app/match/game-mode/game-mode.enum";
-import { BaseService } from "@shared-app/services/base-service.abstract";
-import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { combineLatest, merge, Observable, Subscription } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { GameService } from "../core/game.service";

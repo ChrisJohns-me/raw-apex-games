@@ -1,10 +1,10 @@
+import { Legend } from "@allfather-app/app/common/legend/legend";
+import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
 import { DefaultSetting, SettingKey } from "@allfather-app/app/common/settings";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { AvgMatchStats } from "@allfather-app/app/modules/core/utilities/match-stats";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { Legend } from "@shared-app/legend/legend";
-import { MatchGameModeList } from "@shared-app/match/game-mode/game-mode-list";
 import { combineLatest, Observable, of, Subject, Subscription } from "rxjs";
 import { map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { MatchService } from "../../core/match/match.service";

@@ -1,3 +1,8 @@
+import { MatchGameMode } from "@allfather-app/app/common/match/game-mode/game-mode";
+import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
+import { MatchMapCoordinates } from "@allfather-app/app/common/match/map/map-coordinates";
+import { MatchMapList, sortMatchMapList } from "@allfather-app/app/common/match/map/map-list";
+import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { LocationPhaseNum, MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { DataItem } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
@@ -14,11 +19,6 @@ import {
     ViewChild,
 } from "@angular/core";
 import { FormControl } from "@angular/forms";
-import { MatchGameMode } from "@shared-app/match/game-mode/game-mode";
-import { MatchGameModeList } from "@shared-app/match/game-mode/game-mode-list";
-import { MatchMapCoordinates } from "@shared-app/match/map/map-coordinates";
-import { MatchMapList, sortMatchMapList } from "@shared-app/match/map/map-list";
-import { MatchMap } from "@shared-app/match/map/match-map";
 import { unique } from "common/utilities/primitives/array";
 import * as d3 from "d3";
 import { intervalToDuration } from "date-fns";

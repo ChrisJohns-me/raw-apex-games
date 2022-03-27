@@ -1,4 +1,4 @@
-import { MockOverwolfAPI } from "@shared-app/mocks/mock-overwolf-api";
+import { MockOverwolfAPI } from "@allfather-app/app/modules/core/mocks/mock-overwolf-api";
 import { unique } from "common/utilities/primitives/array";
 import { addMilliseconds, addMinutes, subMilliseconds } from "date-fns";
 import seedrandom from "seedrandom";

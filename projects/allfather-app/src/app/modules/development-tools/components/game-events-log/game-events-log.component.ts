@@ -1,6 +1,6 @@
+import { OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/common/services/overwolf";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from "@angular/core";
-import { OWGameEvent, OWInfoUpdates2Event } from "@shared-app/services/overwolf";
 import { cleanInt } from "common/utilities/";
 import { merge, Observable, Subject } from "rxjs";
 import { delay, filter, takeUntil } from "rxjs/operators";

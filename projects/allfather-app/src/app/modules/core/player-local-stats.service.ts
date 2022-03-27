@@ -1,15 +1,15 @@
+import { MatchGameMode } from "@allfather-app/app/common/match/game-mode/game-mode";
+import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
+import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
+import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
 import {
     AvgMatchStats,
     avgStats,
     complimentaryLegendsWeights,
     legendAvgStats,
 } from "@allfather-app/app/modules/core/utilities/match-stats";
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
-import { MatchGameMode } from "@shared-app/match/game-mode/game-mode";
-import { MatchGameModeList } from "@shared-app/match/game-mode/game-mode-list";
-import { MatchGameModeGenericId } from "@shared-app/match/game-mode/game-mode.enum";
-import { BaseService } from "@shared-app/services/base-service.abstract";
-import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { Stopwatch } from "common/utilities/";
 import { combineLatest, Observable, of } from "rxjs";
 import { filter, map, tap } from "rxjs/operators";

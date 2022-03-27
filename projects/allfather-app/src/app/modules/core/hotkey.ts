@@ -1,4 +1,4 @@
-import { OWHotKey, OWHotKeyAssignHotkeyObject } from "@shared-app/services/overwolf";
+import { OWHotKey, OWHotKeyAssignHotkeyObject } from "@allfather-app/app/common/services/overwolf";
 import keycode from "keycode";
 
 export enum HotkeyEnum {

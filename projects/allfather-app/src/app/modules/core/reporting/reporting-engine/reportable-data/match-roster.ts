@@ -1,5 +1,5 @@
-import { MatchRosterPlayer } from "@shared-app/match/roster-player";
-import { PlatformHardware, PlatformSoftware } from "@shared-app/platform";
+import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
+import { PlatformHardware, PlatformSoftware } from "@allfather-app/app/common/platform";
 import { map } from "rxjs/operators";
 import { MatchRosterService } from "../../../match/match-roster.service";
 import { ReportableDataSnapshot } from "../reportable-data";

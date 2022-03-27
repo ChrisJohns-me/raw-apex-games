@@ -1,5 +1,5 @@
+import { Legend } from "@allfather-app/app/common/legend/legend";
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
-import { Legend } from "@shared-app/legend/legend";
 
 @Component({
     selector: "app-legend-select-complimentary-legends",

@@ -1,11 +1,11 @@
+import { MatchGameMode } from "@allfather-app/app/common/match/game-mode/game-mode";
+import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
+import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
+import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
+import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/common/services/overwolf";
+import { TriggerConditions } from "@allfather-app/app/common/utilities/trigger-conditions";
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
-import { MatchGameMode } from "@shared-app/match/game-mode/game-mode";
-import { MatchGameModeList } from "@shared-app/match/game-mode/game-mode-list";
-import { MatchState, MatchStateChangedEvent } from "@shared-app/match/state";
-import { BaseService } from "@shared-app/services/base-service.abstract";
-import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "@shared-app/services/overwolf";
-import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
-import { TriggerConditions } from "@shared-app/utilities/trigger-conditions";
 import { isEmpty } from "common/utilities";
 import { differenceInMilliseconds, isDate } from "date-fns";
 import { IndexableType } from "dexie";

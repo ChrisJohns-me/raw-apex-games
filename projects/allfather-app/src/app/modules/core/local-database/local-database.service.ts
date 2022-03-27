@@ -1,6 +1,6 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
-import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import Dexie from "dexie";
 import { exportDB } from "dexie-export-import";
 /** @see https://dexie.org/docs/Observable/Dexie.Observable */

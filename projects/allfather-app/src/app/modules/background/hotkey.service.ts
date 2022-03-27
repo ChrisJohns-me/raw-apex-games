@@ -1,8 +1,8 @@
+import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
+import { OWConfig, OW_CONFIG } from "@allfather-app/app/common/services/overwolf/overwolf-config";
+import { OverwolfHotKeyService } from "@allfather-app/app/common/services/overwolf/overwolf-hotkey.service";
+import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Inject, Injectable } from "@angular/core";
-import { BaseService } from "@shared-app/services/base-service.abstract";
-import { OWConfig, OW_CONFIG } from "@shared-app/services/overwolf/overwolf-config";
-import { OverwolfHotKeyService } from "@shared-app/services/overwolf/overwolf-hotkey.service";
-import { SingletonServiceProviderFactory } from "@shared-app/singleton-service.provider.factory";
 import { Observable } from "rxjs";
 import { filter, map } from "rxjs/operators";
 import { Hotkey } from "../core/hotkey";

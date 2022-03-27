@@ -1,10 +1,10 @@
+import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
+import { OWGameEvent } from "@allfather-app/app/common/services/overwolf";
+import { ExposedOverwolfGameDataService } from "@allfather-app/app/common/services/overwolf-exposed-data.service";
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
-import { MatchRosterPlayer } from "@shared-app/match/roster-player";
-import { OWGameEvent } from "@shared-app/services/overwolf";
-import { ExposedOverwolfGameDataService } from "@shared-app/services/overwolf-exposed-data.service";
 import { JSONTryParse } from "common/utilities/";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
 import { Subject } from "rxjs";
