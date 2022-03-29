@@ -9,7 +9,7 @@
                     </tr>
                 </thead>
                 <tbody [formGroup]="hotKeyFormGroup">
-                    <tr *ngFor="let hotkey of hotkeys">
+                    <tr *ngFor="let hotkey of hotkeysList">
                         <td class="ps-4 ps-lg-5">{{ hotkey.friendlyName }}</td>
                         <td class="text-end px-5">
                             <app-hotkey-editor [hotkey]="hotkey" (hotkeyChange)="onHotkeyChange($event)"></app-hotkey-editor>
@@ -68,6 +68,22 @@
                                     type="checkbox"
                                     [formControlName]="SettingKey.EnableInGameUltimateTimerHUD"
                                 />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr *ngIf="config?.featureFlags?.enableUltTimerWindow" (mouseover)="selectedPreviewSetting = SettingPreview.UltTimer">
+                        <td class="ps-4 ps-lg-5">Ultimate Timer - Display Type</td>
+                        <td class="text-end pe-5">
+                            <div class="form-check form-switch d-inline-flex">
+                                <select
+                                    class="form-select form-select-sm bg-secondary text-white"
+                                    [ngClass]="{ 'text-muted': !inGameHUDFormGroup.get(SettingKey.UltimateTimerType)?.enabled }"
+                                    [formControlName]="SettingKey.UltimateTimerType"
+                                >
+                                    <option *ngFor="let ultimateTimerType of UltimateTimerTypeList" [ngValue]="ultimateTimerType.key">
+                                        {{ ultimateTimerType.value }}
+                                    </option>
+                                </select>
                             </div>
                         </td>
                     </tr>

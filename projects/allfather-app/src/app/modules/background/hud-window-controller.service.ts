@@ -117,7 +117,7 @@ export class HUDWindowControllerService extends BaseService {
         private readonly matchTimerWindow: MatchTimerWindowService,
         private readonly miniInventoryWindow: MiniInventoryWindowService,
         private readonly reticleHelperWindow: ReticleHelperWindowService,
-        private readonly settingsService: SettingsService,
+        private readonly settings: SettingsService,
         private readonly ultTimerWindow: UltTimerWindowService
     ) {
         super();
@@ -128,7 +128,7 @@ export class HUDWindowControllerService extends BaseService {
             filter((gameMode) => !!gameMode?.gameModeGenericId && !!gameMode.isAFSupported),
             map((gameMode) => gameMode!.gameModeGenericId as MatchGameModeGenericId)
         );
-        combineLatest([this.settingsService.streamAllSettings$(), this.game.phase$, genericGameModeId$])
+        combineLatest([this.settings.streamAllSettings$(), this.game.phase$, genericGameModeId$])
             .pipe(
                 takeUntil(this.destroy$),
                 switchMap(([settings, gamePhase, genericGameModeId]) =>

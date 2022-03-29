@@ -7,6 +7,7 @@ import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-data
 import { SettingsDataStore } from "@allfather-app/app/modules/core/local-database/settings-data-store";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { AimingReticle, AimingReticleList } from "@allfather-app/app/modules/HUD/reticle-helper/components/aiming-reticle/aiming-reticles";
+import { UltimateTimerType } from "@allfather-app/app/modules/HUD/ult-timer/windows/ult-timer-window.component";
 import { Configuration } from "@allfather-app/configs/config.interface";
 import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
@@ -48,7 +49,7 @@ enum AimingReticlePreview {
 })
 export class SettingsPageComponent implements OnInit, OnDestroy {
     public config?: Configuration;
-    public hotkeys?: Hotkey[] = [];
+    public hotkeysList?: Hotkey[] = [];
     public editingHotkey: Hotkey | undefined;
     //#region Forms
     public hotKeyFormGroup = this.formBuilder.group({});
@@ -60,6 +61,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             [SettingKey.EnableInGameUltimateTimerHUD]: [false],
             [SettingKey.EnableInGameInflictionInsightHUD]: [false],
             [SettingKey.EnableInGameAimingReticle]: [false],
+            [SettingKey.UltimateTimerType]: [UltimateTimerType.TimeTotal],
             [SettingKey.InGameAimingReticleId]: [AimingReticleList[0].reticleId],
             [SettingKey.InGameAimingReticleColor]: [AimingReticleList[0].hexColor],
             [SettingKey.InGameAimingReticleAlpha]: [AimingReticleList[0].alpha],
@@ -107,6 +109,16 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     //#region Pass-through variables
     public SettingKey = SettingKey;
     public SettingPreview = SettingPreview;
+    public UltimateTimerTypeList: { key: UltimateTimerType; value: string }[] = [
+        {
+            key: UltimateTimerType.TimeTotal,
+            value: "Cooldown Total",
+        },
+        {
+            key: UltimateTimerType.TimeRemaining,
+            value: "Cooldown Remaining",
+        },
+    ];
     public AimingReticlePreview = AimingReticlePreview;
     public AimingReticleList = AimingReticleList;
     public mdiAttachment = mdiAttachment;
@@ -122,9 +134,9 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         private readonly configuration: ConfigurationService,
         private readonly fileService: FileService,
         private readonly formBuilder: FormBuilder,
-        private readonly hotkeyService: HotkeyService,
+        private readonly hotkey: HotkeyService,
         private readonly localDatabase: LocalDatabaseService,
-        private readonly settingsService: SettingsService
+        private readonly settings: SettingsService
     ) {
         this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => (this.config = config));
     }
@@ -183,7 +195,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     }
 
     public onHotkeyChange(hotkey: Hotkey): void {
-        this.hotkeyService.assignHotKey(hotkey).subscribe(() => this.refreshHotkeys());
+        this.hotkey.assignHotKey(hotkey).subscribe(() => this.refreshHotkeys());
     }
 
     private setupSettingsListener(): void {
@@ -199,7 +211,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             this.legendSelectHUDFormGroup.patchValue(settings, { emitEvent: false });
         };
 
-        this.settingsService
+        this.settings
             .streamAllSettings$()
             .pipe(takeUntil(this.destroy$))
             .subscribe((allSettings) => {
@@ -217,6 +229,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         this.refreshInGameFormHUDState();
         this.refreshLegendSelectHUDFormState();
         this.refreshAimingReticleFormState();
+        this.refreshUltimateTimerTypeFormState();
     }
 
     private updateAimingReticlePreview(
@@ -244,8 +257,8 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     }
 
     private refreshHotkeys(): void {
-        this.hotkeyService.getGameHotkeys().subscribe((hotkeys) => {
-            this.hotkeys = hotkeys;
+        this.hotkey.getGameHotkeys().subscribe((hotkeys) => {
+            this.hotkeysList = hotkeys;
             this.cdr.detectChanges();
         });
     }
@@ -275,6 +288,17 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             this.inGameHUDFormGroup.enable({ emitEvent: false });
         } else {
             this.inGameHUDFormGroup.disable({ emitEvent: false });
+        }
+    }
+
+    private refreshUltimateTimerTypeFormState(): void {
+        const isUltimateTimerEnabled = this.inGameHUDFormGroup.get([SettingKey.EnableInGameUltimateTimerHUD])?.value;
+        const ultimateTimerTypeForm = this.inGameHUDFormGroup.get(SettingKey.UltimateTimerType);
+
+        if (isUltimateTimerEnabled) {
+            ultimateTimerTypeForm?.enable({ emitEvent: false });
+        } else {
+            ultimateTimerTypeForm?.disable({ emitEvent: false });
         }
     }
 
@@ -350,7 +374,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             .filter((setting) => !!setting)
             .map((setting) => setting as SettingsDataStore<string | number | bigint | boolean>);
 
-        this.settingsService
+        this.settings
             .bulkStoreSettings$(bulkSettings)
             .pipe(finalize(() => (this.isSaving = false)))
             .subscribe();

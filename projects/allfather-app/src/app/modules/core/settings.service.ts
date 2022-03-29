@@ -30,7 +30,7 @@ export class SettingsService extends BaseService {
             const settingValidation = this.validateSetting(setting.key, setting.value);
             if (!settingValidation.isValid) invalidResult = settingValidation;
         });
-        if (invalidResult) return throwError(invalidResult.invalidReason);
+        if (invalidResult) return throwError(() => invalidResult?.invalidReason);
         return defer(() => from(this.localDatabase.settings.bulkPut(settings)));
     }
 
@@ -42,7 +42,7 @@ export class SettingsService extends BaseService {
      */
     public storeSetting$(setting: SettingsDataStore): Observable<IndexableType> {
         const settingValidation = this.validateSetting(setting.key, setting.value);
-        if (!settingValidation.isValid) return throwError(settingValidation.invalidReason);
+        if (!settingValidation.isValid) return throwError(() => settingValidation.invalidReason);
         return defer(() => from(this.localDatabase.settings.put(setting)));
     }
 
@@ -52,7 +52,9 @@ export class SettingsService extends BaseService {
      */
     public getSetting$<T extends SettingValue>(key: SettingKey): Observable<Optional<SettingsDataStore<T>>> {
         if (!Object.values(SettingKey).includes(key))
-            return throwError(`Cannot retrieve settings value from local database; Setting Key "${key}" is not found in known settings.`);
+            return throwError(
+                () => `Cannot retrieve settings value from local database; Setting Key "${key}" is not found in known settings.`
+            );
         return defer(() => from(this.localDatabase.settings.get({ key }))).pipe(
             map((savedSetting) => {
                 if (savedSetting?.value != null) {

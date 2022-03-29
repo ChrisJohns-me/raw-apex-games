@@ -29,7 +29,7 @@ export class CaptureControllerService extends BaseService {
     // private watchEventsSubscription?: Subscription;
 
     constructor() {
-        // private readonly videoRecording: VideoRecordingService, // private readonly settingsService: SettingsService, // private readonly match: MatchService, // private readonly game: GameService,
+        // private readonly videoRecording: VideoRecordingService, // private readonly settings: SettingsService, // private readonly match: MatchService, // private readonly game: GameService,
         super();
     }
 
@@ -38,7 +38,7 @@ export class CaptureControllerService extends BaseService {
         //         filter((gameMode) => !!gameMode?.gameModeGenericId && !!gameMode.isAFSupported),
         //         map((gameMode) => gameMode!.gameModeGenericId as MatchGameModeGenericId)
         //     );
-        //     combineLatest([this.settingsService.streamAllSettings$(), this.game.phase$, genericGameModeId$])
+        //     combineLatest([this.settings.streamAllSettings$(), this.game.phase$, genericGameModeId$])
         //         .pipe(
         //             takeUntil(this.destroy$),
         //             switchMap(([settings, gamePhase, genericGameModeId]) =>
@@ -54,7 +54,7 @@ export class CaptureControllerService extends BaseService {
     // }
 
     // private setupSettingsListener(): void {
-    //     this.settingsService
+    //     this.settings
     //         .streamAllSettings$()
     //         .pipe(takeUntil(this.destroy$))
     //         .subscribe((allSettings) => {

@@ -52,7 +52,7 @@ export class VideoRecordingService extends BaseService {
      * @throws {string} error message
      */
     public startVideoRecording(): Observable<OWStreamResult> {
-        if (this.streamId) return throwError(`Stream already in progress`);
+        if (this.streamId) return throwError(() => `Stream already in progress`);
         const owVideoSettings = this.settings.toOverwolfStreamSettings();
         return this.overwolfStreaming.start(owVideoSettings).pipe(
             tap((streamResult) => {

@@ -29,7 +29,7 @@ export class ReticleHelperWindowComponent implements OnInit, OnDestroy {
         private readonly cdr: ChangeDetectorRef,
         private readonly configuration: ConfigurationService,
         private readonly overwolfInputTracking: OverwolfInputTrackingService,
-        private readonly settingsService: SettingsService
+        private readonly settings: SettingsService
     ) {}
 
     public ngOnInit(): void {
@@ -43,7 +43,7 @@ export class ReticleHelperWindowComponent implements OnInit, OnDestroy {
     }
 
     private setupSettingsListener(): void {
-        combineLatest([this.configuration.config$, this.settingsService.streamAllSettings$()])
+        combineLatest([this.configuration.config$, this.settings.streamAllSettings$()])
             .pipe(takeUntil(this.destroy$))
             .subscribe(([config, allSettings]) => {
                 const isEnabledDefaultValue = DefaultSetting.enableInGameAimingReticle as boolean;

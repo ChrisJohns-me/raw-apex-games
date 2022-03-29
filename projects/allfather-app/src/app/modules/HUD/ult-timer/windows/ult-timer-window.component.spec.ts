@@ -13,6 +13,8 @@ import { MockMatchPlayerLegendService } from "@allfather-app/app/modules/core/mo
 import { MockMatchPlayerLocationService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-location.service";
 import { MockMatchPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
+import { MockSettingsService } from "@allfather-app/app/modules/core/mocks/services/mock-settings.service";
+import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { CustomFormatDistanceToNowPipe } from "@shared/pipes/custom-format-distance-to-now.pipe";
@@ -33,6 +35,7 @@ describe("UltTimerWindowComponent", () => {
     let matchPlayerService: MatchPlayerService;
     let matchPlayerLegendService: MatchPlayerLegendService;
     let matchPlayerLocationService: MatchPlayerLocationService;
+    let settingsService: SettingsService;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -44,6 +47,7 @@ describe("UltTimerWindowComponent", () => {
                 { provide: MatchPlayerService, useClass: MockMatchPlayerService },
                 { provide: MatchPlayerLegendService, useClass: MockMatchPlayerLegendService },
                 { provide: MatchPlayerLocationService, useClass: MockMatchPlayerLocationService },
+                { provide: SettingsService, useClass: MockSettingsService },
             ],
         }).compileComponents();
     });
@@ -60,6 +64,7 @@ describe("UltTimerWindowComponent", () => {
         matchPlayerService = TestBed.inject(MatchPlayerService);
         matchPlayerLegendService = TestBed.inject(MatchPlayerLegendService);
         matchPlayerLocationService = TestBed.inject(MatchPlayerLocationService);
+        settingsService = TestBed.inject(SettingsService);
         fixture.detectChanges(); // ngOnInit
     });
 
@@ -220,7 +225,15 @@ describe("UltTimerWindowComponent", () => {
 
                     const actualReadyDate = sut.maybeReadyDate;
                     const actualRemaining = differenceInMilliseconds(actualReadyDate!, new Date());
-                    expect(actualRemaining).toBeCloseTo(expectedTimeRemainingMs, -4, `Failed on percent: ${currPercent}`);
+                    expect(actualRemaining)
+                        .withContext(`(actualRemaining) on percent: ${currPercent}`)
+                        .toBeCloseTo(expectedTimeRemainingMs, -4);
+
+                    const expectedTotalReadyDate = new Date(totalTimeMs + new Date().getTime());
+                    const actualTotalReadyDate = sut.totalReadyDate;
+                    expect(actualTotalReadyDate.getTime())
+                        .withContext(`(actualTotalReadyDate) on percent: ${currPercent}`)
+                        .toBeCloseTo(expectedTotalReadyDate.getTime(), -4);
                 })
             )
             .subscribe();
@@ -262,7 +275,15 @@ describe("UltTimerWindowComponent", () => {
 
                     const actualReadyDate = sut.maybeReadyDate;
                     const actualRemaining = differenceInMilliseconds(actualReadyDate!, new Date());
-                    expect(actualRemaining).toBeCloseTo(expectedTimeRemainingMs, -5, `Failed on percent: ${currPercent}`);
+                    expect(actualRemaining)
+                        .withContext(`(actualRemaining) on percent: ${currPercent}`)
+                        .toBeCloseTo(expectedTimeRemainingMs, -5);
+
+                    const expectedTotalReadyDate = new Date(totalTimeMs + new Date().getTime());
+                    const actualTotalReadyDate = sut.totalReadyDate;
+                    expect(actualTotalReadyDate.getTime())
+                        .withContext(`(actualTotalReadyDate) on percent: ${currPercent}`)
+                        .toBeCloseTo(expectedTotalReadyDate.getTime(), -5);
                 })
             )
             .subscribe();

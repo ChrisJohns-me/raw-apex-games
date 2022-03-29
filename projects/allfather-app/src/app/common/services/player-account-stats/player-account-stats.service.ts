@@ -142,7 +142,7 @@ export class PlayerAccountStatsService extends BaseService {
             mergeMap((error, i) => {
                 const retryAttempt = i + 1;
                 if (retryAttempt >= MAX_RETRY_COUNT) {
-                    return throwError(error);
+                    return throwError(() => error);
                 }
                 console.warn(
                     `[${this.constructor.name}] Unable to get mozambiquehe.re API map rotation. Retrying...(#${retryAttempt})\n` +

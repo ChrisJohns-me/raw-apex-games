@@ -1,18 +1,25 @@
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
 import { PlayerState } from "@allfather-app/app/common/player-state";
+import { SettingKey } from "@allfather-app/app/common/settings";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
+import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { formatPercent } from "@angular/common";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { mathAverage, mathAverageRate, mathAverageVariance, mathClamp } from "common/utilities/";
 import { addMilliseconds, differenceInSeconds, format, formatDistanceToNowStrict, isFuture, isValid } from "date-fns";
 import { combineLatest, Observable, Subject, timer } from "rxjs";
 import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
-// TODO: Make settings for this window: "Total Time" or "Time Remaining"
+
+export enum UltimateTimerType {
+    TimeTotal = "timeTotal",
+    TimeRemaining = "timeRemaining",
+}
+
 /**
  * Ultimate accelerant or charging station.
  * Anything above this amount will not be logged to the history
@@ -39,6 +46,7 @@ interface UltimateProgress {
 })
 export class UltTimerWindowComponent implements OnInit, OnDestroy {
     public isVisible = false; // based on match state + player state
+    public displayType: UltimateTimerType = UltimateTimerType.TimeTotal;
     public ultimatePercent = 0;
     public get isUltimateReady(): boolean {
         return this.ultimatePercent >= 0.99;
@@ -52,6 +60,18 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
         if (differenceInSeconds(this._maybeReadyDate, new Date()) < 0.5) return; // give no date if it's under x seconds
         return new Date(this._maybeReadyDate); // Force template to update
     }
+    /** @returns {number} Estimated total time in ms for ultimate cooldown */
+    public get totalReadyTimeMs(): number {
+        return this.avgUpdateRateMs / this.avgIncrementMs;
+    }
+    /**
+     * Total Time for ultimate cooldown.
+     * Does not take into consideration the progress of ultimate.
+     * @returns {number} Date for ultimate cooldown to be 100%
+     */
+    public get totalReadyDate(): Date {
+        return new Date(this.totalReadyTimeMs + new Date().getTime());
+    }
     /** Confidence level of accuracy; HIGH, LOW, NONE */
     public get confidenceLevel(): ConfidenceLevel {
         if (this.confidenceAmount >= this.highConfidenceAmount) return ConfidenceLevel.HIGH;
@@ -63,15 +83,13 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
 
     private _maybeReadyDate?: Date;
 
-    private get avgIncrement(): number {
+    private get avgIncrementMs(): number {
         const incrementArr = this.ultimateProgressHistory.map((h) => h.increment);
-        const avg = mathAverage(incrementArr);
-        return avg;
+        return mathAverage(incrementArr);
     }
     private get avgUpdateRateMs(): number {
         const timestampMsArr = this.ultimateProgressHistory.map((h) => h.timestamp.getTime());
-        const avg = mathAverageRate(timestampMsArr);
-        return avg;
+        return mathAverageRate(timestampMsArr);
     }
     private ultimateProgressHistory: UltimateProgress[] = [];
     //#region Config
@@ -79,6 +97,9 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     private lowConfidenceAmount = 0.35;
     private highConfidenceAmount = 0.7;
     private maxHistoryCount = 5;
+    //#endregion
+    //#region Pass-through variables
+    public UltimateTimerType = UltimateTimerType;
     //#endregion
     private readonly visibleStates$: Observable<[MatchStateChangedEvent, PlayerState, Optional<MatchLocationPhase>]>;
     private destroy$ = new Subject<void>();
@@ -89,7 +110,8 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
         private readonly match: MatchService,
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerLegend: MatchPlayerLegendService,
-        private readonly matchPlayerLocation: MatchPlayerLocationService
+        private readonly matchPlayerLocation: MatchPlayerLocationService,
+        private readonly settings: SettingsService
     ) {
         this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => {
             this.maxUltimateCooldownTime = config.facts.maxUltimateCooldownTime;
@@ -101,6 +123,12 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
             takeUntil(this.destroy$),
             distinctUntilChanged()
         );
+        this.settings
+            .streamSetting$(SettingKey.UltimateTimerType)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((ultimateTimerType) => {
+                this.displayType = (ultimateTimerType?.value ?? this.displayType) as UltimateTimerType;
+            });
     }
 
     public ngOnInit(): void {
@@ -172,7 +200,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     private calcReadyDate(percent: number): Optional<Date> {
         const now = Date.now();
         const percentRemaining = 1 - percent;
-        const approxTotalReadyTimeMs = this.avgUpdateRateMs / this.avgIncrement; // Estimated total time for 100% ultimate
+        const approxTotalReadyTimeMs = this.totalReadyTimeMs;
         const approxTimeRemainingMs = percentRemaining * approxTotalReadyTimeMs;
         const rawEstReadyMs = now + approxTimeRemainingMs;
         const estReadyDate = new Date(rawEstReadyMs);
@@ -183,7 +211,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
                 `Remaining ~"${formatDistanceToNowStrict(new Date().getTime() + approxTimeRemainingMs, { unit: "second" })}", ` +
                 `Ready ~"${format(estReadyDate, "yyyy:mm:dd kk:mm:ss")}", ` +
                 `History: ${this.ultimateProgressHistory.length}, ` +
-                `Increment: ${formatPercent(this.avgIncrement, "en-US")}, ` +
+                `Increment: ${formatPercent(this.avgIncrementMs, "en-US")}, ` +
                 `Rate: ${this.avgUpdateRateMs / 1000}sec, ` +
                 `Confidence: ${this.confidenceLevel} (${formatPercent(this.confidenceAmount, "en-US")})`
         );

@@ -48,11 +48,11 @@ describe("ColorUtilities", () => {
         });
     });
 
-    describe("rgbToHsl", () => {});
+    // describe("rgbToHsl", () => {});
 
-    describe("hslToRgb", () => {});
+    // describe("hslToRgb", () => {});
 
-    describe("rgbToHsv", () => {});
+    // describe("rgbToHsv", () => {});
 
-    describe("hsvToRgb", () => {});
+    // describe("hsvToRgb", () => {});
 });

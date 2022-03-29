@@ -90,7 +90,7 @@ export class OverwolfFeatureStatusService implements OnDestroy {
             mergeMap((error, i) => {
                 const retryAttempt = i + 1;
                 if (retryAttempt >= this.owConfig.FEATURE_HEALTHCHECK_RETRY_COUNT) {
-                    return throwError(error);
+                    return throwError(() => error);
                 }
                 console.warn(
                     `[${this.constructor.name}] Unable to get feature health status from Overwolf. Retrying...(#${retryAttempt})\n` +

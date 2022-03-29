@@ -71,7 +71,7 @@ export class OverwolfFeatureRegistrationService extends BaseService {
             mergeMap((error, i) => {
                 const retryAttempt = i + 1;
                 if (retryAttempt >= this.owConfig.REQUIRED_FEATURES_RETRY_COUNT) {
-                    return throwError(error);
+                    return throwError(() => error);
                 }
                 console.warn(
                     `[${this.constructor.name}] Registration for Overwolf features failed. Retrying...(#${retryAttempt})\n` +
