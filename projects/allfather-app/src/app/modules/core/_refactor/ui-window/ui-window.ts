@@ -146,7 +146,6 @@ export class UIWindow {
                 window_id: this.name,
                 width: Math.round(width),
                 height: Math.round(height),
-                auto_dpi_resize: false, // TODO: Check if this is needed
             };
 
             overwolf.windows.changeSize(sizeSettings, (result) => {

@@ -20,6 +20,7 @@
     },
     "featureFlags": {
         "enableMatchTimerWindow": true,
+        "enableMiniInventoryWindow": true,
         "enableUltTimerWindow": false,
         "enableInflictionInsightWindow": true,
         "enableReticleHelperWindow": false,

@@ -1,0 +1,21 @@
+<app-ui-container
+    [isDesktopWindow]="false"
+    [isContentDraggable]="true"
+    primaryTitle="Mini-Inventory"
+    [position]="{ xPercent: -0.02, yPercent: -0.12, xAnchor: 'right', yAnchor: 'bottom' }"
+    [size]="{ widthPercent: 0.25, heightPercent: 0.12 }"
+>
+    <div class="mini-inventory-container" *ngIf="isVisible">
+        <div class="mini-inventory-item tilt-box" *ngFor="let inventorySlot of myInventorySlotList">
+            <div class="untilt-content">
+                <img
+                    class="mini-inventory-item-image"
+                    [src]="'../../../../assets/images/item-icons/' + inventorySlot.item.itemId + '.webp'"
+                />
+                <div class="mini-inventory-item-amount">
+                    {{ inventorySlot.amount }}
+                </div>
+            </div>
+        </div>
+    </div>
+</app-ui-container>

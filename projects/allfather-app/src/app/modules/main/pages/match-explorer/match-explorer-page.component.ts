@@ -12,16 +12,7 @@ import { ReportingEngineId, ReportingStatus } from "@allfather-app/app/modules/c
 import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { AvgMatchStats, avgStats, SumMatchStats, sumStats } from "@allfather-app/app/modules/core/utilities/match-stats";
 import { DataItem } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
-import {
-    ChangeDetectionStrategy,
-    ChangeDetectorRef,
-    Component,
-    ElementRef,
-    OnDestroy,
-    OnInit,
-    TrackByFunction,
-    ViewChild,
-} from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, TrackByFunction } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { mdiFilterVariantRemove } from "@mdi/js";
 import { cleanInt, isEmpty } from "common/utilities/";
@@ -40,7 +31,6 @@ const DEFAULT_NUM_ROWS = 25;
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MatchExplorerPageComponent implements OnInit, OnDestroy {
-    @ViewChild("matchListingContainer") public matchListingContainer?: ElementRef;
     public isSearching = false;
     public isLoadingMatchList = false;
     public numDisplayMatches = DEFAULT_NUM_ROWS;

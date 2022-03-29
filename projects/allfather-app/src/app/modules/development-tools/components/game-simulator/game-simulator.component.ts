@@ -3,18 +3,20 @@ import { OWGameEvent } from "@allfather-app/app/common/services/overwolf";
 import { ExposedOverwolfGameDataService } from "@allfather-app/app/common/services/overwolf-exposed-data.service";
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { JSONTryParse } from "common/utilities/";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
 import { Subject } from "rxjs";
 import { almost1 } from "./simulations/almost1";
 import { arenaModeSuddenDeath } from "./simulations/arena-mode-sudden-death";
+import { basicInventoryQuick } from "./simulations/basic-inventory";
 import { fullGame1Eventful } from "./simulations/full-game1-eventful";
 import { fullGame1Quick } from "./simulations/full-game1-quick";
 import { fullGame2_2k } from "./simulations/full-game2-2k";
 import { resetToInGame } from "./simulations/reset-to-in-game";
 import { resetToLobby } from "./simulations/reset-to-lobby";
+import { s12Quick } from "./simulations/s12-quick";
 import { stupidGame1Full } from "./simulations/stupid-game1";
 import { valkUltGame } from "./simulations/valk-ult-game";
 
@@ -29,7 +31,7 @@ interface Command {
     styleUrls: ["./game-simulator.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GameSimulatorComponent implements OnInit, OnDestroy {
+export class GameSimulatorComponent implements OnDestroy {
     public latestCommand?: Command;
     public fullGameForm = new FormGroup({
         speedAdjust: new FormControl(1),
@@ -56,10 +58,6 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
         private readonly player: PlayerService,
         public readonly matchRoster: MatchRosterService
     ) {}
-
-    public ngOnInit(): void {
-        // ...
-    }
 
     public ngOnDestroy(): void {
         this.destroy$.next();
@@ -103,6 +101,16 @@ export class GameSimulatorComponent implements OnInit, OnDestroy {
 
     public onPerformValkUltGameClick(speedAdjust?: number): void {
         const commands = this.logToCommands(valkUltGame());
+        this.runCommands(commands, speedAdjust);
+    }
+
+    public onPerformS12QuickGameClick(speedAdjust?: number): void {
+        const commands = this.logToCommands(s12Quick());
+        this.runCommands(commands, speedAdjust);
+    }
+
+    public onPerformBasicInventoryGameClick(speedAdjust?: number): void {
+        const commands = this.logToCommands(basicInventoryQuick());
         this.runCommands(commands, speedAdjust);
     }
 

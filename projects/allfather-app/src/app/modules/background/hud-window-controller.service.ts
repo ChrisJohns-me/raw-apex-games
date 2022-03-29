@@ -11,6 +11,7 @@ import { GameService } from "../core/game.service";
 import { MatchService } from "../core/match/match.service";
 import { InflictionInsightWindowService } from "../HUD/infliction-insight/windows/infliction-insight-window.service";
 import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
+import { MiniInventoryWindowService } from "../HUD/mini-inventory/windows/mini-inventory-window.service";
 import { ReticleHelperWindowService } from "../HUD/reticle-helper/windows/reticle-helper-window.service";
 import { UltTimerWindowService } from "../HUD/ult-timer/windows/ult-timer-window.service";
 import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
@@ -30,6 +31,7 @@ type HUDTriggers = {
         LegendSelectAssistWindowService,
         MatchService,
         MatchTimerWindowService,
+        MiniInventoryWindowService,
         ReticleHelperWindowService,
         SettingsService,
         UltTimerWindowService,
@@ -72,6 +74,17 @@ export class HUDWindowControllerService extends BaseService {
             ],
         },
         {
+            windowService: this.miniInventoryWindow,
+            requiredGamePhases: [GamePhase.InGame],
+            requiredSettings: [SettingKey.EnableAllInGameHUD, SettingKey.EnableInGameMatchTimerHUD],
+            requiredGameModes: [
+                MatchGameModeGenericId.Arenas,
+                MatchGameModeGenericId.BattleRoyale_Duos,
+                MatchGameModeGenericId.BattleRoyale_Trios,
+                MatchGameModeGenericId.BattleRoyale_Ranked,
+            ],
+        },
+        {
             windowService: this.ultTimerWindow,
             requiredGamePhases: [GamePhase.InGame],
             requiredSettings: [SettingKey.EnableAllInGameHUD, SettingKey.EnableInGameUltimateTimerHUD],
@@ -102,6 +115,7 @@ export class HUDWindowControllerService extends BaseService {
         private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
         private readonly match: MatchService,
         private readonly matchTimerWindow: MatchTimerWindowService,
+        private readonly miniInventoryWindow: MiniInventoryWindowService,
         private readonly reticleHelperWindow: ReticleHelperWindowService,
         private readonly settingsService: SettingsService,
         private readonly ultTimerWindow: UltTimerWindowService

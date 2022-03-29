@@ -45,6 +45,7 @@ export interface Facts {
  */
 export interface FeatureFlags {
     enableMatchTimerWindow: boolean;
+    enableMiniInventoryWindow: boolean;
     enableUltTimerWindow: boolean;
     enableInflictionInsightWindow: boolean;
     enableReticleHelperWindow: boolean;

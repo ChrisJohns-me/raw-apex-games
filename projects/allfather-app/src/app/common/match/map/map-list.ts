@@ -154,6 +154,32 @@ export const MatchMapList: MatchMap[] = [
         },
     }),
     new MatchMap({
+        mapName: MatchMapFriendlyName.Olympus,
+        mapGenericId: MatchMapGenericId.Olympus,
+        mapId: "mp_rr_olympus_mu2",
+        isBattleRoyaleMap: true,
+        isArenasMap: false,
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
+        activeDates: [
+            {
+                from: new Date("Feb 8, 2022"),
+            },
+        ],
+        zStartPos: 119,
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -520,
+                xEnd: 378,
+                yStart: -421,
+                yEnd: 480,
+            },
+        },
+    }),
+    new MatchMap({
         mapName: MatchMapFriendlyName.StormPoint,
         mapGenericId: MatchMapGenericId.StormPoint,
         mapId: "mp_rr_stormpoint",
@@ -169,13 +195,13 @@ export const MatchMapList: MatchMap[] = [
                 from: new Date("Nov 02, 2021"),
             },
         ],
-        zStartPos: 0,
+        zStartPos: 254,
         chartConfig: {
             imageAxisScale: {
-                xStart: -600,
-                xEnd: 600,
-                yStart: -600,
-                yEnd: 600,
+                xStart: -1000,
+                xEnd: 1000,
+                yStart: -1000,
+                yEnd: 1000,
             },
         },
     }),
@@ -283,6 +309,34 @@ export const MatchMapList: MatchMap[] = [
         mapName: MatchMapFriendlyName.Oasis,
         mapGenericId: MatchMapGenericId.Oasis,
         mapId: "mp_rr_oasis", // TODO: Check
+        isBattleRoyaleMap: false,
+        isArenasMap: true,
+        isChartable: false,
+        gameModeTypes: [MatchGameModeGenericId.Arenas],
+        activeDates: [
+            // {
+            //     from: new Date("August 01, 2021"),
+            // },
+        ],
+    }),
+    new MatchMap({
+        mapName: MatchMapFriendlyName.Habitat,
+        mapGenericId: MatchMapGenericId.Habitat,
+        mapId: "mp_rr_habitat", // TODO: Check
+        isBattleRoyaleMap: false,
+        isArenasMap: true,
+        isChartable: false,
+        gameModeTypes: [MatchGameModeGenericId.Arenas],
+        activeDates: [
+            // {
+            //     from: new Date("August 01, 2021"),
+            // },
+        ],
+    }),
+    new MatchMap({
+        mapName: MatchMapFriendlyName.Encore,
+        mapGenericId: MatchMapGenericId.Encore,
+        mapId: "mp_rr_encore", // TODO: Check
         isBattleRoyaleMap: false,
         isArenasMap: true,
         isChartable: false,

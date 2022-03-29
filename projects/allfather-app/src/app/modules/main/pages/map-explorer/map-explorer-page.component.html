@@ -21,7 +21,7 @@
                     <div class="message-overlay">
                         <!-- <h5></h5> -->
                     </div>
-                    ​<picture>
+                    <picture>
                         <source media="(max-width: 1000px)" [srcset]="'../../../../assets/images/map-layouts/medium/' + getMapFilename()" />
                         <source media="(max-width: 1440px)" [srcset]="'../../../../assets/images/map-layouts/large/' + getMapFilename()" />
                         <img [src]="'../../../../assets/images/map-layouts/' + getMapFilename()" class="img-fluid" alt="..." />
@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="map-full-image" *ngIf="selectedMap?.mapId">
-                    ​<picture>
+                    <picture>
                         <source
                             media="(max-width: 1000px)"
                             [srcset]="'../../../../assets/images/map-layouts/medium/' + getMapFilename(selectedMap!.mapId)"
@@ -71,13 +71,14 @@
             </table>
 
             <!-- Match List -->
-            <div class="matches-container">
+            <div class="matches-container" appFullHeight [marginBottom]="10" (scroll)="onMatchListingScroll($event)">
                 <app-match-listing
                     [matches]="matchList"
                     [isMatchClickable]="true"
                     [selectedMatchId]="selectedMatch?.matchId"
                     (matchClick)="onSelectMatchClick($event)"
                     [showDataItems]="showMatchItems"
+                    [numDisplayMatches]="numDisplayMatches"
                 ></app-match-listing>
             </div>
         </div>
@@ -115,8 +116,8 @@
             <input
                 type="range"
                 class="form-range form-control-sm"
-                min="-600"
-                max="-300"
+                min="-1000"
+                max="-250"
                 step="0.1"
                 id="xStartRange"
                 [formControl]="xStartRangeForm"
@@ -134,15 +135,15 @@
             <input
                 type="range"
                 class="form-range form-control-sm"
-                min="300"
-                max="600"
+                min="250"
+                max="1000"
                 step="0.1"
                 id="xEndRange"
                 [formControl]="xEndRangeForm"
             />
         </div>
         <div class="col-4">
-            <label for="yShiftRange" class="form-label text-white m-0">Y Start ({{ yShiftRangeForm?.value | number: "0.0-3" }})</label>
+            <label for="yShiftRange" class="form-label text-white m-0">Y Shift ({{ yShiftRangeForm?.value | number: "0.0-3" }})</label>
             <input
                 type="range"
                 class="form-range form-control-sm"
@@ -165,8 +166,8 @@
             <input
                 type="range"
                 class="form-range form-control-sm"
-                min="-600"
-                max="-300"
+                min="-1000"
+                max="-250"
                 step="0.1"
                 id="yStartRange"
                 [formControl]="yStartRangeForm"
@@ -184,8 +185,8 @@
             <input
                 type="range"
                 class="form-range form-control-sm"
-                min="300"
-                max="600"
+                min="250"
+                max="1000"
                 step="0.1"
                 id="yEndRange"
                 [formControl]="yEndRangeForm"

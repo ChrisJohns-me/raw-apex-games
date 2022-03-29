@@ -20,7 +20,18 @@ declare namespace overwolf.gep.ApexLegends {
         // "Melee" = "knockdown" or "kill"
         // "Bleed Out" = "kill"
         // "committedsuicide" need to add (need casing and spacing)
-        action: "kill" | "knockdown" | "assist" | "Bleed Out" | "Melee" | "Caustic Gas" | "headshot_kill" | "Finisher";
+        action:
+            | "kill"
+            | "knockdown"
+            | "assist"
+            | "Bleed Out"
+            | "Melee"
+            | "Caustic Gas"
+            | "headshot_kill"
+            | "Finisher"
+            | "Kunai Melee"
+            | "Perimeter Security"
+            | "Defensive Bombardment";
     }
 
     interface GameEventKnockdown {

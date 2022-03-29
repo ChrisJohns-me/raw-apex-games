@@ -17,16 +17,18 @@ import { MatchService } from "./match.service";
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerLocationService", MatchPlayerLocationService, deps),
 })
 export class MatchPlayerLocationService extends BaseService {
-    /** Location data straight from Overwolf. Cleared on match start. */
+    /** Location data straight from Overwolf. Emits new data only when match is started. Cleared on match start. */
     public readonly myCoordinates$ = new BehaviorSubject<Optional<MatchMapCoordinates>>(undefined);
-    /** Based on internal triggers. Cleared on match start. */
+    /** Based on internal triggers. Emits new data only when match is started. Cleared on match start. */
     public readonly myLocationPhase$ = new BehaviorSubject<Optional<MatchLocationPhase>>(undefined);
-    /** Local player's match start position. Cleared on match start. */
+    /** Local player's match start position. Emits new data only when match is started. Cleared on match start. */
     public readonly myStartingCoordinates$ = new BehaviorSubject<Optional<MatchMapCoordinates>>(undefined);
-    /** Local player's landing location. Inferred by "inUse":"Melee". Cleared on match start. */
+    /** Local player's landing location. Inferred by "inUse":"Melee". Emits new data only when match is started. Cleared on match start. */
     public readonly myLandingCoordinates$ = new BehaviorSubject<Optional<MatchMapCoordinates>>(undefined);
-    /** Last known local player when match ends. Cleared on match start. */
+    /** Last known local player when match ends. Emits new data only when match is started. Cleared on match start. */
     public readonly myEndingCoordinates$ = new BehaviorSubject<Optional<MatchMapCoordinates>>(undefined);
+
+    private isMatchStarted = false;
 
     constructor(
         private readonly match: MatchService,
@@ -49,6 +51,10 @@ export class MatchPlayerLocationService extends BaseService {
             this.myStartingCoordinates$.next(undefined);
             this.myLandingCoordinates$.next(undefined);
             this.myEndingCoordinates$.next(undefined);
+            this.isMatchStarted = true;
+        });
+        this.match.endedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+            this.isMatchStarted = false;
         });
     }
 
@@ -60,7 +66,8 @@ export class MatchPlayerLocationService extends BaseService {
             .pipe(
                 takeUntil(this.destroy$),
                 filter((infoUpdate) => infoUpdate.feature === "location" && !!infoUpdate.info.match_info?.location),
-                map((infoUpdate) => infoUpdate.info.match_info?.location)
+                map((infoUpdate) => infoUpdate.info.match_info?.location),
+                filter(() => this.isMatchStarted)
             )
             .subscribe((coord) => {
                 const newCoords: MatchMapCoordinates = {
@@ -104,7 +111,8 @@ export class MatchPlayerLocationService extends BaseService {
             .pipe(
                 takeUntil(this.destroy$),
                 filter(() => !this.myStartingCoordinates$.value),
-                filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z))
+                filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z)),
+                filter(() => this.isMatchStarted)
             )
             .subscribe((coord) => this.myStartingCoordinates$.next(coord));
     }
@@ -116,7 +124,8 @@ export class MatchPlayerLocationService extends BaseService {
                 filter(() => !!this.myStartingCoordinates$.value && !this.myEndingCoordinates$.value),
                 map(() => this.myCoordinates$.value),
                 filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z)),
-                filter((coord) => !!coord && coord.z < (this.myStartingCoordinates$.value?.z ?? -Infinity))
+                filter((coord) => !!coord && coord.z < (this.myStartingCoordinates$.value?.z ?? -Infinity)),
+                filter(() => this.isMatchStarted)
             )
             .subscribe((coord) => this.myEndingCoordinates$.next(coord));
     }
@@ -128,7 +137,8 @@ export class MatchPlayerLocationService extends BaseService {
                 filter((inUse) => !!inUse),
                 map(() => this.myCoordinates$.value),
                 filter(() => !this.myLandingCoordinates$.value),
-                filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z))
+                filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z)),
+                filter(() => this.isMatchStarted)
             )
             .subscribe((coord) => this.myLandingCoordinates$.next(coord));
     }

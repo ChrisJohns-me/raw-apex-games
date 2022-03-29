@@ -65,23 +65,23 @@
         <div class="col-8 col-7-lg text-end">
             <ng-container *ngIf="avgToggle">
                 <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgWins ?? 0 | percent }} win rate</span>
-                <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgEliminations ?? 0 | number:'1.0-2' }} kill rate</span>
-                <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgKnockdowns ?? 0 | number:'1.0-2' }} knockdown rate</span>
-                <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgAssists ?? 0 | number:'1.0-2' }} assist rate</span>
-                <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgDamage ?? 0 | number:'1.0-0' }} damage rate</span>
+                <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgEliminations ?? 0 | number: "1.0-2" }} kill rate</span>
+                <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgKnockdowns ?? 0 | number: "1.0-2" }} knockdown rate</span>
+                <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgAssists ?? 0 | number: "1.0-2" }} assist rate</span>
+                <span class="badge bg-secondary mx-1">{{ filteredAvgStats?.avgDamage ?? 0 | number: "1.0-0" }} damage rate</span>
             </ng-container>
             <ng-container *ngIf="!avgToggle">
-                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumWins?? 0 | number:'1.0-2' }} total wins</span>
-                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumEliminations ?? 0 | number:'1.0-2' }} total kills</span>
-                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumKnockdowns ?? 0 | number:'1.0-2' }} total knockdowns</span>
-                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumAssists ?? 0 | number:'1.0-2' }} total assists</span>
-                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumDamage ?? 0 | number:'1.0-0' }} total damage</span>
+                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumWins ?? 0 | number: "1.0-2" }} total wins</span>
+                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumEliminations ?? 0 | number: "1.0-2" }} total kills</span>
+                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumKnockdowns ?? 0 | number: "1.0-2" }} total knockdowns</span>
+                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumAssists ?? 0 | number: "1.0-2" }} total assists</span>
+                <span class="badge bg-secondary mx-1">{{ filteredSumStats?.sumDamage ?? 0 | number: "1.0-0" }} total damage</span>
             </ng-container>
         </div>
     </div>
 </div>
 
-<div class="container-fluid" appFullHeight [marginBottom]="10" #matchListingContainer (scroll)="onMatchListingScroll($event)">
+<div class="container-fluid" appFullHeight [marginBottom]="10" (scroll)="onMatchListingScroll($event)">
     <div class="row justify-content-center">
         <div class="col-12">
             <app-match-listing

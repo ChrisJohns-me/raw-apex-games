@@ -26,6 +26,7 @@ import { combineLatest, Observable, Subject } from "rxjs";
 import { distinctUntilChanged, finalize, takeUntil, throttleTime } from "rxjs/operators";
 
 type MatchMapImageAxisScale = NonNullable<MatchMap["chartConfig"]>["imageAxisScale"];
+const DEFAULT_NUM_ROWS = 25;
 
 @Component({
     selector: "app-map-explorer-page",
@@ -34,10 +35,11 @@ type MatchMapImageAxisScale = NonNullable<MatchMap["chartConfig"]>["imageAxisSca
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestroy {
-    public ENABLE_DEBUG_TOOLS = environment.DEV && false; // Debug tools
+    public ENABLE_DEBUG_TOOLS = environment.DEV && true; // Debug tools
     @ViewChild("mapOverlayGraph") public mapOverlayGraphRef?: ElementRef<HTMLDivElement>;
 
     public isLoadingMatchList = false;
+    public numDisplayMatches = DEFAULT_NUM_ROWS;
     public mapList: MatchMap[];
     public matchList: MatchDataStore[] = [];
     public selectedMatch?: MatchDataStore;
@@ -78,11 +80,11 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
     public showMapDebugToolsForm = new FormControl(false);
     public heatSizeRange;
     public xShiftRangeForm = new FormControl(0);
-    public xStartRangeForm = new FormControl(-500);
-    public xEndRangeForm = new FormControl(500);
+    public xStartRangeForm = new FormControl(-600);
+    public xEndRangeForm = new FormControl(600);
     public yShiftRangeForm = new FormControl(0);
-    public yStartRangeForm = new FormControl(-500);
-    public yEndRangeForm = new FormControl(500);
+    public yStartRangeForm = new FormControl(-600);
+    public yEndRangeForm = new FormControl(600);
 
     // Graph
     private graphSvg?: d3.Selection<SVGGElement, unknown, null, undefined>;
@@ -92,6 +94,8 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
     private heatAlpha = 0.25;
 
     private _isLoadingMapImage = false;
+    /** Num rows to add when user reaches the bottom of the scroll */
+    private numAddRowsScroll = 25;
     private aggregateMapLocationHistory: MatchMapCoordinates[] = [];
     private destroy$ = new Subject<void>();
 
@@ -159,6 +163,18 @@ export class MapExplorerPageComponent implements OnInit, AfterViewInit, OnDestro
         this.setShowAggregateMapData(true);
         this.drawGraph();
         this.refreshUI();
+    }
+
+    public onMatchListingScroll(event: Event): void {
+        const requiredBottomDistance = 100;
+        const target = event.target as HTMLDivElement;
+        const distanceFromBottom = target.scrollHeight - target.scrollTop - target.clientHeight;
+        const hasMoreRowsToDisplay = this.numDisplayMatches <= this.matchList.length;
+
+        if (!hasMoreRowsToDisplay) return;
+        if (distanceFromBottom < requiredBottomDistance) {
+            this.numDisplayMatches += this.numAddRowsScroll;
+        }
     }
 
     //#region Setup

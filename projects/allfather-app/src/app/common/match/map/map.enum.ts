@@ -8,6 +8,8 @@ export enum MatchMapFriendlyName {
     // Arena Maps
     Artillery = "Artillery",
     GoldenGardens = "Golden Gardens",
+    Encore = "Encore",
+    Habitat = "Habitat",
     Overflow = "Overflow",
     Oasis = "Oasis",
     PartyCrasher = "Party Crasher",
@@ -26,6 +28,8 @@ export enum MatchMapGenericId {
     // Arena Maps
     Artillery = "artillery",
     GoldenGardens = "goldengardens",
+    Encore = "encore",
+    Habitat = "habitat",
     Overflow = "overflow",
     Oasis = "oasis",
     PartyCrasher = "partycrasher",

@@ -12,7 +12,7 @@ import { mathAverage, mathAverageRate, mathAverageVariance, mathClamp } from "co
 import { addMilliseconds, differenceInSeconds, format, formatDistanceToNowStrict, isFuture, isValid } from "date-fns";
 import { combineLatest, Observable, Subject, timer } from "rxjs";
 import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
-
+// TODO: Make settings for this window: "Total Time" or "Time Remaining"
 /**
  * Ultimate accelerant or charging station.
  * Anything above this amount will not be logged to the history

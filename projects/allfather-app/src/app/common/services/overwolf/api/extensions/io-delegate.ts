@@ -9,7 +9,7 @@ export class IODelegate {
      * @returns {true} if successful
      * @returns {error} if failed
      */
-    public writeTextFile(storageSpace: overwolf.extensions.io.StorageSpace, filePath: string, content: string): Observable<true> {
+    public writeTextFile(storageSpace: overwolf.extensions.io.enums.StorageSpace, filePath: string, content: string): Observable<true> {
         const writeTextFileObs = bindCallback(overwolf.extensions.io.writeTextFile);
 
         return writeTextFileObs(storageSpace, filePath, content).pipe(
@@ -26,10 +26,10 @@ export class IODelegate {
      * @returns {true} if exists
      * @returns {false} false if not exist
      */
-    public exist(storageSpace: overwolf.extensions.io.StorageSpace, folderPath: string): Observable<boolean> {
+    public exist(storageSpace: overwolf.extensions.io.enums.StorageSpace, folderPath: string): Observable<boolean> {
         // TODO: Check to see if they've added this namespace to the types
         type OWIOExistFn = (
-            space: overwolf.extensions.io.StorageSpace,
+            space: overwolf.extensions.io.enums.StorageSpace,
             path: string,
             callback: overwolf.CallbackFunction<overwolf.Result>
         ) => void;
@@ -43,10 +43,10 @@ export class IODelegate {
      * @returns {true} if successful
      * @returns {error} if failed
      */
-    public createDirectory(storageSpace: overwolf.extensions.io.StorageSpace, path: string): Observable<true> {
+    public createDirectory(storageSpace: overwolf.extensions.io.enums.StorageSpace, path: string): Observable<true> {
         // TODO: Check to see if they've added this namespace to the types
         type OWIOCreateDirectoryFn = (
-            space: overwolf.extensions.io.StorageSpace,
+            space: overwolf.extensions.io.enums.StorageSpace,
             path: string,
             callback: overwolf.CallbackFunction<overwolf.Result>
         ) => void;

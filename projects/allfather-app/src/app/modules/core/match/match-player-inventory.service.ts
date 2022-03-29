@@ -19,14 +19,15 @@ import { MatchService } from "./match.service";
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerInventoryService", MatchPlayerInventoryService, deps),
 })
 export class MatchPlayerInventoryService extends BaseService {
-    /** Local player's current weapon, throwable, inventory, ultimate, etc. item in use */
+    /** Local player's current weapon, throwable, inventory, ultimate, etc. item in use. Emits new data only when match is started. */
     public readonly myInUseItem$ = new BehaviorSubject<Optional<Item>>(undefined);
-    /** Local player's current weapons */
+    /** Local player's current weapons. Emits new data only when match is started. */
     public readonly myWeaponSlots$ = new BehaviorSubject<InventorySlots<WeaponItem>>({});
-    /** Local player's current backpack inventory */
+    /** Local player's current backpack inventory. Emits new data only when match is started.*/
     public readonly myInventorySlots$ = new BehaviorSubject<InventorySlots>({});
 
     private inventoryInfoUpdates$: Observable<OWInfoUpdates2Event>;
+    private isMatchStarted = false;
 
     constructor(private readonly match: MatchService, private readonly overwolfGameData: OverwolfGameDataService) {
         super();
@@ -48,6 +49,10 @@ export class MatchPlayerInventoryService extends BaseService {
             this.myInUseItem$.next(undefined);
             this.myWeaponSlots$.next({});
             this.myInventorySlots$.next({});
+            this.isMatchStarted = true;
+        });
+        this.match.endedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+            this.isMatchStarted = false;
         });
     }
 
@@ -55,28 +60,33 @@ export class MatchPlayerInventoryService extends BaseService {
      * Updates backpack inventory item updates
      */
     private setupMyInventorySlots(): void {
-        this.inventoryInfoUpdates$.pipe(map((infoUpdate) => infoUpdate.info.me)).subscribe((me) => {
-            const infoSlotName = findKeyByKeyRegEx(me, /^inventory_/);
-            if (!infoSlotName) return;
-            const slotMatch = infoSlotName?.match(/\d+/)?.[0];
-            const newSlotId = slotMatch ? parseInt(slotMatch) : undefined;
-            if (!newSlotId) return;
-            const infoSlotValue: OWMatchInfoMeInventory = (me as any)[infoSlotName];
+        this.inventoryInfoUpdates$
+            .pipe(
+                map((infoUpdate) => infoUpdate.info.me),
+                filter(() => this.isMatchStarted)
+            )
+            .subscribe((me) => {
+                const infoSlotName = findKeyByKeyRegEx(me, /^inventory_/);
+                if (!infoSlotName) return;
+                const slotMatch = infoSlotName?.match(/\d+/)?.[0];
+                const newSlotId = slotMatch ? parseInt(slotMatch) : undefined;
+                if (!newSlotId) return;
+                const infoSlotValue: OWMatchInfoMeInventory = (me as any)[infoSlotName];
 
-            const slotUpdate = infoSlotValue
-                ? {
-                      item: new Item({ fromInGameInventoryId: infoSlotValue.name }),
-                      amount: cleanInt(infoSlotValue.amount),
-                  }
-                : undefined;
+                const slotUpdate = infoSlotValue
+                    ? {
+                          item: new Item({ fromInGameInventoryId: infoSlotValue.name }),
+                          amount: cleanInt(infoSlotValue.amount),
+                      }
+                    : undefined;
 
-            const newInventorySlotItems: InventorySlots<Item> = {
-                ...this.myInventorySlots$.value,
-                [newSlotId]: slotUpdate,
-            };
+                const newInventorySlotItems: InventorySlots<Item> = {
+                    ...this.myInventorySlots$.value,
+                    [newSlotId]: slotUpdate,
+                };
 
-            this.myInventorySlots$.next(newInventorySlotItems);
-        });
+                this.myInventorySlots$.next(newInventorySlotItems);
+            });
     }
 
     private setupMyInUseItem(): void {
@@ -84,7 +94,8 @@ export class MatchPlayerInventoryService extends BaseService {
             .pipe(
                 filter((infoUpdate) => typeof infoUpdate.info.me?.inUse?.inUse === "string"),
                 map((infoUpdate) => infoUpdate.info.me?.inUse?.inUse),
-                filter((inUse) => !!inUse) // match_start defaults this to "", which we don't want
+                filter((inUse) => !!inUse), // match_start defaults this to "", which we don't want
+                filter(() => this.isMatchStarted)
             )
             .subscribe((inUse) => {
                 const newInventoryItem = new Item({ fromInGameInfoName: inUse });
@@ -96,7 +107,8 @@ export class MatchPlayerInventoryService extends BaseService {
         this.inventoryInfoUpdates$
             .pipe(
                 filter((infoUpdate) => typeof infoUpdate.info.me?.weapons === "object"),
-                map((infoUpdate) => infoUpdate.info.me?.weapons)
+                map((infoUpdate) => infoUpdate.info.me?.weapons),
+                filter(() => this.isMatchStarted)
             )
             .subscribe((weapons) => {
                 const infoSlotName = findKeyByKeyRegEx(weapons, /^weapon/);

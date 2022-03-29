@@ -107,6 +107,29 @@
                     "height": 50
                 }
             },
+            "hud-mini-inventory": {
+                "file": "index.html",
+                "in_game_only": true,
+                "resizable": false,
+                "transparent": true,
+                "show_in_taskbar": false,
+                "clickthrough": true,
+                "mute": true,
+                "popup_blocker": true,
+                "allow_local_file_access": true,
+                "size": {
+                    "width": 200,
+                    "height": 50
+                },
+                "min_size": {
+                    "width": 200,
+                    "height": 50
+                },
+                "max_size": {
+                    "width": 200,
+                    "height": 50
+                }
+            },
             "hud-ult-timer": {
                 "file": "index.html",
                 "in_game_only": true,

@@ -39,6 +39,11 @@ export class VideoRecordingSettings {
             max_file_size_bytes: 25000000000,
             include_full_size_video: true,
             sub_folder_name: this.folderName,
+            game_window_capture: {
+                enable_when_available: false,
+                capture_overwolf_windows: true,
+            },
+            keep_game_capture_on_lost_focus: true,
             // encoder: StreamingVideoEncoderSettings; // TODO: use
             // override_overwolf_setting?: boolean; // TODO maybe use
         };

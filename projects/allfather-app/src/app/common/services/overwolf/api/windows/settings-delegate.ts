@@ -37,7 +37,7 @@ export class SettingsDelegate {
 
     /**
      * @param windowId The id or name of the window to remove the style from
-     * @param style "InputPassThrough"
+     * @param style "InputPassThrough" | "BottomMost"
      * @returns {true} if successful
      * @returns {error} if failed
      */

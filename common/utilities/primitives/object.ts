@@ -3,7 +3,7 @@ import { JSONTryParse } from "./json";
 
 /**
  * @description Uses .find() with RegExp.
- * @example findKeyByRegEx({ key_99: "foo" }, /^key_/) = key_99
+ * @example findKeyByKeyRegEx({ key_99: "foo" }, /^key_/) = key_99
  */
 export function findKeyByKeyRegEx(obj: Optional<AnyObject>, regEx: RegExp): Optional<string> {
     if (!obj) return undefined;
@@ -26,11 +26,11 @@ export function findValueByKeyRegEx<V extends ObjectPropertyTypes<T>, T extends 
 }
 
 /**
- * @summary Similar to `incrementedPropertiesToArray()`, but also maps the property key.
+ * @summary Similar to `incrementedKeysToValueArray()`, but also maps the property key.
  * @description Iterates over an object's keys using RegExp to create a key index object from the key's numeric value.
  *              Requires one group within the RegExp; typically should be: `(\d+)`
  * @returns Array-like object of filtered properties with mapped index key.
- * @example incrementedPropertiesToKeyedArray({unrelated_key: "empty", key_0: "value0", key_1: "value1", key_2: "value2"}, /^key_(\d+)/)
+ * @example incrementedKeysToKeyedObject({unrelated_key: "empty", key_0: "value0", key_1: "value1", key_2: "value2"}, /^key_(\d+)/)
  * @returns {0: "value0", 1: "value1", 2: "value2"}
  */
 export function incrementedKeysToKeyedObject<V extends ObjectPropertyTypes<T>, T extends AnyObject = AnyObject>(
@@ -55,7 +55,7 @@ export function incrementedKeysToKeyedObject<V extends ObjectPropertyTypes<T>, T
 /**
  * @summary Creates an array derived from filtering an object's keys using RegExp.
  * @returns Array of filtered properties.
- * @example incrementedPropertyToArray({unrelated_key: "empty", key_0: "value0", key_1: "value1", key_2: "value2"}, /^key_/)
+ * @example incrementedKeysToValueArray({unrelated_key: "empty", key_0: "value0", key_1: "value1", key_2: "value2"}, /^key_/)
  * @returns ["value0", "value1", "value2"]
  */
 export function incrementedKeysToValueArray<V extends ObjectPropertyTypes<T>, T extends AnyObject = AnyObject>(
@@ -82,7 +82,7 @@ export function incrementedKeysToValueArray<V extends ObjectPropertyTypes<T>, T 
 export function recursiveJSONParse<T = any>(obj: any): any {
     if (typeof obj === "string") {
         if ((obj as string).trim().startsWith("{") && (obj as string).trim().endsWith("}")) {
-            return (JSONTryParse(obj) as T) ?? ((obj as unknown) as T);
+            return (JSONTryParse(obj) as T) ?? (obj as unknown as T);
         } else return obj;
     } else if (obj && typeof obj === "object") {
         const newObj = { ...obj };

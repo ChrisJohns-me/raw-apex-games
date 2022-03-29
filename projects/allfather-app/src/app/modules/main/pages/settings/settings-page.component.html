@@ -44,6 +44,21 @@
                             </div>
                         </td>
                     </tr>
+                    <tr
+                        *ngIf="config?.featureFlags?.enableMiniInventoryWindow"
+                        (mouseover)="selectedPreviewSetting = SettingPreview.MiniInventory"
+                    >
+                        <td class="ps-4 ps-lg-5">Mini Inventory</td>
+                        <td class="text-end pe-5">
+                            <div class="form-check form-switch d-inline-flex">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    [formControlName]="SettingKey.EnableInGameMiniInventoryHUD"
+                                />
+                            </div>
+                        </td>
+                    </tr>
                     <tr *ngIf="config?.featureFlags?.enableUltTimerWindow" (mouseover)="selectedPreviewSetting = SettingPreview.UltTimer">
                         <td class="ps-4 ps-lg-5">Ultimate Timer</td>
                         <td class="text-end pe-5">
@@ -253,6 +268,7 @@
                 <h4 class="mt-5 text-center">In-Game Preview</h4>
                 <div class="preview-container">
                     <div *ngIf="selectedPreviewSetting === SettingPreview.MatchTimer" class="preview-image preview-match-timer"></div>
+                    <div *ngIf="selectedPreviewSetting === SettingPreview.MiniInventory" class="preview-image preview-mini-inventory"></div>
                     <div *ngIf="selectedPreviewSetting === SettingPreview.UltTimer" class="preview-image preview-ult-timer"></div>
                     <div
                         *ngIf="selectedPreviewSetting === SettingPreview.InflictionInsight"

@@ -1,0 +1,48 @@
+@import "hud-styles";
+
+.mini-inventory-container {
+    display: inline-flex;
+    color: white;
+    height: 100%;
+    width: 100%;
+    padding-left: 4vw;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    flex-wrap: wrap-reverse;
+}
+
+.mini-inventory-item {
+    $yMargin: 4;
+    $xMargin: 0.5;
+    display: flex;
+    align-items: center;
+    font-family: "Quantico", sans-serif;
+    font-size: 3vw;
+    width: 60vh;
+    height: calc(50vh - #{$yMargin / 2}vh);
+    margin: #{$xMargin}vh #{$yMargin}vh;
+    padding: 2vh 2vw;
+    border: 0.5vw solid #989390;
+    border-radius: 1vw;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.75);
+
+    .mini-inventory-item-image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .mini-inventory-item-amount {
+        position: absolute;
+        left: -3.5vw;
+        bottom: 0.75vh;
+    }
+}
+
+.tilt-box {
+    transform: skewX(-30deg);
+}
+
+.untilt-content {
+    transform: skewX(30deg);
+}

@@ -22,15 +22,15 @@ export class OverwolfExtensionsService extends BaseService {
         this.extensionsDelegate.relaunchApp();
     }
 
-    public writeTextFile(storageSpace: overwolf.extensions.io.StorageSpace, filePath: string, content: string): Observable<true> {
+    public writeTextFile(storageSpace: overwolf.extensions.io.enums.StorageSpace, filePath: string, content: string): Observable<true> {
         return this.ioDelegate.writeTextFile(storageSpace, filePath, content);
     }
 
-    public exist(storageSpace: overwolf.extensions.io.StorageSpace, folderPath: string): Observable<boolean> {
+    public exist(storageSpace: overwolf.extensions.io.enums.StorageSpace, folderPath: string): Observable<boolean> {
         return this.ioDelegate.exist(storageSpace, folderPath);
     }
 
-    public createDirectory(storageSpace: overwolf.extensions.io.StorageSpace, path: string): Observable<true> {
+    public createDirectory(storageSpace: overwolf.extensions.io.enums.StorageSpace, path: string): Observable<true> {
         return this.ioDelegate.createDirectory(storageSpace, path);
     }
 }

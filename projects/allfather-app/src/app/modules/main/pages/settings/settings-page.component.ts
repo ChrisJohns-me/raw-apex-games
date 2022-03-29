@@ -23,6 +23,7 @@ const SAVE_SETTINGS_DEBOUNCETIME = 1000;
 enum SettingPreview {
     AimingReticle = "aimingreticle",
     MatchTimer = "matchtimer",
+    MiniInventory = "miniinventory",
     UltTimer = "ulttimer",
     InflictionInsight = "inflictioninsight",
     LegendSelectionStats = "legendselectionstats",
@@ -55,6 +56,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         [SettingKey.EnableAllInGameHUD]: false,
         inGameHUDFormGroup: this.formBuilder.group({
             [SettingKey.EnableInGameMatchTimerHUD]: [false],
+            [SettingKey.EnableInGameMiniInventoryHUD]: [false],
             [SettingKey.EnableInGameUltimateTimerHUD]: [false],
             [SettingKey.EnableInGameInflictionInsightHUD]: [false],
             [SettingKey.EnableInGameAimingReticle]: [false],

@@ -144,11 +144,10 @@ export class MatchService extends BaseService {
             },
             [MatchState.Active]: (matchState, infoUpdate, gameEvent) => {
                 const notActive = matchState !== MatchState.Active;
-                const locationUpdate = infoUpdate?.feature === "location";
                 const infoStateActive = infoUpdate?.feature === "match_state" && infoUpdate?.info?.game_info?.match_state === "active";
                 const teamActive = infoUpdate?.feature === "team" && infoUpdate.info.match_info?.team_info?.team_state === "active";
                 const matchStart = gameEvent?.name === "match_start";
-                return notActive && (locationUpdate || infoStateActive || teamActive || matchStart);
+                return notActive && (infoStateActive || teamActive || matchStart);
             },
         });
 

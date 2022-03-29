@@ -27,7 +27,6 @@ export type ConfigPositionXAnchor = "left" | "center" | "right";
 export type ConfigPositionYAnchor = "top" | "middle" | "bottom";
 
 type WindowPositionInput = {
-    // x, y: percent
     xPercent: number;
     yPercent: number;
     xAnchor: ConfigPositionXAnchor;
@@ -35,7 +34,6 @@ type WindowPositionInput = {
 };
 
 type WindowSizeInput = {
-    // width, height: percent
     minWidthPercent?: number;
     minHeightPercent?: number;
     widthPercent: number;
@@ -59,7 +57,10 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     @Input() public isMaximizable = true;
     @Input() public isMinimizable = true;
     @Input() public position?: WindowPositionInput;
-    /** If min/max are not set, default to the width/height percent */
+    /**
+     * If min/max are not set, default to the width/height percent.
+     * Overwolf windows are at least must be at least 100px width or height.
+     * */
     @Input() public size?: WindowSizeInput;
     @Input() public set primaryTitle(value: string) {
         this.titleService.setTitle(value ? `${value} - ${APP_NAME}${TITLE_SUFFIX}` : `${APP_NAME}${TITLE_SUFFIX}`);
