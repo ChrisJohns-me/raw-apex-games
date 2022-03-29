@@ -1,4 +1,5 @@
 import { BrowserWindowRef, WINDOW } from "@allfather-app/app/common/services/window.service";
+import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchMapService } from "@allfather-app/app/modules/core/match/match-map.service";
 import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
@@ -20,6 +21,7 @@ import { ReportingService } from "@allfather-app/app/modules/core/reporting/repo
 import { MatchListingComponent } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
 import { FullHeightDirective } from "@allfather-app/app/shared/directives/full-height.directive";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ReactiveFormsModule } from "@angular/forms";
 import { MapExplorerPageComponent } from "./map-explorer-page.component";
 
 describe("MapExplorerPageComponent", () => {
@@ -28,6 +30,7 @@ describe("MapExplorerPageComponent", () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
+            imports: [ReactiveFormsModule],
             declarations: [MapExplorerPageComponent, MatchListingComponent, FullHeightDirective],
             providers: [
                 { provide: WINDOW, useClass: BrowserWindowRef },
@@ -45,6 +48,7 @@ describe("MapExplorerPageComponent", () => {
     });
 
     beforeEach(() => {
+        supressConsoleLog();
         fixture = TestBed.createComponent(MapExplorerPageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();

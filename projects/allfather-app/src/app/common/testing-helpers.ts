@@ -53,7 +53,6 @@ export function supressConsoleLog(): void {
     const consoleSpy = spyOnAllFunctions(console);
     consoleSpy.debug?.and.callFake(() => {});
     consoleSpy.error?.and.callFake(() => {});
-    consoleSpy.exception?.and.callFake(() => {});
     consoleSpy.info?.and.callFake(() => {});
     consoleSpy.log?.and.callFake(() => {});
     consoleSpy.trace?.and.callFake(() => {});
