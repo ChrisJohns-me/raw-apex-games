@@ -14,8 +14,11 @@
         *ngIf="!isUltimateReady && isVisible"
     >
         <p class="timer-display text-shadow-dark-sm">
-            <ng-container *ngIf="maybeReadyDate">
+            <ng-container *ngIf="displayType == UltimateTimerType.TimeRemaining && maybeReadyDate">
                 {{ maybeReadyDate | customFormatDistanceToNow: { hour: "hr", minute: "min", second: "sec" }:"floor" }}
+            </ng-container>
+            <ng-container *ngIf="displayType == UltimateTimerType.TimeTotal">
+                {{ totalReadyDate | customFormatDistanceToNow: { hour: "hr", minute: "min", second: "sec" }:"floor" }}
             </ng-container>
         </p>
     </div>

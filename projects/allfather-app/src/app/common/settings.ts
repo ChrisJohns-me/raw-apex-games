@@ -1,4 +1,5 @@
 import { AimingReticleList } from "../modules/HUD/reticle-helper/components/aiming-reticle/aiming-reticles";
+import { UltimateTimerType } from "../modules/HUD/ult-timer/windows/ult-timer-window.component";
 
 export type SettingValue = BasicPrimitive | BasicPrimitive[];
 export type AllSettings = { [key in SettingKey]: SettingValue };
@@ -13,6 +14,7 @@ export enum SettingKey {
     EnableLegendSelectLegendStats = "enableLegendSelectLegendStats",
     EnableLegendSelectLegendSuggestions = "enableLegendSelectLegendSuggestions",
     EnableInGameAimingReticle = "enableInGameAimingReticle",
+    UltimateTimerType = "ultimateTimerType",
     InGameAimingReticleId = "inGameAimingReticleId",
     InGameAimingReticleColor = "inGameAimingReticleColor",
     InGameAimingReticleAlpha = "inGameAimingReticleAlpha",
@@ -29,6 +31,7 @@ export const DefaultSetting: { [P in SettingKey]: SettingValue } = {
     enableLegendSelectLegendStats: true,
     enableLegendSelectLegendSuggestions: true,
     enableInGameAimingReticle: false,
+    ultimateTimerType: UltimateTimerType.TimeTotal,
     inGameAimingReticleId: AimingReticleList[0].reticleId,
     inGameAimingReticleColor: AimingReticleList[0].hexColor,
     inGameAimingReticleAlpha: AimingReticleList[0].alpha,

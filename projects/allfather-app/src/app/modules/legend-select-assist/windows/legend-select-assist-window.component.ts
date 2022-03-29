@@ -44,7 +44,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
         private readonly configuration: ConfigurationService,
         private readonly match: MatchService,
         private readonly playerStats: PlayerLocalStatsService,
-        private readonly settingsService: SettingsService
+        private readonly settings: SettingsService
     ) {}
 
     public ngOnInit(): void {
@@ -131,7 +131,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
      * Listens to changes from Settings
      */
     private setupSettingsListener(): void {
-        combineLatest([this.configuration.config$, this.settingsService.streamSetting$<boolean>(SettingKey.EnableLegendSelectLegendStats)])
+        combineLatest([this.configuration.config$, this.settings.streamSetting$<boolean>(SettingKey.EnableLegendSelectLegendStats)])
             .pipe(takeUntil(this.destroy$))
             .subscribe(([config, setting]) => {
                 const defaultValue = DefaultSetting.enableLegendSelectLegendStats as boolean;
@@ -141,10 +141,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
                 this.refreshUI();
             });
 
-        combineLatest([
-            this.configuration.config$,
-            this.settingsService.streamSetting$<boolean>(SettingKey.EnableLegendSelectLegendSuggestions),
-        ])
+        combineLatest([this.configuration.config$, this.settings.streamSetting$<boolean>(SettingKey.EnableLegendSelectLegendSuggestions)])
             .pipe(takeUntil(this.destroy$))
             .subscribe(([config, setting]) => {
                 const defaultValue = DefaultSetting.enableLegendSelectLegendSuggestions as boolean;

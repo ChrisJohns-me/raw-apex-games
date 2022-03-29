@@ -21,7 +21,7 @@
     "featureFlags": {
         "enableMatchTimerWindow": true,
         "enableMiniInventoryWindow": true,
-        "enableUltTimerWindow": false,
+        "enableUltTimerWindow": true,
         "enableInflictionInsightWindow": true,
         "enableReticleHelperWindow": false,
         "enableVideoCapture": true,
