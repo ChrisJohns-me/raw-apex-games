@@ -21,6 +21,11 @@
         <span class="secondary-title" [innerText]="secondaryTitle"></span>
     </div>
 
+    <div class="titlebar-feature-status" *ngIf="showOverwolfAllFeatureStates">
+        Service Status:&nbsp;
+        <app-game-events-status-indicator [allFeatureStates]="allFeatureStates"></app-game-events-status-indicator>
+    </div>
+
     <div class="titlebar-controls">
         <button class="btn px-1" type="button" (click)="onSettingsButtonClick()">
             <icon [path]="mdiCogOutline"></icon>

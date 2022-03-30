@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, Observable, of, Subject, throwError, timer } from "rxjs";
 import { catchError, delay, map, mergeMap, retryWhen, switchMap, takeUntil, tap } from "rxjs/operators";
-import { FeatureState, FeatureStatusList, OverwolfFeatureDep } from "../../feature-status";
+import { FeatureState, FeatureStates, OverwolfFeatureDep } from "../../feature-status";
 import { OverwolfGameDataStatusDTO } from "./dto/overwolf-feature-status-dto";
 import { OWConfig, OW_CONFIG } from "./overwolf-config";
 
@@ -16,7 +16,7 @@ import { OWConfig, OW_CONFIG } from "./overwolf-config";
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("OverwolfFeatureStatusService", OverwolfFeatureStatusService, deps),
 })
 export class OverwolfFeatureStatusService implements OnDestroy {
-    public readonly featureStatusList$ = new BehaviorSubject<FeatureStatusList>({});
+    public readonly featureStates$ = new BehaviorSubject<FeatureStates>({});
 
     private destroy$ = new Subject<void>();
 
@@ -34,19 +34,19 @@ export class OverwolfFeatureStatusService implements OnDestroy {
      * @returns Event names and their Overwolf status.
      * @returns Empty on HTTP errors or JSON deserialization errors.
      */
-    public checkFeatureStatus(featureName: OverwolfFeatureDep): FeatureState {
-        const statusList = this.featureStatusList$.value;
+    public checkFeatureState(featureName: OverwolfFeatureDep): FeatureState {
+        const statusList = this.featureStates$.value;
         return featureName in statusList ? statusList[featureName]! : FeatureState.Unavailable;
     }
 
     /**
      * @returns Retrieves the last known overview of all Overwolf feature status
      */
-    public checkAllFeatureStatus(): FeatureState {
-        const statusListArr = Object.values(this.featureStatusList$.value);
+    public checkAllFeatureStates(): FeatureState {
+        const statusListArr = Object.values(this.featureStates$.value);
         if (!statusListArr?.length) return FeatureState.Unavailable;
         if (statusListArr.every((s) => s === FeatureState.Good)) return FeatureState.Good;
-        if (statusListArr.filter((s) => s === FeatureState.Unsupported).length <= 3) return FeatureState.Good;
+        // if (statusListArr.filter((s) => s === FeatureState.Unsupported).length <= 3) return FeatureState.Good;
         if (statusListArr.some((s) => s === FeatureState.Partial)) return FeatureState.Partial;
         if (statusListArr.every((s) => s === FeatureState.Unavailable)) return FeatureState.Unavailable;
         if (statusListArr.some((s) => s === FeatureState.Unavailable)) return FeatureState.Partial;
@@ -60,16 +60,16 @@ export class OverwolfFeatureStatusService implements OnDestroy {
      * @returns Event names and their Overwolf status.
      * @returns Empty on HTTP errors or JSON deserialization errors.
      */
-    public getFeatureStatusList$(): Observable<FeatureStatusList> {
+    public getFeatureStates$(): Observable<FeatureStates> {
         const gameStatusUrl = `https://game-events-status.overwolf.com/${this.owConfig.APEXLEGENDSCLASSID.toString()}_prod.json`;
 
         return this.http.get(gameStatusUrl, { responseType: "json" }).pipe(
             takeUntil(this.destroy$),
             map((gameDataStatusJSON) => new OverwolfGameDataStatusDTO(gameDataStatusJSON)),
-            map((gameDataStatusDTO) => gameDataStatusDTO.toFeatureStatusList()),
+            map((gameDataStatusDTO) => gameDataStatusDTO.toFeatureStates()),
             retryWhen((errors) => this.retry$(errors)),
-            catchError(() => of({} as FeatureStatusList)),
-            tap((statusList) => this.featureStatusList$.next(statusList))
+            catchError(() => of({} as FeatureStates)),
+            tap((states) => this.featureStates$.next(states))
         );
     }
 
@@ -77,9 +77,9 @@ export class OverwolfFeatureStatusService implements OnDestroy {
         timer(0, this.owConfig.FEATURE_HEALTHCHECK_TIME)
             .pipe(
                 takeUntil(this.destroy$),
-                switchMap(() => this.getFeatureStatusList$()),
-                tap((statusList) =>
-                    console.debug(`[${this.constructor.name}] (Feature Status Check) Status: "this.checkAllFeatureStatus()"`, statusList)
+                switchMap(() => this.getFeatureStates$()),
+                tap((states) =>
+                    console.debug(`[${this.constructor.name}] (Feature Status Check) Status: "this.checkAllFeatureStatus()"`, states)
                 )
             )
             .subscribe();

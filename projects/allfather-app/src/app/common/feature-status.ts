@@ -36,6 +36,6 @@ export enum FeatureState {
     Unavailable = 3,
 }
 
-export type FeatureStatusList = {
+export type FeatureStates = {
     [eventName in OverwolfFeatureDep]?: FeatureState;
 };

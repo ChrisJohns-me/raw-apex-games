@@ -1,0 +1,36 @@
+@import "window-styles";
+
+.status-container {
+    cursor: help;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.status-dot {
+    width: 0.64rem;
+    height: 0.64rem;
+    border-radius: 50%;
+    margin-right: 0.1rem;
+    margin-left: 0.1rem;
+    display: inline-block;
+    vertical-align: middle;
+    background-color: $black;
+
+    &.unsupported {
+        background-color: $red;
+    }
+
+    &.good {
+        background-color: $green;
+    }
+
+    &.partial {
+        background-color: $yellow;
+    }
+
+    &.unavailable {
+        background-color: $red;
+    }
+}

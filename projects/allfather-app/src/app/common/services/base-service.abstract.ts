@@ -18,15 +18,15 @@ export abstract class BaseService implements OnDestroy {
 
     public isFeatureDepAvailable(featureName: OverwolfFeatureDep): boolean {
         if (!this.__overwolfGameDataStatus) throw Error(`Cannot check for feature availability; Game Data Status service not provided.`);
-        const featureStatusList = this.__overwolfGameDataStatus.featureStatusList$.value;
-        return featureName in featureStatusList && featureStatusList[featureName] === FeatureState.Good;
+        const featureStates = this.__overwolfGameDataStatus.featureStates$.value;
+        return featureName in featureStates && featureStates[featureName] === FeatureState.Good;
     }
 
     public areAllFeatureDepsAvailable(): boolean {
         if (!this.__overwolfGameDataStatus) throw Error(`Cannot check for feature availability; Game Data Status service not provided.`);
         if (!this.allFeatureDeps) throw Error(`Cannot check for feature availability; Dependencies not provided.`);
         if (this.allFeatureDeps.length === 0) return true;
-        const featureStatusList = this.__overwolfGameDataStatus.featureStatusList$.value;
-        return this.allFeatureDeps.every((f) => f in featureStatusList && featureStatusList[f] === FeatureState.Good);
+        const featureStates = this.__overwolfGameDataStatus.featureStates$.value;
+        return this.allFeatureDeps.every((f) => f in featureStates && featureStates[f] === FeatureState.Good);
     }
 }

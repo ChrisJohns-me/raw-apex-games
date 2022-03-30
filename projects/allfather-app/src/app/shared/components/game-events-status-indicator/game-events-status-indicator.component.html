@@ -1,0 +1,34 @@
+<span
+    class="status-container"
+    data-bs-toggle="tooltip"
+    data-bs-placement="bottom"
+    [title]="
+        allFeatureStates === FeatureState.Unsupported
+            ? 'In-game features are not supported at the moment'
+            : allFeatureStates === FeatureState.Good
+            ? 'All in-game features are available'
+            : allFeatureStates === FeatureState.Partial
+            ? 'Some in-game features might not be available at the moment'
+            : allFeatureStates === FeatureState.Unavailable
+            ? 'In-game features might not be available at the moment'
+            : ''
+    "
+>
+    <span
+        class="status-dot"
+        [ngClass]="{
+            unsupported: allFeatureStates === FeatureState.Unsupported,
+            good: allFeatureStates === FeatureState.Good,
+            partial: allFeatureStates === FeatureState.Partial,
+            unavailable: allFeatureStates === FeatureState.Unavailable
+        }"
+    ></span>
+
+    <span>
+        <ng-container *ngIf="!allFeatureStates">Loading...</ng-container>
+        <ng-container *ngIf="allFeatureStates === FeatureState.Unsupported">Unsupported</ng-container>
+        <ng-container *ngIf="allFeatureStates === FeatureState.Good">Good</ng-container>
+        <ng-container *ngIf="allFeatureStates === FeatureState.Partial">Partial</ng-container>
+        <ng-container *ngIf="allFeatureStates === FeatureState.Unavailable">Unavailable</ng-container>
+    </span>
+</span>

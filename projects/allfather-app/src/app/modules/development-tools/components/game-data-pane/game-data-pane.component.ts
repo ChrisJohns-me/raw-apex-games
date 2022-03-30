@@ -1,4 +1,4 @@
-import { FeatureState, FeatureStatusList } from "@allfather-app/app/common/feature-status";
+import { FeatureState, FeatureStates } from "@allfather-app/app/common/feature-status";
 import { GamePhase } from "@allfather-app/app/common/game-phase";
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchState } from "@allfather-app/app/common/match/state";
@@ -33,7 +33,7 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
     public autoUltimate = false;
 
     public get featureStatus(): FeatureState {
-        return this.overwolfFeatureStatusService.checkAllFeatureStatus();
+        return this.overwolfFeatureStatusService.checkAllFeatureStates();
     }
 
     public get matchDuration(): Date {
@@ -156,15 +156,15 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
         this.incrementUltimatePercent();
     }
 
-    public lastFeatureStatusListToArray(): FeatureStatusList {
-        return this.overwolfFeatureStatusService.featureStatusList$.value;
+    public lastFeatureStatesToArray(): FeatureStates {
+        return this.overwolfFeatureStatusService.featureStates$.value;
     }
 
     public reloadOWGEPStatus(): void {
         this.overwolfFeatureStatusService
-            .getFeatureStatusList$()
+            .getFeatureStates$()
             .pipe(takeUntil(this.destroy$))
-            .subscribe((statusList) => console.debug(`Refreshed OW GEP Status`, statusList));
+            .subscribe((states) => console.debug(`Refreshed OW GEP Status`, states));
     }
 
     private incrementUltimatePercent(): void {

@@ -1,19 +1,19 @@
-import { FeatureState, FeatureStatusList, OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
-import { OverwolfFeatureStatusService } from "projects/shared-app/services/overwolf/overwolf-feature-status.service";
+import { FeatureState, FeatureStates, OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
+import { OverwolfFeatureStatusService } from "@allfather-app/app/common/services/overwolf/overwolf-feature-status.service";
 import { BehaviorSubject, Observable, of } from "rxjs";
 
 export class MockOverwolfFeatureStatusService implements MockedClass<OverwolfFeatureStatusService> {
-    public featureStatusList$: BehaviorSubject<FeatureStatusList> = new BehaviorSubject<FeatureStatusList>({});
+    public featureStates$: BehaviorSubject<FeatureStates> = new BehaviorSubject<FeatureStates>({});
 
-    public checkFeatureStatus(featureName: OverwolfFeatureDep): FeatureState {
+    public checkFeatureState(featureName: OverwolfFeatureDep): FeatureState {
         return FeatureState.Unavailable;
     }
 
-    public checkAllFeatureStatus(): FeatureState {
+    public checkAllFeatureStates(): FeatureState {
         return FeatureState.Unavailable;
     }
 
-    public getFeatureStatusList$(): Observable<FeatureStatusList> {
+    public getFeatureStates$(): Observable<FeatureStates> {
         return of({});
     }
 }

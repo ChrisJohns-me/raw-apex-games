@@ -51,6 +51,11 @@ $titlebar-height: 2.5rem;
         color: white;
     }
 
+    &-feature-status {
+        flex: 2 0;
+        text-align: right;
+    }
+
     &-controls {
         padding: 0 0.5rem;
         flex: 1 0;

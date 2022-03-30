@@ -1,4 +1,4 @@
-import { FeatureState, FeatureStatusList, OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
+import { FeatureState, FeatureStates, OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 
 enum FeatureStateDTO {
     Unsupported = 0,
@@ -59,15 +59,15 @@ export class OverwolfGameDataStatusDTO {
         });
     }
 
-    public toFeatureStatusList(): FeatureStatusList {
-        return this.features.reduce((prev, curr): FeatureStatusList => {
-            const appending: FeatureStatusList = {};
+    public toFeatureStates(): FeatureStates {
+        return this.features.reduce((prev, curr): FeatureStates => {
+            const appending: FeatureStates = {};
             curr.keys.forEach((key) => {
                 const keyName = key.name as OverwolfFeatureDep;
                 appending[keyName] = Number(key.state) as FeatureState;
             });
             return { ...prev, ...appending };
-        }, {} as FeatureStatusList);
+        }, {} as FeatureStates);
     }
 
     private sanitizeName(value?: string): string {
