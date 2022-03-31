@@ -43,6 +43,15 @@ describe("Hotkey Class", () => {
             expect(hotkey.key).toBe("F");
             expect(hotkey.keyCode).toBe(70);
         });
+
+        it("key can be undefined", () => {
+            // Arrange
+            const hotkey = new Hotkey(HotkeyEnum.ToggleMain, "Test Title", "", true, true, true);
+
+            // Assert
+            expect(hotkey.key).toBe("");
+            expect(hotkey.keyCode).toBe(0);
+        });
     });
 
     describe("fromOWHotKeyObject", () => {
@@ -84,6 +93,29 @@ describe("Hotkey Class", () => {
                 binding: "Ctrl+Alt+Shift+F3",
             };
             const expectedHotkey = new Hotkey(HotkeyEnum.ToggleMain, title, "F3", true, true, true);
+
+            // Act
+            const result = Hotkey.fromOWHotKeyObject(owHotKeyObject);
+
+            // Assert
+            expect(result).toEqual(expectedHotkey);
+        });
+
+        it("Creates Hotkey class from Overwolf Hotkey Object (IsUnassigned)", () => {
+            // Arrange
+            const title = "Test Title";
+            const owHotKeyObject: OWHotKey = {
+                name: HotkeyEnum.ToggleMain,
+                title: title,
+                virtualKeycode: 0,
+                modifierKeys: 0,
+                extensionuid: "abcdefghijklmnopqrstuvwxyz",
+                isPassthrough: false,
+                hold: false,
+                IsUnassigned: true,
+                binding: "",
+            };
+            const expectedHotkey = new Hotkey(HotkeyEnum.ToggleMain, title, "", false, false, false);
 
             // Act
             const result = Hotkey.fromOWHotKeyObject(owHotKeyObject);

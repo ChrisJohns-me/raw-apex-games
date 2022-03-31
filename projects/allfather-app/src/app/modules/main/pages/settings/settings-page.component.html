@@ -4,12 +4,12 @@
             <!-- #region Hotkeys -->
             <table class="table table-dark table-striped table-hover mt-4">
                 <thead>
-                    <tr>
+                    <tr (mouseover)="selectedPreviewSetting = undefined">
                         <td class="align-middle" colspan="2"><h5 class="m-2">Hotkeys</h5></td>
                     </tr>
                 </thead>
                 <tbody [formGroup]="hotKeyFormGroup">
-                    <tr *ngFor="let hotkey of hotkeysList">
+                    <tr *ngFor="let hotkey of hotkeysList" (mouseover)="selectedPreviewSetting = undefined">
                         <td class="ps-4 ps-lg-5">{{ hotkey.friendlyName }}</td>
                         <td class="text-end px-5">
                             <app-hotkey-editor [hotkey]="hotkey" (hotkeyChange)="onHotkeyChange($event)"></app-hotkey-editor>
@@ -23,7 +23,7 @@
             <!-- #region In-Game HUD -->
             <table class="table table-dark table-striped table-hover mt-4">
                 <thead>
-                    <tr>
+                    <tr (mouseover)="selectedPreviewSetting = undefined">
                         <td class="align-middle"><h5 class="m-2">In-Game HUD</h5></td>
                         <td class="align-middle text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
@@ -32,7 +32,7 @@
                         </td>
                     </tr>
                 </thead>
-                <tbody [formGroup]="inGameHUDFormGroup" (mousedown)="isEditing = true" (mouseup)="isEditing = false">
+                <tbody [formGroup]="inGameHUDFormGroup">
                     <tr
                         *ngIf="config?.featureFlags?.enableMatchTimerWindow"
                         (mouseover)="selectedPreviewSetting = SettingPreview.MatchTimer"
@@ -60,19 +60,7 @@
                         </td>
                     </tr>
                     <tr *ngIf="config?.featureFlags?.enableUltTimerWindow" (mouseover)="selectedPreviewSetting = SettingPreview.UltTimer">
-                        <td class="ps-4 ps-lg-5">Ultimate Timer</td>
-                        <td class="text-end pe-5">
-                            <div class="form-check form-switch d-inline-flex">
-                                <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    [formControlName]="SettingKey.EnableInGameUltimateTimerHUD"
-                                />
-                            </div>
-                        </td>
-                    </tr>
-                    <tr *ngIf="config?.featureFlags?.enableUltTimerWindow" (mouseover)="selectedPreviewSetting = SettingPreview.UltTimer">
-                        <td class="ps-4 ps-lg-5">Ultimate Timer - Display Type</td>
+                        <td class="ps-4 ps-lg-5">Ultimate Timer Display</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
                                 <select
@@ -252,18 +240,18 @@
             <!-- #region Export/Import -->
             <table class="table table-dark table-striped table-hover">
                 <thead>
-                    <tr>
+                    <tr (mouseover)="selectedPreviewSetting = undefined">
                         <td class="align-middle" colspan="2"><h5 class="m-2">Advanced</h5></td>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr (mouseover)="selectedPreviewSetting = undefined">
                         <td class="ps-4 ps-lg-5">Export Local Data</td>
                         <td class="text-end pe-5">
                             <button class="btn btn-sm btn-primary" type="button" (click)="exportLocalDatabase()">Export</button>
                         </td>
                     </tr>
-                    <tr>
+                    <tr (mouseover)="selectedPreviewSetting = undefined">
                         <td class="ps-4 ps-lg-5">Import Local Data</td>
                         <td class="text-end pe-5">
                             <input type="file" class="hide-file-input" (change)="importLocalDatabase($event)" #fileUpload />

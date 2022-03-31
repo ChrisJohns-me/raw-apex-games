@@ -25,7 +25,7 @@
     ></span>
 
     <span>
-        <ng-container *ngIf="!allFeatureStates">Loading...</ng-container>
+        <ng-container *ngIf="allFeatureStates === undefined || allFeatureStates === null">Loading...</ng-container>
         <ng-container *ngIf="allFeatureStates === FeatureState.Unsupported">Unsupported</ng-container>
         <ng-container *ngIf="allFeatureStates === FeatureState.Good">Good</ng-container>
         <ng-container *ngIf="allFeatureStates === FeatureState.Partial">Partial</ng-container>

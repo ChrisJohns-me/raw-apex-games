@@ -13,13 +13,14 @@ import { InflictionInsightWindowService } from "../HUD/infliction-insight/window
 import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
 import { MiniInventoryWindowService } from "../HUD/mini-inventory/windows/mini-inventory-window.service";
 import { ReticleHelperWindowService } from "../HUD/reticle-helper/windows/reticle-helper-window.service";
+import { UltimateTimerType } from "../HUD/ult-timer/windows/ult-timer-window.component";
 import { UltTimerWindowService } from "../HUD/ult-timer/windows/ult-timer-window.service";
 import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
 
 type HUDTriggers = {
     windowService: { open: () => Observable<void>; close: () => Observable<void> };
     requiredGamePhases: GamePhase[];
-    requiredSettings: SettingKey[];
+    requiredSettings: { key: SettingKey; predicate?: (value: SettingValue) => boolean }[];
     requiredGameModes: MatchGameModeGenericId[];
 };
 
@@ -43,7 +44,7 @@ export class HUDWindowControllerService extends BaseService {
         {
             windowService: this.inflictionInsightWindow,
             requiredGamePhases: [GamePhase.InGame],
-            requiredSettings: [SettingKey.EnableAllInGameHUD, SettingKey.EnableInGameInflictionInsightHUD],
+            requiredSettings: [{ key: SettingKey.EnableAllInGameHUD }, { key: SettingKey.EnableInGameInflictionInsightHUD }],
             requiredGameModes: [
                 MatchGameModeGenericId.Arenas,
                 MatchGameModeGenericId.BattleRoyale_Duos,
@@ -54,7 +55,7 @@ export class HUDWindowControllerService extends BaseService {
         {
             windowService: this.legendSelectAssistWindow,
             requiredGamePhases: [GamePhase.LegendSelection],
-            requiredSettings: [SettingKey.EnableAllLegendSelectHUD],
+            requiredSettings: [{ key: SettingKey.EnableAllLegendSelectHUD }],
             requiredGameModes: [
                 MatchGameModeGenericId.Arenas,
                 MatchGameModeGenericId.BattleRoyale_Duos,
@@ -65,7 +66,7 @@ export class HUDWindowControllerService extends BaseService {
         {
             windowService: this.matchTimerWindow,
             requiredGamePhases: [GamePhase.InGame],
-            requiredSettings: [SettingKey.EnableAllInGameHUD, SettingKey.EnableInGameMatchTimerHUD],
+            requiredSettings: [{ key: SettingKey.EnableAllInGameHUD }, { key: SettingKey.EnableInGameMatchTimerHUD }],
             requiredGameModes: [
                 MatchGameModeGenericId.Arenas,
                 MatchGameModeGenericId.BattleRoyale_Duos,
@@ -76,7 +77,7 @@ export class HUDWindowControllerService extends BaseService {
         {
             windowService: this.miniInventoryWindow,
             requiredGamePhases: [GamePhase.InGame],
-            requiredSettings: [SettingKey.EnableAllInGameHUD, SettingKey.EnableInGameMatchTimerHUD],
+            requiredSettings: [{ key: SettingKey.EnableAllInGameHUD }, { key: SettingKey.EnableInGameMatchTimerHUD }],
             requiredGameModes: [
                 MatchGameModeGenericId.Arenas,
                 MatchGameModeGenericId.BattleRoyale_Duos,
@@ -87,7 +88,10 @@ export class HUDWindowControllerService extends BaseService {
         {
             windowService: this.ultTimerWindow,
             requiredGamePhases: [GamePhase.InGame],
-            requiredSettings: [SettingKey.EnableAllInGameHUD, SettingKey.EnableInGameUltimateTimerHUD],
+            requiredSettings: [
+                { key: SettingKey.EnableAllInGameHUD },
+                { key: SettingKey.UltimateTimerType, predicate: (value) => value !== UltimateTimerType.Disabled },
+            ],
             requiredGameModes: [
                 MatchGameModeGenericId.BattleRoyale_Duos,
                 MatchGameModeGenericId.BattleRoyale_Trios,
@@ -97,7 +101,7 @@ export class HUDWindowControllerService extends BaseService {
         {
             windowService: this.reticleHelperWindow,
             requiredGamePhases: [GamePhase.InGame],
-            requiredSettings: [SettingKey.EnableInGameAimingReticle],
+            requiredSettings: [{ key: SettingKey.EnableInGameAimingReticle }],
             requiredGameModes: [
                 MatchGameModeGenericId.Arenas,
                 MatchGameModeGenericId.BattleRoyale_Duos,
@@ -155,10 +159,12 @@ export class HUDWindowControllerService extends BaseService {
         return this.HUDWindows.map((hud) => {
             const meetsGameMode = hud.requiredGameModes.includes(genericGameModeId);
             const meetsGamePhase = Object.values(hud.requiredGamePhases).includes(gamePhase);
-            const meetsSettings = hud.requiredSettings.every((reqSettingKey) => {
-                const keyExists = reqSettingKey in settings;
-                const savedValue = settings[reqSettingKey];
-                return keyExists ? savedValue : true;
+            const meetsSettings = hud.requiredSettings.every((reqSetting) => {
+                const keyExists = reqSetting.key in settings;
+                const savedValue = settings[reqSetting.key];
+                const predicate = typeof reqSetting.predicate === "function" ? reqSetting.predicate(savedValue) : savedValue;
+
+                return keyExists ? predicate : true;
             });
 
             if (meetsGameMode && meetsGamePhase && meetsSettings) return hud.windowService.open();

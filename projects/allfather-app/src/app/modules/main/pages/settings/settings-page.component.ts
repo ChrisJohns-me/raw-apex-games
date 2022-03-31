@@ -58,7 +58,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         inGameHUDFormGroup: this.formBuilder.group({
             [SettingKey.EnableInGameMatchTimerHUD]: [false],
             [SettingKey.EnableInGameMiniInventoryHUD]: [false],
-            [SettingKey.EnableInGameUltimateTimerHUD]: [false],
             [SettingKey.EnableInGameInflictionInsightHUD]: [false],
             [SettingKey.EnableInGameAimingReticle]: [false],
             [SettingKey.UltimateTimerType]: [UltimateTimerType.TimeTotal],
@@ -110,6 +109,10 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     public SettingKey = SettingKey;
     public SettingPreview = SettingPreview;
     public UltimateTimerTypeList: { key: UltimateTimerType; value: string }[] = [
+        {
+            key: UltimateTimerType.Disabled,
+            value: "Off",
+        },
         {
             key: UltimateTimerType.TimeTotal,
             value: "Cooldown Total",
@@ -229,7 +232,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         this.refreshInGameFormHUDState();
         this.refreshLegendSelectHUDFormState();
         this.refreshAimingReticleFormState();
-        this.refreshUltimateTimerTypeFormState();
     }
 
     private updateAimingReticlePreview(
@@ -288,17 +290,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             this.inGameHUDFormGroup.enable({ emitEvent: false });
         } else {
             this.inGameHUDFormGroup.disable({ emitEvent: false });
-        }
-    }
-
-    private refreshUltimateTimerTypeFormState(): void {
-        const isUltimateTimerEnabled = this.inGameHUDFormGroup.get([SettingKey.EnableInGameUltimateTimerHUD])?.value;
-        const ultimateTimerTypeForm = this.inGameHUDFormGroup.get(SettingKey.UltimateTimerType);
-
-        if (isUltimateTimerEnabled) {
-            ultimateTimerTypeForm?.enable({ emitEvent: false });
-        } else {
-            ultimateTimerTypeForm?.disable({ emitEvent: false });
         }
     }
 

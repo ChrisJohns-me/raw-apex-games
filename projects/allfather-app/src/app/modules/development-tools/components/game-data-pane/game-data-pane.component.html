@@ -22,7 +22,7 @@
                     <div class="col-6 text-end">{{ game.phase$ | async }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
-                    <div class="col-8">Overwolf GEP</div>
+                    <div class="col-8"><a class="link-primary" (click)="onChangeOverwolfGEPClick()">Overwolf GEP</a></div>
                     <div class="col-4 text-end"><a class="link-primary" (click)="reloadOWGEPStatus()">(Reload)</a></div>
                     <div class="col-12 text-end">
                         <ng-container *ngIf="featureStatus === 0">Unsupported</ng-container>

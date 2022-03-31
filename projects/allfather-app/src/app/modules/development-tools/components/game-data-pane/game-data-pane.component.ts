@@ -126,6 +126,24 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
         this.game.phase$.next(newPhase);
     }
 
+    public onChangeOverwolfGEPClick(): void {
+        const featureStates = { ...this.overwolfFeatureStatusService.featureStates$.value } as FeatureStates;
+        const keys = Object.keys(featureStates) as (keyof FeatureStates)[];
+
+        let newValue = FeatureState.Unavailable;
+        if (keys.some((key) => featureStates[key] === FeatureState.Unsupported)) {
+            newValue = FeatureState.Good;
+        } else if (keys.some((key) => featureStates[key] === FeatureState.Good)) {
+            newValue = FeatureState.Partial;
+        } else if (keys.some((key) => featureStates[key] === FeatureState.Partial)) {
+            newValue = FeatureState.Unavailable;
+        } else if (keys.some((key) => featureStates[key] === FeatureState.Unavailable)) {
+            newValue = FeatureState.Unsupported;
+        }
+        keys.forEach((key) => (featureStates[key] = newValue));
+        this.overwolfFeatureStatusService.featureStates$.next(featureStates);
+    }
+
     public onChangeLocationPhaseClick(): void {
         const phase = this.matchPlayerLocation.myLocationPhase$.value;
         const newPhase = !phase

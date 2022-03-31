@@ -16,6 +16,7 @@ import { combineLatest, Observable, Subject, timer } from "rxjs";
 import { distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 
 export enum UltimateTimerType {
+    Disabled = "disabled",
     TimeTotal = "timeTotal",
     TimeRemaining = "timeRemaining",
 }

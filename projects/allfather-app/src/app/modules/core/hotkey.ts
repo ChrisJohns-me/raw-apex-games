@@ -20,17 +20,17 @@ export class Hotkey {
         return keycode(this.key);
     }
 
-    public get key(): string {
-        return this._key.toUpperCase();
+    public get key(): Optional<string> {
+        return this._key?.toUpperCase();
     }
-    public set key(value: string) {
+    public set key(value: Optional<string>) {
         this._key = value;
     }
 
     constructor(
         public hotkeyName: HotkeyEnum | string,
         public friendlyName: string,
-        private _key: string,
+        private _key: Optional<string>,
         public ctrlKey: boolean,
         public altKey: boolean,
         public shiftKey: boolean
@@ -39,7 +39,8 @@ export class Hotkey {
     //#region static methods
     public static fromOWHotKeyObject(owHotKeyObject: OWHotKey): Hotkey {
         const [ctrl, alt, shift] = Hotkey.modifiersFromEnum(owHotKeyObject.modifierKeys);
-        const key: string = keycode(owHotKeyObject.virtualKeycode).toUpperCase();
+        const keyFromKeyCode = keycode(owHotKeyObject.virtualKeycode) as Optional<string>;
+        const key: string = keyFromKeyCode?.toUpperCase() ?? "";
         return new Hotkey(owHotKeyObject.name, owHotKeyObject.title, key, ctrl, alt, shift);
     }
 
