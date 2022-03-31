@@ -8,8 +8,9 @@ import { MatchListingComponent } from "./components/match-listing/match-listing.
 import { BootstrapCSSInjectorComponent } from "./components/ui-container/bootstrap-css-injector/bootstrap-css-injector.component";
 import { UIContainerComponent } from "./components/ui-container/ui-container.component";
 import { FullHeightDirective } from "./directives/full-height.directive";
+import { HrefDirective } from "./directives/href.directive";
 
-const DIRECTIVES = [FullHeightDirective];
+const DIRECTIVES = [FullHeightDirective, HrefDirective];
 // const PIPES = [];
 const COMPONENTS = [BootstrapCSSInjectorComponent, MatchListingComponent, GameEventsStatusIndicatorComponent, UIContainerComponent];
 // const THIRDPARTYMODULES = [];
