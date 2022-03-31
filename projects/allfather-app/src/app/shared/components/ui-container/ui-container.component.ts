@@ -74,7 +74,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     @Input() public enablePageviewTracking = true;
     /** If function is not provided, the window will be closed */
     @Input("onCloseButtonClick") public onCloseFn?: () => void;
-    @Input() public showOverwolfAllFeatureStates = true;
+    @Input() public showOverwolfAllFeatureStates = false;
 
     public allFeatureStates?: FeatureState;
     public state: WindowState = WindowState.Normal;
@@ -184,8 +184,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
             )
             .subscribe((allFeatureStates) => {
                 this.allFeatureStates = allFeatureStates;
-                console.log(`[UIContainerComponent] allFeatureStates: ${allFeatureStates}`);
-                this.cdr.checkNoChanges();
+                this.cdr.detectChanges();
             });
     }
 

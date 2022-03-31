@@ -33,6 +33,7 @@
     [isTitlebarDraggable]="true"
     [isContentDraggable]="true"
     [enablePageviewTracking]="false"
+    [showOverwolfAllFeatureStates]="false"
 >
     <div class="loading-splash-bg" id="loading-container">
         <div class="loading-splash-container">
@@ -52,6 +53,7 @@
         [isContentDraggable]="false"
         [enablePageviewTracking]="false"
         [onCloseButtonClick]="onCloseButtonClick"
+        [showOverwolfAllFeatureStates]="true"
     >
         <app-navbar (navPage)="goToPage($event)" [currentPage]="activePage"></app-navbar>
         <ng-container [ngSwitch]="activePage">
