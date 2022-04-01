@@ -35,9 +35,26 @@
                 "file": "index.html",
                 "is_background_page": true
             },
-            "main": {
+            "development-tools": {
                 "file": "index.html",
                 "desktop_only": true,
+                "native_window": true,
+                "resizable": true,
+                "transparent": true,
+                "show_in_taskbar": true,
+                "allow_local_file_access": true,
+                "size": {
+                    "width": 1600,
+                    "height": 900
+                },
+                "min_size": {
+                    "width": 300,
+                    "height": 250
+                }
+            },
+            "main": {
+                "file": "index.html",
+                "desktop_only": false,
                 "native_window": true,
                 "in_game_only": false,
                 "transparent": true,
@@ -47,6 +64,8 @@
                 "keep_window_location": false,
                 "allow_local_file_access": true,
                 "block_top_window_navigation": true,
+                "focus_game_takeover": "ReleaseOnHidden",
+                "focus_game_takeover_release_hotkey": "toggle_main",
                 "size": {
                     "width": 1200,
                     "height": 750
@@ -71,16 +90,8 @@
                 "popup_blocker": true,
                 "allow_local_file_access": true,
                 "size": {
-                    "width": 200,
-                    "height": 50
-                },
-                "min_size": {
-                    "width": 200,
-                    "height": 50
-                },
-                "max_size": {
-                    "width": 200,
-                    "height": 50
+                    "width": 1,
+                    "height": 1
                 }
             },
             "hud-mini-inventory": {
@@ -94,16 +105,8 @@
                 "popup_blocker": true,
                 "allow_local_file_access": true,
                 "size": {
-                    "width": 200,
-                    "height": 50
-                },
-                "min_size": {
-                    "width": 200,
-                    "height": 50
-                },
-                "max_size": {
-                    "width": 200,
-                    "height": 50
+                    "width": 1,
+                    "height": 1
                 }
             },
             "hud-ult-timer": {
@@ -117,20 +120,8 @@
                 "popup_blocker": true,
                 "allow_local_file_access": true,
                 "size": {
-                    "width": 200,
-                    "height": 50
-                },
-                "min_size": {
-                    "width": 200,
-                    "height": 50
-                },
-                "max_size": {
-                    "width": 200,
-                    "height": 50
-                },
-                "start_position": {
-                    "top": 0,
-                    "left": 0
+                    "width": 1,
+                    "height": 1
                 }
             },
             "hud-infliction-insight": {
@@ -144,16 +135,8 @@
                 "popup_blocker": true,
                 "allow_local_file_access": true,
                 "size": {
-                    "width": 400,
-                    "height": 455
-                },
-                "min_size": {
-                    "width": 400,
-                    "height": 455
-                },
-                "max_size": {
-                    "width": 400,
-                    "height": 455
+                    "width": 1,
+                    "height": 1
                 }
             },
             "hud-reticle-helper": {
@@ -161,7 +144,6 @@
                 "in_game_only": true,
                 "resizable": false,
                 "transparent": true,
-                "disable_blur": true,
                 "show_in_taskbar": false,
                 "clickthrough": true,
                 "mute": true,
@@ -170,10 +152,6 @@
                 "size": {
                     "width": 1,
                     "height": 1
-                },
-                "start_position": {
-                    "top": 0,
-                    "left": 0
                 }
             },
             "legend-select-assist": {
@@ -187,16 +165,8 @@
                 "popup_blocker": true,
                 "allow_local_file_access": true,
                 "size": {
-                    "width": 1440,
-                    "height": 1440
-                },
-                "min_size": {
-                    "width": 1440,
-                    "height": 1440
-                },
-                "max_size": {
-                    "width": 1440,
-                    "height": 1440
+                    "width": 1,
+                    "height": 1
                 }
             }
         },

@@ -4,6 +4,7 @@ export type OWGameEventKillFeed = overwolf.gep.ApexLegends.GameEventKillFeed;
 export type OWHotKey = overwolf.settings.hotkeys.IHotkey;
 export type OWHotKeyAssignHotkeyObject = overwolf.settings.hotkeys.AssignHotkeyObject;
 export type OWHotKeyGetAssignedHotkeyResult = overwolf.settings.hotkeys.GetAssignedHotkeyResult;
+export type OWHotKeyOnChangedEvent = overwolf.settings.hotkeys.OnChangedEvent;
 export type OWHotKeyOnPressedEvent = overwolf.settings.hotkeys.OnPressedEvent;
 export type OWHotKeyUnassignHotkeyObject = overwolf.settings.hotkeys.UnassignHotkeyObject;
 export type OWInfoUpdates2Event = overwolf.gep.ApexLegends.InfoUpdates2Event; // overwolf.games.events.InfoUpdates2Event

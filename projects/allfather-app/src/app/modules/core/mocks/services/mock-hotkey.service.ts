@@ -6,15 +6,8 @@ import { Hotkey } from "../../hotkey";
 
 export class MockHotkeyService implements MockedClass<HotkeyService> {
     public onHotkeyPressed$ = new Subject<ExtractSubjectType<HotkeyService["onHotkeyPressed$"]>>();
+    public onHotkeyChanged$ = new Subject<ExtractSubjectType<HotkeyService["onHotkeyChanged$"]>>();
 
-    public getGlobalHotkeys(): Observable<Hotkey[]> {
-        return of([]);
-    }
-    public getGlobalHotkeyByName(
-        ...args: Parameters<HotkeyService["getGlobalHotkeyByName"]>
-    ): ReturnType<HotkeyService["getGlobalHotkeyByName"]> {
-        return of();
-    }
     public getGameHotkeys(): Observable<Hotkey[]> {
         return of([]);
     }

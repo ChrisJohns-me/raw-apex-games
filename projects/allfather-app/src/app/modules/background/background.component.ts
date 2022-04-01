@@ -5,7 +5,7 @@ import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Subject } from "rxjs";
-import { switchMap, takeUntil } from "rxjs/operators";
+import { filter, switchMap, takeUntil } from "rxjs/operators";
 import { HotkeyEnum } from "../core/hotkey";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
 import { MainWindowService } from "../main/windows/main-window.service";
@@ -79,14 +79,19 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     }
 
     private setupHotkeys(): void {
-        this.hotkey.onHotkeyPressed$.pipe(takeUntil(this.destroy$)).subscribe((hotkey) => {
-            console.log(`[BackgroundComponent] Hotkey Triggered:`, hotkey);
-            switch (hotkey.hotkeyName) {
-                case HotkeyEnum.ToggleMain:
-                    this.toggleMainWindow();
-                    break;
-            }
-        });
+        this.hotkey.onHotkeyPressed$
+            .pipe(
+                filter(() => this.gameProcess.isInFocus$.value),
+                takeUntil(this.destroy$)
+            )
+            .subscribe((hotkey) => {
+                console.log(`[BackgroundComponent] Hotkey Triggered:`, hotkey);
+                switch (hotkey.hotkeyName) {
+                    case HotkeyEnum.ToggleMain:
+                        this.toggleMainWindow();
+                        break;
+                }
+            });
     }
 
     //#region App Actions

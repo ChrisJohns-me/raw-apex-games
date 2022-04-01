@@ -13,6 +13,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { IconComponent } from "@shared/components/icon/icon.component";
 import { BackgroundService } from "../../background/background.service";
+import { HotkeyService } from "../../background/hotkey.service";
 import { ConfigurationService } from "../../core/configuration.service";
 import { LocalDatabaseService } from "../../core/local-database/local-database.service";
 import { MatchMapService } from "../../core/match/match-map.service";
@@ -21,6 +22,7 @@ import { MockConfigurationService } from "../../core/mocks/services/mock-configu
 import { MockFileService } from "../../core/mocks/services/mock-file.service";
 import { MockGameProcessService } from "../../core/mocks/services/mock-game-process.service";
 import { MockGoogleAnalyticsService } from "../../core/mocks/services/mock-google-analytics.service";
+import { MockHotkeyService } from "../../core/mocks/services/mock-hotkey.service";
 import { MockLocalDatabaseService } from "../../core/mocks/services/mock-local-database.service";
 import { MockMainWindowService } from "../../core/mocks/services/mock-main-window.service";
 import { MockMapRotationService } from "../../core/mocks/services/mock-map-rotation.service";
@@ -71,6 +73,7 @@ describe("MainWindowComponent", () => {
                 { provide: FileService, useClass: MockFileService },
                 { provide: GameProcessService, useClass: MockGameProcessService },
                 { provide: GoogleAnalyticsService, useClass: MockGoogleAnalyticsService },
+                { provide: HotkeyService, useClass: MockHotkeyService },
                 { provide: LocalDatabaseService, useClass: MockLocalDatabaseService },
                 { provide: MainWindowService, useClass: MockMainWindowService },
                 { provide: MapRotationService, useClass: MockMapRotationService },

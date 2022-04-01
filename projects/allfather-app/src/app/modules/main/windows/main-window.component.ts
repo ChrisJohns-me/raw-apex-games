@@ -18,7 +18,9 @@ import { exhaustiveEnumSwitch } from "common/utilities/switch";
 import { interval, Subject } from "rxjs";
 import { delayWhen, filter, map, take, takeUntil } from "rxjs/operators";
 import { BackgroundService } from "../../background/background.service";
+import { HotkeyService } from "../../background/hotkey.service";
 import { ConfigLoadStatus, ConfigurationService } from "../../core/configuration.service";
+import { Hotkey, HotkeyEnum } from "../../core/hotkey";
 import { MainPage } from "../pages/main-page";
 import { MainWindowService } from "./main-window.service";
 
@@ -45,6 +47,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     public isLoading = false;
     public isAppStarting = false;
+    public toggleMainHotkey?: Hotkey;
     public randomCaption = this.captionGenerator();
 
     private _activePage: MainPage = MainPage.Dashboard;
@@ -55,8 +58,11 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         private readonly cdr: ChangeDetectorRef,
         private readonly config: ConfigurationService,
         private readonly googleAnalytics: GoogleAnalyticsService,
+        private readonly hotkey: HotkeyService,
         private readonly mainWindow: MainWindowService
-    ) {}
+    ) {
+        this.setupHotkeys();
+    }
 
     public ngOnInit(): void {
         this.mainWindow.isStarting$.pipe(takeUntil(this.destroy$)).subscribe((isStarting) => {
@@ -149,6 +155,26 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (!confirmModal) confirmModal = getConfirmModal();
                 if (confirmModal) confirmModal.show();
                 else this.backgroundService.exitApp();
+            });
+    }
+
+    private setupHotkeys(): void {
+        this.hotkey
+            .getGameHotkeyByName(HotkeyEnum.ToggleMain)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((toggleMainHotkey) => {
+                this.toggleMainHotkey = toggleMainHotkey;
+                this.cdr.detectChanges();
+            });
+
+        this.hotkey.onHotkeyChanged$
+            .pipe(
+                filter((hotkey) => hotkey.hotkeyName === HotkeyEnum.ToggleMain),
+                takeUntil(this.destroy$)
+            )
+            .subscribe((toggleMainHotkey) => {
+                this.toggleMainHotkey = toggleMainHotkey;
+                this.cdr.detectChanges();
             });
     }
 

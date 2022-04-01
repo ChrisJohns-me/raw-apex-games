@@ -6,6 +6,7 @@ import { HotKeyDelegate } from "./api/settings/hotkey-delegate";
 import {
     OWHotKeyAssignHotkeyObject,
     OWHotKeyGetAssignedHotkeyResult,
+    OWHotKeyOnChangedEvent,
     OWHotKeyOnPressedEvent,
     OWHotKeyUnassignHotkeyObject,
 } from "./types/overwolf-types";
@@ -23,6 +24,9 @@ export class OverwolfHotKeyService extends BaseService {
     //#region Delegate Outputs
     public get onPressed$(): Subject<OWHotKeyOnPressedEvent> {
         return this.hotKeyDelegate.onPressed$;
+    }
+    public get onChanged$(): Subject<OWHotKeyOnChangedEvent> {
+        return this.hotKeyDelegate.onChanged$;
     }
 
     private readonly hotKeyDelegate = new HotKeyDelegate();

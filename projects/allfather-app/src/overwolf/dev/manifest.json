@@ -36,6 +36,23 @@
                 "is_background_page": true,
                 "dev_tools_window_style": true
             },
+            "development-tools": {
+                "file": "index.html",
+                "desktop_only": true,
+                "native_window": true,
+                "resizable": true,
+                "transparent": true,
+                "show_in_taskbar": true,
+                "allow_local_file_access": true,
+                "size": {
+                    "width": 1600,
+                    "height": 900
+                },
+                "min_size": {
+                    "width": 300,
+                    "height": 250
+                }
+            },
             "main": {
                 "file": "index.html",
                 "desktop_only": false,
@@ -63,23 +80,6 @@
                     "height": 1440
                 }
             },
-            "development-tools": {
-                "file": "index.html",
-                "desktop_only": true,
-                "native_window": true,
-                "resizable": true,
-                "transparent": true,
-                "show_in_taskbar": true,
-                "allow_local_file_access": true,
-                "size": {
-                    "width": 1600,
-                    "height": 900
-                },
-                "min_size": {
-                    "width": 300,
-                    "height": 250
-                }
-            },
             "hud-match-timer": {
                 "file": "index.html",
                 "in_game_only": false,
@@ -94,10 +94,6 @@
                 "size": {
                     "width": 1,
                     "height": 1
-                },
-                "start_position": {
-                    "top": 0,
-                    "left": 0
                 }
             },
             "hud-mini-inventory": {
@@ -114,10 +110,6 @@
                 "size": {
                     "width": 1,
                     "height": 1
-                },
-                "start_position": {
-                    "top": 0,
-                    "left": 0
                 }
             },
             "hud-ult-timer": {
@@ -134,10 +126,6 @@
                 "size": {
                     "width": 1,
                     "height": 1
-                },
-                "start_position": {
-                    "top": 0,
-                    "left": 0
                 }
             },
             "hud-infliction-insight": {
@@ -154,10 +142,6 @@
                 "size": {
                     "width": 1,
                     "height": 1
-                },
-                "start_position": {
-                    "top": 0,
-                    "left": 0
                 }
             },
             "hud-reticle-helper": {
@@ -174,10 +158,6 @@
                 "size": {
                     "width": 1,
                     "height": 1
-                },
-                "start_position": {
-                    "top": 0,
-                    "left": 0
                 }
             },
             "legend-select-assist": {
@@ -194,10 +174,6 @@
                 "size": {
                     "width": 1,
                     "height": 1
-                },
-                "start_position": {
-                    "top": 0,
-                    "left": 0
                 }
             }
         },

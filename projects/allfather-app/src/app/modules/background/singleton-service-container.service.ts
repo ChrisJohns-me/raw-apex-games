@@ -4,6 +4,7 @@ import { GoogleAnalyticsService } from "@allfather-app/app/common/services/googl
 import { OverwolfGameDataService } from "@allfather-app/app/common/services/overwolf";
 import { OverwolfExtensionsService } from "@allfather-app/app/common/services/overwolf/overwolf-extensions.service";
 import { OverwolfFeatureStatusService } from "@allfather-app/app/common/services/overwolf/overwolf-feature-status.service";
+import { OverwolfHotKeyService } from "@allfather-app/app/common/services/overwolf/overwolf-hotkey.service";
 import { OverwolfInputTrackingService } from "@allfather-app/app/common/services/overwolf/overwolf-input-tracking.service";
 import { OverwolfProfileService } from "@allfather-app/app/common/services/overwolf/overwolf-profile.service";
 import { OverwolfStreamingService } from "@allfather-app/app/common/services/overwolf/overwolf-streaming.service";
@@ -41,6 +42,7 @@ import { UltTimerWindowService } from "../HUD/ult-timer/windows/ult-timer-window
 import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
 import { MainWindowService } from "../main/windows/main-window.service";
 import { CaptureControllerService } from "./capture-controller.service";
+import { HotkeyService } from "./hotkey.service";
 import { HUDWindowControllerService } from "./hud-window-controller.service";
 import { SystemTrayService } from "./system-tray.service";
 
@@ -58,6 +60,7 @@ import { SystemTrayService } from "./system-tray.service";
         GameProcessService,
         GameService,
         GoogleAnalyticsService,
+        HotkeyService,
         HUDWindowControllerService,
         InflictionInsightWindowService,
         LegendSelectAssistWindowService,
@@ -81,6 +84,7 @@ import { SystemTrayService } from "./system-tray.service";
         OverwolfExtensionsService,
         OverwolfFeatureStatusService,
         OverwolfGameDataService,
+        OverwolfHotKeyService,
         OverwolfInputTrackingService,
         OverwolfProfileService,
         OverwolfStreamingService,
@@ -107,6 +111,7 @@ export class SingletonServiceContainerService {
         public readonly GameProcessService: GameProcessService,
         public readonly GameService: GameService,
         public readonly GoogleAnalyticsService: GoogleAnalyticsService,
+        public readonly HotkeyService: HotkeyService,
         public readonly HUDWindowControllerService: HUDWindowControllerService,
         public readonly InflictionInsightWindowService: InflictionInsightWindowService,
         public readonly LegendSelectAssistWindowService: LegendSelectAssistWindowService,
@@ -130,6 +135,7 @@ export class SingletonServiceContainerService {
         public readonly OverwolfExtensionsService: OverwolfExtensionsService,
         public readonly OverwolfFeatureStatusService: OverwolfFeatureStatusService,
         public readonly OverwolfGameDataService: OverwolfGameDataService,
+        public readonly OverwolfHotKeyService: OverwolfHotKeyService,
         public readonly OverwolfInputTrackingService: OverwolfInputTrackingService,
         public readonly OverwolfProfileService: OverwolfProfileService,
         public readonly OverwolfStreamingService: OverwolfStreamingService,

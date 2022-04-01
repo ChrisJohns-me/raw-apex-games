@@ -3,24 +3,29 @@ import { map } from "rxjs/operators";
 import {
     OWHotKeyAssignHotkeyObject,
     OWHotKeyGetAssignedHotkeyResult,
+    OWHotKeyOnChangedEvent,
     OWHotKeyOnPressedEvent,
     OWHotKeyUnassignHotkeyObject,
 } from "../../types/overwolf-types";
 
 export class HotKeyDelegate {
     public readonly onPressed$ = new Subject<OWHotKeyOnPressedEvent>();
+    public readonly onChanged$ = new Subject<OWHotKeyOnChangedEvent>();
 
     public eventListeners = {
         ONPRESSED: this.onPressed,
+        ONCHANGED: this.onChanged,
     };
 
     public startEventListeners(): void {
         this.stopEventListeners();
         overwolf.settings.hotkeys.onPressed.addListener(this.eventListeners.ONPRESSED.bind(this));
+        overwolf.settings.hotkeys.onChanged.addListener(this.eventListeners.ONCHANGED.bind(this));
     }
 
     public stopEventListeners(): void {
         overwolf.settings.hotkeys.onPressed.removeListener(this.eventListeners.ONPRESSED.bind(this));
+        overwolf.settings.hotkeys.onChanged.removeListener(this.eventListeners.ONCHANGED.bind(this));
     }
 
     /**
@@ -72,5 +77,9 @@ export class HotKeyDelegate {
 
     private onPressed(event: OWHotKeyOnPressedEvent): void {
         this.onPressed$.next(event);
+    }
+
+    private onChanged(event: OWHotKeyOnChangedEvent): void {
+        this.onChanged$.next(event);
     }
 }

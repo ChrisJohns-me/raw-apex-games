@@ -47,6 +47,7 @@
 <div *ngIf="!isLoading">
     <app-ui-container
         [primaryTitle]="''"
+        [secondaryTitle]="toggleMainHotkey?.friendlyBinding ?? ''"
         [injectBootstrapCSS]="true"
         [isDesktopWindow]="true"
         [isTitlebarDraggable]="true"
