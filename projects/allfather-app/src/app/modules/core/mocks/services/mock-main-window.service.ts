@@ -20,6 +20,9 @@ export class MockMainWindowService implements MockedClass<MainWindowService> {
     public focus(page?: MainPage): ReturnType<MainWindowService["focus"]> {
         return of();
     }
+    public toggle(): ReturnType<MainWindowService["toggle"]> {
+        return of();
+    }
     public goToPage(page: MainPage): ReturnType<MainWindowService["goToPage"]> {}
     public setIsStarting(value: boolean): ReturnType<MainWindowService["setIsStarting"]> {}
     public requestExit(): void {}

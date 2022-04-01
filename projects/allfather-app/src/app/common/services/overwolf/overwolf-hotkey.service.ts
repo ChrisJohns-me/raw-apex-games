@@ -30,11 +30,11 @@ export class OverwolfHotKeyService extends BaseService {
 
     constructor() {
         super();
-        this.hotKeyDelegate.startEventListeners();
+        this.startDelegateEventListeners();
     }
 
     public ngOnDestroy(): void {
-        this.hotKeyDelegate.stopEventListeners();
+        this.stopDelegateEventListeners();
         super.ngOnDestroy();
     }
 
@@ -86,4 +86,16 @@ export class OverwolfHotKeyService extends BaseService {
 
         return this.hotKeyDelegate.unassign(unassignHotKeyObject);
     }
+
+    //#region Delegate event listeners
+    private startDelegateEventListeners(): void {
+        this.hotKeyDelegate.startEventListeners();
+        console.debug(`[${this.constructor.name}] Hotkey Delegate Event Listeners Started`);
+    }
+
+    private stopDelegateEventListeners(): void {
+        this.hotKeyDelegate.stopEventListeners();
+        console.debug(`[${this.constructor.name}] Hotkey Delegate Event Listeners Stopped`);
+    }
+    //#endregion
 }

@@ -24,3 +24,22 @@ export type OWStreamResult = overwolf.streaming.StreamResult;
 export type OWStreamSettings = overwolf.streaming.StreamSettings;
 export type OWSystemTrayMenuItem = overwolf.os.tray.menu_item;
 export type OWVideoSplitedEvent = overwolf.streaming.VideoFileSplitedEvent;
+
+/**********************/
+/*****CORRECTIONS******/
+/**********************/
+export interface OWAppLaunchTriggeredEvent extends overwolf.extensions.AppLaunchTriggeredEvent {
+    origin:
+        | "dock" // Launched from the Overwolf dock
+        | "gamelaunchevent" // Auto-launched along with a game
+        | "hotkey" // Launched in-game with a hotkey
+        | "storeapi" // Launched from the store
+        | "odk" // Launched with the overwolf.extensions.launch API
+        | "commandline" // Launched from the command line using overwolf.exe -launchapp [extension id]
+        | "tray" // Launched from the tray
+        | "startup" // Launched upon startup (like remote configurations)
+        | "after-install" // Auto-launched after installation
+        | "overwolfstartlaunchevent" // Auto-launched with the client launch (when app auto-launch with Overwolf is enabled)
+        | "urlscheme"; // Launched from custom link. See the process_name manifest flag
+    parameter: string;
+}

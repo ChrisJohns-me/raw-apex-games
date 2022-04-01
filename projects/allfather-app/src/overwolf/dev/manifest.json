@@ -38,7 +38,7 @@
             },
             "main": {
                 "file": "index.html",
-                "desktop_only": true,
+                "desktop_only": false,
                 "native_window": true,
                 "in_game_only": false,
                 "transparent": true,
@@ -48,30 +48,8 @@
                 "keep_window_location": false,
                 "allow_local_file_access": true,
                 "block_top_window_navigation": true,
-                "size": {
-                    "width": 1200,
-                    "height": 750
-                },
-                "min_size": {
-                    "width": 768,
-                    "height": 400
-                },
-                "max_size": {
-                    "width": 1440,
-                    "height": 1440
-                }
-            },
-            "main-ingame": {
-                "file": "index.html",
-                "desktop_only": false,
-                "in_game_only": true,
-                "transparent": true,
-                "resizable": true,
-                "show_in_taskbar": false,
-                "keep_window_location": true,
-                "allow_local_file_access": true,
-                "restrict_to_game_bounds": true,
-                "block_top_window_navigation": true,
+                "focus_game_takeover": "ReleaseOnHidden",
+                "focus_game_takeover_release_hotkey": "toggle_main",
                 "size": {
                     "width": 1200,
                     "height": 750

@@ -1,7 +1,7 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, from, Observable, Subject } from "rxjs";
-import { concatAll, takeUntil, tap } from "rxjs/operators";
+import { concatAll, map, takeUntil, tap } from "rxjs/operators";
 import { WindowName } from "../../core/window-name";
 import { UIWindow } from "../../core/_refactor/ui-window";
 import { MainPage } from "../pages/main-page";
@@ -32,6 +32,13 @@ export class MainWindowService implements OnDestroy {
 
     public close(): Observable<void> {
         return this.uiWindow.close();
+    }
+
+    /**
+     * @param {boolean} close - If true, the app will close instead of minimizing.
+     */
+    public toggle(close: boolean): Observable<void> {
+        return this.uiWindow.toggleMinimize(close).pipe(map(() => undefined));
     }
 
     public restore(page?: MainPage): Observable<void> {

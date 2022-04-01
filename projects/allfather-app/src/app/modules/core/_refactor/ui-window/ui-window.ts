@@ -102,6 +102,8 @@ export class UIWindow {
     }
 
     /**
+     * Toggles between minimized and normal state.
+     * @param {boolean} close - if true, will close the window instead of minimizing it.
      * @returns {true} if restored
      * @returns {false} if closed
      */
@@ -118,6 +120,7 @@ export class UIWindow {
     }
 
     /**
+     * Toggles between maximized and normal state.
      * @returns {true} if set to maximized
      * @returns {false} if set to non-maximized
      */

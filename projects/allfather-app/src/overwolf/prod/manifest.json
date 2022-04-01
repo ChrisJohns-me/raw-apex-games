@@ -60,30 +60,6 @@
                     "height": 1440
                 }
             },
-            "main-ingame": {
-                "file": "index.html",
-                "desktop_only": false,
-                "in_game_only": true,
-                "transparent": true,
-                "resizable": true,
-                "show_in_taskbar": false,
-                "keep_window_location": true,
-                "allow_local_file_access": true,
-                "restrict_to_game_bounds": true,
-                "block_top_window_navigation": true,
-                "size": {
-                    "width": 1200,
-                    "height": 750
-                },
-                "min_size": {
-                    "width": 768,
-                    "height": 400
-                },
-                "max_size": {
-                    "width": 1440,
-                    "height": 1440
-                }
-            },
             "hud-match-timer": {
                 "file": "index.html",
                 "in_game_only": true,

@@ -1,9 +1,10 @@
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { BaseService } from "../base-service.abstract";
 import { ExtensionsDelegate } from "./api/extensions-delegate";
 import { IODelegate } from "./api/extensions/io-delegate";
+import { OWAppLaunchTriggeredEvent } from "./types/overwolf-types";
 
 /**
  * @class OverwolfExtensionsService
@@ -15,8 +16,24 @@ import { IODelegate } from "./api/extensions/io-delegate";
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("OverwolfExtensionsService", OverwolfExtensionsService, deps),
 })
 export class OverwolfExtensionsService extends BaseService {
-    private extensionsDelegate = new ExtensionsDelegate();
-    private ioDelegate = new IODelegate();
+    //#region Delegate Outputs
+    public get appLaunchTriggeredEvent$(): Subject<OWAppLaunchTriggeredEvent> {
+        return this.extensionsDelegate.appLaunchTriggeredEvent$;
+    }
+
+    private readonly extensionsDelegate = new ExtensionsDelegate();
+    private readonly ioDelegate = new IODelegate();
+    //#endregion
+
+    constructor() {
+        super();
+        this.startDelegateEventListeners();
+    }
+
+    public ngOnDestroy(): void {
+        this.stopDelegateEventListeners();
+        super.ngOnDestroy();
+    }
 
     public relaunchApp(): void {
         this.extensionsDelegate.relaunchApp();
@@ -33,4 +50,16 @@ export class OverwolfExtensionsService extends BaseService {
     public createDirectory(storageSpace: overwolf.extensions.io.enums.StorageSpace, path: string): Observable<true> {
         return this.ioDelegate.createDirectory(storageSpace, path);
     }
+
+    //#region Delegate event listeners
+    private startDelegateEventListeners(): void {
+        this.extensionsDelegate.startEventListeners();
+        console.debug(`[${this.constructor.name}] Extensions Delegate Event Listeners Started`);
+    }
+
+    private stopDelegateEventListeners(): void {
+        this.extensionsDelegate.stopEventListeners();
+        console.debug(`[${this.constructor.name}] Extensions Delegate Event Listeners Stopped`);
+    }
+    //#endregion
 }
