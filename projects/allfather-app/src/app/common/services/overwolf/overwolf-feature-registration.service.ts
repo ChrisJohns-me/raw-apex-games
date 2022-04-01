@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@angular/core";
 import { BehaviorSubject, bindCallback, defer, Observable, of, throwError } from "rxjs";
-import { catchError, delay, map, mapTo, mergeMap, retryWhen, takeUntil, tap } from "rxjs/operators";
+import { catchError, delay, map, mergeMap, retryWhen, takeUntil, tap } from "rxjs/operators";
 import { BaseService } from "../base-service.abstract";
 import { OWConfig, OW_CONFIG } from "./overwolf-config";
 
@@ -52,7 +52,7 @@ export class OverwolfFeatureRegistrationService extends BaseService {
         return this.setRegisteredFeatures([]).pipe(
             takeUntil(this.destroy$),
             tap(() => this.registrationStatus$.next(OWFeatureRegistrationStatus.NOT_REGISTERED)),
-            mapTo(undefined)
+            map(() => undefined)
         );
     }
 

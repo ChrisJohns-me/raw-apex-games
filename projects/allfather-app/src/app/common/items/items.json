@@ -61,66 +61,66 @@
             "id": "ammo_light",
             "friendlyName": "Light Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "120$"
+            "inGameInventoryIdRegExPattern": "121$"
         },
         {
             "id": "ammo_energy",
             "friendlyName": "Energy Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "121$"
+            "inGameInventoryIdRegExPattern": "122$"
         },
         {
             "id": "ammo_shotgun",
             "friendlyName": "Shotgun Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "122$"
+            "inGameInventoryIdRegExPattern": "123$"
         },
         {
             "id": "ammo_heavy",
             "friendlyName": "Heavy Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "123$"
+            "inGameInventoryIdRegExPattern": "124$"
         },
         {
             "id": "ammo_sniper",
             "friendlyName": "Sniper Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "124$"
+            "inGameInventoryIdRegExPattern": "125$"
         },
         {
             "id": "ammo_arrows",
             "friendlyName": "Arrow Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "125$"
+            "inGameInventoryIdRegExPattern": "126$"
         },
         {
             "id": "ultimate_accelerant",
             "friendlyName": "Ultimate Accelerant",
-            "inGameInventoryIdRegExPattern": "161$"
-        },
-        {
-            "id": "med_kit",
-            "friendlyName": "Med Kit",
-            "inGameInventoryIdRegExPattern": "163$"
-        },
-        {
-            "id": "syringe",
-            "friendlyName": "Syringe",
-            "inGameInventoryIdRegExPattern": "164$"
-        },
-        {
-            "id": "shield_battery",
-            "friendlyName": "Shield Battery",
-            "inGameInventoryIdRegExPattern": "165$"
-        },
-        {
-            "id": "shield_cell",
-            "friendlyName": "Shield Cell",
-            "inGameInventoryIdRegExPattern": "166$"
+            "inGameInventoryIdRegExPattern": "162$"
         },
         {
             "id": "phoenix_kit",
             "friendlyName": "Phoenix Kit",
+            "inGameInventoryIdRegExPattern": "163$"
+        },
+        {
+            "id": "med_kit",
+            "friendlyName": "Med Kit",
+            "inGameInventoryIdRegExPattern": "164$"
+        },
+        {
+            "id": "syringe",
+            "friendlyName": "Syringe",
+            "inGameInventoryIdRegExPattern": "165$"
+        },
+        {
+            "id": "shield_battery",
+            "friendlyName": "Shield Battery",
+            "inGameInventoryIdRegExPattern": "166$"
+        },
+        {
+            "id": "shield_cell",
+            "friendlyName": "Shield Cell",
             "inGameInventoryIdRegExPattern": "167$"
         },
         {
@@ -128,21 +128,21 @@
             "friendlyName": "Thermite Grenade",
             "inGameInfoNameRegExPattern": "^Thermite Grenade$",
             "inGameEventNameRegExPattern": "grenade_incendiary",
-            "inGameInventoryIdRegExPattern": "189"
+            "inGameInventoryIdRegExPattern": "190"
         },
         {
             "id": "grenade_frag",
             "friendlyName": "Frag Grenade",
             "inGameInfoNameRegExPattern": "^Frag Grenade$",
             "inGameEventNameRegExPattern": "grenade_frag",
-            "inGameInventoryIdRegExPattern": "190"
+            "inGameInventoryIdRegExPattern": "191"
         },
         {
             "id": "grenade_arc_star",
             "friendlyName": "Arc Star",
             "inGameInfoNameRegExPattern": "^Arc Star$",
             "inGameEventNameRegExPattern": "grenade_arc",
-            "inGameInventoryIdRegExPattern": "191"
+            "inGameInventoryIdRegExPattern": "192"
         },
         {
             "id": "knockdownshield",

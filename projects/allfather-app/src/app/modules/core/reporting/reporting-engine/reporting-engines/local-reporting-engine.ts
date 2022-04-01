@@ -1,7 +1,7 @@
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { isEmpty } from "common/utilities/";
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
-import { delay, mapTo, mergeMap, retryWhen, takeUntil } from "rxjs/operators";
+import { delay, map, mergeMap, retryWhen, takeUntil } from "rxjs/operators";
 import { MatchDataStore } from "../../../local-database/match-data-store";
 import { MatchService } from "../../../match/match.service";
 import { DamageConditionOption, GameModeConditionOption, KillsConditionOption, PlacementConditionOption } from "../condition-options";
@@ -94,7 +94,7 @@ export class LocalReportingEngine implements ReportingEngine {
                     })
                 )
             ),
-            mapTo(true)
+            map(() => true)
         );
     }
 

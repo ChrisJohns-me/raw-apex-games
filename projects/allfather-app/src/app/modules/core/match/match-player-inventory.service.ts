@@ -32,8 +32,8 @@ export class MatchPlayerInventoryService extends BaseService {
     constructor(private readonly match: MatchService, private readonly overwolfGameData: OverwolfGameDataService) {
         super();
         this.inventoryInfoUpdates$ = this.overwolfGameData.infoUpdates$.pipe(
-            takeUntil(this.destroy$),
-            filter((infoUpdate) => infoUpdate.feature === "inventory")
+            filter((infoUpdate) => infoUpdate.feature === "inventory"),
+            takeUntil(this.destroy$)
         );
         this.setupOnMatchStart();
         this.setupMyInventorySlots();
@@ -70,7 +70,7 @@ export class MatchPlayerInventoryService extends BaseService {
                 if (!infoSlotName) return;
                 const slotMatch = infoSlotName?.match(/\d+/)?.[0];
                 const newSlotId = slotMatch ? parseInt(slotMatch) : undefined;
-                if (!newSlotId) return;
+                if (!newSlotId && newSlotId !== 0) return;
                 const infoSlotValue: OWMatchInfoMeInventory = (me as any)[infoSlotName];
 
                 const slotUpdate = infoSlotValue

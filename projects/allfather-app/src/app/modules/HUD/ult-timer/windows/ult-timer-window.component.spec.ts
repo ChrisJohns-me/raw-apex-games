@@ -20,7 +20,7 @@ import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from
 import { CustomFormatDistanceToNowPipe } from "@shared/pipes/custom-format-distance-to-now.pipe";
 import { differenceInMilliseconds } from "date-fns";
 import { of } from "rxjs";
-import { filter, mapTo, take, tap } from "rxjs/operators";
+import { filter, map, take, tap } from "rxjs/operators";
 import { TestScheduler } from "rxjs/testing";
 import seedrandom from "seedrandom";
 import { UltTimerWindowComponent } from "./ult-timer-window.component";
@@ -187,7 +187,7 @@ describe("UltTimerWindowComponent", () => {
         // Act
         of(...percentsArr)
             .pipe(
-                mapTo(0.5),
+                map(() => 0.5),
                 take(1),
                 tap(() => tick(10000))
             )
