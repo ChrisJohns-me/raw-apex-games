@@ -23,6 +23,7 @@ interface MatchMapConstructor {
     mapName: MatchMapFriendlyName;
     isBattleRoyaleMap: boolean;
     isArenasMap: boolean;
+    isControlMap: boolean;
     gameModeTypes?: MatchGameModeGenericId[];
     activeDates?: ActiveDates;
     zStartPos?: MatchMapCoordinates["z"];
@@ -35,6 +36,7 @@ export class MatchMap implements MatchMapConstructor {
     public mapName: MatchMapFriendlyName;
     public isBattleRoyaleMap: boolean;
     public isArenasMap: boolean;
+    public isControlMap: boolean;
     public gameModeTypes?: MatchGameModeGenericId[];
     public activeDates?: ActiveDates;
     public zStartPos?: MatchMapCoordinates["z"]; // Useful to cross-reference with starting location
@@ -61,6 +63,7 @@ export class MatchMap implements MatchMapConstructor {
         this.mapName = ctor.mapName;
         this.isBattleRoyaleMap = ctor.isBattleRoyaleMap;
         this.isArenasMap = ctor.isArenasMap;
+        this.isControlMap = ctor.isControlMap;
         this.gameModeTypes = ctor.gameModeTypes;
         this.activeDates = ctor.activeDates;
         this.zStartPos = ctor.zStartPos;

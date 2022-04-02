@@ -49,7 +49,7 @@ export class MatchExplorerPageComponent implements OnInit, OnDestroy {
     /** Removes duplicate GenericIds by using the latest active map from Map list */
     public mapGenericList: MatchMap[];
     public gameModeList = sortMatchGameModeList(
-        MatchGameModeList.filter((g) => g.isAFSupported && (g.isBattleRoyaleGameMode || g.isArenasGameMode))
+        MatchGameModeList.filter((g) => g.isAFSupported && (g.isBattleRoyaleGameMode || g.isArenasGameMode || g.isControlGameMode))
     );
     public legendList = sortLegendList(LegendList);
 
@@ -78,8 +78,8 @@ export class MatchExplorerPageComponent implements OnInit, OnDestroy {
     public DataItem = DataItem;
     public mdiFilterVariantRemove = mdiFilterVariantRemove;
 
-    /** All BattleRoyal and Arenas Maps; includes duplicate GenericIds */
-    private _mapList = sortMatchMapList(MatchMapList.filter((m) => m.isBattleRoyaleMap || m.isArenasMap));
+    /** All BattleRoyal, Arenas, and Control Maps; includes duplicate GenericIds */
+    private _mapList = sortMatchMapList(MatchMapList.filter((m) => m.isBattleRoyaleMap || m.isArenasMap || m.isControlMap));
     /** Num rows to add when user reaches the bottom of the scroll */
     private numAddRowsScroll = 25;
     private destroy$ = new Subject<void>();
@@ -290,6 +290,9 @@ export class MatchExplorerPageComponent implements OnInit, OnDestroy {
             return match.placement !== 1;
         } else if (searchInput === "solo") {
             return match.teamRoster?.length === 1;
+        } else if (match.gameModeId && searchInput === "control") {
+            const gameMode = MatchGameMode.getFromId(MatchGameModeList, match.gameModeId);
+            return gameMode.gameModeGenericId === MatchGameModeGenericId.Control;
         } else if (match.gameModeId && (searchInput === "arena" || searchInput === "arenas")) {
             const gameMode = MatchGameMode.getFromId(MatchGameModeList, match.gameModeId);
             return gameMode.gameModeGenericId === MatchGameModeGenericId.Arenas;

@@ -16,6 +16,7 @@ interface MatchGameModeConstructor {
     isReportable?: boolean;
     isBattleRoyaleGameMode: boolean;
     isArenasGameMode: boolean;
+    isControlGameMode: boolean;
     activeDates?: ActiveDates;
 }
 export class MatchGameMode {
@@ -27,6 +28,7 @@ export class MatchGameMode {
     public isReportable?: boolean;
     public isBattleRoyaleGameMode: boolean;
     public isArenasGameMode: boolean;
+    public isControlGameMode: boolean;
     public activeDates?: ActiveDates;
 
     public get isActive(): boolean {
@@ -42,6 +44,7 @@ export class MatchGameMode {
         this.isReportable = ctor.isReportable ?? true;
         this.isBattleRoyaleGameMode = ctor.isBattleRoyaleGameMode;
         this.isArenasGameMode = ctor.isArenasGameMode;
+        this.isControlGameMode = ctor.isControlGameMode;
         this.activeDates = ctor.activeDates;
     }
 
@@ -73,6 +76,7 @@ export class MatchGameMode {
         const gameModeGenericId = gameModeId;
         const isBattleRoyaleGameMode = new RegExp("trios|duos|ranked_leagues", "i").test(gameModeId);
         const isArenasGameMode = !isBattleRoyaleGameMode && new RegExp("arena", "i").test(gameModeId);
+        const isControlGameMode = !isBattleRoyaleGameMode && !isArenasGameMode && new RegExp("control", "i").test(gameModeId);
 
         return new MatchGameMode({
             gameModeId,
@@ -80,6 +84,7 @@ export class MatchGameMode {
             gameModeName: gameModeName as MatchGameModeFriendlyName,
             isBattleRoyaleGameMode,
             isArenasGameMode,
+            isControlGameMode,
         });
     }
     //#endregion

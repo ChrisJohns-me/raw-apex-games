@@ -12,6 +12,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         isReportable: false,
         isBattleRoyaleGameMode: false,
         isArenasGameMode: false,
+        isControlGameMode: false,
         activeDates: [
             {
                 from: new Date(0),
@@ -27,6 +28,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         isReportable: false,
         isBattleRoyaleGameMode: false,
         isArenasGameMode: false,
+        isControlGameMode: false,
         activeDates: [
             {
                 from: new Date(0),
@@ -40,6 +42,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeIdRegExPattern: "trio",
         isBattleRoyaleGameMode: true,
         isArenasGameMode: false,
+        isControlGameMode: false,
         activeDates: [
             {
                 from: new Date(0),
@@ -53,6 +56,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeIdRegExPattern: "duo",
         isBattleRoyaleGameMode: true,
         isArenasGameMode: false,
+        isControlGameMode: false,
         activeDates: [
             {
                 from: new Date(0),
@@ -66,6 +70,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeIdRegExPattern: "ranked_leagues",
         isBattleRoyaleGameMode: true,
         isArenasGameMode: false,
+        isControlGameMode: false,
         activeDates: [
             {
                 from: new Date(0),
@@ -79,6 +84,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeIdRegExPattern: "arenas",
         isBattleRoyaleGameMode: false,
         isArenasGameMode: true,
+        isControlGameMode: false,
         activeDates: [
             {
                 from: new Date("May 04, 2021"),
@@ -89,19 +95,19 @@ export const MatchGameModeList: MatchGameMode[] = [
 
 /**
  * Sorts by:
- *  - Non-battle royale & non-arenas game modes first
- *  - Battle Royale game modes second
- *  - Arenas game modes third
+ *  - Battle Royale game modes first
+ *  - Arenas game modes second
+ *  - Control game modes third
  *  - Alphabetically
  */
 export function sortMatchGameModeList(matchGameModeList: MatchGameMode[]): MatchGameMode[] {
     return matchGameModeList.sort((a, b) => {
-        if ((!a.isBattleRoyaleGameMode && !a.isArenasGameMode && b.isBattleRoyaleGameMode) || b.isArenasGameMode) return -1;
-        if ((a.isBattleRoyaleGameMode && a.isArenasGameMode && !b.isBattleRoyaleGameMode) || !b.isArenasGameMode) return 1;
         if (a.isBattleRoyaleGameMode && !b.isBattleRoyaleGameMode) return -1;
         if (!a.isBattleRoyaleGameMode && b.isBattleRoyaleGameMode) return 1;
         if (a.isArenasGameMode && !b.isArenasGameMode) return -1;
         if (!a.isArenasGameMode && b.isArenasGameMode) return 1;
+        if (a.isControlGameMode && !b.isControlGameMode) return -1;
+        if (!a.isControlGameMode && b.isControlGameMode) return 1;
         if (a.gameModeName.toLowerCase() < b.gameModeName.toLowerCase()) return -1;
         if (a.gameModeName.toLowerCase() > b.gameModeName.toLowerCase()) return 1;
         return 0;

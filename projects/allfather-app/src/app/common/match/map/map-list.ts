@@ -1,4 +1,7 @@
 import { MatchGameModeGenericId } from "../game-mode/game-mode.enum";
+import { MatchMapListArenasMaps } from "./map-list/arenas-maps";
+import { MatchMapListBattleRoyalMaps } from "./map-list/battle-royal-maps";
+import { MatchMapListControlMaps } from "./map-list/control-maps";
 import { MatchMapFriendlyName, MatchMapGenericId } from "./map.enum";
 import { MatchMap } from "./match-map";
 
@@ -10,6 +13,7 @@ export const MatchMapList: MatchMap[] = [
         mapId: "mp_rr_canyonlands_staging",
         isBattleRoyaleMap: false,
         isArenasMap: false,
+        isControlMap: false,
         isChartable: false,
         gameModeTypes: [MatchGameModeGenericId.Training, MatchGameModeGenericId.FiringRange],
         activeDates: [
@@ -20,351 +24,26 @@ export const MatchMapList: MatchMap[] = [
         zStartPos: -Infinity,
     }),
     //#endregion
-    //#region Battle Royale Maps
-    new MatchMap({
-        mapName: MatchMapFriendlyName.KingsCanyon,
-        mapGenericId: MatchMapGenericId.KingsCanyon,
-        mapId: "mp_rr_canyonlands_mu3",
-        isBattleRoyaleMap: true,
-        isArenasMap: false,
-        gameModeTypes: [
-            MatchGameModeGenericId.BattleRoyale_Duos,
-            MatchGameModeGenericId.BattleRoyale_Trios,
-            MatchGameModeGenericId.BattleRoyale_Ranked,
-        ],
-        activeDates: [
-            {
-                from: new Date("June 23, 2020"),
-            },
-        ],
-        zStartPos: 234,
-        chartConfig: {
-            imageAxisScale: {
-                xStart: -373,
-                xEnd: 442,
-                yStart: -371,
-                yEnd: 441,
-            },
-        },
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.WorldsEdge,
-        mapGenericId: MatchMapGenericId.WorldsEdge,
-        mapId: "mp_rr_desertlands_mu2",
-        isBattleRoyaleMap: true,
-        isArenasMap: false,
-        gameModeTypes: [
-            MatchGameModeGenericId.BattleRoyale_Duos,
-            MatchGameModeGenericId.BattleRoyale_Trios,
-            MatchGameModeGenericId.BattleRoyale_Ranked,
-        ],
-        activeDates: [
-            {
-                from: new Date("May 04, 2021"),
-                to: new Date("August 03, 2021"),
-            },
-        ],
-        zStartPos: 146,
-        chartConfig: {
-            imageAxisScale: {
-                xStart: -450,
-                xEnd: 450,
-                yStart: -450,
-                yEnd: 450,
-            },
-        },
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.WorldsEdge,
-        mapGenericId: MatchMapGenericId.WorldsEdge,
-        mapId: "mp_rr_desertlands_mu3",
-        isBattleRoyaleMap: true,
-        isArenasMap: false,
-        gameModeTypes: [
-            MatchGameModeGenericId.BattleRoyale_Duos,
-            MatchGameModeGenericId.BattleRoyale_Trios,
-            MatchGameModeGenericId.BattleRoyale_Ranked,
-        ],
-        activeDates: [
-            {
-                from: new Date("August 03, 2021"),
-            },
-        ],
-        zStartPos: 146,
-        chartConfig: {
-            imageAxisScale: {
-                xStart: -450,
-                xEnd: 450,
-                yStart: -450,
-                yEnd: 450,
-            },
-        },
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.Olympus,
-        mapGenericId: MatchMapGenericId.Olympus,
-        mapId: "mp_rr_olympus",
-        isBattleRoyaleMap: true,
-        isArenasMap: false,
-        gameModeTypes: [
-            MatchGameModeGenericId.BattleRoyale_Duos,
-            MatchGameModeGenericId.BattleRoyale_Trios,
-            MatchGameModeGenericId.BattleRoyale_Ranked,
-        ],
-        activeDates: [
-            {
-                from: new Date("January 04, 2021"),
-                to: new Date("May 03, 2021"),
-            },
-        ],
-        zStartPos: 119,
-        chartConfig: {
-            imageAxisScale: {
-                xStart: -520,
-                xEnd: 378,
-                yStart: -421,
-                yEnd: 480,
-            },
-        },
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.Olympus,
-        mapGenericId: MatchMapGenericId.Olympus,
-        mapId: "mp_rr_olympus_mu1",
-        isBattleRoyaleMap: true,
-        isArenasMap: false,
-        gameModeTypes: [
-            MatchGameModeGenericId.BattleRoyale_Duos,
-            MatchGameModeGenericId.BattleRoyale_Trios,
-            MatchGameModeGenericId.BattleRoyale_Ranked,
-        ],
-        activeDates: [
-            {
-                from: new Date("May 04, 2021"),
-            },
-        ],
-        zStartPos: 119,
-        chartConfig: {
-            imageAxisScale: {
-                xStart: -520,
-                xEnd: 378,
-                yStart: -421,
-                yEnd: 480,
-            },
-        },
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.Olympus,
-        mapGenericId: MatchMapGenericId.Olympus,
-        mapId: "mp_rr_olympus_mu2",
-        isBattleRoyaleMap: true,
-        isArenasMap: false,
-        gameModeTypes: [
-            MatchGameModeGenericId.BattleRoyale_Duos,
-            MatchGameModeGenericId.BattleRoyale_Trios,
-            MatchGameModeGenericId.BattleRoyale_Ranked,
-        ],
-        activeDates: [
-            {
-                from: new Date("Feb 8, 2022"),
-            },
-        ],
-        zStartPos: 119,
-        chartConfig: {
-            imageAxisScale: {
-                xStart: -520,
-                xEnd: 378,
-                yStart: -421,
-                yEnd: 480,
-            },
-        },
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.StormPoint,
-        mapGenericId: MatchMapGenericId.StormPoint,
-        mapId: "mp_rr_stormpoint",
-        isBattleRoyaleMap: true,
-        isArenasMap: false,
-        gameModeTypes: [
-            MatchGameModeGenericId.BattleRoyale_Duos,
-            MatchGameModeGenericId.BattleRoyale_Trios,
-            MatchGameModeGenericId.BattleRoyale_Ranked,
-        ],
-        activeDates: [
-            {
-                from: new Date("Nov 02, 2021"),
-            },
-        ],
-        zStartPos: 254,
-        chartConfig: {
-            imageAxisScale: {
-                xStart: -1000,
-                xEnd: 1000,
-                yStart: -1000,
-                yEnd: 1000,
-            },
-        },
-    }),
-    //#endregion
-    //#region Arena Maps
-    new MatchMap({
-        mapName: MatchMapFriendlyName.PhaseRunner,
-        mapGenericId: MatchMapGenericId.PhaseRunner,
-        mapId: "mp_rr_arena_phase_runner",
-        isBattleRoyaleMap: false,
-        isArenasMap: true,
-        isChartable: false,
-        gameModeTypes: [MatchGameModeGenericId.Arenas],
-        activeDates: [
-            {
-                from: new Date("May 04, 2021"),
-            },
-        ],
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.PartyCrasher,
-        mapGenericId: MatchMapGenericId.PartyCrasher,
-        mapId: "mp_rr_party_crasher",
-        isBattleRoyaleMap: false,
-        isArenasMap: true,
-        isChartable: false,
-        gameModeTypes: [MatchGameModeGenericId.Arenas],
-        activeDates: [
-            {
-                from: new Date("May 04, 2021"),
-            },
-        ],
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.Artillery,
-        mapGenericId: MatchMapGenericId.Artillery,
-        mapId: "mp_rr_canyonlands_mu3_arena", // TODO: Check
-        isBattleRoyaleMap: false,
-        isArenasMap: true,
-        isChartable: false,
-        gameModeTypes: [MatchGameModeGenericId.Arenas],
-        activeDates: [
-            // {
-            //     from: new Date("May 04, 2021"),
-            // },
-        ],
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.ThermalStation,
-        mapGenericId: MatchMapGenericId.ThermalStation,
-        mapId: "mp_rr_desertlands_mu2_arena", // TODO: Check
-        isBattleRoyaleMap: false,
-        isArenasMap: true,
-        isChartable: false,
-        gameModeTypes: [MatchGameModeGenericId.Arenas],
-        activeDates: [
-            // {
-            //     from: new Date("May 04, 2021"),
-            // },
-        ],
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.GoldenGardens,
-        mapGenericId: MatchMapGenericId.GoldenGardens,
-        mapId: "mp_rr_olympus_arena", // TODO: Check
-        isBattleRoyaleMap: false,
-        isArenasMap: true,
-        isChartable: false,
-        gameModeTypes: [MatchGameModeGenericId.Arenas],
-        activeDates: [
-            // {
-            //     from: new Date("June 01, 2021"),
-            // },
-        ],
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.SkullTown,
-        mapGenericId: MatchMapGenericId.SkullTown,
-        mapId: "mp_rr_canyonlands_mu3_arena", // TODO: Check
-        isBattleRoyaleMap: false,
-        isArenasMap: true,
-        isChartable: false,
-        gameModeTypes: [MatchGameModeGenericId.Arenas],
-        activeDates: [
-            // {
-            //     from: new Date("June 29, 2021"),
-            // },
-        ],
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.Overflow,
-        mapGenericId: MatchMapGenericId.Overflow,
-        mapId: "mp_rr_aqueduct", // TODO: Check
-        isBattleRoyaleMap: false,
-        isArenasMap: true,
-        isChartable: false,
-        gameModeTypes: [MatchGameModeGenericId.Arenas],
-        activeDates: [
-            // {
-            //     from: new Date("August 01, 2021"),
-            // },
-        ],
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.Oasis,
-        mapGenericId: MatchMapGenericId.Oasis,
-        mapId: "mp_rr_oasis", // TODO: Check
-        isBattleRoyaleMap: false,
-        isArenasMap: true,
-        isChartable: false,
-        gameModeTypes: [MatchGameModeGenericId.Arenas],
-        activeDates: [
-            // {
-            //     from: new Date("August 01, 2021"),
-            // },
-        ],
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.Habitat,
-        mapGenericId: MatchMapGenericId.Habitat,
-        mapId: "mp_rr_habitat", // TODO: Check
-        isBattleRoyaleMap: false,
-        isArenasMap: true,
-        isChartable: false,
-        gameModeTypes: [MatchGameModeGenericId.Arenas],
-        activeDates: [
-            // {
-            //     from: new Date("August 01, 2021"),
-            // },
-        ],
-    }),
-    new MatchMap({
-        mapName: MatchMapFriendlyName.Encore,
-        mapGenericId: MatchMapGenericId.Encore,
-        mapId: "mp_rr_encore", // TODO: Check
-        isBattleRoyaleMap: false,
-        isArenasMap: true,
-        isChartable: false,
-        gameModeTypes: [MatchGameModeGenericId.Arenas],
-        activeDates: [
-            // {
-            //     from: new Date("August 01, 2021"),
-            // },
-        ],
-    }),
-    //#endregion
+    ...MatchMapListBattleRoyalMaps,
+    ...MatchMapListArenasMaps,
+    ...MatchMapListControlMaps,
 ];
 
 /**
  * Sorts by:
- *  - Non-battle royale & non-arenas maps first
- *  - Battle Royale maps second
- *  - Arenas maps third
+ *  - Battle Royale maps first
+ *  - Arenas maps second
+ *  - Control maps third
  *  - Alphabetically
  */
 export function sortMatchMapList(matchMapList: MatchMap[]): MatchMap[] {
     return matchMapList.sort((a, b) => {
-        if ((!a.isBattleRoyaleMap && !a.isArenasMap && b.isBattleRoyaleMap) || b.isArenasMap) return -1;
-        if ((a.isBattleRoyaleMap && a.isArenasMap && !b.isBattleRoyaleMap) || !b.isArenasMap) return 1;
         if (a.isBattleRoyaleMap && !b.isBattleRoyaleMap) return -1;
         if (!a.isBattleRoyaleMap && b.isBattleRoyaleMap) return 1;
         if (a.isArenasMap && !b.isArenasMap) return -1;
         if (!a.isArenasMap && b.isArenasMap) return 1;
+        if (a.isControlMap && !b.isControlMap) return -1;
+        if (!a.isControlMap && b.isControlMap) return 1;
         if (a.mapName.toLowerCase() < b.mapName.toLowerCase()) return -1;
         if (a.mapName.toLowerCase() > b.mapName.toLowerCase()) return 1;
         return 0;
