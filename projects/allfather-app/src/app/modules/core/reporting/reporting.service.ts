@@ -10,6 +10,7 @@ import { ReportableDataManagerService } from "./reporting-engine/reportable-data
 import { ReportingEngine, ReportingEngineId, ReportingStatus } from "./reporting-engine/reporting-engine";
 import { GoogleAnalyticsReportingEngine } from "./reporting-engine/reporting-engines/google-analytics-reporting-engine";
 import { LocalReportingEngine } from "./reporting-engine/reporting-engines/local-reporting-engine";
+import { RunCondition } from "./reporting-engine/run-condition";
 
 interface ReportingEvent {
     engine: ReportingEngine;
@@ -141,7 +142,12 @@ export class ReportingService extends BaseService implements OnDestroy {
         if (isEmpty(dataItems)) throw Error(`Data items list was empty when building local reporting engine`);
         const setup = {
             reportableDataList: this.reportableDataManager.instantiatedDataItems,
-            runConditions: [],
+            runConditions: [
+                new RunCondition({
+                    id: "LocalReportingEngine GameMode",
+                    condition: () => !!this.match.gameMode$.value?.isReportable,
+                }),
+            ],
         };
         const localReportingEngine = new LocalReportingEngine(this.match);
         localReportingEngine.setup(setup);

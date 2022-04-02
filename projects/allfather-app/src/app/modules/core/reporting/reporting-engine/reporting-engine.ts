@@ -1,5 +1,4 @@
 import { BehaviorSubject } from "rxjs";
-import { ConditionOption } from "./condition-options";
 import { RunCondition } from "./run-condition";
 
 export enum ReportingEngineId {
@@ -20,9 +19,7 @@ export enum ReportingStatus {
 export interface ReportingEngine {
     engineId: ReportingEngineId;
     reportingStatus$: BehaviorSubject<ReportingStatus>;
-    availableConditionOptions: ConditionOption[];
     runConditions: RunCondition[];
-    isRunAlways: boolean;
 
     teardown(): void;
     reset(): void;

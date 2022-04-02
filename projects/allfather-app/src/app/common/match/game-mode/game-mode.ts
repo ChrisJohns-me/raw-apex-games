@@ -11,8 +11,9 @@ interface MatchGameModeConstructor {
     gameModeIdRegExPattern?: string;
     gameModeName: MatchGameModeFriendlyName;
     gameModeGenericId: MatchGameModeGenericId;
-    /** Is supported by Allfather app */
+    /** Is supported by Allfather app; typically used by certain UI windows to display */
     isAFSupported?: boolean;
+    isReportable?: boolean;
     isBattleRoyaleGameMode: boolean;
     isArenasGameMode: boolean;
     activeDates?: ActiveDates;
@@ -23,6 +24,7 @@ export class MatchGameMode {
     public gameModeName: MatchGameModeFriendlyName;
     public gameModeGenericId: MatchGameModeGenericId;
     public isAFSupported?: boolean;
+    public isReportable?: boolean;
     public isBattleRoyaleGameMode: boolean;
     public isArenasGameMode: boolean;
     public activeDates?: ActiveDates;
@@ -37,6 +39,7 @@ export class MatchGameMode {
         this.gameModeName = ctor.gameModeName;
         this.gameModeGenericId = ctor.gameModeGenericId;
         this.isAFSupported = ctor.isAFSupported ?? true;
+        this.isReportable = ctor.isReportable ?? true;
         this.isBattleRoyaleGameMode = ctor.isBattleRoyaleGameMode;
         this.isArenasGameMode = ctor.isArenasGameMode;
         this.activeDates = ctor.activeDates;

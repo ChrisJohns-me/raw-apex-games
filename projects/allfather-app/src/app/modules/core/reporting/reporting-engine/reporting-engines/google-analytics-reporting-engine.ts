@@ -2,7 +2,6 @@ import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
 import { differenceInMinutes } from "date-fns";
 import { BehaviorSubject, Subject } from "rxjs";
-import { DamageConditionOption, GameModeConditionOption, KillsConditionOption, PlacementConditionOption } from "../condition-options";
 import { ReportableDataFactoryMap } from "../reportable-data";
 import { ReportingEngine, ReportingEngineId, ReportingStatus } from "../reporting-engine";
 import { RunCondition } from "../run-condition";
@@ -17,11 +16,7 @@ import { RunCondition } from "../run-condition";
 export class GoogleAnalyticsReportingEngine implements ReportingEngine {
     public engineId = ReportingEngineId.Local;
     public reportingStatus$ = new BehaviorSubject<ReportingStatus>(ReportingStatus.WAITING);
-    public availableConditionOptions = [KillsConditionOption, DamageConditionOption, PlacementConditionOption, GameModeConditionOption];
     public runConditions: RunCondition[] = [];
-    public get isRunAlways(): boolean {
-        return !this.runConditions?.length;
-    }
 
     private reportableDataList: ObjectPropertyTypes<ReportableDataFactoryMap>[] = [];
     private destroy$ = new Subject<void>();
@@ -53,10 +48,7 @@ export class GoogleAnalyticsReportingEngine implements ReportingEngine {
     public runOpportunity(): void {
         this.reportingStatus$.next(ReportingStatus.IN_PROGRESS);
 
-        const shouldRun = this.runConditions.every((rc) => {
-            const reportableData = this.reportableDataList.find((d) => d.dataId === rc.condition.id);
-            return rc.conditionMet(reportableData?.value);
-        });
+        const shouldRun = !this.runConditions?.length || this.runConditions.every((rc) => rc.conditionMet());
 
         if (shouldRun) {
             try {

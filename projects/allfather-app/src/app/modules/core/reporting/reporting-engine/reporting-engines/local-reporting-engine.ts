@@ -4,7 +4,6 @@ import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { delay, map, mergeMap, retryWhen, takeUntil } from "rxjs/operators";
 import { MatchDataStore } from "../../../local-database/match-data-store";
 import { MatchService } from "../../../match/match.service";
-import { DamageConditionOption, GameModeConditionOption, KillsConditionOption, PlacementConditionOption } from "../condition-options";
 import { ReportableDataFactoryMap } from "../reportable-data";
 import { ReportingEngine, ReportingEngineId, ReportingStatus } from "../reporting-engine";
 import { RunCondition } from "../run-condition";
@@ -19,11 +18,7 @@ const RETRY_DELAY_MULTIPLIER = 12 * 1000;
 export class LocalReportingEngine implements ReportingEngine {
     public engineId = ReportingEngineId.Local;
     public reportingStatus$ = new BehaviorSubject<ReportingStatus>(ReportingStatus.WAITING);
-    public availableConditionOptions = [KillsConditionOption, DamageConditionOption, PlacementConditionOption, GameModeConditionOption];
     public runConditions: RunCondition[] = [];
-    public get isRunAlways(): boolean {
-        return !this.runConditions?.length;
-    }
 
     private reportableDataList: ObjectPropertyTypes<ReportableDataFactoryMap>[] = [];
     private destroy$ = new Subject<void>();
@@ -55,10 +50,7 @@ export class LocalReportingEngine implements ReportingEngine {
     public runOpportunity(): void {
         this.reportingStatus$.next(ReportingStatus.IN_PROGRESS);
 
-        const shouldRun = this.runConditions.every((rc) => {
-            const reportableData = this.reportableDataList.find((d) => d.dataId === rc.condition.id);
-            return rc.conditionMet(reportableData?.value);
-        });
+        const shouldRun = !this.runConditions?.length || this.runConditions.every((rc) => rc.conditionMet());
 
         if (shouldRun) {
             const matchData = this.getMatchData();

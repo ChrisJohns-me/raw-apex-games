@@ -9,6 +9,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeName: MatchGameModeFriendlyName.Training,
         gameModeIdRegExPattern: "training",
         isAFSupported: true,
+        isReportable: false,
         isBattleRoyaleGameMode: false,
         isArenasGameMode: false,
         activeDates: [
@@ -23,6 +24,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeName: MatchGameModeFriendlyName.FiringRange,
         gameModeIdRegExPattern: "firingrange",
         isAFSupported: true,
+        isReportable: false,
         isBattleRoyaleGameMode: false,
         isArenasGameMode: false,
         activeDates: [
