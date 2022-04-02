@@ -11,7 +11,7 @@ export const MatchMapList: MatchMap[] = [
         isBattleRoyaleMap: false,
         isArenasMap: false,
         isChartable: false,
-        gameModeTypes: [MatchGameModeGenericId.FiringRange],
+        gameModeTypes: [MatchGameModeGenericId.Training, MatchGameModeGenericId.FiringRange],
         activeDates: [
             {
                 from: new Date(0),

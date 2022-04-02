@@ -13,15 +13,16 @@ import { combineLatest, Observable, Subject } from "rxjs";
 import { distinctUntilChanged, map, takeUntil } from "rxjs/operators";
 
 // Item IDs from items.json
+// Also is a reference for sorting.
 const VISIBLEITEMIDS: string[] = [
+    "shield_cell",
+    "shield_battery",
     "syringe",
     "med_kit",
-    "shield_battery",
-    "shield_cell",
     "phoenix_kit",
-    "grenade_thermite",
-    "grenade_frag",
     "grenade_arc_star",
+    "grenade_frag",
+    "grenade_thermite",
     "ultimate_accelerant",
 ];
 
@@ -91,7 +92,8 @@ export class MiniInventoryWindowComponent implements OnInit, OnDestroy {
                         return inventorySlot?.item?.itemId && VISIBLEITEMIDS.includes(inventorySlot.item.itemId);
                     });
                 }),
-                map((inventorySlots: InventorySlot<Item>[]) => this.consolidateInventorySlots(inventorySlots))
+                map((inventorySlots: InventorySlot<Item>[]) => this.consolidateInventorySlots(inventorySlots)),
+                map((inventorySlots: InventorySlot<Item>[]) => this.sortInventorySlots(inventorySlots, VISIBLEITEMIDS))
             )
             .subscribe((inventorySlots: InventorySlot<Item>[]) => {
                 this.myInventorySlotList = inventorySlots;
@@ -123,5 +125,11 @@ export class MiniInventoryWindowComponent implements OnInit, OnDestroy {
             }
         });
         return consolidatedInventorySlots;
+    }
+
+    private sortInventorySlots(inventorySlots: InventorySlot<Item>[], sortingArray: string[]): InventorySlot<Item>[] {
+        return inventorySlots.slice().sort((a, b) => {
+            return sortingArray.indexOf(a.item.itemId ?? "") - sortingArray.indexOf(b.item.itemId ?? "");
+        });
     }
 }

@@ -68,6 +68,8 @@ export class HUDWindowControllerService extends BaseService {
             requiredGamePhases: [GamePhase.InGame],
             requiredSettings: [{ key: SettingKey.EnableAllInGameHUD }, { key: SettingKey.EnableInGameMatchTimerHUD }],
             requiredGameModes: [
+                MatchGameModeGenericId.Training,
+                MatchGameModeGenericId.FiringRange,
                 MatchGameModeGenericId.Arenas,
                 MatchGameModeGenericId.BattleRoyale_Duos,
                 MatchGameModeGenericId.BattleRoyale_Trios,
@@ -79,6 +81,8 @@ export class HUDWindowControllerService extends BaseService {
             requiredGamePhases: [GamePhase.InGame],
             requiredSettings: [{ key: SettingKey.EnableAllInGameHUD }, { key: SettingKey.EnableInGameMatchTimerHUD }],
             requiredGameModes: [
+                MatchGameModeGenericId.Training,
+                MatchGameModeGenericId.FiringRange,
                 MatchGameModeGenericId.Arenas,
                 MatchGameModeGenericId.BattleRoyale_Duos,
                 MatchGameModeGenericId.BattleRoyale_Trios,
@@ -93,6 +97,8 @@ export class HUDWindowControllerService extends BaseService {
                 { key: SettingKey.UltimateTimerType, predicate: (value) => value !== UltimateTimerType.Disabled },
             ],
             requiredGameModes: [
+                MatchGameModeGenericId.Training,
+                MatchGameModeGenericId.FiringRange,
                 MatchGameModeGenericId.BattleRoyale_Duos,
                 MatchGameModeGenericId.BattleRoyale_Trios,
                 MatchGameModeGenericId.BattleRoyale_Ranked,
@@ -103,6 +109,8 @@ export class HUDWindowControllerService extends BaseService {
             requiredGamePhases: [GamePhase.InGame],
             requiredSettings: [{ key: SettingKey.EnableInGameAimingReticle }],
             requiredGameModes: [
+                MatchGameModeGenericId.Training,
+                MatchGameModeGenericId.FiringRange,
                 MatchGameModeGenericId.Arenas,
                 MatchGameModeGenericId.BattleRoyale_Duos,
                 MatchGameModeGenericId.BattleRoyale_Trios,

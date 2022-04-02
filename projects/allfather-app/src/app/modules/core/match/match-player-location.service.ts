@@ -1,3 +1,4 @@
+import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchMapCoordinates } from "@allfather-app/app/common/match/map/map-coordinates";
 import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
@@ -92,7 +93,9 @@ export class MatchPlayerLocationService extends BaseService {
                 infoUpdate?.feature === "location" &&
                 (infoUpdate.info.match_info?.location?.z ?? Infinity) < (this.myStartingCoordinates$.value?.z ?? -Infinity),
             [MatchLocationPhase.HasLanded]: () =>
-                this.myLocationPhase$.value === MatchLocationPhase.Dropping && !!this.myLandingCoordinates$.value,
+                (this.myLocationPhase$.value === MatchLocationPhase.Dropping && !!this.myLandingCoordinates$.value) ||
+                this.match.gameMode$.value?.gameModeGenericId === MatchGameModeGenericId.Training ||
+                this.match.gameMode$.value?.gameModeGenericId === MatchGameModeGenericId.FiringRange,
         });
 
         this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.destroy$)).subscribe((infoUpdate) => {
