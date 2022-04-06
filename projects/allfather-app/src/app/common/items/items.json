@@ -379,8 +379,13 @@
         },
         {
             "id": "bangalore_heirloom",
-            "friendlyName": "Bangalor \"Cold Steel\" Heirloom",
+            "friendlyName": "Bangalore \"Cold Steel\" Heirloom",
             "inGameInfoNameRegExPattern": "mp_weapon_bangalore_heirloom_primary"
+        },
+        {
+            "id": "crypto_heirloom",
+            "friendlyName": "Crypto \"Biwon Blade\" Heirloom",
+            "inGameInfoNameRegExPattern": "mp_weapon_crypto_heirloom_primary"
         },
         {
             "id": "bangalore_creeping_barrage",

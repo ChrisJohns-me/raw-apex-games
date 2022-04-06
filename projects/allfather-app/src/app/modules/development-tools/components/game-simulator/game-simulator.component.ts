@@ -16,6 +16,7 @@ import { fullGame1Quick } from "./simulations/full-game1-quick";
 import { fullGame2_2k } from "./simulations/full-game2-2k";
 import { resetToInGame } from "./simulations/reset-to-in-game";
 import { resetToLobby } from "./simulations/reset-to-lobby";
+import { s12Control } from "./simulations/s12-control";
 import { s12Quick } from "./simulations/s12-quick";
 import { stupidGame1Full } from "./simulations/stupid-game1";
 import { valkUltGame } from "./simulations/valk-ult-game";
@@ -106,6 +107,11 @@ export class GameSimulatorComponent implements OnDestroy {
 
     public onPerformS12QuickGameClick(speedAdjust?: number): void {
         const commands = this.logToCommands(s12Quick());
+        this.runCommands(commands, speedAdjust);
+    }
+
+    public onPerformS12ControlGameClick(speedAdjust?: number): void {
+        const commands = this.logToCommands(s12Control());
         this.runCommands(commands, speedAdjust);
     }
 

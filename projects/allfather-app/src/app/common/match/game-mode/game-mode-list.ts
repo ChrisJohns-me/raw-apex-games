@@ -82,12 +82,28 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeGenericId: MatchGameModeGenericId.Arenas,
         gameModeName: MatchGameModeFriendlyName.Arenas,
         gameModeIdRegExPattern: "arenas",
+        isReportable: false,
         isBattleRoyaleGameMode: false,
         isArenasGameMode: true,
         isControlGameMode: false,
         activeDates: [
             {
                 from: new Date("May 04, 2021"),
+            },
+        ],
+    }),
+    new MatchGameMode({
+        gameModeId: "#CONTROL_NAME",
+        gameModeGenericId: MatchGameModeGenericId.Control,
+        gameModeName: MatchGameModeFriendlyName.Control,
+        gameModeIdRegExPattern: "control",
+        isReportable: false,
+        isBattleRoyaleGameMode: false,
+        isArenasGameMode: false,
+        isControlGameMode: true,
+        activeDates: [
+            {
+                from: new Date("Mar 2, 2022"),
             },
         ],
     }),

@@ -57,7 +57,6 @@ export class HUDWindowControllerService extends BaseService {
             requiredGamePhases: [GamePhase.LegendSelection],
             requiredSettings: [{ key: SettingKey.EnableAllLegendSelectHUD }],
             requiredGameModes: [
-                MatchGameModeGenericId.Arenas,
                 MatchGameModeGenericId.BattleRoyale_Duos,
                 MatchGameModeGenericId.BattleRoyale_Trios,
                 MatchGameModeGenericId.BattleRoyale_Ranked,
@@ -71,6 +70,7 @@ export class HUDWindowControllerService extends BaseService {
                 MatchGameModeGenericId.Training,
                 MatchGameModeGenericId.FiringRange,
                 MatchGameModeGenericId.Arenas,
+                MatchGameModeGenericId.Control,
                 MatchGameModeGenericId.BattleRoyale_Duos,
                 MatchGameModeGenericId.BattleRoyale_Trios,
                 MatchGameModeGenericId.BattleRoyale_Ranked,
@@ -112,6 +112,7 @@ export class HUDWindowControllerService extends BaseService {
                 MatchGameModeGenericId.Training,
                 MatchGameModeGenericId.FiringRange,
                 MatchGameModeGenericId.Arenas,
+                MatchGameModeGenericId.Control,
                 MatchGameModeGenericId.BattleRoyale_Duos,
                 MatchGameModeGenericId.BattleRoyale_Trios,
                 MatchGameModeGenericId.BattleRoyale_Ranked,

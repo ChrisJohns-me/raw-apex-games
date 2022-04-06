@@ -1,5 +1,6 @@
 import { Legend } from "@allfather-app/app/common/legend/legend";
 import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
+import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
 import { DefaultSetting, SettingKey } from "@allfather-app/app/common/settings";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
@@ -23,7 +24,9 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     public focusedLegendId?: string;
     public legendStats?: AvgMatchStats;
     public legendGameModeStats?: AvgMatchStats;
+    public isBattleRoyaleGameMode = false;
     public isArenasGameMode = false;
+    public isControlGameMode = false;
     public legendIconRows: LegendIconRow[] = [];
     public complimentaryLegendWeights: { legendId: string; weightScore: number }[] = [];
     public minLegendStatsMatches = 1;
@@ -37,6 +40,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     private hoverLegendSubscription?: Subscription;
     private brGameModeIds = MatchGameModeList.filter((gm) => gm.isBattleRoyaleGameMode).map((gm) => gm.gameModeGenericId);
     private arenasGameModeIds = MatchGameModeList.filter((gm) => gm.isArenasGameMode).map((gm) => gm.gameModeGenericId);
+    private controlGameModeIds = MatchGameModeList.filter((gm) => gm.isControlGameMode).map((gm) => gm.gameModeGenericId);
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -90,13 +94,16 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
         return this.configuration.config$.pipe(
             tap((config) => (limitLegendStatsMatches = config.featureConfigs.legendSelectAssist.limitLegendStatsMatches)),
             switchMap(() => this.match.gameMode$),
-            map((gameMode) => (this.isArenasGameMode = !!gameMode?.isArenasGameMode)),
-            switchMap((isArenasGameMode) => {
-                return this.playerStats.getLegendGameModeGenericStats$(
-                    legendId,
-                    isArenasGameMode ? this.arenasGameModeIds : this.brGameModeIds,
-                    limitLegendStatsMatches
-                );
+            switchMap((gameMode) => {
+                this.isBattleRoyaleGameMode = !!gameMode?.isBattleRoyaleGameMode;
+                this.isArenasGameMode = !!gameMode?.isArenasGameMode;
+                this.isControlGameMode = !!gameMode?.isControlGameMode;
+                let gameModeGenericIds: MatchGameModeGenericId[] = [];
+                if (this.isBattleRoyaleGameMode) gameModeGenericIds = this.brGameModeIds;
+                else if (this.isArenasGameMode) gameModeGenericIds = this.arenasGameModeIds;
+                else if (this.isControlGameMode) gameModeGenericIds = this.controlGameModeIds;
+
+                return this.playerStats.getLegendGameModeGenericStats$(legendId, gameModeGenericIds, limitLegendStatsMatches);
             })
         );
     }

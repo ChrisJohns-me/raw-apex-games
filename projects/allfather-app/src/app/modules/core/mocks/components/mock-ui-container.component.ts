@@ -51,6 +51,7 @@ export class MockUIContainerComponent implements MockedClass<UIContainerComponen
     }
     @Input() public secondaryTitle = "";
     @Input() public enablePageviewTracking = true;
+    @Input() public showSettingsLink = false;
     @Input("onCloseButtonClick") public onCloseFn?: () => void;
     @Input() public showOverwolfAllFeatureStates = false;
 

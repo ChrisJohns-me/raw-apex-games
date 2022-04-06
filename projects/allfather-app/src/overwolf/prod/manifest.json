@@ -55,7 +55,7 @@
             "main": {
                 "file": "index.html",
                 "desktop_only": false,
-                "native_window": true,
+                "native_window": false,
                 "in_game_only": false,
                 "transparent": true,
                 "resizable": true,
@@ -67,7 +67,7 @@
                 "focus_game_takeover": "ReleaseOnHidden",
                 "focus_game_takeover_release_hotkey": "toggle_main",
                 "size": {
-                    "width": 1200,
+                    "width": 1000,
                     "height": 750
                 },
                 "min_size": {

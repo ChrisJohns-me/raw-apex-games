@@ -74,6 +74,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     @Input() public enablePageviewTracking = true;
     /** If function is not provided, the window will be closed */
     @Input("onCloseButtonClick") public onCloseFn?: () => void;
+    @Input() public showSettingsLink = false;
     @Input() public showOverwolfAllFeatureStates = false;
 
     public allFeatureStates?: FeatureState;

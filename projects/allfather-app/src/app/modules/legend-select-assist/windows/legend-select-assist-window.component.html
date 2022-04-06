@@ -6,8 +6,9 @@
     [size]="{ widthPercent: 0.5625, heightPercent: 1 }"
 >
     <h3 class="game-mode-header" *ngIf="(legendGameModeStats?.numMatches ?? 0) > 0">
-        <ng-container *ngIf="!isArenasGameMode">Battle Royale</ng-container>
+        <ng-container *ngIf="isBattleRoyaleGameMode">Battle Royale</ng-container>
         <ng-container *ngIf="isArenasGameMode">Arenas</ng-container>
+        <ng-container *ngIf="isControlGameMode">Control</ng-container>
         ({{ legendGameModeStats?.numMatches | number: "1.0":"en-US" }} matches)
     </h3>
 
