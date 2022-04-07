@@ -103,6 +103,16 @@ const MOCKINVENTORYSLOTS: InventorySlots = {
     },
 };
 
+const MOCKCONFIG = {
+    facts: {
+        maxHealth: 100,
+    },
+    brFacts: {
+        ringDamageTickRate: 1500,
+        rings: MOCKALLRINGS,
+    },
+};
+
 describe("HealingHelperWindowComponent", () => {
     let sut: HealingHelperWindowComponent;
     let fixture: ComponentFixture<HealingHelperWindowComponent>;
@@ -133,15 +143,6 @@ describe("HealingHelperWindowComponent", () => {
         fixture = TestBed.createComponent(HealingHelperWindowComponent);
         sut = fixture.componentInstance;
         config = TestBed.inject(ConfigurationService) as unknown as MockConfigurationService;
-        config.mockSetConfig({
-            facts: {
-                maxHealth: 100,
-            },
-            brFacts: {
-                ringDamageTickRate: 1500,
-                rings: MOCKALLRINGS,
-            },
-        } as Configuration);
         matchPlayerLocationService = TestBed.inject(MatchPlayerLocationService);
         matchPlayerInventoryService = TestBed.inject(MatchPlayerInventoryService);
         matchPlayerService = TestBed.inject(MatchPlayerService);
@@ -297,9 +298,10 @@ describe("HealingHelperWindowComponent", () => {
     });
 
     describe("availableHealingItems", () => {
-        it("returns healing items for ring 1", () => {
+        it("returns healing items for ring 1", fakeAsync(() => {
             // Arrange
             const firstRing = MOCKALLRINGS.find((ring) => ring.ringNumber === 1);
+            config.mockSetConfig(MOCKCONFIG as Configuration);
             matchRingService.allBRRings$.next(MOCKALLRINGS);
             matchRingService.currentBRRing$.next(firstRing);
             matchPlayerInventoryService.myInventorySlots$.next(MOCKINVENTORYSLOTS);
@@ -324,11 +326,12 @@ describe("HealingHelperWindowComponent", () => {
 
             // Assert
             expect(actual).toEqual(expected);
-        });
+        }));
 
-        it("returns some healing items for ring 1", () => {
+        it("returns some healing items for ring 1", fakeAsync(() => {
             // Arrange
             const firstRing = MOCKALLRINGS.find((ring) => ring.ringNumber === 1);
+            config.mockSetConfig(MOCKCONFIG as Configuration);
             matchRingService.allBRRings$.next(MOCKALLRINGS);
             matchRingService.currentBRRing$.next(firstRing);
             const inventorySlots = {
@@ -348,11 +351,12 @@ describe("HealingHelperWindowComponent", () => {
 
             // Assert
             expect(actual).toEqual(expected);
-        });
+        }));
 
-        it("returns healing items for ring 6", () => {
+        it("returns healing items for ring 6", fakeAsync(() => {
             // Arrange
             const firstRing = MOCKALLRINGS.find((ring) => ring.ringNumber === 6);
+            config.mockSetConfig(MOCKCONFIG as Configuration);
             matchRingService.allBRRings$.next(MOCKALLRINGS);
             matchRingService.currentBRRing$.next(firstRing);
             matchPlayerInventoryService.myInventorySlots$.next(MOCKINVENTORYSLOTS);
@@ -373,6 +377,6 @@ describe("HealingHelperWindowComponent", () => {
 
             // Assert
             expect(actual).toEqual(expected);
-        });
+        }));
     });
 });
