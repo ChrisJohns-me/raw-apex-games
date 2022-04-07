@@ -41,16 +41,10 @@
             },
             "required": ["playerDeathHUDTimeout", "matchEndHUDTimeout"]
         },
-        "facts": {
+        "brFacts": {
             "type": "object",
             "properties": {
                 "respawnBannerExpireTime": {
-                    "type": "integer"
-                },
-                "maxShield": {
-                    "type": "integer"
-                },
-                "maxHealth": {
                     "type": "integer"
                 },
                 "maxUltimateCooldownTime": {
@@ -58,9 +52,53 @@
                 },
                 "maxSquadSize": {
                     "type": "integer"
+                },
+                "ringDamageTickRate": {
+                    "type": "integer"
+                },
+                "rings": {
+                    "type": "array",
+                    "items": [
+                        {
+                            "type": "object",
+                            "properties": {
+                                "ringNumber": {
+                                    "type": "number"
+                                },
+                                "holdStartTime": {
+                                    "type": "number"
+                                },
+                                "holdEndTime": {
+                                    "type": "number"
+                                },
+                                "shrinkStartTime": {
+                                    "type": "number"
+                                },
+                                "shrinkEndTime": {
+                                    "type": "number"
+                                },
+                                "damagePerTick": {
+                                    "type": "number"
+                                }
+                            },
+                            "required": ["ringNumber", "holdStartTime", "holdEndTime", "shrinkStartTime", "shrinkEndTime", "damagePerTick"]
+                        }
+                    ]
                 }
             },
-            "required": ["maxShield", "maxHealth", "maxUltimateCooldownTime", "maxSquadSize"]
+            "required": ["respawnBannerExpireTime", "maxUltimateCooldownTime", "maxSquadSize", "ringDamageTickRate", "rings"]
+        },
+        "facts": {
+            "type": "object",
+            "properties": {
+                "maxShield": {
+                    "type": "integer"
+                },
+                "maxHealth": {
+                    "type": "integer"
+                }
+            },
+            "required": ["maxShield", "maxHealth"]
         },
         "featureFlags": {
             "type": "object",
@@ -75,6 +113,9 @@
                     "type": "boolean"
                 },
                 "enableInflictionInsightWindow": {
+                    "type": "boolean"
+                },
+                "enableHealingHelperWindow": {
                     "type": "boolean"
                 },
                 "enableReticleHelperWindow": {

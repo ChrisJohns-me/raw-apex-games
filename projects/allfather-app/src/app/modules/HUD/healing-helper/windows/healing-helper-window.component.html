@@ -1,0 +1,16 @@
+<app-ui-container
+    [isDesktopWindow]="false"
+    [isContentDraggable]="true"
+    primaryTitle="Healing Helper"
+    [position]="{ xPercent: 0.085, yPercent: 0.007, xAnchor: 'left', yAnchor: 'bottom' }"
+    [size]="{ widthPercent: 0.135, heightPercent: 0.07 }"
+>
+    <div class="healing-helper-container" *ngIf="isVisible">
+        <div class="healing-item-container" *ngFor="let healingItem of availableHealingItems">
+            <div class="healing-item" [ngStyle]="{ 'left.%': healingItem.neededHealthTime }">
+                <span class="healing-item-tick">|</span>
+                <img class="healing-item-image" [src]="'../../../../../assets/images/item-icons/' + healingItem.id + '.webp'" />
+            </div>
+        </div>
+    </div>
+</app-ui-container>

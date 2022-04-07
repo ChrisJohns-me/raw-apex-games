@@ -1,6 +1,9 @@
+import { MatchRing } from "@allfather-app/app/common/match/ring";
+
 export interface Configuration {
     assumptions: Assumptions;
     common: Common;
+    brFacts: BRFacts;
     facts: Facts;
     featureFlags: FeatureFlags;
     featureConfigs: FeatureConfigs;
@@ -27,17 +30,23 @@ export interface Common {
     matchEndHUDTimeout: number;
 }
 
-export interface Facts {
+export interface BRFacts {
     /** Time in ms before respawn banner expires where teammates can grab banner */
     respawnBannerExpireTime: number;
-    /** Max amount of shields that is possible in the game */
-    maxShield: number;
-    /** Max amount of health that is possible in the game */
-    maxHealth: number;
     /** Largest ultimate ability cooldown time possible */
     maxUltimateCooldownTime: number;
     /** Absolute maximum possible number of players on one squad */
     maxSquadSize: number;
+    /** Time in ms for damage from ring */
+    ringDamageTickRate: number;
+    rings: MatchRing[];
+}
+
+export interface Facts {
+    /** Max amount of shields that is possible in the game */
+    maxShield: number;
+    /** Max amount of health that is possible in the game */
+    maxHealth: number;
 }
 
 /**
@@ -48,6 +57,7 @@ export interface FeatureFlags {
     enableMiniInventoryWindow: boolean;
     enableUltTimerWindow: boolean;
     enableInflictionInsightWindow: boolean;
+    enableHealingHelperWindow: boolean;
     enableReticleHelperWindow: boolean;
     enableVideoCapture: boolean;
     inflictionInsight: {

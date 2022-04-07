@@ -59,6 +59,10 @@
                     <div class="col-6">MatchDuration</div>
                     <div class="col-6 text-end">{{ matchDuration | date: "mm:ss" }}</div>
                 </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6"><a class="link-primary" (click)="onChangeBRRingClick()">BRMatchRing</a></div>
+                    <div class="col-6 text-end">{{ matchBRRingNumber }}</div>
+                </div>
             </div>
         </div>
     </div>

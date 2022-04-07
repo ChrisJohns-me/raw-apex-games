@@ -10,8 +10,8 @@
         "minimum-gep-version": "0.165.0",
         "description": "Allfather, give me sight!",
         "dock_button_title": "Allfather",
-        "icon": "iconMouseOver.png",
-        "icon_gray": "iconMouseNormal.png",
+        "icon": "IconMouseOver.png",
+        "icon_gray": "IconMouseNormal.png",
         "launcher_icon": "LauncherIcon.ico",
         "window_icon": "TaskbarIcon.png"
     },
@@ -140,6 +140,21 @@
                 }
             },
             "hud-reticle-helper": {
+                "file": "index.html",
+                "in_game_only": true,
+                "resizable": false,
+                "transparent": true,
+                "show_in_taskbar": false,
+                "clickthrough": true,
+                "mute": true,
+                "popup_blocker": true,
+                "allow_local_file_access": true,
+                "size": {
+                    "width": 1,
+                    "height": 1
+                }
+            },
+            "hud-healing-helper": {
                 "file": "index.html",
                 "in_game_only": true,
                 "resizable": false,

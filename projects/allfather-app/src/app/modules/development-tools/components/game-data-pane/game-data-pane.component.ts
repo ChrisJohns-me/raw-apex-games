@@ -13,6 +13,7 @@ import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
 import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/match-player-stats.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
+import { MatchRingService } from "@allfather-app/app/modules/core/match/match-ring.service";
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
@@ -42,6 +43,10 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
         return new Date(endDate.getTime() - startDate.getTime());
     }
 
+    public get matchBRRingNumber(): number {
+        return this.matchRing.currentBRRing$.value?.ringNumber ?? 0;
+    }
+
     private autoUltimateTime = 10000;
     private ultimatePercentOverride?: number = undefined;
     private autoUltimateSubscription?: Subscription;
@@ -59,6 +64,7 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
         public readonly matchPlayerLegend: MatchPlayerLegendService,
         public readonly matchPlayerLocation: MatchPlayerLocationService,
         public readonly matchPlayerStats: MatchPlayerStatsService,
+        public readonly matchRing: MatchRingService,
         public readonly matchRoster: MatchRosterService,
         public readonly overwolfFeatureStatusService: OverwolfFeatureStatusService,
         public readonly player: PlayerService
@@ -124,6 +130,13 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
                 ? GamePhase.InGame
                 : GamePhase.Lobby;
         this.game.phase$.next(newPhase);
+    }
+
+    public onChangeBRRingClick(): void {
+        const ringNumber = this.matchBRRingNumber;
+        const newRingNumber = ringNumber < 6 ? ringNumber + 1 : 0;
+        const newBRRing = this.matchRing.allBRRings$.value.find((ring) => ring.ringNumber === newRingNumber);
+        this.matchRing.currentBRRing$.next(newBRRing);
     }
 
     public onChangeOverwolfGEPClick(): void {

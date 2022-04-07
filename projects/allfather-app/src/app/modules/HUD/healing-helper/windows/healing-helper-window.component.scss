@@ -1,0 +1,31 @@
+@import "hud-styles";
+
+.healing-helper-container {
+    height: 100%;
+    width: 100%;
+    margin-top: 7vw;
+}
+
+.healing-item-container {
+    position: relative;
+    width: calc(100% - 10vw);
+}
+
+.healing-item {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 10vw;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    &-tick {
+        color: red;
+    }
+
+    &-image {
+        height: 10vw;
+    }
+}

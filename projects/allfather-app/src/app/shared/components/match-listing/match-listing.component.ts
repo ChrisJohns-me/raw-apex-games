@@ -75,7 +75,7 @@ export class MatchListingComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
 
     constructor(private readonly cdr: ChangeDetectorRef, private readonly configuration: ConfigurationService) {
-        this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => (this.maxSquadSize = config.facts.maxSquadSize));
+        this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => (this.maxSquadSize = config.brFacts.maxSquadSize));
     }
 
     public isFunction = (value: unknown): boolean => typeof value === "function";

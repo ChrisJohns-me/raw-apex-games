@@ -115,7 +115,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
         private readonly settings: SettingsService
     ) {
         this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => {
-            this.maxUltimateCooldownTime = config.facts.maxUltimateCooldownTime;
+            this.maxUltimateCooldownTime = config.brFacts.maxUltimateCooldownTime;
             this.lowConfidenceAmount = config.featureConfigs.ultTimer.lowConfidenceAmount;
             this.highConfidenceAmount = config.featureConfigs.ultTimer.highConfidenceAmount;
             this.maxHistoryCount = config.featureConfigs.ultTimer.maxHistoryCount;

@@ -90,6 +90,21 @@
                             </div>
                         </td>
                     </tr>
+                    <tr
+                        *ngIf="config?.featureFlags?.enableHealingHelperWindow"
+                        (mouseover)="selectedPreviewSetting = SettingPreview.HealingHelper"
+                    >
+                        <td class="ps-4 ps-lg-5">In-Ring Healing Info</td>
+                        <td class="text-end pe-5">
+                            <div class="form-check form-switch d-inline-flex">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    [formControlName]="SettingKey.EnableInGameHealingHelperHUD"
+                                />
+                            </div>
+                        </td>
+                    </tr>
                     <!-- #region Aiming Reticle -->
                     <ng-container *ngIf="config?.featureFlags?.enableReticleHelperWindow">
                         <tr (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle">

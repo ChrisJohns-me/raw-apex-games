@@ -8,6 +8,7 @@ import { WINDOW_PROVIDERS } from "./common/services/window.service";
 import { BackgroundModule } from "./modules/background/background.module";
 import { DevelopmentToolsModule } from "./modules/development-tools/development-tools.module";
 import { NoopDevelopmentToolsModule } from "./modules/development-tools/noop-development-tools.module";
+import { HealingHelperWindowModule } from "./modules/HUD/healing-helper/healing-helper.module";
 import { InflictionInsightWindowModule } from "./modules/HUD/infliction-insight/infliction-insight.module";
 import { MatchTimerWindowModule } from "./modules/HUD/match-timer/match-timer.module";
 import { MiniInventoryWindowModule } from "./modules/HUD/mini-inventory/mini-inventory.module";
@@ -23,6 +24,7 @@ import { MainModule } from "./modules/main/main.module";
         BrowserModule,
         MainModule,
         environment.allowDevTools ? DevelopmentToolsModule : NoopDevelopmentToolsModule,
+        HealingHelperWindowModule,
         HttpClientModule,
         InflictionInsightWindowModule,
         LegendSelectAssistWindowModule,

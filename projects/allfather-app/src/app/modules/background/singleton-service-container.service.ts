@@ -31,6 +31,7 @@ import { MatchPlayerInventoryService } from "../core/match/match-player-inventor
 import { MatchPlayerLegendService } from "../core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "../core/match/match-player-location.service";
 import { MatchPlayerStatsService } from "../core/match/match-player-stats.service";
+import { MatchRingService } from "../core/match/match-ring.service";
 import { PlayerLocalStatsService } from "../core/player-local-stats.service";
 import { PlayerService } from "../core/player.service";
 import { ReportableDataManagerService } from "../core/reporting/reporting-engine/reportable-data-manager";
@@ -78,6 +79,7 @@ import { SystemTrayService } from "./system-tray.service";
         MatchPlayerLocationService,
         MatchPlayerService,
         MatchPlayerStatsService,
+        MatchRingService,
         MatchRosterService,
         MatchService,
         MatchTimerWindowService,
@@ -129,6 +131,7 @@ export class SingletonServiceContainerService {
         public readonly MatchPlayerLocationService: MatchPlayerLocationService,
         public readonly MatchPlayerService: MatchPlayerService,
         public readonly MatchPlayerStatsService: MatchPlayerStatsService,
+        public readonly MatchRingService: MatchRingService,
         public readonly MatchRosterService: MatchRosterService,
         public readonly MatchService: MatchService,
         public readonly MatchTimerWindowService: MatchTimerWindowService,

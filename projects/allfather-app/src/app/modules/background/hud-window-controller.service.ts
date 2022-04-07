@@ -9,6 +9,7 @@ import { combineLatest, merge, Observable, Subscription } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { GameService } from "../core/game.service";
 import { MatchService } from "../core/match/match.service";
+import { HealingHelperWindowService } from "../HUD/healing-helper/windows/healing-helper-window.service";
 import { InflictionInsightWindowService } from "../HUD/infliction-insight/windows/infliction-insight-window.service";
 import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
 import { MiniInventoryWindowService } from "../HUD/mini-inventory/windows/mini-inventory-window.service";
@@ -28,6 +29,7 @@ type HUDTriggers = {
     providedIn: "root",
     deps: [
         GameService,
+        HealingHelperWindowService,
         InflictionInsightWindowService,
         LegendSelectAssistWindowService,
         MatchService,
@@ -105,6 +107,16 @@ export class HUDWindowControllerService extends BaseService {
             ],
         },
         {
+            windowService: this.healingHelperWindow,
+            requiredGamePhases: [GamePhase.InGame],
+            requiredSettings: [{ key: SettingKey.EnableAllInGameHUD }, { key: SettingKey.EnableInGameHealingHelperHUD }],
+            requiredGameModes: [
+                MatchGameModeGenericId.BattleRoyale_Duos,
+                MatchGameModeGenericId.BattleRoyale_Trios,
+                MatchGameModeGenericId.BattleRoyale_Ranked,
+            ],
+        },
+        {
             windowService: this.reticleHelperWindow,
             requiredGamePhases: [GamePhase.InGame],
             requiredSettings: [{ key: SettingKey.EnableInGameAimingReticle }],
@@ -124,6 +136,7 @@ export class HUDWindowControllerService extends BaseService {
 
     constructor(
         private readonly game: GameService,
+        private readonly healingHelperWindow: HealingHelperWindowService,
         private readonly inflictionInsightWindow: InflictionInsightWindowService,
         private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
         private readonly match: MatchService,

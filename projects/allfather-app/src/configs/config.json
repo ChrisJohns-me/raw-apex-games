@@ -11,18 +11,72 @@
         "playerDeathHUDTimeout": 30000,
         "matchEndHUDTimeout": 15000
     },
-    "facts": {
+    "brFacts": {
         "respawnBannerExpireTime": 60000,
-        "maxShield": 125,
-        "maxHealth": 100,
         "maxUltimateCooldownTime": 360000,
-        "maxSquadSize": 3
+        "maxSquadSize": 3,
+        "ringDamageTickRate": 1500,
+        "rings": [
+            {
+                "ringNumber": 1,
+                "holdStartTime": 65000,
+                "holdEndTime": 245000,
+                "shrinkStartTime": 248000,
+                "shrinkEndTime": 475000,
+                "damagePerTick": 2
+            },
+            {
+                "ringNumber": 2,
+                "holdStartTime": 478000,
+                "holdEndTime": 645000,
+                "shrinkStartTime": 647000,
+                "shrinkEndTime": 717000,
+                "damagePerTick": 3
+            },
+            {
+                "ringNumber": 3,
+                "holdStartTime": 720000,
+                "holdEndTime": 855000,
+                "shrinkStartTime": 857000,
+                "shrinkEndTime": 902000,
+                "damagePerTick": 10
+            },
+            {
+                "ringNumber": 4,
+                "holdStartTime": 905000,
+                "holdEndTime": 1012000,
+                "shrinkStartTime": 1012000,
+                "shrinkEndTime": 1057000,
+                "damagePerTick": 20
+            },
+            {
+                "ringNumber": 5,
+                "holdStartTime": 1060000,
+                "holdEndTime": 1152000,
+                "shrinkStartTime": 1152000,
+                "shrinkEndTime": 1196000,
+                "damagePerTick": 20
+            },
+            {
+                "ringNumber": 6,
+                "holdStartTime": 1200000,
+                "holdEndTime": 1260000,
+                "shrinkStartTime": 1263000,
+                "shrinkEndTime": 1383000,
+                "damagePerTick": 25
+            }
+        ]
+    },
+    "facts": {
+        "maxShield": 125,
+        "maxHealth": 100
     },
     "featureFlags": {
         "enableMatchTimerWindow": true,
         "enableMiniInventoryWindow": true,
         "enableUltTimerWindow": true,
         "enableInflictionInsightWindow": true,
+        "enableHealingHelperWindow": true,
         "enableReticleHelperWindow": false,
         "enableVideoCapture": true,
         "inflictionInsight": {
