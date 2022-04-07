@@ -73,8 +73,8 @@ export const s12Quick = (): string => `
 [2022-03-27 09:36:07.146 PM] {"info":{"match_info":{"tabs":{"kills":0,"assists":0,"spectators":0,"teams":20,"players":58,"damage":0,"cash":0}}},"feature":"match_info"}
 [2022-03-27 09:36:07.149 PM] {"info":{"me":{"weapons":null}},"feature":"inventory"}
 [2022-03-27 09:36:07.152 PM] {"info":{"me":{"inUse":{"inUse":"mp_weapon_bangalore_heirloom_primary"}}},"feature":"inventory"}
-[2022-03-27 09:36:07.155 PM] {"info":{"me":{"inventory_0":{"name":"unknown_166","amount":"2"}}},"feature":"inventory"}
-[2022-03-27 09:36:07.157 PM] {"info":{"me":{"inventory_1":{"name":"unknown_164","amount":"2"}}},"feature":"inventory"}
+[2022-03-27 09:36:07.155 PM] {"info":{"me":{"inventory_0":{"name":"unknown_167","amount":"2"}}},"feature":"inventory"}
+[2022-03-27 09:36:07.157 PM] {"info":{"me":{"inventory_1":{"name":"unknown_165","amount":"2"}}},"feature":"inventory"}
 [2022-03-27 09:36:07.160 PM] {"name":"match_start","data":null}
 [2022-03-27 09:36:07.236 PM] {"info":{"me":{"inventory_0":null}},"feature":"inventory"}
 [2022-03-27 09:36:07.238 PM] {"info":{"me":{"inventory_1":null}},"feature":"inventory"}

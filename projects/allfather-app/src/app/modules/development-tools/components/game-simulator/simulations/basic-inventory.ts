@@ -75,8 +75,8 @@ export const basicInventoryQuick = (): string => `
 [2022-03-28 05:58:07.383 PM] {"info":{"match_info":{"tabs":{"kills":0,"assists":0,"spectators":0,"teams":20,"players":58,"damage":0,"cash":0}}},"feature":"match_info"}
 [2022-03-28 05:58:07.385 PM] {"info":{"me":{"weapons":{"weapon0":"Melee","weapon1":"Melee"}}},"feature":"inventory"}
 [2022-03-28 05:58:07.387 PM] {"info":{"me":{"inUse":{"inUse":"Melee"}}},"feature":"inventory"}
-[2022-03-28 05:58:07.389 PM] {"info":{"me":{"inventory_0":{"name":"unknown_166","amount":"0"}}},"feature":"inventory"}
-[2022-03-28 05:58:07.392 PM] {"info":{"me":{"inventory_1":{"name":"unknown_164","amount":"0"}}},"feature":"inventory"}
+[2022-03-28 05:58:07.389 PM] {"info":{"me":{"inventory_0":{"name":"unknown_165","amount":"0"}}},"feature":"inventory"}
+[2022-03-28 05:58:07.392 PM] {"info":{"me":{"inventory_1":{"name":"unknown_167","amount":"0"}}},"feature":"inventory"}
 [2022-03-28 05:58:07.712 PM] {"info":{"match_info":{"location":{"x":"-364","y":"401","z":"234"}}},"feature":"location"}
 [2022-03-28 05:58:08.221 PM] {"info":{"match_info":{"location":{"x":"-354","y":"393","z":"234"}}},"feature":"location"}
 [2022-03-28 05:58:08.677 PM] {"info":{"match_info":{"location":{"x":"-345","y":"387","z":"234"}}},"feature":"location"}
@@ -150,8 +150,8 @@ export const basicInventoryQuick = (): string => `
 [2022-03-28 05:58:39.867 PM] {"info":{"match_info":{"location":{"x":"149","y":"7","z":"234"}}},"feature":"location"}
 [2022-03-28 05:58:40.369 PM] {"info":{"match_info":{"location":{"x":"157","y":"0","z":"234"}}},"feature":"location"}
 [2022-03-28 05:58:40.872 PM] {"info":{"match_info":{"location":{"x":"165","y":"-5","z":"234"}}},"feature":"location"}
-[2022-03-28 05:58:41.267 PM] {"info":{"me":{"inventory_0":{"name":"unknown_166","amount":"2"}}},"feature":"inventory"}
-[2022-03-28 05:58:41.271 PM] {"info":{"me":{"inventory_1":{"name":"unknown_164","amount":"2"}}},"feature":"inventory"}
+[2022-03-28 05:58:41.267 PM] {"info":{"me":{"inventory_0":{"name":"unknown_165","amount":"2"}}},"feature":"inventory"}
+[2022-03-28 05:58:41.271 PM] {"info":{"me":{"inventory_1":{"name":"unknown_167","amount":"2"}}},"feature":"inventory"}
 [2022-03-28 05:58:41.371 PM] {"info":{"match_info":{"location":{"x":"174","y":"-11","z":"233"}}},"feature":"location"}
 [2022-03-28 05:58:41.872 PM] {"info":{"match_info":{"location":{"x":"178","y":"-14","z":"229"}}},"feature":"location"}
 [2022-03-28 05:58:42.151 PM] {"info":{"me":{"ultimate_cooldown":{"ultimate_cooldown":"40"}}},"feature":"me"}
@@ -207,13 +207,13 @@ export const basicInventoryQuick = (): string => `
 [2022-03-28 05:59:02.724 PM] {"info":{"match_info":{"roster_6":null}},"feature":"roster"}
 [2022-03-28 05:59:02.869 PM] {"info":{"match_info":{"location":{"x":"208","y":"-51","z":"43"}}},"feature":"location"}
 [2022-03-28 05:59:02.981 PM] {"info":{"me":{"inventory_0":{"name":"unknown_122","amount":"8"}}},"feature":"inventory"}
-[2022-03-28 05:59:02.986 PM] {"info":{"me":{"inventory_1":{"name":"unknown_166","amount":"2"}}},"feature":"inventory"}
-[2022-03-28 05:59:02.991 PM] {"info":{"me":{"inventory_2":{"name":"unknown_164","amount":"2"}}},"feature":"inventory"}
+[2022-03-28 05:59:02.986 PM] {"info":{"me":{"inventory_1":{"name":"unknown_165","amount":"2"}}},"feature":"inventory"}
+[2022-03-28 05:59:02.991 PM] {"info":{"me":{"inventory_2":{"name":"unknown_167","amount":"2"}}},"feature":"inventory"}
 [2022-03-28 05:59:03.062 PM] {"info":{"me":{"weapons":{"weapon0":"Mastiff Shotgun","weapon1":"Melee"}}},"feature":"inventory"}
 [2022-03-28 05:59:03.284 PM] {"info":{"me":{"inventory_0":{"name":"unknown_122","amount":"16"}}},"feature":"inventory"}
 [2022-03-28 05:59:03.368 PM] {"info":{"me":{"inUse":{"inUse":"Mastiff Shotgun"}}},"feature":"inventory"}
 [2022-03-28 05:59:03.372 PM] {"info":{"match_info":{"location":{"x":"208","y":"-52","z":"43"}}},"feature":"location"}
-[2022-03-28 05:59:03.667 PM] {"info":{"me":{"inventory_2":{"name":"unknown_164","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 05:59:03.667 PM] {"info":{"me":{"inventory_2":{"name":"unknown_167","amount":"4"}}},"feature":"inventory"}
 [2022-03-28 05:59:04.367 PM] {"info":{"match_info":{"location":{"x":"208","y":"-51","z":"43"}}},"feature":"location"}
 [2022-03-28 05:59:04.438 PM] {"info":{"me":{"inUse":{"inUse":"Melee"}}},"feature":"inventory"}
 [2022-03-28 05:59:04.514 PM] {"info":{"me":{"ultimate_cooldown":{"ultimate_cooldown":"5"}}},"feature":"me"}
@@ -235,8 +235,8 @@ export const basicInventoryQuick = (): string => `
 [2022-03-28 05:59:12.868 PM] {"info":{"match_info":{"location":{"x":"201","y":"-62","z":"42"}}},"feature":"location"}
 [2022-03-28 05:59:13.020 PM] {"info":{"me":{"weapons":{"weapon0":"Alternator SMG","weapon1":"Mastiff Shotgun"}}},"feature":"inventory"}
 [2022-03-28 05:59:13.266 PM] {"info":{"me":{"inventory_1":{"name":"unknown_120","amount":"20"}}},"feature":"inventory"}
-[2022-03-28 05:59:13.271 PM] {"info":{"me":{"inventory_2":{"name":"unknown_166","amount":"2"}}},"feature":"inventory"}
-[2022-03-28 05:59:13.276 PM] {"info":{"me":{"inventory_3":{"name":"unknown_164","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 05:59:13.271 PM] {"info":{"me":{"inventory_2":{"name":"unknown_165","amount":"2"}}},"feature":"inventory"}
+[2022-03-28 05:59:13.276 PM] {"info":{"me":{"inventory_3":{"name":"unknown_167","amount":"4"}}},"feature":"inventory"}
 [2022-03-28 05:59:13.315 PM] {"info":{"me":{"inUse":{"inUse":"Alternator SMG"}}},"feature":"inventory"}
 [2022-03-28 05:59:13.368 PM] {"info":{"match_info":{"location":{"x":"201","y":"-62","z":"41"}}},"feature":"location"}
 [2022-03-28 05:59:13.524 PM] {"info":{"me":{"ultimate_cooldown":{"ultimate_cooldown":"15"}}},"feature":"me"}
@@ -255,7 +255,7 @@ export const basicInventoryQuick = (): string => `
 [2022-03-28 05:59:17.967 PM] {"info":{"me":{"inventory_4":{"name":"unknown_190","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:18.262 PM] {"info":{"me":{"inventory_5":{"name":"unknown_190","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:18.368 PM] {"info":{"match_info":{"location":{"x":"195","y":"-62","z":"41"}}},"feature":"location"}
-[2022-03-28 05:59:21.680 PM] {"info":{"me":{"inventory_2":{"name":"unknown_166","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 05:59:21.680 PM] {"info":{"me":{"inventory_2":{"name":"unknown_165","amount":"4"}}},"feature":"inventory"}
 [2022-03-28 05:59:22.537 PM] {"info":{"me":{"ultimate_cooldown":{"ultimate_cooldown":"25"}}},"feature":"me"}
 [2022-03-28 05:59:22.871 PM] {"info":{"match_info":{"location":{"x":"195","y":"-61","z":"41"}}},"feature":"location"}
 [2022-03-28 05:59:23.369 PM] {"info":{"match_info":{"location":{"x":"194","y":"-60","z":"41"}}},"feature":"location"}
@@ -280,8 +280,8 @@ export const basicInventoryQuick = (): string => `
 [2022-03-28 05:59:29.367 PM] {"info":{"match_info":{"location":{"x":"197","y":"-59","z":"43"}}},"feature":"location"}
 [2022-03-28 05:59:29.868 PM] {"info":{"match_info":{"location":{"x":"199","y":"-59","z":"43"}}},"feature":"location"}
 [2022-03-28 05:59:30.274 PM] {"info":{"me":{"inventory_2":{"name":"unknown_163","amount":"1"}}},"feature":"inventory"}
-[2022-03-28 05:59:30.281 PM] {"info":{"me":{"inventory_3":{"name":"unknown_166","amount":"4"}}},"feature":"inventory"}
-[2022-03-28 05:59:30.287 PM] {"info":{"me":{"inventory_4":{"name":"unknown_164","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 05:59:30.281 PM] {"info":{"me":{"inventory_3":{"name":"unknown_165","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 05:59:30.287 PM] {"info":{"me":{"inventory_4":{"name":"unknown_167","amount":"4"}}},"feature":"inventory"}
 [2022-03-28 05:59:30.292 PM] {"info":{"me":{"inventory_6":{"name":"unknown_190","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:30.303 PM] {"info":{"match_info":{"tabs":{"kills":0,"assists":0,"spectators":0,"teams":20,"players":54,"damage":0,"cash":0}}},"feature":"match_info"}
 [2022-03-28 05:59:30.341 PM] {"name":"kill_feed","data":{"local_player_name":"MasterKriff","attackerName":"[OSP] Phoenix69","victimName":" WynDeLyon","weaponName":"p2020","action":"kill"}}
@@ -297,22 +297,22 @@ export const basicInventoryQuick = (): string => `
 [2022-03-28 05:59:33.368 PM] {"info":{"match_info":{"location":{"x":"194","y":"-64","z":"43"}}},"feature":"location"}
 [2022-03-28 05:59:33.869 PM] {"info":{"match_info":{"location":{"x":"195","y":"-65","z":"43"}}},"feature":"location"}
 [2022-03-28 05:59:34.111 PM] {"info":{"me":{"inUse":{"inUse":"Mastiff Shotgun"}}},"feature":"inventory"}
-[2022-03-28 05:59:34.372 PM] {"info":{"me":{"inventory_4":{"name":"unknown_166","amount":"2"}}},"feature":"inventory"}
-[2022-03-28 05:59:34.379 PM] {"info":{"me":{"inventory_5":{"name":"unknown_164","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 05:59:34.372 PM] {"info":{"me":{"inventory_4":{"name":"unknown_165","amount":"2"}}},"feature":"inventory"}
+[2022-03-28 05:59:34.379 PM] {"info":{"me":{"inventory_5":{"name":"unknown_167","amount":"4"}}},"feature":"inventory"}
 [2022-03-28 05:59:34.385 PM] {"info":{"me":{"inventory_7":{"name":"unknown_190","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:34.391 PM] {"info":{"match_info":{"location":{"x":"196","y":"-65","z":"43"}}},"feature":"location"}
 [2022-03-28 05:59:34.870 PM] {"info":{"match_info":{"location":{"x":"197","y":"-66","z":"43"}}},"feature":"location"}
 [2022-03-28 05:59:35.554 PM] {"info":{"me":{"ultimate_cooldown":{"ultimate_cooldown":"40"}}},"feature":"me"}
 [2022-03-28 05:59:37.085 PM] {"info":{"match_info":{"roster_38":null}},"feature":"roster"}
 [2022-03-28 05:59:37.368 PM] {"info":{"match_info":{"location":{"x":"197","y":"-65","z":"43"}}},"feature":"location"}
-[2022-03-28 05:59:37.462 PM] {"info":{"me":{"inventory_6":{"name":"unknown_164","amount":"2"}}},"feature":"inventory"}
+[2022-03-28 05:59:37.462 PM] {"info":{"me":{"inventory_6":{"name":"unknown_167","amount":"2"}}},"feature":"inventory"}
 [2022-03-28 05:59:37.468 PM] {"info":{"me":{"inventory_8":{"name":"unknown_190","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:37.870 PM] {"info":{"match_info":{"location":{"x":"197","y":"-66","z":"43"}}},"feature":"location"}
 [2022-03-28 05:59:38.062 PM] {"info":{"me":{"inUse":{"inUse":"Melee"}}},"feature":"inventory"}
 [2022-03-28 05:59:38.370 PM] {"info":{"match_info":{"location":{"x":"196","y":"-66","z":"43"}}},"feature":"location"}
 [2022-03-28 05:59:38.869 PM] {"info":{"match_info":{"location":{"x":"195","y":"-67","z":"43"}}},"feature":"location"}
 [2022-03-28 05:59:39.370 PM] {"info":{"match_info":{"location":{"x":"193","y":"-67","z":"43"}}},"feature":"location"}
-[2022-03-28 05:59:39.571 PM] {"info":{"me":{"inventory_4":{"name":"unknown_166","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 05:59:39.571 PM] {"info":{"me":{"inventory_4":{"name":"unknown_165","amount":"4"}}},"feature":"inventory"}
 [2022-03-28 05:59:39.868 PM] {"info":{"match_info":{"location":{"x":"192","y":"-67","z":"43"}}},"feature":"location"}
 [2022-03-28 05:59:40.251 PM] {"info":{"me":{"inUse":{"inUse":"Mastiff Shotgun"}}},"feature":"inventory"}
 [2022-03-28 05:59:40.369 PM] {"info":{"match_info":{"location":{"x":"192","y":"-68","z":"43"}}},"feature":"location"}
@@ -344,15 +344,15 @@ export const basicInventoryQuick = (): string => `
 [2022-03-28 05:59:47.370 PM] {"info":{"match_info":{"location":{"x":"188","y":"-59","z":"43"}}},"feature":"location"}
 [2022-03-28 05:59:47.376 PM] {"info":{"me":{"inventory_0":{"name":"unknown_120","amount":"40"}}},"feature":"inventory"}
 [2022-03-28 05:59:47.384 PM] {"info":{"me":{"inventory_1":{"name":"unknown_163","amount":"1"}}},"feature":"inventory"}
-[2022-03-28 05:59:47.391 PM] {"info":{"me":{"inventory_2":{"name":"unknown_166","amount":"4"}}},"feature":"inventory"}
-[2022-03-28 05:59:47.398 PM] {"info":{"me":{"inventory_4":{"name":"unknown_164","amount":"4"}}},"feature":"inventory"}
-[2022-03-28 05:59:47.406 PM] {"info":{"me":{"inventory_5":{"name":"unknown_164","amount":"2"}}},"feature":"inventory"}
+[2022-03-28 05:59:47.391 PM] {"info":{"me":{"inventory_2":{"name":"unknown_165","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 05:59:47.398 PM] {"info":{"me":{"inventory_4":{"name":"unknown_167","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 05:59:47.406 PM] {"info":{"me":{"inventory_5":{"name":"unknown_167","amount":"2"}}},"feature":"inventory"}
 [2022-03-28 05:59:47.413 PM] {"info":{"me":{"inventory_6":{"name":"unknown_190","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:47.420 PM] {"info":{"me":{"inventory_8":{"name":"unknown_189","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:47.426 PM] {"info":{"me":{"inventory_9":null}},"feature":"inventory"}
 [2022-03-28 05:59:47.841 PM] {"name":"kill_feed","data":{"local_player_name":"MasterKriff","attackerName":" PotatoChipPanda","victimName":" dumontdude10","weaponName":"r97","action":"knockdown"}}
 [2022-03-28 05:59:47.848 PM] {"name":"kill_feed","data":{"local_player_name":"MasterKriff","attackerName":" dumontdude10","victimName":" PotatoChipPanda","weaponName":"alternator","action":"knockdown"}}
-[2022-03-28 05:59:47.864 PM] {"info":{"me":{"inventory_5":{"name":"unknown_164","amount":"1"}}},"feature":"inventory"}
+[2022-03-28 05:59:47.864 PM] {"info":{"me":{"inventory_5":{"name":"unknown_167","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:48.063 PM] {"info":{"me":{"inventory_5":{"name":"unknown_190","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:48.070 PM] {"info":{"me":{"inventory_7":{"name":"unknown_189","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:48.076 PM] {"info":{"me":{"inventory_8":null}},"feature":"inventory"}
@@ -367,12 +367,12 @@ export const basicInventoryQuick = (): string => `
 [2022-03-28 05:59:51.595 PM] {"info":{"match_info":{"roster_9":null}},"feature":"roster"}
 [2022-03-28 05:59:51.871 PM] {"info":{"match_info":{"location":{"x":"187","y":"-55","z":"44"}}},"feature":"location"}
 [2022-03-28 05:59:52.370 PM] {"info":{"match_info":{"location":{"x":"186","y":"-54","z":"44"}}},"feature":"location"}
-[2022-03-28 05:59:52.465 PM] {"info":{"me":{"inventory_3":{"name":"unknown_166","amount":"3"}}},"feature":"inventory"}
-[2022-03-28 05:59:52.664 PM] {"info":{"me":{"inventory_3":{"name":"unknown_166","amount":"2"}}},"feature":"inventory"}
+[2022-03-28 05:59:52.465 PM] {"info":{"me":{"inventory_3":{"name":"unknown_165","amount":"3"}}},"feature":"inventory"}
+[2022-03-28 05:59:52.664 PM] {"info":{"me":{"inventory_3":{"name":"unknown_165","amount":"2"}}},"feature":"inventory"}
 [2022-03-28 05:59:52.868 PM] {"info":{"match_info":{"location":{"x":"186","y":"-53","z":"44"}}},"feature":"location"}
-[2022-03-28 05:59:53.064 PM] {"info":{"me":{"inventory_3":{"name":"unknown_166","amount":"1"}}},"feature":"inventory"}
+[2022-03-28 05:59:53.064 PM] {"info":{"me":{"inventory_3":{"name":"unknown_165","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:53.369 PM] {"info":{"match_info":{"location":{"x":"187","y":"-54","z":"45"}}},"feature":"location"}
-[2022-03-28 05:59:53.465 PM] {"info":{"me":{"inventory_3":{"name":"unknown_164","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 05:59:53.465 PM] {"info":{"me":{"inventory_3":{"name":"unknown_167","amount":"4"}}},"feature":"inventory"}
 [2022-03-28 05:59:53.472 PM] {"info":{"me":{"inventory_4":{"name":"unknown_190","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:53.480 PM] {"info":{"me":{"inventory_6":{"name":"unknown_189","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:53.488 PM] {"info":{"me":{"inventory_7":null}},"feature":"inventory"}
@@ -380,16 +380,16 @@ export const basicInventoryQuick = (): string => `
 [2022-03-28 05:59:54.368 PM] {"info":{"match_info":{"location":{"x":"188","y":"-54","z":"46"}}},"feature":"location"}
 [2022-03-28 05:59:54.870 PM] {"info":{"match_info":{"location":{"x":"189","y":"-54","z":"46"}}},"feature":"location"}
 [2022-03-28 05:59:56.372 PM] {"info":{"match_info":{"location":{"x":"188","y":"-54","z":"46"}}},"feature":"location"}
-[2022-03-28 05:59:56.868 PM] {"info":{"me":{"inventory_3":{"name":"unknown_166","amount":"1"}}},"feature":"inventory"}
-[2022-03-28 05:59:56.875 PM] {"info":{"me":{"inventory_4":{"name":"unknown_164","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 05:59:56.868 PM] {"info":{"me":{"inventory_3":{"name":"unknown_165","amount":"1"}}},"feature":"inventory"}
+[2022-03-28 05:59:56.875 PM] {"info":{"me":{"inventory_4":{"name":"unknown_167","amount":"4"}}},"feature":"inventory"}
 [2022-03-28 05:59:56.883 PM] {"info":{"me":{"inventory_6":{"name":"unknown_190","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:56.890 PM] {"info":{"me":{"inventory_7":{"name":"unknown_189","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 05:59:56.897 PM] {"info":{"match_info":{"location":{"x":"186","y":"-54","z":"45"}}},"feature":"location"}
 [2022-03-28 05:59:57.372 PM] {"info":{"match_info":{"location":{"x":"185","y":"-54","z":"44"}}},"feature":"location"}
-[2022-03-28 05:59:57.666 PM] {"info":{"me":{"inventory_3":{"name":"unknown_166","amount":"2"}}},"feature":"inventory"}
-[2022-03-28 05:59:58.560 PM] {"info":{"me":{"inventory_3":{"name":"unknown_166","amount":"3"}}},"feature":"inventory"}
+[2022-03-28 05:59:57.666 PM] {"info":{"me":{"inventory_3":{"name":"unknown_165","amount":"2"}}},"feature":"inventory"}
+[2022-03-28 05:59:58.560 PM] {"info":{"me":{"inventory_3":{"name":"unknown_165","amount":"3"}}},"feature":"inventory"}
 [2022-03-28 05:59:58.585 PM] {"info":{"me":{"ultimate_cooldown":{"ultimate_cooldown":"65"}}},"feature":"me"}
-[2022-03-28 05:59:58.766 PM] {"info":{"me":{"inventory_3":{"name":"unknown_166","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 05:59:58.766 PM] {"info":{"me":{"inventory_3":{"name":"unknown_165","amount":"4"}}},"feature":"inventory"}
 [2022-03-28 05:59:59.868 PM] {"info":{"match_info":{"location":{"x":"186","y":"-54","z":"44"}}},"feature":"location"}
 [2022-03-28 06:00:00.368 PM] {"info":{"match_info":{"location":{"x":"187","y":"-53","z":"45"}}},"feature":"location"}
 [2022-03-28 06:00:00.868 PM] {"info":{"match_info":{"location":{"x":"187","y":"-54","z":"45"}}},"feature":"location"}
@@ -401,8 +401,8 @@ export const basicInventoryQuick = (): string => `
 [2022-03-28 06:00:03.868 PM] {"info":{"match_info":{"location":{"x":"186","y":"-53","z":"48"}}},"feature":"location"}
 [2022-03-28 06:00:04.368 PM] {"info":{"match_info":{"location":{"x":"186","y":"-53","z":"49"}}},"feature":"location"}
 [2022-03-28 06:00:05.367 PM] {"info":{"me":{"inventory_2":{"name":"unknown_161","amount":"1"}}},"feature":"inventory"}
-[2022-03-28 06:00:05.375 PM] {"info":{"me":{"inventory_4":{"name":"unknown_166","amount":"4"}}},"feature":"inventory"}
-[2022-03-28 06:00:05.382 PM] {"info":{"me":{"inventory_5":{"name":"unknown_164","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 06:00:05.375 PM] {"info":{"me":{"inventory_4":{"name":"unknown_165","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 06:00:05.382 PM] {"info":{"me":{"inventory_5":{"name":"unknown_167","amount":"4"}}},"feature":"inventory"}
 [2022-03-28 06:00:05.389 PM] {"info":{"me":{"inventory_7":{"name":"unknown_190","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 06:00:05.395 PM] {"info":{"me":{"inventory_8":{"name":"unknown_189","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 06:00:06.342 PM] {"name":"kill_feed","data":{"local_player_name":"MasterKriff","attackerName":"[789] edgyman","victimName":"[Bro] CoolNamesMakeYouBetter™","weaponName":"r301","action":"knockdown"}}
@@ -460,12 +460,12 @@ export const basicInventoryQuick = (): string => `
 [2022-03-28 06:00:26.867 PM] {"name":"kill_feed","data":{"local_player_name":"MasterKriff","attackerName":"[Bro] EnemyZUBATusedCORONAVIRUS!™","victimName":"[789] YEET_MAN_REEEEE","weaponName":"mastiff","action":"kill"}}
 [2022-03-28 06:00:27.341 PM] {"name":"kill_feed","data":{"local_player_name":"MasterKriff","attackerName":"Lifeline5199","victimName":" MediocreKevin","weaponName":"eva8","action":"knockdown"}}
 [2022-03-28 06:00:27.370 PM] {"info":{"match_info":{"location":{"x":"187","y":"-43","z":"49"}}},"feature":"location"}
-[2022-03-28 06:00:27.382 PM] {"info":{"me":{"inventory_5":{"name":"unknown_166","amount":"2"}}},"feature":"inventory"}
-[2022-03-28 06:00:27.392 PM] {"info":{"me":{"inventory_6":{"name":"unknown_164","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 06:00:27.382 PM] {"info":{"me":{"inventory_5":{"name":"unknown_165","amount":"2"}}},"feature":"inventory"}
+[2022-03-28 06:00:27.392 PM] {"info":{"me":{"inventory_6":{"name":"unknown_167","amount":"4"}}},"feature":"inventory"}
 [2022-03-28 06:00:27.401 PM] {"info":{"me":{"inventory_7":{"name":"unknown_191","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 06:00:27.411 PM] {"info":{"me":{"inventory_9":{"name":"unknown_190","amount":"1"}}},"feature":"inventory"}
 [2022-03-28 06:00:27.869 PM] {"info":{"match_info":{"location":{"x":"187","y":"-44","z":"49"}}},"feature":"location"}
-[2022-03-28 06:00:28.262 PM] {"info":{"me":{"inventory_5":{"name":"unknown_166","amount":"4"}}},"feature":"inventory"}
+[2022-03-28 06:00:28.262 PM] {"info":{"me":{"inventory_5":{"name":"unknown_165","amount":"4"}}},"feature":"inventory"}
 [2022-03-28 06:00:29.370 PM] {"info":{"match_info":{"location":{"x":"187","y":"-45","z":"49"}}},"feature":"location"}
 [2022-03-28 06:00:29.617 PM] {"info":{"me":{"ultimate_cooldown":{"ultimate_cooldown":"100"}}},"feature":"me"}
 [2022-03-28 06:00:29.867 PM] {"info":{"match_info":{"location":{"x":"187","y":"-47","z":"49"}}},"feature":"location"}

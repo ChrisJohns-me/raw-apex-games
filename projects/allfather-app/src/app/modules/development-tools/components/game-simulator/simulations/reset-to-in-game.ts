@@ -74,4 +74,6 @@ export const resetToInGame = (): string => `
 [2020-01-01 00:00:08.000 AM] {"info":{"match_info":{"location":{"x":"-168","y":"578","z":"25"}}},"feature":"location"}
 [2020-01-01 00:00:09.000 AM] {"info":{"me":{"inUse":{"inUse":"Melee"}}},"feature":"inventory"}
 [2020-01-01 00:00:09.100 AM] {"info":{"match_info":{"location":{"x":"-168","y":"578","z":"25"}}},"feature":"location"}
+[2020-01-01 00:00:09.150 AM] {"info":{"me":{"inventory_0":{"name":"unknown_167","amount":"2"}}},"feature":"inventory"}
+[2020-01-01 00:00:09.200 AM] {"info":{"me":{"inventory_1":{"name":"unknown_165","amount":"2"}}},"feature":"inventory"}
 `;

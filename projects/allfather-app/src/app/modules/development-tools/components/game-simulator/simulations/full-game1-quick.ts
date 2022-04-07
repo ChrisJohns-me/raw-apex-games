@@ -106,6 +106,8 @@ export const fullGame1Quick = (): string => `
 [2020-01-01 00:00:04.400 AM] {"info":{"match_info":{"location":{"x":"-190","y":"241","z":"24"}}},"feature":"location"}
 [2020-01-01 00:00:04.410 AM] {"info":{"me":{"ultimate_cooldown":{"ultimate_cooldown":"0"}}},"feature":"me"}
 [2020-01-01 00:00:04.420 AM] {"info":{"me":{"inUse":{"inUse":"Melee"}}},"feature":"inventory"}
+[2020-01-01 00:00:04.425 AM] {"info":{"me":{"inventory_0":{"name":"unknown_167","amount":"2"}}},"feature":"inventory"}
+[2020-01-01 00:00:04.430 AM] {"info":{"me":{"inventory_1":{"name":"unknown_165","amount":"2"}}},"feature":"inventory"}
 [2020-01-01 00:00:04.430 AM] {"info":{"match_info":{"location":{"x":"-189","y":"241","z":"23"}}},"feature":"location"}
 [2020-01-01 00:00:04.440 AM] {"info":{"match_info":{"location":{"x":"-189","y":"241","z":"24"}}},"feature":"location"}
 [2020-01-01 00:00:04.450 AM] {"info":{"match_info":{"location":{"x":"-190","y":"240","z":"24"}}},"feature":"location"}

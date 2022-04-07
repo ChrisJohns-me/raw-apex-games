@@ -1,3 +1,4 @@
+import { InventorySlot } from "@allfather-app/app/common/inventory-slots";
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchRing } from "@allfather-app/app/common/match/ring";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
@@ -10,14 +11,14 @@ import { MatchRingService } from "@allfather-app/app/modules/core/match/match-ri
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { combineLatest, Observable, Subject } from "rxjs";
-import { distinctUntilChanged, takeUntil } from "rxjs/operators";
+import { distinctUntilChanged, filter, map, takeUntil } from "rxjs/operators";
 
 type HealingItemHealthTime = {
     id: string;
     neededHealthTime: number; // (damagePerTick / ringTickRate) * duration
 };
-
-const HEALINGITEMS: { id: string; duration: number }[] = [
+type HealingItem = { id: string; duration: number };
+const HEALINGITEMS: HealingItem[] = [
     { id: "syringe", duration: 5000 },
     { id: "med_kit", duration: 8000 },
     { id: "phoenix_kit", duration: 10000 },
@@ -61,7 +62,7 @@ export class HealingHelperWindowComponent implements OnInit, OnDestroy {
     }
 
     public ngOnInit(): void {
-        this.setupMatchRing();
+        this.setupHealingHealthItems();
         this.setupVisibleStates();
     }
 
@@ -70,12 +71,22 @@ export class HealingHelperWindowComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    private setupMatchRing(): void {
-        this.matchRing.currentBRRing$.pipe(takeUntil(this.destroy$)).subscribe((ring) => {
-            this.currentRing = ring;
-            this.calcAvailableHealingItems();
-            this.cdr.detectChanges();
-        });
+    private setupHealingHealthItems(): void {
+        const ring$ = this.matchRing.currentBRRing$.pipe(filter((ring) => !!ring));
+        const inventory$ = this.matchPlayerInventory.myInventorySlots$.pipe(
+            map((inventorySlots) => Object.values(inventorySlots)),
+            map((inventorySlots) => this.filterInventorySlots(inventorySlots, HEALINGITEMS))
+        );
+
+        combineLatest([ring$, inventory$])
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(([ring, inventory]) => {
+                this.currentRing = ring;
+                this.availableHealingItems = this.getHealingItemHealthTimes(HEALINGITEMS);
+                this.availableHealingItems = this.filterHealingItemHealthTimes(this.availableHealingItems, inventory);
+
+                this.cdr.detectChanges();
+            });
     }
 
     private setupVisibleStates(): void {
@@ -86,9 +97,9 @@ export class HealingHelperWindowComponent implements OnInit, OnDestroy {
         });
     }
 
-    private calcAvailableHealingItems(): void {
-        if (!this.currentRing) return;
-        this.availableHealingItems = HEALINGITEMS.map((item) => {
+    private getHealingItemHealthTimes(healingItems: HealingItem[]): HealingItemHealthTime[] {
+        if (!this.currentRing) return [];
+        return healingItems.map((item) => {
             const damagePerSecond = this.currentRing!.damagePerTick / this.ringDamageTickRateMs;
             const neededHealthTime = damagePerSecond * item.duration;
             console.info(
@@ -100,10 +111,38 @@ export class HealingHelperWindowComponent implements OnInit, OnDestroy {
                 id: item.id,
                 neededHealthTime: neededHealthTime + damagePerSecond, // add one second buffer
             };
-        }).filter((item) => {
-            if (!item) return false;
+        });
+    }
+
+    /**
+     * Ensures items are between 0 and maxHealth
+     * Removes items that are not in the inventory
+     * @param healingItemHealthTimes {HealingItemHealthTime[]}
+     * @returns {HealingItemHealthTime[]}
+     */
+    private filterHealingItemHealthTimes(
+        healingItemHealthTimes: HealingItemHealthTime[],
+        inventory: InventorySlot[]
+    ): HealingItemHealthTime[] {
+        return healingItemHealthTimes.filter((item) => {
             if (item.neededHealthTime <= 0) return false;
             if (item.neededHealthTime >= this.maxHealth) return false;
+            const itemInInventory = inventory.find((i) => i.item.itemId === item.id);
+            if (!itemInInventory) return false;
+            return true;
+        });
+    }
+
+    /**
+     * Removes non-healing items from the inventory
+     * @param inventorySlots {InventorySlot[]}
+     */
+    private filterInventorySlots(inventorySlots: InventorySlot[], healingItems: HealingItem[]): InventorySlot[] {
+        return inventorySlots.filter((slot) => {
+            const item = slot.item;
+            if (!item) return false;
+            const healingItemFound = healingItems.find((healingItem) => healingItem.id === item.itemId);
+            if (!healingItemFound) return false;
             return true;
         });
     }

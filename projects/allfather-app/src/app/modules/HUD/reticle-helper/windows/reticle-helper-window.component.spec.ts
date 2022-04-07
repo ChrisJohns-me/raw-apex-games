@@ -86,76 +86,78 @@ describe("UltTimerWindowComponent", () => {
         expect(actual).toBeUndefined();
     }));
 
-    it("should show when player has landed", fakeAsync(() => {
-        // Arrange / Act
-        matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
-        matchService.startedEvent$.next(matchService.state$.value);
-        matchPlayerService.myState$.next(PlayerState.Alive);
-        matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+    describe("isVisible", () => {
+        it("should show when player has landed", fakeAsync(() => {
+            // Arrange / Act
+            matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
+            matchService.startedEvent$.next(matchService.state$.value);
+            matchPlayerService.myState$.next(PlayerState.Alive);
+            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
-        const actual = sut.isVisible;
-        // Assert
-        expect(actual).toBeTrue();
-    }));
+            const actual = sut.isVisible;
+            // Assert
+            expect(actual).toBeTrue();
+        }));
 
-    it("should hide when player is knocked", fakeAsync(() => {
-        // Arrange
-        matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
-        matchService.startedEvent$.next(matchService.state$.value);
-        matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+        it("should hide when player is knocked", fakeAsync(() => {
+            // Arrange
+            matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
+            matchService.startedEvent$.next(matchService.state$.value);
+            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
-        // Act
-        matchPlayerService.myState$.next(PlayerState.Knocked);
+            // Act
+            matchPlayerService.myState$.next(PlayerState.Knocked);
 
-        const actual = sut.isVisible;
-        // Assert
-        expect(actual).toBeFalse();
-    }));
+            const actual = sut.isVisible;
+            // Assert
+            expect(actual).toBeFalse();
+        }));
 
-    it("should hide when player is eliminated", fakeAsync(() => {
-        // Arrange
-        matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
-        matchService.startedEvent$.next(matchService.state$.value);
-        matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+        it("should hide when player is eliminated", fakeAsync(() => {
+            // Arrange
+            matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
+            matchService.startedEvent$.next(matchService.state$.value);
+            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
-        // Act
-        matchPlayerService.myState$.next(PlayerState.Eliminated);
+            // Act
+            matchPlayerService.myState$.next(PlayerState.Eliminated);
 
-        const actual = sut.isVisible;
-        // Assert
-        expect(actual).toBeFalse();
-    }));
+            const actual = sut.isVisible;
+            // Assert
+            expect(actual).toBeFalse();
+        }));
 
-    it("should hide when player is disconnected", fakeAsync(() => {
-        // Arrange
-        matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
-        matchService.startedEvent$.next(matchService.state$.value);
-        matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+        it("should hide when player is disconnected", fakeAsync(() => {
+            // Arrange
+            matchService.state$.next({ state: MatchState.Active, startDate: new Date(), matchId: "test" });
+            matchService.startedEvent$.next(matchService.state$.value);
+            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
-        // Act
-        matchPlayerService.myState$.next(PlayerState.Disconnected);
+            // Act
+            matchPlayerService.myState$.next(PlayerState.Disconnected);
 
-        const actual = sut.isVisible;
-        // Assert
-        expect(actual).toBeFalse();
-    }));
+            const actual = sut.isVisible;
+            // Assert
+            expect(actual).toBeFalse();
+        }));
 
-    it("should hide when match is inactive", fakeAsync(() => {
-        // Arrange
-        matchService.state$.next({ state: MatchState.Inactive, startDate: new Date(), matchId: "test" });
-        matchService.startedEvent$.next(matchService.state$.value);
-        matchPlayerService.myState$.next(PlayerState.Alive);
-        matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+        it("should hide when match is inactive", fakeAsync(() => {
+            // Arrange
+            matchService.state$.next({ state: MatchState.Inactive, startDate: new Date(), matchId: "test" });
+            matchService.startedEvent$.next(matchService.state$.value);
+            matchPlayerService.myState$.next(PlayerState.Alive);
+            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
-        // Act
-        matchService.state$.next({ state: MatchState.Inactive, startDate: new Date(), endDate: new Date(), matchId: "test" });
-        matchService.endedEvent$.next(matchService.state$.value);
+            // Act
+            matchService.state$.next({ state: MatchState.Inactive, startDate: new Date(), endDate: new Date(), matchId: "test" });
+            matchService.endedEvent$.next(matchService.state$.value);
 
-        const actual = sut.isVisible;
-        expect(actual).toBeFalse();
-        // Assert
-        discardPeriodicTasks();
-    }));
+            const actual = sut.isVisible;
+            expect(actual).toBeFalse();
+            // Assert
+            discardPeriodicTasks();
+        }));
+    });
 
     it("should have a property that returns true when the ultimate is ready", fakeAsync(() => {
         // Arrange
