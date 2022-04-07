@@ -173,14 +173,6 @@ describe("HealingHelperWindowComponent", () => {
                 state: MatchState.Active,
                 matchId: "test",
             };
-            const mockConfig = {
-                featureFlags: {
-                    inflictionInsight: {
-                        assumeKnockdownExpires: true,
-                    },
-                },
-            };
-            config.mockSetConfig(mockConfig as Configuration);
 
             // Act
             matchService.startedEvent$.next(startEvent);

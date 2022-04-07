@@ -3,7 +3,6 @@ import { Item } from "@allfather-app/app/common/items/item";
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
 import { PlayerState } from "@allfather-app/app/common/player-state";
-import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchPlayerInventoryService } from "@allfather-app/app/modules/core/match/match-player-inventory.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
@@ -44,13 +43,11 @@ export class MiniInventoryWindowComponent implements OnInit, OnDestroy {
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
-        private readonly configuration: ConfigurationService,
         private readonly match: MatchService,
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
         private readonly matchPlayerLocation: MatchPlayerLocationService
     ) {
-        this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => {});
         this.visibleStates$ = combineLatest([this.match.state$, this.matchPlayer.myState$, this.matchPlayerLocation.myLocationPhase$]).pipe(
             takeUntil(this.destroy$),
             distinctUntilChanged()

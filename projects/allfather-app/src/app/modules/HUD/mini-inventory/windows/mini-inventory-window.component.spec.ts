@@ -2,18 +2,15 @@ import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
 import { PlayerState } from "@allfather-app/app/common/player-state";
 import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
-import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchPlayerInventoryService } from "@allfather-app/app/modules/core/match/match-player-inventory.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { MockUIContainerComponent } from "@allfather-app/app/modules/core/mocks/components/mock-ui-container.component";
-import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/services/mock-configuration.service";
 import { MockMatchPlayerInventoryService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-inventory.service";
 import { MockMatchPlayerLocationService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-location.service";
 import { MockMatchPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
-import { Configuration } from "@allfather-app/configs/config.interface";
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { TestScheduler } from "rxjs/testing";
@@ -23,7 +20,6 @@ describe("MiniInventoryWindowComponent", () => {
     let sut: MiniInventoryWindowComponent;
     let fixture: ComponentFixture<MiniInventoryWindowComponent>;
     let scheduler: TestScheduler;
-    let config: MockConfigurationService;
     let matchPlayerLocationService: MatchPlayerLocationService;
     let matchPlayerService: MatchPlayerService;
     let matchService: MatchService;
@@ -33,7 +29,6 @@ describe("MiniInventoryWindowComponent", () => {
             declarations: [MiniInventoryWindowComponent, MockUIContainerComponent],
             providers: [
                 { provide: ChangeDetectorRef, useValue: {} },
-                { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: MatchPlayerService, useClass: MockMatchPlayerService },
                 { provide: MatchPlayerInventoryService, useClass: MockMatchPlayerInventoryService },
@@ -50,7 +45,6 @@ describe("MiniInventoryWindowComponent", () => {
         scheduler.maxFrames = 5000;
         fixture = TestBed.createComponent(MiniInventoryWindowComponent);
         sut = fixture.componentInstance;
-        config = TestBed.inject(ConfigurationService) as unknown as MockConfigurationService;
         matchPlayerLocationService = TestBed.inject(MatchPlayerLocationService);
         matchPlayerService = TestBed.inject(MatchPlayerService);
         matchService = TestBed.inject(MatchService);
@@ -79,14 +73,6 @@ describe("MiniInventoryWindowComponent", () => {
                 state: MatchState.Active,
                 matchId: "test",
             };
-            const mockConfig = {
-                featureFlags: {
-                    inflictionInsight: {
-                        assumeKnockdownExpires: true,
-                    },
-                },
-            };
-            config.mockSetConfig(mockConfig as Configuration);
 
             // Act
             matchService.startedEvent$.next(startEvent);
