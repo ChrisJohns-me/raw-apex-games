@@ -5,6 +5,7 @@ import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/ma
 import { PlayerState } from "@allfather-app/app/common/player-state";
 import { MatchPlayerInventoryService } from "@allfather-app/app/modules/core/match/match-player-inventory.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
+import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/match-player-stats.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
@@ -38,7 +39,7 @@ export class MiniInventoryWindowComponent implements OnInit, OnDestroy {
     //#region Config
 
     //#endregion
-    private readonly visibleStates$: Observable<[MatchStateChangedEvent, PlayerState, Optional<MatchLocationPhase>]>;
+    private readonly visibleStates$: Observable<[MatchStateChangedEvent, PlayerState, Optional<MatchLocationPhase>, boolean]>;
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -46,12 +47,15 @@ export class MiniInventoryWindowComponent implements OnInit, OnDestroy {
         private readonly match: MatchService,
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
-        private readonly matchPlayerLocation: MatchPlayerLocationService
+        private readonly matchPlayerLocation: MatchPlayerLocationService,
+        private readonly matchPlayerStats: MatchPlayerStatsService
     ) {
-        this.visibleStates$ = combineLatest([this.match.state$, this.matchPlayer.myState$, this.matchPlayerLocation.myLocationPhase$]).pipe(
-            takeUntil(this.destroy$),
-            distinctUntilChanged()
-        );
+        this.visibleStates$ = combineLatest([
+            this.match.state$,
+            this.matchPlayer.myState$,
+            this.matchPlayerLocation.myLocationPhase$,
+            this.matchPlayerStats.victory$,
+        ]).pipe(takeUntil(this.destroy$), distinctUntilChanged());
     }
 
     public ngOnInit(): void {
@@ -72,9 +76,12 @@ export class MiniInventoryWindowComponent implements OnInit, OnDestroy {
     }
 
     private setupVisibleStates(): void {
-        this.visibleStates$.subscribe(([stateChanged, myState, locationPhase]) => {
+        this.visibleStates$.subscribe(([stateChanged, myState, locationPhase, victory]) => {
             this.isVisible =
-                stateChanged.state === MatchState.Active && myState === PlayerState.Alive && locationPhase === MatchLocationPhase.HasLanded;
+                stateChanged.state === MatchState.Active &&
+                myState === PlayerState.Alive &&
+                locationPhase === MatchLocationPhase.HasLanded &&
+                victory === false;
             this.cdr.detectChanges();
         });
     }

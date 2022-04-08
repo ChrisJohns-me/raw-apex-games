@@ -36,7 +36,6 @@ describe("InflictionAggregator", () => {
         /**
          * Initial damage event shows "armor=false", if the damageAmount is 50 or greater
          * @overwolfQuirk
-         * @see https://trello.com/c/jYDAAOSJ/2-damageamount-50
          */
         it("assumes initial HEALTH damage event of greater than 50 is to damage to shield", () => {
             // Arrange

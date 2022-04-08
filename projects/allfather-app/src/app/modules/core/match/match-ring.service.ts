@@ -20,7 +20,11 @@ const REFRESH_INTERVAL = 1000;
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchRingService", MatchRingService, deps),
 })
 export class MatchRingService extends BaseService {
-    /** Current Battle Royale ring based on the match time. Resets on match start */
+    /**
+     * Current Battle Royale ring based on the match time.
+     * Only emits undefined on match start.
+     * Does not emit undefined in-between rings (value persists until the next ring is identified).
+     */
     public readonly currentBRRing$ = new BehaviorSubject<Optional<MatchRing>>(undefined);
     /** All Battle Royale rings */
     public readonly allBRRings$ = new BehaviorSubject<MatchRing[]>([]);
@@ -51,9 +55,10 @@ export class MatchRingService extends BaseService {
     }
 
     private setupCurrentRing(): void {
+        const matchStart$ = this.match.startedEvent$;
         const refresh$ = interval(REFRESH_INTERVAL).pipe(filter(() => this.match.isActive));
 
-        combineLatest([this.match.startedEvent$, refresh$])
+        combineLatest([matchStart$, refresh$])
             .pipe(
                 map(([matchEvent]) => this.timeSinceMatchStart(matchEvent)),
                 map((timeSinceMatchStartMs) => this.getCurrentRing(timeSinceMatchStartMs))

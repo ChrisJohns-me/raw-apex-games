@@ -5,6 +5,7 @@ import { SettingKey } from "@allfather-app/app/common/settings";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
+import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/match-player-stats.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
@@ -102,7 +103,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     //#region Pass-through variables
     public UltimateTimerType = UltimateTimerType;
     //#endregion
-    private readonly visibleStates$: Observable<[MatchStateChangedEvent, PlayerState, Optional<MatchLocationPhase>]>;
+    private readonly visibleStates$: Observable<[MatchStateChangedEvent, PlayerState, Optional<MatchLocationPhase>, boolean]>;
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -112,6 +113,7 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerLegend: MatchPlayerLegendService,
         private readonly matchPlayerLocation: MatchPlayerLocationService,
+        private readonly matchPlayerStatsService: MatchPlayerStatsService,
         private readonly settings: SettingsService
     ) {
         this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => {
@@ -120,10 +122,12 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
             this.highConfidenceAmount = config.featureConfigs.ultTimer.highConfidenceAmount;
             this.maxHistoryCount = config.featureConfigs.ultTimer.maxHistoryCount;
         });
-        this.visibleStates$ = combineLatest([this.match.state$, this.matchPlayer.myState$, this.matchPlayerLocation.myLocationPhase$]).pipe(
-            takeUntil(this.destroy$),
-            distinctUntilChanged()
-        );
+        this.visibleStates$ = combineLatest([
+            this.match.state$,
+            this.matchPlayer.myState$,
+            this.matchPlayerLocation.myLocationPhase$,
+            this.matchPlayerStatsService.victory$,
+        ]).pipe(takeUntil(this.destroy$), distinctUntilChanged());
         this.settings
             .streamSetting$(SettingKey.UltimateTimerType)
             .pipe(takeUntil(this.destroy$))
@@ -150,9 +154,12 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     }
 
     private setupVisibleStates(): void {
-        this.visibleStates$.subscribe(([stateChanged, myState, locationPhase]) => {
+        this.visibleStates$.subscribe(([stateChanged, myState, locationPhase, victory]) => {
             this.isVisible =
-                stateChanged.state === MatchState.Active && myState === PlayerState.Alive && locationPhase === MatchLocationPhase.HasLanded;
+                stateChanged.state === MatchState.Active &&
+                myState === PlayerState.Alive &&
+                locationPhase === MatchLocationPhase.HasLanded &&
+                victory === false;
         });
     }
 

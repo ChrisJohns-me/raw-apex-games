@@ -6,6 +6,7 @@ import { PlayerState } from "@allfather-app/app/common/player-state";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchPlayerInventoryService } from "@allfather-app/app/modules/core/match/match-player-inventory.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
+import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/match-player-stats.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
 import { MatchRingService } from "@allfather-app/app/modules/core/match/match-ring.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
@@ -39,7 +40,7 @@ export class HealingHelperWindowComponent implements OnInit, OnDestroy {
     private currentRing: Optional<MatchRing>;
     private ringDamageTickRateMs = 1500;
     private maxHealth = 100;
-    private readonly visibleStates$: Observable<[MatchStateChangedEvent, PlayerState, Optional<MatchLocationPhase>]>;
+    private readonly visibleStates$: Observable<[MatchStateChangedEvent, PlayerState, Optional<MatchLocationPhase>, boolean]>;
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -49,16 +50,19 @@ export class HealingHelperWindowComponent implements OnInit, OnDestroy {
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
         private readonly matchPlayerLocation: MatchPlayerLocationService,
+        private readonly matchPlayerStats: MatchPlayerStatsService,
         private readonly matchRing: MatchRingService
     ) {
         this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => {
             this.ringDamageTickRateMs = config.brFacts.ringDamageTickRate;
             this.maxHealth = config.facts.maxHealth;
         });
-        this.visibleStates$ = combineLatest([this.match.state$, this.matchPlayer.myState$, this.matchPlayerLocation.myLocationPhase$]).pipe(
-            takeUntil(this.destroy$),
-            distinctUntilChanged()
-        );
+        this.visibleStates$ = combineLatest([
+            this.match.state$,
+            this.matchPlayer.myState$,
+            this.matchPlayerLocation.myLocationPhase$,
+            this.matchPlayerStats.victory$,
+        ]).pipe(takeUntil(this.destroy$), distinctUntilChanged());
     }
 
     public ngOnInit(): void {
@@ -90,9 +94,12 @@ export class HealingHelperWindowComponent implements OnInit, OnDestroy {
     }
 
     private setupVisibleStates(): void {
-        this.visibleStates$.subscribe(([stateChanged, myState, locationPhase]) => {
+        this.visibleStates$.subscribe(([stateChanged, myState, locationPhase, victory]) => {
             this.isVisible =
-                stateChanged.state === MatchState.Active && myState === PlayerState.Alive && locationPhase === MatchLocationPhase.HasLanded;
+                stateChanged.state === MatchState.Active &&
+                myState === PlayerState.Alive &&
+                locationPhase === MatchLocationPhase.HasLanded &&
+                victory === false;
             this.cdr.detectChanges();
         });
     }
@@ -103,9 +110,9 @@ export class HealingHelperWindowComponent implements OnInit, OnDestroy {
             const damagePerSecond = this.currentRing!.damagePerTick / this.ringDamageTickRateMs;
             const neededHealthTime = damagePerSecond * item.duration;
             console.info(
-                `[HealingHelperWindow] neededHealthTime ${neededHealthTime}hp ` +
-                    `for "${item.id}", for ring ${this.currentRing!.ringNumber}` +
-                    `(damagePerSecond: ${damagePerSecond})`
+                `[HealingHelperWindow] neededHealthTime ${neededHealthTime}hp` +
+                    ` for "${item.id}", for ring ${this.currentRing!.ringNumber}` +
+                    ` (damagePerSecond: ${damagePerSecond})`
             );
             return {
                 id: item.id,

@@ -4,11 +4,13 @@ import { PlayerState } from "@allfather-app/app/common/player-state";
 import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { MatchPlayerInventoryService } from "@allfather-app/app/modules/core/match/match-player-inventory.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
+import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/match-player-stats.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { MockUIContainerComponent } from "@allfather-app/app/modules/core/mocks/components/mock-ui-container.component";
 import { MockMatchPlayerInventoryService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-inventory.service";
 import { MockMatchPlayerLocationService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-location.service";
+import { MockMatchPlayerStatsService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-stats.service";
 import { MockMatchPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
 import { ChangeDetectorRef } from "@angular/core";
@@ -22,6 +24,7 @@ describe("MiniInventoryWindowComponent", () => {
     let scheduler: TestScheduler;
     let matchPlayerLocationService: MatchPlayerLocationService;
     let matchPlayerService: MatchPlayerService;
+    let matchPlayerStatsService: MatchPlayerStatsService;
     let matchService: MatchService;
 
     beforeEach(async () => {
@@ -33,6 +36,7 @@ describe("MiniInventoryWindowComponent", () => {
                 { provide: MatchPlayerService, useClass: MockMatchPlayerService },
                 { provide: MatchPlayerInventoryService, useClass: MockMatchPlayerInventoryService },
                 { provide: MatchPlayerLocationService, useClass: MockMatchPlayerLocationService },
+                { provide: MatchPlayerStatsService, useClass: MockMatchPlayerStatsService },
             ],
         }).compileComponents();
     });
@@ -47,6 +51,7 @@ describe("MiniInventoryWindowComponent", () => {
         sut = fixture.componentInstance;
         matchPlayerLocationService = TestBed.inject(MatchPlayerLocationService);
         matchPlayerService = TestBed.inject(MatchPlayerService);
+        matchPlayerStatsService = TestBed.inject(MatchPlayerStatsService);
         matchService = TestBed.inject(MatchService);
         fixture.detectChanges(); // ngOnInit
     });
@@ -88,7 +93,7 @@ describe("MiniInventoryWindowComponent", () => {
             expect(actual).toBeTrue();
         });
 
-        it("does NOT show after a player is knocked", fakeAsync(() => {
+        it("hides after a player is knocked", fakeAsync(() => {
             // Arrange
             jasmine.clock().mockDate(new Date(0));
             const startEvent: MatchStateChangedEvent = {
@@ -155,6 +160,30 @@ describe("MiniInventoryWindowComponent", () => {
             // Assert
             const actual = sut.isVisible;
             expect(actual).toBeFalse();
+        }));
+
+        it("hides on victory", fakeAsync(() => {
+            // Arrange
+            jasmine.clock().mockDate(new Date(0));
+            const startEvent: MatchStateChangedEvent = {
+                startDate: new Date(),
+                state: MatchState.Active,
+                matchId: "test",
+            };
+            matchService.startedEvent$.next(startEvent);
+            matchService.state$.next(startEvent);
+            matchPlayerService.myState$.next(PlayerState.Alive);
+            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+            tick(60 * 1000);
+
+            // Act
+            matchPlayerStatsService.victory$.next(true);
+            tick(60 * 1000);
+
+            // Assert
+            const actual = sut.isVisible;
+            expect(actual).toBeFalse();
+            discardPeriodicTasks();
         }));
 
         it("hides on match end", fakeAsync(() => {

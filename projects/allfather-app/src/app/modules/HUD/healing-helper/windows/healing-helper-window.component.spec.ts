@@ -8,6 +8,7 @@ import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchPlayerInventoryService } from "@allfather-app/app/modules/core/match/match-player-inventory.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
+import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/match-player-stats.service";
 import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-player.service";
 import { MatchRingService } from "@allfather-app/app/modules/core/match/match-ring.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
@@ -15,6 +16,7 @@ import { MockUIContainerComponent } from "@allfather-app/app/modules/core/mocks/
 import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/services/mock-configuration.service";
 import { MockMatchPlayerInventoryService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-inventory.service";
 import { MockMatchPlayerLocationService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-location.service";
+import { MockMatchPlayerStatsService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-stats.service";
 import { MockMatchPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player.service";
 import { MockMatchRingService } from "@allfather-app/app/modules/core/mocks/services/mock-match-ring.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
@@ -111,15 +113,16 @@ const MOCKCONFIG = {
         ringDamageTickRate: 1500,
         rings: MOCKALLRINGS,
     },
-};
+} as Configuration;
 
 describe("HealingHelperWindowComponent", () => {
     let sut: HealingHelperWindowComponent;
     let fixture: ComponentFixture<HealingHelperWindowComponent>;
-    let config: MockConfigurationService;
-    let matchPlayerLocationService: MatchPlayerLocationService;
+    let configurationService: MockConfigurationService;
     let matchPlayerInventoryService: MatchPlayerInventoryService;
+    let matchPlayerLocationService: MatchPlayerLocationService;
     let matchPlayerService: MatchPlayerService;
+    let matchPlayerStatsService: MatchPlayerStatsService;
     let matchRingService: MatchRingService;
     let matchService: MatchService;
 
@@ -129,11 +132,12 @@ describe("HealingHelperWindowComponent", () => {
             providers: [
                 { provide: ChangeDetectorRef, useValue: {} },
                 { provide: ConfigurationService, useClass: MockConfigurationService },
-                { provide: MatchService, useClass: MockMatchService },
-                { provide: MatchPlayerService, useClass: MockMatchPlayerService },
                 { provide: MatchPlayerInventoryService, useClass: MockMatchPlayerInventoryService },
                 { provide: MatchPlayerLocationService, useClass: MockMatchPlayerLocationService },
+                { provide: MatchPlayerService, useClass: MockMatchPlayerService },
+                { provide: MatchPlayerStatsService, useClass: MockMatchPlayerStatsService },
                 { provide: MatchRingService, useClass: MockMatchRingService },
+                { provide: MatchService, useClass: MockMatchService },
             ],
         }).compileComponents();
     });
@@ -142,10 +146,11 @@ describe("HealingHelperWindowComponent", () => {
         supressConsoleLog();
         fixture = TestBed.createComponent(HealingHelperWindowComponent);
         sut = fixture.componentInstance;
-        config = TestBed.inject(ConfigurationService) as unknown as MockConfigurationService;
-        matchPlayerLocationService = TestBed.inject(MatchPlayerLocationService);
+        configurationService = TestBed.inject(ConfigurationService) as unknown as MockConfigurationService;
         matchPlayerInventoryService = TestBed.inject(MatchPlayerInventoryService);
+        matchPlayerLocationService = TestBed.inject(MatchPlayerLocationService);
         matchPlayerService = TestBed.inject(MatchPlayerService);
+        matchPlayerStatsService = TestBed.inject(MatchPlayerStatsService);
         matchRingService = TestBed.inject(MatchRingService);
         matchService = TestBed.inject(MatchService);
         fixture.detectChanges(); // ngOnInit
@@ -188,7 +193,7 @@ describe("HealingHelperWindowComponent", () => {
             expect(actual).toBeTrue();
         });
 
-        it("does NOT show after a player is knocked", fakeAsync(() => {
+        it("hides after a player is knocked", fakeAsync(() => {
             // Arrange
             jasmine.clock().mockDate(new Date(0));
             const startEvent: MatchStateChangedEvent = {
@@ -257,6 +262,30 @@ describe("HealingHelperWindowComponent", () => {
             expect(actual).toBeFalse();
         }));
 
+        it("hides on victory", fakeAsync(() => {
+            // Arrange
+            jasmine.clock().mockDate(new Date(0));
+            const startEvent: MatchStateChangedEvent = {
+                startDate: new Date(),
+                state: MatchState.Active,
+                matchId: "test",
+            };
+            matchService.startedEvent$.next(startEvent);
+            matchService.state$.next(startEvent);
+            matchPlayerService.myState$.next(PlayerState.Alive);
+            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+            tick(60 * 1000);
+
+            // Act
+            matchPlayerStatsService.victory$.next(true);
+            tick(60 * 1000);
+
+            // Assert
+            const actual = sut.isVisible;
+            expect(actual).toBeFalse();
+            discardPeriodicTasks();
+        }));
+
         it("hides on match end", fakeAsync(() => {
             // Arrange
             jasmine.clock().mockDate(new Date(0));
@@ -293,7 +322,7 @@ describe("HealingHelperWindowComponent", () => {
         it("returns healing items for ring 1", fakeAsync(() => {
             // Arrange
             const firstRing = MOCKALLRINGS.find((ring) => ring.ringNumber === 1);
-            config.mockSetConfig(MOCKCONFIG as Configuration);
+            configurationService.mockSetConfig(MOCKCONFIG);
             matchRingService.allBRRings$.next(MOCKALLRINGS);
             matchRingService.currentBRRing$.next(firstRing);
             matchPlayerInventoryService.myInventorySlots$.next(MOCKINVENTORYSLOTS);
@@ -323,7 +352,7 @@ describe("HealingHelperWindowComponent", () => {
         it("returns some healing items for ring 1", fakeAsync(() => {
             // Arrange
             const firstRing = MOCKALLRINGS.find((ring) => ring.ringNumber === 1);
-            config.mockSetConfig(MOCKCONFIG as Configuration);
+            configurationService.mockSetConfig(MOCKCONFIG);
             matchRingService.allBRRings$.next(MOCKALLRINGS);
             matchRingService.currentBRRing$.next(firstRing);
             const inventorySlots = {
@@ -348,7 +377,7 @@ describe("HealingHelperWindowComponent", () => {
         it("returns healing items for ring 6", fakeAsync(() => {
             // Arrange
             const firstRing = MOCKALLRINGS.find((ring) => ring.ringNumber === 6);
-            config.mockSetConfig(MOCKCONFIG as Configuration);
+            configurationService.mockSetConfig(MOCKCONFIG);
             matchRingService.allBRRings$.next(MOCKALLRINGS);
             matchRingService.currentBRRing$.next(firstRing);
             matchPlayerInventoryService.myInventorySlots$.next(MOCKINVENTORYSLOTS);
