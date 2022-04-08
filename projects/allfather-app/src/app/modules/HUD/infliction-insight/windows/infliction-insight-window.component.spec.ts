@@ -15,7 +15,7 @@ import { MockOpponentBannerComponent } from "@allfather-app/app/modules/core/moc
 import { MockUIContainerComponent } from "@allfather-app/app/modules/core/mocks/components/mock-ui-container.component";
 import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/services/mock-configuration.service";
 import { MockGoogleAnalyticsService } from "@allfather-app/app/modules/core/mocks/services/mock-google-analytics.service";
-import { MockmatchKillfeedService } from "@allfather-app/app/modules/core/mocks/services/mock-match-killfeed.service";
+import { MockMatchKillfeedService } from "@allfather-app/app/modules/core/mocks/services/mock-match-killfeed.service";
 import { MockMatchPlayerInflictionService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-infliction.service";
 import { MockMatchPlayerLocationService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-location.service";
 import { MockMatchPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player.service";
@@ -48,7 +48,7 @@ describe("InflictionInsightWindowComponent", () => {
                 { provide: ChangeDetectorRef, useValue: {} },
                 { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: GoogleAnalyticsService, useClass: MockGoogleAnalyticsService },
-                { provide: MatchKillfeedService, useClass: MockmatchKillfeedService },
+                { provide: MatchKillfeedService, useClass: MockMatchKillfeedService },
                 { provide: MatchPlayerInflictionService, useClass: MockMatchPlayerInflictionService },
                 { provide: MatchPlayerLocationService, useClass: MockMatchPlayerLocationService },
                 { provide: MatchPlayerService, useClass: MockMatchPlayerService },

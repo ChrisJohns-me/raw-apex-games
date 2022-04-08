@@ -3,7 +3,7 @@ import { MatchKillfeedService } from "@allfather-app/app/modules/core/match/matc
 import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { BehaviorSubject, Subject } from "rxjs";
 
-export class MockmatchKillfeedService implements MockedClass<MatchKillfeedService> {
+export class MockMatchKillfeedService implements MockedClass<MatchKillfeedService> {
     public killfeedEvent$: MatchKillfeedService["killfeedEvent$"] = new Subject();
     public killfeedEventHistory$: MatchKillfeedService["killfeedEventHistory$"] = new BehaviorSubject<
         ExtractSubjectType<MatchKillfeedService["killfeedEventHistory$"]>

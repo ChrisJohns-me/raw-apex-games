@@ -15,6 +15,8 @@ export interface OpponentBanner {
     maybeHealthAmount: number;
 }
 
+const REFRESHTIME = 1000;
+
 @Component({
     selector: "app-opponent-banner",
     templateUrl: "./opponent-banner.component.html",
@@ -44,7 +46,7 @@ export class OpponentBannerComponent implements AfterViewInit, OnDestroy {
     private setupRefreshTimer() {
         const shouldRefresh = () =>
             !!this.bannerData?.latestInflictionAccum?.isKnocked || !!this.bannerData?.latestInflictionAccum?.isEliminated;
-        interval(1000)
+        interval(REFRESHTIME)
             .pipe(
                 takeUntil(this.destroy$),
                 filter(() => shouldRefresh())
