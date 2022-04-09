@@ -130,10 +130,7 @@
                         "teamIndicatorUI": {
                             "type": "boolean"
                         },
-                        "shieldBarUI": {
-                            "type": "boolean"
-                        },
-                        "healthBarUI": {
+                        "visualizeDamageUI": {
                             "type": "boolean"
                         },
                         "totalDamageAmount": {
@@ -163,8 +160,7 @@
                     },
                     "required": [
                         "teamIndicatorUI",
-                        "shieldBarUI",
-                        "healthBarUI",
+                        "visualizeDamageUI",
                         "totalDamageAmount",
                         "shieldDamageAmount",
                         "healthDamageAmount",

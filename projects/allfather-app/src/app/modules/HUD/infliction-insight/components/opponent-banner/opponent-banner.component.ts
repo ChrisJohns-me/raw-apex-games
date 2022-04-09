@@ -1,10 +1,12 @@
 import { MatchInflictionEventAccum } from "@allfather-app/app/common/match/infliction-event";
 import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
+import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { Configuration } from "@allfather-app/configs/config.interface";
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy } from "@angular/core";
-import { interval, Subject } from "rxjs";
-import { filter, takeUntil } from "rxjs/operators";
+import { combineLatest, interval, Subject } from "rxjs";
+import { filter, takeUntil, tap } from "rxjs/operators";
+import { InflictionInsightType } from "../../windows/infliction-insight-window.component";
 
 export interface OpponentBanner {
     isIndirectBanner: boolean;
@@ -27,11 +29,26 @@ export class OpponentBannerComponent implements AfterViewInit, OnDestroy {
     @Input("bannerData") public bannerData: Optional<OpponentBanner>;
     @Input() public teamColor?: string;
 
+    public visualizeHealthUI = false;
     public config?: Configuration;
     private destroy$ = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef, private readonly configuration: ConfigurationService) {
-        this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => (this.config = config));
+    constructor(
+        private readonly cdr: ChangeDetectorRef,
+        private readonly configuration: ConfigurationService,
+        private readonly settings: SettingsService
+    ) {
+        const configuration$ = this.configuration.config$.pipe(tap((config) => (this.config = config)));
+        const settings$ = this.settings.streamAllSettings$();
+
+        combineLatest([configuration$, settings$])
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(([config, settings]) => {
+                this.visualizeHealthUI =
+                    settings.inflictionInsightType === InflictionInsightType.Emulated &&
+                    config.featureFlags.inflictionInsight.visualizeDamageUI;
+                this.cdr.detectChanges();
+            });
     }
 
     public ngAfterViewInit(): void {

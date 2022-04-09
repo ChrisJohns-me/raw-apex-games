@@ -6,6 +6,7 @@ import { Hotkey } from "@allfather-app/app/modules/core/hotkey";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
 import { SettingsDataStore } from "@allfather-app/app/modules/core/local-database/settings-data-store";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
+import { InflictionInsightType } from "@allfather-app/app/modules/HUD/infliction-insight/windows/infliction-insight-window.component";
 import { AimingReticle, AimingReticleList } from "@allfather-app/app/modules/HUD/reticle-helper/components/aiming-reticle/aiming-reticles";
 import { UltimateTimerType } from "@allfather-app/app/modules/HUD/ult-timer/windows/ult-timer-window.component";
 import { Configuration } from "@allfather-app/configs/config.interface";
@@ -59,7 +60,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         inGameHUDFormGroup: this.formBuilder.group({
             [SettingKey.EnableInGameMatchTimerHUD]: [false],
             [SettingKey.EnableInGameMiniInventoryHUD]: [false],
-            [SettingKey.EnableInGameInflictionInsightHUD]: [false],
+            [SettingKey.InflictionInsightType]: [InflictionInsightType.Digits],
             [SettingKey.EnableInGameHealingHelperHUD]: [false],
             [SettingKey.EnableInGameAimingReticle]: [false],
             [SettingKey.UltimateTimerType]: [UltimateTimerType.TimeTotal],
@@ -122,6 +123,20 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         {
             key: UltimateTimerType.TimeRemaining,
             value: "Cooldown Remaining",
+        },
+    ];
+    public InflictionInsightTypeList: { key: InflictionInsightType; value: string }[] = [
+        {
+            key: InflictionInsightType.Disabled,
+            value: "Off",
+        },
+        {
+            key: InflictionInsightType.Digits,
+            value: "Damage Numbers",
+        },
+        {
+            key: InflictionInsightType.Emulated,
+            value: "Health Bar",
         },
     ];
     public AimingReticlePreview = AimingReticlePreview;

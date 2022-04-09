@@ -36,11 +36,7 @@
             <!-- #region Shield UI -->
             <div
                 class="player-shield-container"
-                *ngIf="
-                    config?.featureFlags?.inflictionInsight?.shieldBarUI &&
-                    !bannerData.latestInflictionAccum?.isEliminated &&
-                    !bannerData.latestInflictionAccum?.isKnocked
-                "
+                *ngIf="visualizeHealthUI && !bannerData.latestInflictionAccum?.isEliminated && !bannerData.latestInflictionAccum?.isKnocked"
             >
                 <ng-container *ngFor="let shieldNum of [0, 1, 2, 3, 4]">
                     <div class="player-shield-ui-box-shadow" *ngIf="bannerData.maybeMaxShield / 25 > shieldNum">
@@ -51,8 +47,10 @@
                                 !bannerData.latestInflictionAccum?.isEliminated &&
                                 bannerData.maybeShieldAmount > shieldNum * 25
                             "
-                            [style.width.%]="
-                                bannerData.maybeShieldAmount < 25 * (shieldNum + 1) ? ((bannerData.maybeShieldAmount % 25) / 25) * 100 : 100
+                            [style.left.%]="
+                                (bannerData.maybeShieldAmount < 25 * (shieldNum + 1)
+                                    ? ((bannerData.maybeShieldAmount % 25) / 25) * 100
+                                    : 100) - 100
                             "
                         ></div>
                     </div>
@@ -62,17 +60,13 @@
             <!-- #region Health UI -->
             <div
                 class="player-health-container"
-                *ngIf="
-                    config?.featureFlags?.inflictionInsight?.healthBarUI &&
-                    !bannerData.latestInflictionAccum?.isEliminated &&
-                    !bannerData.latestInflictionAccum?.isKnocked
-                "
+                *ngIf="visualizeHealthUI && !bannerData.latestInflictionAccum?.isEliminated && !bannerData.latestInflictionAccum?.isKnocked"
             >
                 <div class="player-health-ui-box-shadow">
                     <div
                         class="player-health-ui-box"
                         *ngIf="!bannerData.latestInflictionAccum?.isKnocked && !bannerData.latestInflictionAccum?.isEliminated"
-                        [style.width.%]="bannerData.maybeHealthAmount"
+                        [style.left.%]="bannerData.maybeHealthAmount - 100"
                     ></div>
                 </div>
             </div>
@@ -82,13 +76,13 @@
                 <!-- #region Shield Damage -->
                 <div class="split-damage" *ngIf="config?.featureFlags?.inflictionInsight?.shieldDamageAmount">
                     <div class="split-damage-header">Shield Damage</div>
-                    <div class="split-damage-sum">{{ (bannerData.latestInflictionAccum?.shieldDamageSum ?? 0) }}</div>
+                    <div class="split-damage-sum">{{ bannerData.latestInflictionAccum?.shieldDamageSum ?? 0 }}</div>
                 </div>
                 <!-- #region Shield Damage -->
                 <!-- #endregion -->
                 <div class="split-damage" *ngIf="config?.featureFlags?.inflictionInsight?.healthDamageAmount">
                     <div class="split-damage-header">Health Damage</div>
-                    <div class="split-damage-sum">{{ (bannerData.latestInflictionAccum?.healthDamageSum ?? 0) }}</div>
+                    <div class="split-damage-sum">{{ bannerData.latestInflictionAccum?.healthDamageSum ?? 0 }}</div>
                 </div>
                 <!-- #endregion -->
             </div>

@@ -22,6 +22,12 @@ import { combineLatest, interval, merge, Observable, Subject } from "rxjs";
 import { delay, delayWhen, distinctUntilChanged, filter, map, pairwise, share, takeUntil, tap } from "rxjs/operators";
 import { OpponentBanner } from "../components/opponent-banner/opponent-banner.component";
 
+export enum InflictionInsightType {
+    Disabled = "disabled",
+    Digits = "digits",
+    Emulated = "emulated",
+}
+
 @Component({
     selector: "app-hud-infliction-insight-window",
     templateUrl: "./infliction-insight-window.component.html",

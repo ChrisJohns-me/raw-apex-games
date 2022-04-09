@@ -10,6 +10,7 @@ import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { GameService } from "../core/game.service";
 import { MatchService } from "../core/match/match.service";
 import { HealingHelperWindowService } from "../HUD/healing-helper/windows/healing-helper-window.service";
+import { InflictionInsightType } from "../HUD/infliction-insight/windows/infliction-insight-window.component";
 import { InflictionInsightWindowService } from "../HUD/infliction-insight/windows/infliction-insight-window.service";
 import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
 import { MiniInventoryWindowService } from "../HUD/mini-inventory/windows/mini-inventory-window.service";
@@ -46,7 +47,10 @@ export class HUDWindowControllerService extends BaseService {
         {
             windowService: this.inflictionInsightWindow,
             requiredGamePhases: [GamePhase.InGame],
-            requiredSettings: [{ key: SettingKey.EnableAllInGameHUD }, { key: SettingKey.EnableInGameInflictionInsightHUD }],
+            requiredSettings: [
+                { key: SettingKey.EnableAllInGameHUD },
+                { key: SettingKey.InflictionInsightType, predicate: (value) => value !== InflictionInsightType.Disabled },
+            ],
             requiredGameModes: [
                 MatchGameModeGenericId.Arenas,
                 MatchGameModeGenericId.BattleRoyale_Duos,

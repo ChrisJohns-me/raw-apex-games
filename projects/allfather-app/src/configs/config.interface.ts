@@ -63,10 +63,8 @@ export interface FeatureFlags {
     inflictionInsight: {
         /** Visualize teams */
         teamIndicatorUI: boolean;
-        /** Visualize the damage amount to shield */
-        shieldBarUI: boolean;
-        /** Visualize the damage amount to health */
-        healthBarUI: boolean;
+        /** Visualize the damage amount to shield or health */
+        visualizeDamageUI: boolean;
         /** Shield + Health damage text */
         totalDamageAmount: boolean;
         /** Shield damage text */

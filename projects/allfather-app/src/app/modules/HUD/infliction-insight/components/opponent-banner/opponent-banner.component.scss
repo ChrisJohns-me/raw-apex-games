@@ -196,6 +196,7 @@ $eliminated-transparency: 0.6;
     text-transform: uppercase;
     height: 100%;
     margin-right: 20%;
+    margin-top: 2px;
 
     .split-damage {
         display: flex;
@@ -231,17 +232,27 @@ $eliminated-transparency: 0.6;
 
     .player-shield-container {
         display: inline-flex;
+        height: $base-height * 0.10;
         width: calc(100% - #{$base-width * 0.04});
     }
 
     .player-shield-ui-box-shadow {
         background-color: #ffffff3d;
-        height: $base-height * 0.12;
+        height: 100%;
         width: calc(20% - #{$base-width * 0.01});
-        margin: 0 $base-width * 0.0075;
+        margin: 0 -#{$base-width * 0.015};
+        position: relative;
+        
+        &, .player-shield-ui-box {
+            clip-path: polygon(0% 0%, 80% 0%, 100% 100%, 20% 100%); // Slant left & right
+        }
 
         &:first-of-type {
             margin-left: 0;
+
+            &, .player-shield-ui-box {
+                clip-path: polygon(0% 0%, 80% 0%, 100% 100%, 0% 100%); // Slant right
+            }
         }
 
         &:last-of-type {
@@ -250,24 +261,37 @@ $eliminated-transparency: 0.6;
 
         .player-shield-ui-box {
             background-color: #ffffff;
-            height: $base-height * 0.12;
-            width: 100%; // Actual amount per shield box
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0; // Actual amount per shield box
         }
     }
 
     .player-health-container {
-        width: calc(100% - #{$base-width * 0.04});
+        height: $base-height * 0.14;
+        width: calc(100% - #{$base-width * 0.05});
+        margin-top: 2px;
     }
 
     .player-health-ui-box-shadow {
         width: 100%;
+        height: 100%;
         background-color: #ffffff3d;
-        height: $base-height * 0.18;
+        position: relative;
+
+        &, .player-health-ui-box {
+            clip-path: polygon(0% 0%, 96% 0%, 100% 75%, 99% 100%, 0% 100%);
+        }
 
         .player-health-ui-box {
             height: 100%;
-            width: 100%; // Actual amount
+            width: 100%;
             background-color: #ffffff;
+            position: absolute;
+            top: 0;
+            left: 0; // Actual amount
         }
     }
 

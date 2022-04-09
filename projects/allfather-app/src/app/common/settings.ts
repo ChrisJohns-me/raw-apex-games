@@ -1,3 +1,4 @@
+import { InflictionInsightType } from "../modules/HUD/infliction-insight/windows/infliction-insight-window.component";
 import { AimingReticleList } from "../modules/HUD/reticle-helper/components/aiming-reticle/aiming-reticles";
 import { UltimateTimerType } from "../modules/HUD/ult-timer/windows/ult-timer-window.component";
 
@@ -8,7 +9,7 @@ export enum SettingKey {
     EnableAllInGameHUD = "enableAllInGameHUD",
     EnableInGameMatchTimerHUD = "enableInGameMatchTimerHUD",
     EnableInGameMiniInventoryHUD = "enableInGameMiniInventoryHUD",
-    EnableInGameInflictionInsightHUD = "enableInGameInflictionInsightHUD",
+    InflictionInsightType = "inflictionInsightType",
     EnableInGameHealingHelperHUD = "enableInGameHealingHelperHUD",
     EnableAllLegendSelectHUD = "enableAllLegendSelectHUD",
     EnableLegendSelectLegendStats = "enableLegendSelectLegendStats",
@@ -25,7 +26,7 @@ export const DefaultSetting: { [P in SettingKey]: SettingValue } = {
     enableAllInGameHUD: true,
     enableInGameMatchTimerHUD: true,
     enableInGameMiniInventoryHUD: true,
-    enableInGameInflictionInsightHUD: true,
+    inflictionInsightType: InflictionInsightType.Digits,
     enableInGameHealingHelperHUD: true,
     enableAllLegendSelectHUD: true,
     enableLegendSelectLegendStats: true,

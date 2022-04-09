@@ -81,8 +81,7 @@
         "enableVideoCapture": false,
         "inflictionInsight": {
             "teamIndicatorUI": true,
-            "shieldBarUI": false,
-            "healthBarUI": false,
+            "visualizeDamageUI": true,
             "totalDamageAmount": true,
             "shieldDamageAmount": true,
             "healthDamageAmount": true,
