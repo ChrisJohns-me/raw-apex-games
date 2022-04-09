@@ -235,6 +235,48 @@ describe("MatchPlayerInventoryService", () => {
             });
         });
     });
+
+    /**
+     * @overwolfQuirk - When all weapons are dropped, "Thermite Grenade" is returned as the weapon in use.
+     */
+    it("myWeapons$ correctly displays weapons", () => {
+        scheduler.run(({ cold, expectObservable }) => {
+            // Arrange
+            const startEvent: MatchStateChangedEvent = {
+                startDate: new Date(),
+                state: MatchState.Active,
+                matchId: "test",
+            };
+
+            // Act
+            cold("a-------", { a: startEvent }).subscribe(matchService.state$);
+            cold("a-------", { a: startEvent }).subscribe(matchService.startedEvent$);
+            cold("-1abcdef1", {
+                1: createWeaponsEventFn(), // No weapons
+                a: createWeaponsEventFn("R-301 Carbine"),
+                b: createWeaponsEventFn("R-301 Carbine", "VK-47 Flatline"),
+                c: createWeaponsEventFn("Melee"),
+                d: createWeaponsEventFn("Thermite Grenade"), // All weapons dropped
+                e: createWeaponsEventFn("Frag Grenade"),
+                f: createWeaponsEventFn("Arc Star"),
+            }).subscribe(overwolfGameDataService.infoUpdates$);
+
+            // Assert
+            expectObservable(sut.myWeaponSlots$).toBe("01AB1---", {
+                0: {},
+                1: {
+                    0: { item: new WeaponItem({ fromId: "empty_handed" }) },
+                },
+                A: {
+                    0: { item: new WeaponItem({ fromId: "r301" }) },
+                },
+                B: {
+                    0: { item: new WeaponItem({ fromId: "r301" }) },
+                    1: { item: new WeaponItem({ fromId: "vk47_flatline" }) },
+                },
+            });
+        });
+    });
 });
 
 function createInventorySlotFn(id: string, amount: number): InventorySlot {
@@ -246,10 +288,10 @@ function createInventorySlotFn(id: string, amount: number): InventorySlot {
 
 function createInventoryEventFn(inventorySlotKey: number, name: string, amount: number): OWInfoUpdates2Event {
     const infoEvent: any = {
+        feature: "inventory",
         info: {
             me: {},
         },
-        feature: "inventory",
     };
     infoEvent.info.me[`inventory_${inventorySlotKey}`] = {
         name: name,
@@ -260,11 +302,25 @@ function createInventoryEventFn(inventorySlotKey: number, name: string, amount: 
 
 function createEmptyInventoryEventFn(inventorySlotKey: number): OWInfoUpdates2Event {
     const infoEvent: any = {
+        feature: "inventory",
         info: {
             me: {},
         },
-        feature: "inventory",
     };
     infoEvent.info.me[`inventory_${inventorySlotKey}`] = null;
+    return infoEvent as OWInfoUpdates2Event;
+}
+
+function createWeaponsEventFn(weapon0?: string, weapon1?: string): OWInfoUpdates2Event {
+    const infoEvent: any = {
+        feature: "inventory",
+        info: {
+            me: {
+                weapons: {},
+            },
+        },
+    };
+    if (weapon0) infoEvent.info.me.weapons.weapon0 = weapon0;
+    if (weapon1) infoEvent.info.me.weapons.weapon1 = weapon1;
     return infoEvent as OWInfoUpdates2Event;
 }

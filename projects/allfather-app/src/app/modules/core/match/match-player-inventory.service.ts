@@ -2,7 +2,12 @@ import { InventorySlots } from "@allfather-app/app/common/inventory-slots";
 import { Item } from "@allfather-app/app/common/items/item";
 import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
 import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { OverwolfGameDataService, OWInfoUpdates2Event, OWMatchInfoMeInventory } from "@allfather-app/app/common/services/overwolf";
+import {
+    OverwolfGameDataService,
+    OWInfoUpdates2Event,
+    OWMatchInfoMeInventory,
+    OWMatchInfoMeWeapons,
+} from "@allfather-app/app/common/services/overwolf";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { cleanInt, findKeyByKeyRegEx } from "common/utilities/";
@@ -19,11 +24,21 @@ import { MatchService } from "./match.service";
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerInventoryService", MatchPlayerInventoryService, deps),
 })
 export class MatchPlayerInventoryService extends BaseService {
-    /** Local player's current weapon, throwable, inventory, ultimate, etc. item in use. Emits new data only when match is started. */
+    /**
+     * Local player's current weapon, throwable, inventory, ultimate, etc. item in use.
+     * Emits new data only when match is started.
+     */
     public readonly myInUseItem$ = new BehaviorSubject<Optional<Item>>(undefined);
-    /** Local player's current weapons. Emits new data only when match is started. */
+    /**
+     * Local player's current weapons.
+     * Emits new data only when match is started.
+     */
     public readonly myWeaponSlots$ = new BehaviorSubject<InventorySlots<WeaponItem>>({});
-    /** Local player's current backpack inventory. Emits new data only when match is started.*/
+    /**
+     * Local player's current backpack inventory.
+     * Emits new data only when match is started.
+     * Emits empty_handed when weapons are dropped.
+     */
     public readonly myInventorySlots$ = new BehaviorSubject<InventorySlots>({});
 
     private inventoryInfoUpdates$: Observable<OWInfoUpdates2Event>;
@@ -62,8 +77,8 @@ export class MatchPlayerInventoryService extends BaseService {
     private setupMyInventorySlots(): void {
         this.inventoryInfoUpdates$
             .pipe(
-                map((infoUpdate) => infoUpdate.info.me),
-                filter(() => this.isMatchStarted)
+                filter(() => this.isMatchStarted),
+                map((infoUpdate) => infoUpdate.info.me)
             )
             .subscribe((me) => {
                 const infoSlotName = findKeyByKeyRegEx(me, /^inventory_/);
@@ -92,10 +107,10 @@ export class MatchPlayerInventoryService extends BaseService {
     private setupMyInUseItem(): void {
         this.inventoryInfoUpdates$
             .pipe(
+                filter(() => this.isMatchStarted),
                 filter((infoUpdate) => typeof infoUpdate.info.me?.inUse?.inUse === "string"),
                 map((infoUpdate) => infoUpdate.info.me?.inUse?.inUse),
-                filter((inUse) => !!inUse), // match_start defaults this to "", which we don't want
-                filter(() => this.isMatchStarted)
+                filter((inUse) => !!inUse) // match_start defaults this to "", which we don't want
             )
             .subscribe((inUse) => {
                 const newInventoryItem = new Item({ fromInGameInfoName: inUse });
@@ -103,29 +118,44 @@ export class MatchPlayerInventoryService extends BaseService {
             });
     }
 
+    /**
+     * @overwolfQuirk - When all weapons are dropped, "Thermite Grenade" is returned as the weapon in use.
+     */
     private setupMyWeapons(): void {
+        const blacklistedItemIds = ["grenade_arc_star", "grenade_frag", "grenade_thermite", "empty_handed"];
+
         this.inventoryInfoUpdates$
             .pipe(
-                filter((infoUpdate) => typeof infoUpdate.info.me?.weapons === "object"),
-                map((infoUpdate) => infoUpdate.info.me?.weapons),
-                filter(() => this.isMatchStarted)
+                filter(() => this.isMatchStarted),
+                filter((infoUpdate) => Object.keys(infoUpdate?.info?.me ?? {}).includes("weapons")),
+                map((infoUpdate) => (infoUpdate.info.me?.weapons ? infoUpdate.info.me?.weapons : {}) as OWMatchInfoMeWeapons)
             )
             .subscribe((weapons) => {
-                const infoSlotName = findKeyByKeyRegEx(weapons, /^weapon/);
-                if (!infoSlotName) return;
-                const slotMatch = infoSlotName?.match(/\d+/)?.[0];
-                const newSlotId = slotMatch ? parseInt(slotMatch) : undefined;
-                if (!newSlotId) return;
-                const infoSlotValue: string = (weapons as any)[infoSlotName];
+                let newWeaponSlotItems: InventorySlots<WeaponItem> = {};
+                Object.entries(weapons).forEach(([weaponSlotId, weaponName]) => {
+                    const slotMatch = weaponSlotId?.match(/\d+/)?.[0];
+                    const newSlotId = slotMatch ? parseInt(slotMatch) : undefined;
+                    if (!newSlotId && newSlotId !== 0) return;
+                    const weaponItem = new WeaponItem({ fromInGameInfoName: weaponName });
+                    if (weaponItem.itemId && blacklistedItemIds.includes(weaponItem.itemId)) return;
+                    newWeaponSlotItems[newSlotId] = { item: weaponItem };
+                });
 
-                const slotUpdate = infoSlotValue ? { item: new WeaponItem({ fromInGameInfoName: infoSlotValue }) } : undefined;
+                // No weapons, so empty handed
+                if (!Object.keys(newWeaponSlotItems).length) {
+                    newWeaponSlotItems = {
+                        0: { item: new WeaponItem({ fromId: "empty_handed" }) },
+                    };
+                }
 
-                const newWeaponSlotItems: InventorySlots<Item> = {
-                    ...this.myWeaponSlots$.value,
-                    [newSlotId]: slotUpdate,
-                };
+                const sizeChanged = Object.keys(this.myWeaponSlots$.value).length !== Object.keys(newWeaponSlotItems).length;
+                let hasChanged = false;
+                Object.entries(this.myWeaponSlots$.value).forEach(([_slotId, slotItem]) => {
+                    const slotId = parseInt(_slotId);
+                    if (!hasChanged) hasChanged = newWeaponSlotItems[slotId]?.item?.itemId !== slotItem.item?.itemId;
+                });
 
-                this.myWeaponSlots$.next(newWeaponSlotItems);
+                if (hasChanged || sizeChanged) this.myWeaponSlots$.next(newWeaponSlotItems);
             });
     }
 }

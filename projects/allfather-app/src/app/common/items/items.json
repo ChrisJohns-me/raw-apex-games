@@ -128,21 +128,21 @@
             "friendlyName": "Thermite Grenade",
             "inGameInfoNameRegExPattern": "^Thermite Grenade$",
             "inGameEventNameRegExPattern": "grenade_incendiary",
-            "inGameInventoryIdRegExPattern": "190"
+            "inGameInventoryIdRegExPattern": "190$"
         },
         {
             "id": "grenade_frag",
             "friendlyName": "Frag Grenade",
             "inGameInfoNameRegExPattern": "^Frag Grenade$",
             "inGameEventNameRegExPattern": "grenade_frag",
-            "inGameInventoryIdRegExPattern": "191"
+            "inGameInventoryIdRegExPattern": "191$"
         },
         {
             "id": "grenade_arc_star",
             "friendlyName": "Arc Star",
             "inGameInfoNameRegExPattern": "^Arc Star$",
             "inGameEventNameRegExPattern": "grenade_arc",
-            "inGameInventoryIdRegExPattern": "192"
+            "inGameInventoryIdRegExPattern": "192$"
         },
         {
             "id": "knockdownshield",
@@ -163,7 +163,7 @@
         },
         {
             "id": "bocek_bow",
-            "friendlyName": "Bocek Box",
+            "friendlyName": "Bocek Bow",
             "inGameInfoNameRegExPattern": "Bocek Compound Bow$",
             "inGameEventNameRegExPattern": "^bow$"
         },
@@ -182,7 +182,8 @@
         {
             "id": "rampage",
             "friendlyName": "Rampage LMG",
-            "inGameInfoNameRegExPattern": "^Rampage LMG$"
+            "inGameInfoNameRegExPattern": "^Rampage LMG$",
+            "inGameEventNameRegExPattern": "^rampage"
         },
         {
             "id": "eva_8",
@@ -211,19 +212,20 @@
         {
             "id": "prowler_burst",
             "friendlyName": "Prowler Burst",
-            "inGameInfoNameRegExPattern": "^Prowler Burst PDW$"
+            "inGameInfoNameRegExPattern": "^Prowler Burst PDW$",
+            "inGameEventNameRegExPattern": "^prowler$"
         },
         {
             "id": "kraber",
             "friendlyName": "Kraber .50-Cal",
-            "inGameInfoNameRegExPattern": "kraber",
+            "inGameInfoNameRegExPattern": "Kraber",
             "inGameEventNameRegExPattern": "^kraber$"
         },
         {
             "id": "l_star",
             "friendlyName": "L-STAR",
-            "inGameEventNameRegExPattern": "^L-Star$",
-            "inGameInventoryIdRegExPattern": "L-Star"
+            "inGameInfoNameRegExPattern": "^L-Star$",
+            "inGameEventNameRegExPattern": "^lstar$"
         },
         {
             "id": "longbow",
@@ -258,14 +260,8 @@
         {
             "id": "peacekeeper",
             "friendlyName": "Peacekeeper",
-            "inGameInfoNameRegExPattern": "^peacekeeper$",
+            "inGameInfoNameRegExPattern": "^Peacekeeper$",
             "inGameEventNameRegExPattern": "^peacekeeper$"
-        },
-        {
-            "id": "prowler",
-            "friendlyName": "Prowler",
-            "inGameInfoNameRegExPattern": "^prowler$",
-            "inGameEventNameRegExPattern": "^prowler$"
         },
         {
             "id": "r301",
