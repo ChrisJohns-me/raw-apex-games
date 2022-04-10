@@ -187,10 +187,10 @@ export const MatchMapListBattleRoyalMaps = [
         zStartPos: 254,
         chartConfig: {
             imageAxisScale: {
-                xStart: -1000,
-                xEnd: 1000,
-                yStart: -1000,
-                yEnd: 1000,
+                xStart: -506,
+                xEnd: 522,
+                yStart: -511,
+                yEnd: 525,
             },
         },
     }),
