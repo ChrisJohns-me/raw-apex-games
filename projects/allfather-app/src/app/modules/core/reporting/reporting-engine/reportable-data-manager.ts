@@ -14,7 +14,8 @@ import { ReportableDataFactoryMap } from "./reportable-data";
 import { AssistsDataFactory } from "./reportable-data/assists";
 import { DamageDataFactory } from "./reportable-data/damage";
 import { DamageEventsHistoryDataFactory } from "./reportable-data/damage-events-history";
-import { DeathsDataFactory } from "./reportable-data/deaths";
+import { DeathLocationHistoryDataFactory } from "./reportable-data/death-location-history";
+import { EliminationLocationHistoryDataFactory } from "./reportable-data/elimination-location-history";
 import { EliminationsDataFactory } from "./reportable-data/eliminations";
 import { GameModeDataFactory } from "./reportable-data/game-mode";
 import { KillfeedHistoryDataFactory } from "./reportable-data/killfeed-history";
@@ -36,7 +37,7 @@ import { WeaponIdsHistoryDataFactory } from "./reportable-data/weapon-ids-histor
  * @classdesc Assembles reportable data items; used to consolidate
  *  and organize reportable data instantiations.
  * Provides reporting engines with organized game data.
- * Good idea to only instantiate once; since this creates insteances
+ * Good idea to only instantiate once; since this creates instances
  *  of the reportable data classes, which have observables that listen to game data.
  */
 @Injectable({
@@ -88,8 +89,9 @@ export class ReportableDataManagerService {
             AssistsDataFactory(this.matchPlayerStats.myAssists$),
             DamageDataFactory(this.matchPlayerStats.myDamage$),
             DamageEventsHistoryDataFactory(this.matchPlayerInfliction.myDamageEvent$),
+            DeathLocationHistoryDataFactory(this.matchPlayerLocation.myDeathCoordinates$),
+            EliminationLocationHistoryDataFactory(this.matchPlayerLocation.myEliminationCoordinates$),
             EliminationsDataFactory(this.matchPlayerStats.myEliminations$),
-            DeathsDataFactory(this.matchPlayerStats.myDeaths$),
             GameModeDataFactory(this.match.gameMode$),
             KillfeedHistoryDataFactory(this.matchKillfeed.killfeedEvent$),
             KnockdownsDataFactory(this.matchPlayerStats.myKnockdowns$),

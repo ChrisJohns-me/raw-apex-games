@@ -18,6 +18,7 @@ export interface MatchDataStore {
     legendId?: string;
     assists?: number;
     damage?: number;
+    deaths?: number;
     eliminations?: number;
     knockdowns?: number;
     maxPlacement?: number;
@@ -25,11 +26,12 @@ export interface MatchDataStore {
     damageEventsHistory?: TimestampedStream<DamageEvent>;
     killfeedHistory?: TimestampedStream<MatchKillfeed>;
     locationHistory?: TimestampedStream<LocationHistory>;
+    deathLocationHistory?: TimestampedStream<Coordinates>;
+    eliminationLocationHistory?: TimestampedStream<Coordinates>;
     matchRoster?: Stream<MatchRosterPlayer>;
     teamRoster?: TeamRosterPlayer[];
     ultimateUsageDates?: Stream<Date>;
     weaponIdsHistory?: TimestampedStream<WeaponIds>;
-    deaths?: number;
 }
 
 type Stream<T> = T[];

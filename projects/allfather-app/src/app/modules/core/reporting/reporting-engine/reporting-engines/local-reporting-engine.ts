@@ -122,8 +122,8 @@ export class LocalReportingEngine implements ReportingEngine {
             mapId: map?.mapId ?? "",
             assists: matchSummary.assists,
             damage: matchSummary.damage,
-            eliminations: matchSummary.eliminations,
             deaths: matchSummary.deaths,
+            eliminations: matchSummary.eliminations,
             knockdowns: matchSummary.knockdowns,
             maxPlacement: matchSummary.maxPlacement,
             placement: matchSummary.placement,
@@ -132,7 +132,9 @@ export class LocalReportingEngine implements ReportingEngine {
             legendId: getDataById("legendId")?.value?.legendId ?? "",
             killfeedHistory: getDataById("killfeedHistory")?.value ?? [],
             damageEventsHistory: getDataById("damageEventsHistory")?.value ?? [],
-            locationHistory: getDataById("locationHistory")?.value.map((loc) => composeMapCoordinate(loc)) ?? [],
+            deathLocationHistory: getDataById("deathLocationHistory")?.value ?? [],
+            eliminationLocationHistory: getDataById("eliminationLocationHistory")?.value ?? [],
+            locationHistory: getDataById("locationHistory")?.value.map((loc) => composeLocationCoordinate(loc)) ?? [],
             weaponIdsHistory: getDataById("weaponIdsHistory")?.value ?? [],
             ultimateUsageDates: getDataById("ultimateUsageDates")?.value ?? [],
         };
@@ -144,7 +146,7 @@ export class LocalReportingEngine implements ReportingEngine {
 }
 
 /** Store locationHistory.phase as number */
-function composeMapCoordinate(
+function composeLocationCoordinate(
     location: ReportableDataFactoryMap["locationHistory"]["value"][0]
 ): NonNullable<MatchDataStore["locationHistory"]>[0] {
     return {
