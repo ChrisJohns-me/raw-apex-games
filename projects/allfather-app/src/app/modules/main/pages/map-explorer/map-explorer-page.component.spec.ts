@@ -22,6 +22,7 @@ import { MatchListingComponent } from "@allfather-app/app/shared/components/matc
 import { FullHeightDirective } from "@allfather-app/app/shared/directives/full-height.directive";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";
+import { MapHeatmapComponent } from "./components/map-heatmap.component";
 import { MapExplorerPageComponent } from "./map-explorer-page.component";
 
 describe("MapExplorerPageComponent", () => {
@@ -31,7 +32,7 @@ describe("MapExplorerPageComponent", () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [ReactiveFormsModule],
-            declarations: [MapExplorerPageComponent, MatchListingComponent, FullHeightDirective],
+            declarations: [MapExplorerPageComponent, MatchListingComponent, MapHeatmapComponent, FullHeightDirective],
             providers: [
                 { provide: WINDOW, useClass: BrowserWindowRef },
                 { provide: ConfigurationService, useClass: MockConfigurationService },

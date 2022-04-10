@@ -1,64 +1,29 @@
-<div class="container my-3">
-    <div class="row justify-content-center">
-        <div class="col-12 col-lg-8 col-md-10">
-            <ul class="nav nav-pills nav-fill">
-                <li class="nav-item" *ngFor="let map of mapList">
-                    <button class="nav-link" (click)="onSelectMapClick(map)" [ngClass]="{ active: map.mapId == selectedMap?.mapId }">
-                        {{ map.mapName }}
-                    </button>
+<ul class="nav m-3">
+    <li class="nav-item me-2">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ selectedMap?.mapName ?? "Select a map" }}
+            </button>
+            <ul class="dropdown-menu">
+                <li *ngFor="let map of mapList">
+                    <button class="dropdown-item" type="button" (click)="onSelectMapIdClick(map.mapId)">{{ map.mapName }}</button>
                 </li>
             </ul>
         </div>
-    </div>
-</div>
+    </li>
+</ul>
 
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col col-xl-auto" appFullHeight [marginBottom]="10">
-            <!-- TODO: Maybe Breakout into own component -->
-            <div class="interactive-map-container ms-auto">
-                <div class="map-full-image map-full-image-no-map" *ngIf="!selectedMap?.mapId">
-                    <div class="message-overlay">
-                        <!-- <h5></h5> -->
-                    </div>
-                    <picture>
-                        <source media="(max-width: 1000px)" [srcset]="'../../../../assets/images/map-layouts/medium/' + getMapFilename()" />
-                        <source media="(max-width: 1440px)" [srcset]="'../../../../assets/images/map-layouts/large/' + getMapFilename()" />
-                        <img [src]="'../../../../assets/images/map-layouts/' + getMapFilename()" class="img-fluid" alt="..." />
-                    </picture>
-                </div>
-
-                <div class="map-full-image" *ngIf="selectedMap?.mapId">
-                    <picture>
-                        <source
-                            media="(max-width: 1000px)"
-                            [srcset]="'../../../../assets/images/map-layouts/medium/' + getMapFilename(selectedMap!.mapId)"
-                        />
-                        <source
-                            media="(max-width: 1440px)"
-                            [srcset]="'../../../../assets/images/map-layouts/large/' + getMapFilename(selectedMap!.mapId)"
-                        />
-                        <img
-                            [src]="'../../../../assets/images/map-layouts/' + getMapFilename(selectedMap!.mapId)"
-                            class="img-fluid"
-                            alt="..."
-                            (load)="isLoadingMapImage = false"
-                        />
-                    </picture>
-                </div>
-                <div class="d3-overlay" [hidden]="isLoadingMapImage" #mapOverlayGraph></div>
-
-                <div class="map-debug-container" *ngIf="ENABLE_DEBUG_TOOLS">
-                    <ng-container [ngTemplateOutlet]="mapDebugTools"></ng-container>
-                </div>
-            </div>
+            <app-map-heatmap [map]="selectedMap" [coordinates]="displayedLocationHistory"></app-map-heatmap>
         </div>
         <div class="col-8 col-lg-6 col-md-7 col-xl-5 col-xxl-5" appFullHeight [marginBottom]="10">
             <!-- Aggregate Option -->
             <table class="table table-dark table-hover mb-0" *ngIf="selectedMap">
                 <tbody>
                     <tr
-                        (click)="onSelectMapClick(selectedMap)"
+                        (click)="onSelectMapIdClick(selectedMap.mapId)"
                         class="clickable"
                         [ngClass]="{ 'table-active table-primary': selectedMapMatchList && !selectedMatch }"
                     >
@@ -73,10 +38,10 @@
             <!-- Match List -->
             <div class="matches-container" appFullHeight [marginBottom]="10" (scroll)="onMatchListingScroll($event)">
                 <app-match-listing
-                    [matches]="matchList"
+                    [matches]="selectedMapMatchList"
                     [isMatchClickable]="true"
                     [selectedMatchId]="selectedMatch?.matchId"
-                    (matchClick)="onSelectMatchClick($event)"
+                    (matchClick)="onSelectMatchIdClick($event.matchId)"
                     [showDataItems]="showMatchItems"
                     [numDisplayMatches]="numDisplayMatches"
                 ></app-match-listing>
@@ -84,128 +49,3 @@
         </div>
     </div>
 </div>
-
-<!-- #region Map Debug Tools -->
-<ng-template #mapDebugTools>
-    <div class="row px-3" [hidden]="!showMapDebugToolsForm.value">
-        <div class="offset-9 col-3">
-            <label for="heatSize" class="form-label text-white m-0">Heat Sizing ({{ heatSizeRange?.value | number: "0.0-3" }})</label>
-            <input type="range" class="form-range" min="0" max="50" step="0.1" id="heatSize" [formControl]="heatSizeRange" />
-        </div>
-        <div class="col-4">
-            <label for="xShiftRange" class="form-label text-white m-0">X Shift ({{ xShiftRangeForm?.value | number: "0.0-3" }})</label>
-            <input
-                type="range"
-                class="form-range form-control-sm"
-                min="-500"
-                max="500"
-                step="0.1"
-                id="xShiftRange"
-                [formControl]="xShiftRangeForm"
-            />
-        </div>
-        <div class="col-4">
-            <label for="xStartRange" class="form-label text-white m-0">
-                X Start ({{ xStartRangeForm?.value + xShiftRangeForm?.value | number: "0.0-3" }})
-                <span
-                    class="text-muted"
-                    *ngIf="xStartRangeForm?.value + xShiftRangeForm?.value != selectedMap?.chartConfig?.imageAxisScale?.xStart"
-                    >was: {{ selectedMap?.chartConfig?.imageAxisScale?.xStart | number: "0.0-3" }}</span
-                >
-            </label>
-            <input
-                type="range"
-                class="form-range form-control-sm"
-                min="-1000"
-                max="-250"
-                step="0.1"
-                id="xStartRange"
-                [formControl]="xStartRangeForm"
-            />
-        </div>
-        <div class="col-4">
-            <label for="xEndRange" class="form-label text-white m-0">
-                X End ({{ xEndRangeForm?.value + xShiftRangeForm?.value | number: "0.0-3" }})
-                <span
-                    class="text-muted"
-                    *ngIf="xEndRangeForm?.value + xShiftRangeForm?.value != selectedMap?.chartConfig?.imageAxisScale?.xEnd"
-                    >was: {{ selectedMap?.chartConfig?.imageAxisScale?.xEnd | number: "0.0-3" }}</span
-                >
-            </label>
-            <input
-                type="range"
-                class="form-range form-control-sm"
-                min="250"
-                max="1000"
-                step="0.1"
-                id="xEndRange"
-                [formControl]="xEndRangeForm"
-            />
-        </div>
-        <div class="col-4">
-            <label for="yShiftRange" class="form-label text-white m-0">Y Shift ({{ yShiftRangeForm?.value | number: "0.0-3" }})</label>
-            <input
-                type="range"
-                class="form-range form-control-sm"
-                min="-500"
-                max="500"
-                step="0.1"
-                id="yShiftRange"
-                [formControl]="yShiftRangeForm"
-            />
-        </div>
-        <div class="col-4">
-            <label for="yStartRange" class="form-label text-white m-0">
-                Y Start ({{ yStartRangeForm?.value + yShiftRangeForm?.value | number: "0.0-3" }})
-                <span
-                    class="text-muted"
-                    *ngIf="yStartRangeForm?.value + yShiftRangeForm?.value != selectedMap?.chartConfig?.imageAxisScale?.yStart"
-                    >was:{{ selectedMap?.chartConfig?.imageAxisScale?.yStart | number: "0.0-3" }}</span
-                >
-            </label>
-            <input
-                type="range"
-                class="form-range form-control-sm"
-                min="-1000"
-                max="-250"
-                step="0.1"
-                id="yStartRange"
-                [formControl]="yStartRangeForm"
-            />
-        </div>
-        <div class="col-4">
-            <label for="yEndRange" class="form-label text-white m-0">
-                Y End ({{ yEndRangeForm?.value + yShiftRangeForm?.value | number: "0.0-3" }})
-                <span
-                    class="text-muted"
-                    *ngIf="yEndRangeForm?.value + yShiftRangeForm?.value != selectedMap?.chartConfig?.imageAxisScale?.yEnd"
-                    >was:{{ selectedMap?.chartConfig?.imageAxisScale?.yEnd | number: "0.0-3" }}</span
-                >
-            </label>
-            <input
-                type="range"
-                class="form-range form-control-sm"
-                min="250"
-                max="1000"
-                step="0.1"
-                id="yEndRange"
-                [formControl]="yEndRangeForm"
-            />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col text-end">
-            <div class="form-check form-switch form-check-inline">
-                <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="showMapDebugToolsSwitch"
-                    [checked]="showMapDebugToolsForm.value"
-                    (change)="showMapDebugToolsForm.setValue(!showMapDebugToolsForm.value)"
-                />
-                <label class="form-check-label text-white" for="showMapDebugToolsSwitch">Debug Tools</label>
-            </div>
-        </div>
-    </div>
-</ng-template>
-<!-- #endregion Map Debug Tools -->
