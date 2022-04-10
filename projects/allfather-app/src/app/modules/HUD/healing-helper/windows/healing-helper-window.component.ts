@@ -79,6 +79,7 @@ export class HealingHelperWindowComponent implements OnInit, OnDestroy {
         const ring$ = this.matchRing.currentBRRing$.pipe(filter((ring) => !!ring));
         const inventory$ = this.matchPlayerInventory.myInventorySlots$.pipe(
             map((inventorySlots) => Object.values(inventorySlots)),
+            filter((inventorySlots) => inventorySlots.every((slot) => !!slot)),
             map((inventorySlots) => this.filterInventorySlots(inventorySlots, HEALINGITEMS))
         );
 
@@ -146,8 +147,8 @@ export class HealingHelperWindowComponent implements OnInit, OnDestroy {
      */
     private filterInventorySlots(inventorySlots: InventorySlot[], healingItems: HealingItem[]): InventorySlot[] {
         return inventorySlots.filter((slot) => {
+            if (!slot?.item) return false;
             const item = slot.item;
-            if (!item) return false;
             const healingItemFound = healingItems.find((healingItem) => healingItem.id === item.itemId);
             if (!healingItemFound) return false;
             return true;

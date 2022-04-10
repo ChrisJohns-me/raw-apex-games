@@ -1,4 +1,4 @@
-import { InventorySlots } from "@allfather-app/app/common/inventory-slots";
+import { InventorySlot, InventorySlots } from "@allfather-app/app/common/inventory-slots";
 import { Item } from "@allfather-app/app/common/items/item";
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchRing } from "@allfather-app/app/common/match/ring";
@@ -380,7 +380,6 @@ describe("HealingHelperWindowComponent", () => {
             configurationService.mockSetConfig(MOCKCONFIG);
             matchRingService.allBRRings$.next(MOCKALLRINGS);
             matchRingService.currentBRRing$.next(firstRing);
-            matchPlayerInventoryService.myInventorySlots$.next(MOCKINVENTORYSLOTS);
             const inventorySlots = {
                 0: MOCKINVENTORYSLOTS[0],
             };
@@ -392,6 +391,27 @@ describe("HealingHelperWindowComponent", () => {
                     neededHealthTime: 83.35,
                 },
             ];
+
+            // Act
+            const actual = sut.availableHealingItems;
+
+            // Assert
+            expect(actual).toEqual(expected);
+        }));
+    });
+
+    describe("bugfixes", () => {
+        it("does not error when inventory slot is null", fakeAsync(() => {
+            // Arrange
+            const firstRing = MOCKALLRINGS.find((ring) => ring.ringNumber === 6);
+            configurationService.mockSetConfig(MOCKCONFIG);
+            matchRingService.allBRRings$.next(MOCKALLRINGS);
+            matchRingService.currentBRRing$.next(firstRing);
+            matchPlayerInventoryService.myInventorySlots$.next({
+                0: undefined as unknown as InventorySlot,
+            });
+
+            const expected: HealingItemHealthTime[] = [];
 
             // Act
             const actual = sut.availableHealingItems;
