@@ -95,7 +95,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     private trackPageChange(newPage: MainPage): void {
-        this.mainWindow.uiWindow
+        this.mainWindow.overwolfWindow
             .windowInfo()
             .pipe(
                 takeUntil(this.destroy$),

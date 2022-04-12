@@ -1,9 +1,8 @@
-import { UIWindow } from "@allfather-app/app/common/ui-window";
+import { OverwolfWindow, OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, from, Observable, Subject } from "rxjs";
 import { concatAll, map, takeUntil, tap } from "rxjs/operators";
-import { WindowName } from "../../../common/window-name";
 import { MainPage } from "../pages/main-page";
 
 @Injectable({
@@ -16,7 +15,7 @@ export class MainWindowService implements OnDestroy {
     /** App is still initializing; ie. booting up the app */
     public isStarting$ = new BehaviorSubject<boolean>(false);
     public isRequestingExit$ = new BehaviorSubject<boolean>(false);
-    public readonly uiWindow = new UIWindow(WindowName.Main);
+    public readonly overwolfWindow = new OverwolfWindow(OverwolfWindowName.Main);
 
     private destroy$ = new Subject<void>();
 
@@ -27,28 +26,28 @@ export class MainWindowService implements OnDestroy {
 
     public open(page?: MainPage): Observable<void> {
         if (page) this.goToPage(page);
-        return this.uiWindow.restore();
+        return this.overwolfWindow.restore();
     }
 
     public close(): Observable<void> {
-        return this.uiWindow.close();
+        return this.overwolfWindow.close();
     }
 
     /**
      * @param {boolean} close - If true, the app will close instead of minimizing.
      */
     public toggle(close: boolean): Observable<void> {
-        return this.uiWindow.toggleMinimize(close).pipe(map(() => undefined));
+        return this.overwolfWindow.toggleMinimize(close).pipe(map(() => undefined));
     }
 
     public restore(page?: MainPage): Observable<void> {
         if (page) this.goToPage(page);
-        return this.uiWindow.restore();
+        return this.overwolfWindow.restore();
     }
 
     public focus(page?: MainPage): Observable<void> {
         if (page) this.goToPage(page);
-        return this.uiWindow.bringToFront(true);
+        return this.overwolfWindow.bringToFront(true);
     }
 
     public goToPage(page: MainPage): void {

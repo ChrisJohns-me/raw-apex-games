@@ -1,8 +1,7 @@
-import { UIWindow } from "@allfather-app/app/common/ui-window";
+import { OverwolfWindow, OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { WindowName } from "../../../common/window-name";
 
 @Injectable({
     providedIn: "root",
@@ -11,13 +10,13 @@ import { WindowName } from "../../../common/window-name";
         SingletonServiceProviderFactory("DevelopmentToolsWindowService", DevelopmentToolsWindowService, deps),
 })
 export class DevelopmentToolsWindowService {
-    private readonly uiWindow = new UIWindow(WindowName.DevelopmentTools);
+    private readonly overwolfWindow = new OverwolfWindow(OverwolfWindowName.DevelopmentTools);
 
     public open(): Observable<void> {
-        return this.uiWindow.restore();
+        return this.overwolfWindow.restore();
     }
 
     public close(): Observable<void> {
-        return this.uiWindow.close();
+        return this.overwolfWindow.close();
     }
 }

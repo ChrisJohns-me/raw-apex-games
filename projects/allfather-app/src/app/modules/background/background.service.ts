@@ -1,9 +1,8 @@
-import { UIWindow } from "@allfather-app/app/common/ui-window";
+import { OverwolfWindow, OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
 import { from, Observable, of, Subject } from "rxjs";
 import { catchError, concatAll, delay, map, mergeMap, switchMap, takeUntil, tap } from "rxjs/operators";
-import { WindowName } from "../../common/window-name";
 import { SingletonServiceContainerService } from "./singleton-service-container.service";
 
 const BACKGROUND_EXIT_DELAY = 1000;
@@ -25,7 +24,7 @@ export class BackgroundService implements OnDestroy {
 
     public exitApp(): void {
         console.trace(`[BackgroundService] Exiting App`);
-        const backgroundWindow = new UIWindow(WindowName.Background);
+        const backgroundWindow = new OverwolfWindow(OverwolfWindowName.Background);
         const closeBackgroundWindow$ = of(undefined).pipe(
             tap(() => console.trace(`[BackgroundService] Exiting App - delaying closing BackgroundService`)),
             delay(BACKGROUND_EXIT_DELAY),
@@ -38,13 +37,13 @@ export class BackgroundService implements OnDestroy {
 
     /** Closes all windows except Background */
     private closeAllWindows$(): Observable<void> {
-        const allWindowNames = Object.values(WindowName).filter((name) => name !== WindowName.Background);
+        const allWindowNames = Object.values(OverwolfWindowName).filter((name) => name !== OverwolfWindowName.Background);
         const allWindows$ = from(allWindowNames);
         return allWindows$.pipe(
             tap(() => console.trace(`[BackgroundService] Closing all windows`)),
             takeUntil(this.destroy$),
-            map((winName) => new UIWindow(winName)),
-            mergeMap((uiWindow) => uiWindow.close()),
+            map((winName) => new OverwolfWindow(winName)),
+            mergeMap((overwolfWindow) => overwolfWindow.close()),
             catchError((err) => {
                 console.warn(`[BackgroundService] Closing All windows warning:`, err);
                 return of(undefined);

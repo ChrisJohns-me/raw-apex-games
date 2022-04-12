@@ -1,4 +1,5 @@
 // export type OWGameInfoUpdatedEvent = overwolf.games.GameInfoUpdatedEvent;
+export type OWDisplay = overwolf.utils.Display;
 export type OWGameEvent = overwolf.gep.ApexLegends.GameEvent;
 export type OWGameEventKillFeed = overwolf.gep.ApexLegends.GameEventKillFeed;
 export type OWHotKey = overwolf.settings.hotkeys.IHotkey;
@@ -25,6 +26,7 @@ export type OWStreamResult = overwolf.streaming.StreamResult;
 export type OWStreamSettings = overwolf.streaming.StreamSettings;
 export type OWSystemTrayMenuItem = overwolf.os.tray.menu_item;
 export type OWVideoSplitedEvent = overwolf.streaming.VideoFileSplitedEvent;
+export type OWWindowInfo = overwolf.windows.WindowInfo;
 
 /**********************/
 /*****CORRECTIONS******/

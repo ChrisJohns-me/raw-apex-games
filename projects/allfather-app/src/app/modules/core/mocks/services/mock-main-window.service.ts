@@ -1,8 +1,8 @@
-import { UIWindow } from "@allfather-app/app/common/ui-window";
+import { OverwolfWindow } from "@allfather-app/app/common/overwolf-window";
 import { MainPage } from "@allfather-app/app/modules/main/pages/main-page";
 import { MainWindowService } from "@allfather-app/app/modules/main/windows/main-window.service";
 import { BehaviorSubject, of } from "rxjs";
-import { MockUIWindow } from "../components/mock-ui-window";
+import { MockOverwolfWindow } from "../components/mock-ui-window";
 
 export class MockMainWindowService implements MockedClass<MainWindowService> {
     public isRequestingExit$: MainWindowService["isRequestingExit$"] = new BehaviorSubject<boolean>(false);
@@ -27,5 +27,5 @@ export class MockMainWindowService implements MockedClass<MainWindowService> {
     public setIsStarting(value: boolean): ReturnType<MainWindowService["setIsStarting"]> {}
     public requestExit(): void {}
     public cancelExit(): void {}
-    public uiWindow = new MockUIWindow() as UIWindow;
+    public overwolfWindow = new MockOverwolfWindow() as OverwolfWindow;
 }

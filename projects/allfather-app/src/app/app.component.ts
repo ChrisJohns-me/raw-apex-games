@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs";
-import { UIWindow, UIWindowInfo } from "./common/ui-window";
-import { WindowName } from "./common/window-name";
+import { OverwolfWindow, OverwolfWindowName } from "./common/overwolf-window";
+import { OWWindowInfo } from "./modules/core/overwolf";
 
 @Component({
     selector: "app-root",
@@ -9,10 +9,10 @@ import { WindowName } from "./common/window-name";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
-    public WindowName = WindowName;
-    public uiWindowInfo?: Observable<UIWindowInfo>;
+    public OverwolfWindowName = OverwolfWindowName;
+    public owWindowInfo?: Observable<OWWindowInfo>;
 
     public ngOnInit(): void {
-        this.uiWindowInfo = UIWindow.getCurrentWindow();
+        this.owWindowInfo = OverwolfWindow.getCurrentWindow();
     }
 }

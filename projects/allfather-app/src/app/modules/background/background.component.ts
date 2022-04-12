@@ -44,7 +44,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     }
 
     public ngOnInit(): void {
-        this.setupUIWindows();
+        this.setupOverwolfWindows();
         this.hudWindowController.startWatchEvents();
         // this.captureController.startWatchEvents();
     }
@@ -54,7 +54,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    private setupUIWindows(): void {
+    private setupOverwolfWindows(): void {
         if (AUTOOPEN_DEV_TOOLS && environment.allowDevTools) {
             this.developmentToolsWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
         }

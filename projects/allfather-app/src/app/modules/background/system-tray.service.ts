@@ -1,11 +1,11 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
+import { OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { environment } from "@allfather-app/environments/environment";
 import { Injectable } from "@angular/core";
 import { exhaustiveEnumSwitch } from "common/utilities/switch";
 import { of } from "rxjs";
 import { catchError, takeUntil } from "rxjs/operators";
-import { WindowName } from "../../common/window-name";
 import { BaseService } from "../core/base-service.abstract";
 import { OWSystemTrayMenuItem } from "../core/overwolf";
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
@@ -50,7 +50,7 @@ const MENUITEMS: OWSystemTrayMenuItem[] = [
 const DEVTOOLS_MENUITEMS: OWSystemTrayMenuItem[] = [
     {
         label: "Development Tools",
-        id: WindowName.DevelopmentTools,
+        id: OverwolfWindowName.DevelopmentTools,
     },
 ];
 const FOOTER_MENUITEMS: OWSystemTrayMenuItem[] = [

@@ -38,7 +38,7 @@
 //     beforeEach(async () => {
 //         mockOverwolfAPI = new MockOverwolfAPI();
 //         mockOverwolfAPI.install();
-//         mockOverwolfAPI.mockUIWindowName = "hud-match-timer";
+//         mockOverwolfAPI.mockOverwolfWindowName = "hud-match-timer";
 //         await TestBed.configureTestingModule({
 //             declarations: [MatchTimerWindowComponent, MockUIContainerComponent],
 //             providers: [
@@ -75,7 +75,7 @@
 //             featureRegistrationService = TestBed.inject(OverwolfFeatureRegistrationService);
 //             overwolfGameDataService = TestBed.inject(OverwolfGameDataService);
 //             mockOverwolfAPI = TestBed.inject(MockOverwolfAPI);
-//             mockOverwolfAPI.mockUIWindowName = "hud-match-timer";
+//             mockOverwolfAPI.mockOverwolfWindowName = "hud-match-timer";
 //             fixture.detectChanges(); // ngOnInit
 //             // Arrange
 //             const startDate = new Date("Jan 1, 2020 12:00:00 PM");

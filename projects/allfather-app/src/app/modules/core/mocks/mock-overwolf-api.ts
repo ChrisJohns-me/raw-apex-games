@@ -18,7 +18,7 @@ export class MockOverwolfAPI {
         }
     }
 
-    public mockUIWindowName = "mock";
+    public mockOverwolfWindowName = "mock";
     public mockMonitorID = "mock";
     public setRequiredFeaturesShouldFail = false;
     public getRunningGameInfoShouldFail = false;
@@ -268,8 +268,8 @@ export class MockOverwolfAPI {
 
     private createWindows(): Partial<OverwolfObj["windows"]> {
         const windowInfo: overwolf.windows.WindowInfo = {
-            name: this.mockUIWindowName,
-            id: `Window_Extension_abc123_${this.mockUIWindowName}`,
+            name: this.mockOverwolfWindowName,
+            id: `Window_Extension_abc123_${this.mockOverwolfWindowName}`,
             state: "active",
             stateEx: "normal" as overwolf.windows.WindowStateEx,
             isVisible: true,
@@ -299,7 +299,7 @@ export class MockOverwolfAPI {
             },
             getCurrentWindow: (callbackFn: overwolf.CallbackFunction<overwolf.windows.WindowResult>): void => {
                 callbackFn({
-                    window: { ...windowInfo, name: this.mockUIWindowName },
+                    window: { ...windowInfo, name: this.mockOverwolfWindowName },
                     success: true,
                 });
             },

@@ -1,7 +1,7 @@
-import { UIWindow, WindowState } from "@allfather-app/app/common/ui-window";
+import { OverwolfWindow, OverwolfWindowState } from "@allfather-app/app/common/overwolf-window";
 import { Observable, of } from "rxjs";
 
-export class MockUIWindow implements MockedClass<UIWindow> {
+export class MockOverwolfWindow implements MockedClass<OverwolfWindow> {
     public name = "";
 
     public assureObtained(): Observable<void> {
@@ -46,7 +46,7 @@ export class MockUIWindow implements MockedClass<UIWindow> {
     public sendToBack(): Observable<void> {
         return of();
     }
-    public getState(): Observable<WindowState> {
+    public getState(): Observable<OverwolfWindowState> {
         return of();
     }
     public getSize(): Observable<{ height: number; width: number }> {

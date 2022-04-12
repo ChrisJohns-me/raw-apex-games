@@ -1,5 +1,4 @@
-import { UIWindow } from "@allfather-app/app/common/ui-window";
-import { WindowName } from "@allfather-app/app/common/window-name";
+import { OverwolfWindow, OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
@@ -10,13 +9,13 @@ import { Observable } from "rxjs";
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("UltTimerWindowService", UltTimerWindowService, deps),
 })
 export class UltTimerWindowService {
-    private readonly uiWindow = new UIWindow(WindowName.HUDUltTimer);
+    private readonly overwolfWindow = new OverwolfWindow(OverwolfWindowName.HUDUltTimer);
 
     public open(): Observable<void> {
-        return this.uiWindow.restore();
+        return this.overwolfWindow.restore();
     }
 
     public close(): Observable<void> {
-        return this.uiWindow.close();
+        return this.overwolfWindow.close();
     }
 }

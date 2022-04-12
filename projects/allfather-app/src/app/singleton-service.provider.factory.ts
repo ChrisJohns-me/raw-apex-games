@@ -5,11 +5,10 @@
  * Singleton services should be typically be registered with
  * the Background service. Non-registered services may cause memory leaks.
  */
-import { WindowName as AllfatherWindowName } from "@allfather-app/app/common/window-name";
 import { environment } from "@allfather-app/environments/environment";
 import { Provider } from "@angular/core";
 import { take } from "rxjs/operators";
-import { UIWindow } from "./common/ui-window";
+import { OverwolfWindow, OverwolfWindowName } from "./common/overwolf-window";
 
 export const INSTANTIATIONS_KEY = "$__singletonInstantiations";
 type Singleton = Provider;
@@ -26,7 +25,7 @@ declare interface Window {
  */
 export function SingletonServiceProviderFactory(referenceKey: string, service: Provider, deps: any[] = []): Singleton {
     const logPrefix = `[SingletonServiceProvider] "${referenceKey}"`;
-    const owWindow = UIWindow.getMainWindow() as unknown as Window;
+    const owWindow = OverwolfWindow.getMainWindow() as unknown as Window;
     validateNumDependencies(service, deps, referenceKey);
 
     if (!owWindow[INSTANTIATIONS_KEY]) owWindow[INSTANTIATIONS_KEY] = {};
@@ -44,7 +43,7 @@ export function SingletonServiceProviderFactory(referenceKey: string, service: P
 }
 
 function isServiceInstantiated(referenceKey: string): boolean {
-    const owWindow = UIWindow.getMainWindow() as unknown as Window;
+    const owWindow = OverwolfWindow.getMainWindow() as unknown as Window;
     const serviceRef = owWindow?.[INSTANTIATIONS_KEY]?.[referenceKey];
     const isInstantiated = !!serviceRef && typeof serviceRef === "object";
     return isInstantiated;
@@ -57,10 +56,10 @@ function validateIsBackgroundWindow(referenceKey: string): void {
         console.error(`This is a unit test; bailing`);
         return;
     }
-    UIWindow.getCurrentWindow()
+    OverwolfWindow.getCurrentWindow()
         .pipe(take(1))
         .subscribe((currentWindow) => {
-            if (currentWindow.name !== AllfatherWindowName.Background) {
+            if (currentWindow.name !== OverwolfWindowName.Background) {
                 const errMsg = `[SingletonServiceProvider] "${referenceKey}" Singleton Service is not instantiated on the Background Window; is instantiated on "${currentWindow.name}"`;
                 if (environment.DEV) throw new Error(errMsg);
                 console.error(errMsg);

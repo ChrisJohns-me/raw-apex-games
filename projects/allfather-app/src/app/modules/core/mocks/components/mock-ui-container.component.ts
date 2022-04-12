@@ -1,6 +1,6 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
 import { FeatureState } from "@allfather-app/app/common/feature-status";
-import { WindowState } from "@allfather-app/app/common/ui-window";
+import { OverwolfWindowState } from "@allfather-app/app/common/overwolf-window";
 import {
     ConfigPositionXAnchor,
     ConfigPositionYAnchor,
@@ -56,9 +56,9 @@ export class MockUIContainerComponent implements MockedClass<UIContainerComponen
     @Input() public showOverwolfAllFeatureStates = false;
 
     public allFeatureStates?: FeatureState;
-    public state: WindowState = WindowState.Normal;
+    public state: OverwolfWindowState = OverwolfWindowState.Normal;
     public isDev = false;
-    public WindowState = WindowState;
+    public WindowState = OverwolfWindowState;
     public mdiCogOutline = mdiCogOutline;
     public mdiWindowMinimize = mdiWindowMinimize;
     public mdiWindowMaximize = mdiWindowMaximize;

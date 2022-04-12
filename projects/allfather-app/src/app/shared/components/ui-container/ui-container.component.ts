@@ -1,6 +1,6 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
 import { FeatureState } from "@allfather-app/app/common/feature-status";
-import { UIWindow, WindowState } from "@allfather-app/app/common/ui-window";
+import { OverwolfWindow, OverwolfWindowState } from "@allfather-app/app/common/overwolf-window";
 import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { OverwolfFeatureStatusService } from "@allfather-app/app/modules/core/overwolf/overwolf-feature-status.service";
@@ -78,16 +78,16 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     @Input() public showOverwolfAllFeatureStates = false;
 
     public allFeatureStates?: FeatureState;
-    public state: WindowState = WindowState.Normal;
+    public state: OverwolfWindowState = OverwolfWindowState.Normal;
     public isDev = environment.DEV;
-    public WindowState = WindowState;
+    public WindowState = OverwolfWindowState;
     public mdiCogOutline = mdiCogOutline;
     public mdiWindowMinimize = mdiWindowMinimize;
     public mdiWindowMaximize = mdiWindowMaximize;
     public mdiWindowRestore = mdiWindowRestore;
     public mdiWindowClose = mdiWindowClose;
 
-    private readonly uiWindow = new UIWindow();
+    private readonly overwolfWindow = new OverwolfWindow();
     private _primaryTitle = "";
     private obtained$?: Observable<boolean>;
     private destroy$ = new Subject<void>();
@@ -104,7 +104,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     public ngOnInit(): void {
-        this.obtained$ = this.uiWindow.assureObtained().pipe(
+        this.obtained$ = this.overwolfWindow.assureObtained().pipe(
             map(() => true),
             shareReplay(1)
         );
@@ -190,7 +190,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     private setupPageviewTracking(): void {
-        UIWindow.getCurrentWindow()
+        OverwolfWindow.getCurrentWindow()
             .pipe(
                 takeUntil(this.destroy$),
                 filter(() => this.enablePageviewTracking),
@@ -207,7 +207,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
 
     private setupDefaultSize(): void {
         // Set default size (is DPI unaware)
-        this.uiWindow
+        this.overwolfWindow
             .getMonitor()
             .pipe(takeUntil(this.destroy$))
             .subscribe((monitor) => {
@@ -230,8 +230,8 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         });
     }
 
-    private getState(): Observable<WindowState> {
-        return this.uiWindow.getState().pipe(tap((winState) => (this.state = winState)));
+    private getState(): Observable<OverwolfWindowState> {
+        return this.overwolfWindow.getState().pipe(tap((winState) => (this.state = winState)));
     }
 
     private onDrag(event: MouseEvent): void {
@@ -239,11 +239,11 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         if (target?.tagName === "INPUT") {
             return;
         }
-        this.obtained$?.pipe(takeUntil(this.destroy$)).subscribe(() => this.uiWindow.dragMove());
+        this.obtained$?.pipe(takeUntil(this.destroy$)).subscribe(() => this.overwolfWindow.dragMove());
     }
 
     private minimizeToggle(): void {
-        this.uiWindow
+        this.overwolfWindow
             .toggleMinimize()
             .pipe(
                 takeUntil(this.destroy$),
@@ -254,7 +254,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     private maximizeToggle(): void {
-        this.uiWindow
+        this.overwolfWindow
             .toggleMaximize()
             .pipe(
                 takeUntil(this.destroy$),
@@ -268,7 +268,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         this.obtained$
             ?.pipe(
                 takeUntil(this.destroy$),
-                switchMap(() => this.uiWindow.close())
+                switchMap(() => this.overwolfWindow.close())
             )
             .subscribe();
     }
@@ -290,15 +290,15 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         const widthPixel = Math.round(screenWidth * widthPercentClamp);
         const heightPixel = Math.round(screenHeight * heightPercentClamp);
 
-        if (isEmpty(this.uiWindow.name)) {
+        if (isEmpty(this.overwolfWindow.name)) {
             console.warn(`[${this.constructor.name}] Unable to setSizeByPercent; window name is empty`);
             return;
         }
         console.log(
-            `Setting "${this.uiWindow.name}" size to: ${widthPixel}px (${widthPercentClamp * 100}%) width,  ` +
+            `Setting "${this.overwolfWindow.name}" size to: ${widthPixel}px (${widthPercentClamp * 100}%) width,  ` +
                 `${heightPixel}px (${heightPercentClamp * 100}%) height`
         );
-        this.uiWindow.changeSize(widthPixel, heightPixel).pipe(takeUntil(this.destroy$)).subscribe();
+        this.overwolfWindow.changeSize(widthPixel, heightPixel).pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     /**
@@ -318,24 +318,24 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
             heightPixel = Math.round(screenHeight * heightPercentClamp);
         }
 
-        if (isEmpty(this.uiWindow.name)) {
+        if (isEmpty(this.overwolfWindow.name)) {
             console.error(`[${this.constructor.name}] Unable to setSizeByPercent; window name is empty`);
             return;
         }
 
         console.log(
-            `Setting "${this.uiWindow.name}" MIN size to: ${widthPixel}px ${
+            `Setting "${this.overwolfWindow.name}" MIN size to: ${widthPixel}px ${
                 widthPercentClamp ? widthPercentClamp * 100 + "% " : ""
             }width,  ` + `${heightPixel}px ${heightPercentClamp ? heightPercentClamp * 100 + "% " : ""}height`
         );
-        this.uiWindow.setMinSize(widthPixel, heightPixel).pipe(takeUntil(this.destroy$)).subscribe();
+        this.overwolfWindow.setMinSize(widthPixel, heightPixel).pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     private updatePosition(): void {
         if (!this.position) return;
         const screenSize = { height: 0, width: 0 };
         const windowSize = { height: 0, width: 0 };
-        this.uiWindow
+        this.overwolfWindow
             .getMonitor()
             .pipe(
                 takeUntil(this.destroy$),
@@ -343,13 +343,13 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
                     screenSize.height = monitor.height;
                     screenSize.width = monitor.width;
                 }),
-                switchMap(() => this.uiWindow.getSize()),
+                switchMap(() => this.overwolfWindow.getSize()),
                 tap((_windowSize) => {
                     windowSize.height = _windowSize.height;
                     windowSize.width = _windowSize.width;
                 }),
                 map(() => toTopLeftFn(this.position!, screenSize, windowSize)),
-                switchMap((newPos) => this.uiWindow.changePosition(newPos.left, newPos.top)),
+                switchMap((newPos) => this.overwolfWindow.changePosition(newPos.left, newPos.top)),
                 finalize(() => this.cdr.detectChanges())
             )
             .subscribe();
