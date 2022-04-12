@@ -1,9 +1,6 @@
-import { GameProcessService } from "@allfather-app/app/common/services/game-process.service";
-import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
-import { OverwolfGameDataService } from "@allfather-app/app/common/services/overwolf";
-import { OverwolfProfileService } from "@allfather-app/app/common/services/overwolf/overwolf-profile.service";
-import { PlayerAccountStatsService } from "@allfather-app/app/common/services/player-account-stats/player-account-stats.service";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
+import { GameProcessService } from "@allfather-app/app/modules/core/game-process.service";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
 import { MapRotationService } from "@allfather-app/app/modules/core/map-rotation/map-rotation.service";
 import { MatchMapService } from "@allfather-app/app/modules/core/match/match-map.service";
@@ -20,6 +17,9 @@ import { MockOverwolfProfileService } from "@allfather-app/app/modules/core/mock
 import { MockPlayerAccountStatsService } from "@allfather-app/app/modules/core/mocks/services/mock-player-account-stats.service";
 import { MockPlayerStatsService } from "@allfather-app/app/modules/core/mocks/services/mock-player-stats.service";
 import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-player.service";
+import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
+import { OverwolfProfileService } from "@allfather-app/app/modules/core/overwolf/overwolf-profile.service";
+import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats.service";
 import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-local-stats.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";

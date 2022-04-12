@@ -1,6 +1,6 @@
-import { BrowserWindowRef, WINDOW } from "@allfather-app/app/common/services/window.service";
 import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
+import { BrowserWindowRef, WINDOW } from "@allfather-app/app/modules/core/global-window.provider";
 import { MatchMapService } from "@allfather-app/app/modules/core/match/match-map.service";
 import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";

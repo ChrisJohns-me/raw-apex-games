@@ -1,5 +1,5 @@
 import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
-import { OverwolfExtensionsService } from "@allfather-app/app/common/services/overwolf/overwolf-extensions.service";
+import { OverwolfExtensionsService } from "@allfather-app/app/modules/core/overwolf/overwolf-extensions.service";
 import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { of, Subject } from "rxjs";
 

@@ -5,11 +5,11 @@
  * Singleton services should be typically be registered with
  * the Background service. Non-registered services may cause memory leaks.
  */
-import { WindowName as AllfatherWindowName } from "@allfather-app/app/modules/core/window-name";
+import { WindowName as AllfatherWindowName } from "@allfather-app/app/common/window-name";
 import { environment } from "@allfather-app/environments/environment";
 import { Provider } from "@angular/core";
 import { take } from "rxjs/operators";
-import { UIWindow } from "./modules/core/_refactor/ui-window";
+import { UIWindow } from "./common/ui-window";
 
 export const INSTANTIATIONS_KEY = "$__singletonInstantiations";
 type Singleton = Provider;

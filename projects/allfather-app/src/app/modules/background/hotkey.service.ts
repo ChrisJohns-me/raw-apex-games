@@ -1,11 +1,11 @@
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { OWConfig, OW_CONFIG } from "@allfather-app/app/common/services/overwolf/overwolf-config";
-import { OverwolfHotKeyService } from "@allfather-app/app/common/services/overwolf/overwolf-hotkey.service";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Inject, Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
-import { Hotkey } from "../core/hotkey";
+import { Hotkey } from "../../common/hotkey";
+import { BaseService } from "../core/base-service.abstract";
+import { OWConfig, OW_CONFIG } from "../core/overwolf/overwolf-config";
+import { OverwolfHotKeyService } from "../core/overwolf/overwolf-hotkey.service";
 
 @Injectable({
     providedIn: "root",

@@ -1,5 +1,5 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
-import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -17,10 +17,10 @@ import { isEmpty, wordsToUpperCase } from "common/utilities/";
 import { exhaustiveEnumSwitch } from "common/utilities/switch";
 import { interval, Subject } from "rxjs";
 import { delayWhen, filter, map, take, takeUntil } from "rxjs/operators";
+import { Hotkey, HotkeyEnum } from "../../../common/hotkey";
 import { BackgroundService } from "../../background/background.service";
 import { HotkeyService } from "../../background/hotkey.service";
 import { ConfigLoadStatus, ConfigurationService } from "../../core/configuration.service";
-import { Hotkey, HotkeyEnum } from "../../core/hotkey";
 import { MainPage } from "../pages/main-page";
 import { MainWindowService } from "./main-window.service";
 

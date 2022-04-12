@@ -1,6 +1,6 @@
+import { FeatureState, OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { Injectable, OnDestroy } from "@angular/core";
 import { Subject } from "rxjs";
-import { FeatureState, OverwolfFeatureDep } from "../feature-status";
 import { OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status.service";
 
 @Injectable()

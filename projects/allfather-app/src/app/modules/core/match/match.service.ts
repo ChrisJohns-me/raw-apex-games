@@ -1,8 +1,6 @@
 import { MatchGameMode } from "@allfather-app/app/common/match/game-mode/game-mode";
 import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/common/services/overwolf";
 import { TriggerConditions } from "@allfather-app/app/common/utilities/trigger-conditions";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
@@ -12,8 +10,10 @@ import { IndexableType } from "dexie";
 import { BehaviorSubject, defer, from, merge, Observable, of, Subject, throwError } from "rxjs";
 import { filter, map, take, takeUntil, tap, timeoutWith } from "rxjs/operators";
 import { v4 as uuid, validate as uuidValidate } from "uuid";
+import { BaseService } from "../base-service.abstract";
 import { LocalDatabaseService } from "../local-database/local-database.service";
 import { MatchDataStore } from "../local-database/match-data-store";
+import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "../overwolf";
 
 /** Time allowed to wait for Overwolf's "psuedo_match_id", before generating our own */
 const MATCHID_TIMEOUT = 5000;

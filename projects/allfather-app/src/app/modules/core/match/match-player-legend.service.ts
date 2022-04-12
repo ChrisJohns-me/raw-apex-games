@@ -1,7 +1,5 @@
 import { Legend } from "@allfather-app/app/common/legend/legend";
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { OverwolfGameDataService } from "@allfather-app/app/common/services/overwolf";
 import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
@@ -10,6 +8,8 @@ import { Injectable } from "@angular/core";
 import { mathClamp } from "common/utilities/";
 import { BehaviorSubject, combineLatest, of, Subject } from "rxjs";
 import { distinctUntilChanged, filter, map, pairwise, switchMap, takeUntil, tap } from "rxjs/operators";
+import { BaseService } from "../base-service.abstract";
+import { OverwolfGameDataService } from "../overwolf";
 import { MatchLegendSelectService } from "./match-legend-select.service";
 import { MatchPlayerLocationService } from "./match-player-location.service";
 

@@ -3,14 +3,14 @@ import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
 import { MapRotationData, MapRotationInfo } from "@allfather-app/app/common/match/map/map-rotation-data";
 import { MatchMapFriendlyName, MatchMapGenericId } from "@allfather-app/app/common/match/map/map.enum";
 import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { GameProcessService } from "@allfather-app/app/common/services/game-process.service";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { addMinutes } from "date-fns";
 import { BehaviorSubject, combineLatest, Observable, of, throwError, timer } from "rxjs";
 import { delay, filter, map, mergeMap, retryWhen, switchMap, takeUntil, tap } from "rxjs/operators";
+import { BaseService } from "../base-service.abstract";
+import { GameProcessService } from "../game-process.service";
 import { MatchService } from "../match/match.service";
 import { MapRotationMozambiquehereDTO } from "./map-rotation-mozambiquehere-dto";
 

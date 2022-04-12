@@ -4,12 +4,12 @@ import { MatchInflictionEvent } from "@allfather-app/app/common/match/infliction
 import { MatchRoster } from "@allfather-app/app/common/match/roster";
 import { MatchRosterTeammate } from "@allfather-app/app/common/match/roster-teammate";
 import { PlayerState } from "@allfather-app/app/common/player-state";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
 import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, combineLatest, Subject } from "rxjs";
 import { filter, pairwise, switchMap, takeUntil } from "rxjs/operators";
+import { BaseService } from "../base-service.abstract";
 import { MatchKillfeedService } from "./match-killfeed.service";
 import { MatchPlayerService } from "./match-player.service";
 import { MatchRosterService } from "./match-roster.service";

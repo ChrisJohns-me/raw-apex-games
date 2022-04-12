@@ -1,4 +1,3 @@
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
 import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
 import { SettingsDataStore } from "@allfather-app/app/modules/core/local-database/settings-data-store";
@@ -7,6 +6,7 @@ import { Injectable } from "@angular/core";
 import { IndexableType } from "dexie";
 import { defer, from, merge, Observable, of, throwError } from "rxjs";
 import { filter, map, switchMap } from "rxjs/operators";
+import { BaseService } from "./base-service.abstract";
 
 @Injectable({
     providedIn: "root",

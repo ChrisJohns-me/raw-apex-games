@@ -1,5 +1,5 @@
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
-import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { differenceInMinutes } from "date-fns";
 import { BehaviorSubject, Subject } from "rxjs";
 import { ReportableDataFactoryMap } from "../reportable-data";

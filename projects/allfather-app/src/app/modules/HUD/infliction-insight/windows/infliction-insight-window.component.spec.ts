@@ -3,8 +3,8 @@ import { MatchInflictionEvent, MatchInflictionEventAccum } from "@allfather-app/
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
 import { PlayerState } from "@allfather-app/app/common/player-state";
-import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { MatchKillfeedService } from "@allfather-app/app/modules/core/match/match-killfeed.service";
 import { MatchPlayerInflictionService } from "@allfather-app/app/modules/core/match/match-player-infliction.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";

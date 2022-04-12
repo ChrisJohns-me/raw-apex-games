@@ -1,6 +1,6 @@
-import { OverwolfInputTrackingService } from "@allfather-app/app/common/services/overwolf/overwolf-input-tracking.service";
 import { DefaultSetting } from "@allfather-app/app/common/settings";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
+import { OverwolfInputTrackingService } from "@allfather-app/app/modules/core/overwolf/overwolf-input-tracking.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { combineLatest, Subject } from "rxjs";

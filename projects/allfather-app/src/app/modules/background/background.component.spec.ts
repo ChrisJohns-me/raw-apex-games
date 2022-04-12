@@ -1,13 +1,13 @@
-import { GameProcessService } from "@allfather-app/app/common/services/game-process.service";
-import { OverwolfExtensionsService } from "@allfather-app/app/common/services/overwolf/overwolf-extensions.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Title } from "@angular/platform-browser";
+import { GameProcessService } from "../core/game-process.service";
 import { MockBackgroundService } from "../core/mocks/services/mock-background.service";
 import { MockCaptureControllerService } from "../core/mocks/services/mock-capture-controller.service";
 import { MockGameProcessService } from "../core/mocks/services/mock-game-process.service";
 import { MockHotkeyService } from "../core/mocks/services/mock-hotkey.service";
 import { MockMainWindowService } from "../core/mocks/services/mock-main-window.service";
 import { MockOverwolfExtensionsService } from "../core/mocks/services/mock-overwolf-extensions.service";
+import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
 import { MainWindowService } from "../main/windows/main-window.service";
 import { BackgroundComponent } from "./background.component";

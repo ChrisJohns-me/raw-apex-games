@@ -1,5 +1,6 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
 import { FeatureState } from "@allfather-app/app/common/feature-status";
+import { WindowState } from "@allfather-app/app/common/ui-window";
 import {
     ConfigPositionXAnchor,
     ConfigPositionYAnchor,
@@ -8,7 +9,6 @@ import {
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { mdiCogOutline, mdiWindowClose, mdiWindowMaximize, mdiWindowMinimize, mdiWindowRestore } from "@mdi/js";
-import { WindowState } from "../../_refactor/ui-window";
 
 type WindowPositionInput = {
     // x, y: percent

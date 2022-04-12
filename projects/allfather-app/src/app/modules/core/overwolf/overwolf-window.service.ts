@@ -13,7 +13,7 @@ import { VisibilityDelegate } from "./api/windows/visibility-delegate";
 @Injectable({
     providedIn: "root",
     deps: [],
-    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("OverwolfGameDataService", OverwolfWindowService, deps),
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("OverwolfWindowService", OverwolfWindowService, deps),
 })
 export class OverwolfWindowService {
     //#region Delegate Outputs
@@ -32,11 +32,6 @@ export class OverwolfWindowService {
 
     public ngOnDestroy(): void {
         this.stopWindowEventListeners();
-        this.instances.onDestroy();
-        this.settings.onDestroy();
-        this.size.onDestroy();
-        this.state.onDestroy();
-        this.visibility.onDestroy();
         this.destroy$.next();
         this.destroy$.complete();
     }

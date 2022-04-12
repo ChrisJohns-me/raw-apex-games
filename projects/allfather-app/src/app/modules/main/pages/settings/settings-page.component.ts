@@ -1,8 +1,8 @@
-import { FileService } from "@allfather-app/app/common/services/file.service";
+import { Hotkey } from "@allfather-app/app/common/hotkey";
 import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
 import { HotkeyService } from "@allfather-app/app/modules/background/hotkey.service";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
-import { Hotkey } from "@allfather-app/app/modules/core/hotkey";
+import { FileService } from "@allfather-app/app/modules/core/file.service";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
 import { SettingsDataStore } from "@allfather-app/app/modules/core/local-database/settings-data-store";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";

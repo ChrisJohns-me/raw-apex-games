@@ -2,7 +2,7 @@ import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import {
     OverwolfFeatureRegistrationService,
     OWFeatureRegistrationStatus,
-} from "@allfather-app/app/common/services/overwolf/overwolf-feature-registration.service";
+} from "@allfather-app/app/modules/core/overwolf/overwolf-feature-registration.service";
 import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { BehaviorSubject, of } from "rxjs";
 

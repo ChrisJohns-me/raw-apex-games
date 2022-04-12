@@ -1,6 +1,6 @@
 import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
-import { MozambiqueherePlatform } from "@allfather-app/app/common/services/player-account-stats/player-account-stats-mozambiquehere-dto";
-import { PlayerAccountStatsService } from "@allfather-app/app/common/services/player-account-stats/player-account-stats.service";
+import { MozambiqueherePlatform } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats-mozambiquehere-dto";
+import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats.service";
 import { of } from "rxjs";
 
 export class MockPlayerAccountStatsService implements MockedClass<PlayerAccountStatsService> {

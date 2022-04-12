@@ -1,6 +1,6 @@
-import { FileService } from "@allfather-app/app/common/services/file.service";
 import { HotkeyService } from "@allfather-app/app/modules/background/hotkey.service";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
+import { FileService } from "@allfather-app/app/modules/core/file.service";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
 import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/services/mock-configuration.service";
 import { MockFileService } from "@allfather-app/app/modules/core/mocks/services/mock-file.service";

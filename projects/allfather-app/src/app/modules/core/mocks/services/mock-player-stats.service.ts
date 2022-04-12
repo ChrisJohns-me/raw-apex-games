@@ -1,7 +1,7 @@
 import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
+import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
 import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-local-stats.service";
-import { AvgMatchStats } from "@allfather-app/app/modules/core/utilities/match-stats";
 import { Observable, of } from "rxjs";
 
 export class MockPlayerStatsService implements MockedClass<PlayerLocalStatsService> {

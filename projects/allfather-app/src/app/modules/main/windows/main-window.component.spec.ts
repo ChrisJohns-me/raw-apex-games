@@ -1,11 +1,11 @@
-import { FileService } from "@allfather-app/app/common/services/file.service";
-import { GameProcessService } from "@allfather-app/app/common/services/game-process.service";
-import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
-import { PlayerAccountStatsService } from "@allfather-app/app/common/services/player-account-stats/player-account-stats.service";
-import { BrowserWindowRef, WINDOW } from "@allfather-app/app/common/services/window.service";
+import { FileService } from "@allfather-app/app/modules/core/file.service";
+import { GameProcessService } from "@allfather-app/app/modules/core/game-process.service";
+import { BrowserWindowRef, WINDOW } from "@allfather-app/app/modules/core/global-window.provider";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { MapRotationService } from "@allfather-app/app/modules/core/map-rotation/map-rotation.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { MockBackgroundService } from "@allfather-app/app/modules/core/mocks/services/mock-background.service";
+import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";

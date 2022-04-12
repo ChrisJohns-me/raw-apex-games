@@ -1,10 +1,10 @@
-import { OverwolfInputTrackingService } from "@allfather-app/app/common/services/overwolf/overwolf-input-tracking.service";
 import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MockUIContainerComponent } from "@allfather-app/app/modules/core/mocks/components/mock-ui-container.component";
 import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/services/mock-configuration.service";
 import { MockOverwolfInputTrackingService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-input-tracking.service";
 import { MockSettingsService } from "@allfather-app/app/modules/core/mocks/services/mock-settings.service";
+import { OverwolfInputTrackingService } from "@allfather-app/app/modules/core/overwolf/overwolf-input-tracking.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";

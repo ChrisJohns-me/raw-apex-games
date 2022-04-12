@@ -1,5 +1,5 @@
 import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
-import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 
 export class MockGoogleAnalyticsService implements MockedClass<GoogleAnalyticsService> {
     public sendEvent(eventCategory: string, eventAction: string, eventLabel?: string, eventValue?: number): void {}

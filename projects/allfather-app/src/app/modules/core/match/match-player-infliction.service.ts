@@ -2,8 +2,6 @@ import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
 import { MatchInflictionEvent } from "@allfather-app/app/common/match/infliction-event";
 import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
 import { PlayerState } from "@allfather-app/app/common/player-state";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { OverwolfGameDataService } from "@allfather-app/app/common/services/overwolf";
 import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { MatchKillfeedService } from "@allfather-app/app/modules/core/match/match-killfeed.service";
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
@@ -13,6 +11,8 @@ import { Injectable } from "@angular/core";
 import { cleanInt, isEmpty, parseBoolean } from "common/utilities/";
 import { Observable, partition, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
+import { BaseService } from "../base-service.abstract";
+import { OverwolfGameDataService } from "../overwolf";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
 import { MatchPlayerService } from "./match-player.service";
 

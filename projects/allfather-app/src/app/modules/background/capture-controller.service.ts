@@ -1,6 +1,6 @@
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
+import { BaseService } from "../core/base-service.abstract";
 
 export enum VideoCaptureMode {
     Manual = "manual",

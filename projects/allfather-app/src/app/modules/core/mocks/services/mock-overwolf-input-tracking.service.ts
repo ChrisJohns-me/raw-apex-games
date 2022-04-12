@@ -1,5 +1,5 @@
 import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
-import { OverwolfInputTrackingService } from "@allfather-app/app/common/services/overwolf/overwolf-input-tracking.service";
+import { OverwolfInputTrackingService } from "@allfather-app/app/modules/core/overwolf/overwolf-input-tracking.service";
 import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { Subject } from "rxjs";
 

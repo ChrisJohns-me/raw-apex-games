@@ -3,7 +3,6 @@ import { MatchRoster } from "@allfather-app/app/common/match/roster";
 import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
 import { MatchState } from "@allfather-app/app/common/match/state";
 import { PlayerState } from "@allfather-app/app/common/player-state";
-import { OverwolfGameDataService } from "@allfather-app/app/common/services/overwolf";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { TestScheduler } from "rxjs/testing";
@@ -11,6 +10,7 @@ import { MockMatchRosterService } from "../mocks/services/mock-match-roster.serv
 import { MockMatchService } from "../mocks/services/mock-match.service";
 import { MockOverwolfGameDataService } from "../mocks/services/mock-overwolf-game-data.service";
 import { MockPlayerService } from "../mocks/services/mock-player.service";
+import { OverwolfGameDataService } from "../overwolf";
 import { MatchKillfeedService } from "./match-killfeed.service";
 import { MatchRosterService } from "./match-roster.service";
 import { MatchService } from "./match.service";

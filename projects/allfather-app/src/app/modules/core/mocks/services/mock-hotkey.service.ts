@@ -2,7 +2,7 @@ import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
 import { HotkeyService } from "@allfather-app/app/modules/background/hotkey.service";
 import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { Observable, of, Subject } from "rxjs";
-import { Hotkey } from "../../hotkey";
+import { Hotkey } from "../../../../common/hotkey";
 
 export class MockHotkeyService implements MockedClass<HotkeyService> {
     public onHotkeyPressed$ = new Subject<ExtractSubjectType<HotkeyService["onHotkeyPressed$"]>>();

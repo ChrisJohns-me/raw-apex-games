@@ -1,5 +1,5 @@
-import { OverwolfConfig } from "@allfather-app/app/common/services/overwolf/overwolf-config";
 import { createOverwolfObj } from "@allfather-app/app/common/testing-helpers";
+import { OverwolfConfig } from "../overwolf/overwolf-config";
 
 type CallbackFn = (...args: any[]) => void;
 type OverwolfObj = typeof overwolf;

@@ -1,10 +1,10 @@
 import { MatchRing } from "@allfather-app/app/common/match/ring";
 import { MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, combineLatest, interval } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
+import { BaseService } from "../base-service.abstract";
 import { ConfigurationService } from "../configuration.service";
 import { MatchService } from "./match.service";
 

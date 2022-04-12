@@ -1,14 +1,14 @@
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { OverwolfGameDataService, OWGameEventKillFeed } from "@allfather-app/app/common/services/overwolf";
 import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { isEmpty } from "common/utilities/";
 import { BehaviorSubject, defer, from, iif, merge, Observable, of } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
+import { BaseService } from "./base-service.abstract";
 import { LocalDatabaseService } from "./local-database/local-database.service";
 import { LocalStorageKeys } from "./local-storage/local-storage-keys";
 import { LocalStorageService } from "./local-storage/local-storage.service";
+import { OverwolfGameDataService, OWGameEventKillFeed } from "./overwolf";
 
 @Injectable({
     providedIn: "root",

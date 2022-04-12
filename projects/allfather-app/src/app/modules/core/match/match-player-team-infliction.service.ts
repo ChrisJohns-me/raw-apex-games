@@ -1,10 +1,10 @@
 import { MatchInflictionEvent } from "@allfather-app/app/common/match/infliction-event";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
 import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { MatchKillfeedService } from "@allfather-app/app/modules/core/match/match-killfeed.service";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { Observable, partition } from "rxjs";
+import { BaseService } from "../base-service.abstract";
 import { MatchRosterService } from "./match-roster.service";
 
 /**

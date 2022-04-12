@@ -1,12 +1,12 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
-import { GameProcessService } from "@allfather-app/app/common/services/game-process.service";
-import { OverwolfExtensionsService } from "@allfather-app/app/common/services/overwolf/overwolf-extensions.service";
 import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Subject } from "rxjs";
 import { filter, switchMap, takeUntil } from "rxjs/operators";
-import { HotkeyEnum } from "../core/hotkey";
+import { HotkeyEnum } from "../../common/hotkey";
+import { GameProcessService } from "../core/game-process.service";
+import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
 import { MainWindowService } from "../main/windows/main-window.service";
 import { BackgroundService } from "./background.service";

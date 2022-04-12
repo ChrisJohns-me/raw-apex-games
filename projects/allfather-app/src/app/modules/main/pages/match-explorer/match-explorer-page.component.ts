@@ -5,12 +5,12 @@ import { MatchGameModeList, sortMatchGameModeList } from "@allfather-app/app/com
 import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
 import { latestGenericMap, MatchMapList, sortMatchMapList } from "@allfather-app/app/common/match/map/map-list";
 import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
-import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
+import { AvgMatchStats, avgStats, SumMatchStats, sumStats } from "@allfather-app/app/common/utilities/match-stats";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { ReportingEngineId, ReportingStatus } from "@allfather-app/app/modules/core/reporting/reporting-engine/reporting-engine";
 import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
-import { AvgMatchStats, avgStats, SumMatchStats, sumStats } from "@allfather-app/app/modules/core/utilities/match-stats";
 import { DataItem } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, TrackByFunction } from "@angular/core";
 import { FormControl } from "@angular/forms";

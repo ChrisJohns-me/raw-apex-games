@@ -1,9 +1,9 @@
+import { UIWindow } from "@allfather-app/app/common/ui-window";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
 import { from, Observable, of, Subject } from "rxjs";
 import { catchError, concatAll, delay, map, mergeMap, switchMap, takeUntil, tap } from "rxjs/operators";
-import { WindowName } from "../core/window-name";
-import { UIWindow } from "../core/_refactor/ui-window";
+import { WindowName } from "../../common/window-name";
 import { SingletonServiceContainerService } from "./singleton-service-container.service";
 
 const BACKGROUND_EXIT_DELAY = 1000;

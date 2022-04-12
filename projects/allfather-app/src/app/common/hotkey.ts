@@ -1,5 +1,5 @@
-import { OWHotKey, OWHotKeyAssignHotkeyObject } from "@allfather-app/app/common/services/overwolf";
 import keycode from "keycode";
+import { OWHotKey, OWHotKeyAssignHotkeyObject } from "../modules/core/overwolf";
 
 export enum HotkeyEnum {
     ToggleMain = "toggle_main",

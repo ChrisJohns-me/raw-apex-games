@@ -1,6 +1,6 @@
-import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
-import { BrowserWindowRef, WINDOW } from "@allfather-app/app/common/services/window.service";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
+import { BrowserWindowRef, WINDOW } from "@allfather-app/app/modules/core/global-window.provider";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { MatchMapService } from "@allfather-app/app/modules/core/match/match-map.service";
 import { MatchPlayerLegendService } from "@allfather-app/app/modules/core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";

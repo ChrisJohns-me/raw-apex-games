@@ -2,11 +2,11 @@ import { InventorySlot, InventorySlots } from "@allfather-app/app/common/invento
 import { Item } from "@allfather-app/app/common/items/item";
 import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
-import { OverwolfGameDataService, OWInfoUpdates2Event } from "@allfather-app/app/common/services/overwolf";
 import { TestBed } from "@angular/core/testing";
 import { TestScheduler } from "rxjs/testing";
 import { MockMatchService } from "../mocks/services/mock-match.service";
 import { MockOverwolfGameDataService } from "../mocks/services/mock-overwolf-game-data.service";
+import { OverwolfGameDataService, OWInfoUpdates2Event } from "../overwolf";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
 import { MatchService } from "./match.service";
 

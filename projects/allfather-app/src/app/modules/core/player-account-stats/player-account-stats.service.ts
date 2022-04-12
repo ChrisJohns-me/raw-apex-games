@@ -1,3 +1,4 @@
+import { PlayerAccountStats } from "@allfather-app/app/common/player-account-stats";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
@@ -5,7 +6,6 @@ import { unique } from "common/utilities/primitives/array";
 import { addMilliseconds } from "date-fns";
 import { merge, Observable, of, throwError } from "rxjs";
 import { bufferCount, delay, filter, map, mergeMap, retryWhen, tap } from "rxjs/operators";
-import { PlayerAccountStats } from "../../player-account-stats";
 import { BaseService } from "../base-service.abstract";
 import { MozambiqueherePlatform, PlayerAccountStatsMozambiquehereDTO } from "./player-account-stats-mozambiquehere-dto";
 

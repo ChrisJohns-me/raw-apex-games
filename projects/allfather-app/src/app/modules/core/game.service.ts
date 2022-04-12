@@ -3,17 +3,17 @@ import { GamePhase } from "@allfather-app/app/common/game-phase";
 import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
 import { MatchRoster } from "@allfather-app/app/common/match/roster";
 import { MatchState } from "@allfather-app/app/common/match/state";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { OverwolfGameDataService, OWInfoUpdates2Event } from "@allfather-app/app/common/services/overwolf";
-import { OverwolfFeatureStatusService } from "@allfather-app/app/common/services/overwolf/overwolf-feature-status.service";
 import { TriggerConditions } from "@allfather-app/app/common/utilities/trigger-conditions";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { findValueByKeyRegEx, isEmpty } from "common/utilities/";
 import { BehaviorSubject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { BaseService } from "./base-service.abstract";
 import { MatchRosterService } from "./match/match-roster.service";
 import { MatchService } from "./match/match.service";
+import { OverwolfGameDataService, OWInfoUpdates2Event } from "./overwolf";
+import { OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status.service";
 
 /** Amount of delay time to set GamePhase to "Pregame", after first legend is selected */
 const PREGAME_DELAY = 18500;

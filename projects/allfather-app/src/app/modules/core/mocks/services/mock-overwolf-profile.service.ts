@@ -1,5 +1,5 @@
 import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
-import { OverwolfProfileService } from "@allfather-app/app/common/services/overwolf/overwolf-profile.service";
+import { OverwolfProfileService } from "@allfather-app/app/modules/core/overwolf/overwolf-profile.service";
 import { Observable, of } from "rxjs";
 
 export class MockOverwolfProfileService implements MockedClass<OverwolfProfileService> {

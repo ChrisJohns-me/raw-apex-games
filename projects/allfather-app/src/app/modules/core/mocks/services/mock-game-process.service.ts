@@ -1,5 +1,5 @@
 import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
-import { GameProcessService } from "@allfather-app/app/common/services/game-process.service";
+import { GameProcessService } from "@allfather-app/app/modules/core/game-process.service";
 import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { BehaviorSubject } from "rxjs";
 

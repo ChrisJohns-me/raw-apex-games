@@ -1,9 +1,9 @@
+import { PlatformHardware } from "@allfather-app/app/common/platform";
+import { PlayerAccountStats, PlayerBattlePass, PlayerLevel } from "@allfather-app/app/common/player-account-stats";
+import { Rank } from "@allfather-app/app/common/rank/rank";
+import { sanitizePlayerName } from "@allfather-app/app/common/utilities/player";
 import { ɵ_sanitizeUrl } from "@angular/core";
 import { cleanInt, isEmpty, mathClamp } from "common/utilities/";
-import { PlatformHardware } from "../../platform";
-import { PlayerAccountStats, PlayerBattlePass, PlayerLevel } from "../../player-account-stats";
-import { Rank } from "../../rank/rank";
-import { sanitizePlayerName } from "../../utilities/player";
 
 export enum MozambiqueherePlatform {
     PC = "PC",

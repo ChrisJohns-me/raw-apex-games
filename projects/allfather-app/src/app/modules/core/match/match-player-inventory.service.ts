@@ -1,18 +1,13 @@
 import { InventorySlots } from "@allfather-app/app/common/inventory-slots";
 import { Item } from "@allfather-app/app/common/items/item";
 import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import {
-    OverwolfGameDataService,
-    OWInfoUpdates2Event,
-    OWMatchInfoMeInventory,
-    OWMatchInfoMeWeapons,
-} from "@allfather-app/app/common/services/overwolf";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { cleanInt, findKeyByKeyRegEx } from "common/utilities/";
 import { BehaviorSubject, Observable } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
+import { BaseService } from "../base-service.abstract";
+import { OverwolfGameDataService, OWInfoUpdates2Event, OWMatchInfoMeInventory, OWMatchInfoMeWeapons } from "../overwolf";
 import { MatchService } from "./match.service";
 
 /**

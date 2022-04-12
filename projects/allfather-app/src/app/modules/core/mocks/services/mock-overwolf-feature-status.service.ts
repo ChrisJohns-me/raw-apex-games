@@ -1,5 +1,5 @@
 import { FeatureState, FeatureStates, OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
-import { OverwolfFeatureStatusService } from "@allfather-app/app/common/services/overwolf/overwolf-feature-status.service";
+import { OverwolfFeatureStatusService } from "@allfather-app/app/modules/core/overwolf/overwolf-feature-status.service";
 import { BehaviorSubject, Observable, of } from "rxjs";
 
 export class MockOverwolfFeatureStatusService implements MockedClass<OverwolfFeatureStatusService> {

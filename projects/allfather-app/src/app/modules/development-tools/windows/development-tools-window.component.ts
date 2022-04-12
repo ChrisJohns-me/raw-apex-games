@@ -1,6 +1,6 @@
-import { OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/common/services/overwolf";
-import { ExposedOverwolfGameDataService } from "@allfather-app/app/common/services/overwolf-exposed-data.service";
-import { OverwolfExtensionsService } from "@allfather-app/app/common/services/overwolf/overwolf-extensions.service";
+import { OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
+import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
+import { OverwolfExtensionsService } from "@allfather-app/app/modules/core/overwolf/overwolf-extensions.service";
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Subject } from "rxjs";
 

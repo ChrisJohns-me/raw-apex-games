@@ -2,14 +2,14 @@ import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
 import { MatchInflictionEvent } from "@allfather-app/app/common/match/infliction-event";
 import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
 import { PlayerState } from "@allfather-app/app/common/player-state";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { OverwolfGameDataService, OWGameEventKillFeed } from "@allfather-app/app/common/services/overwolf";
 import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { isEmpty } from "common/utilities/";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
+import { BaseService } from "../base-service.abstract";
+import { OverwolfGameDataService, OWGameEventKillFeed } from "../overwolf";
 import { MatchRosterService } from "./match-roster.service";
 import { MatchService } from "./match.service";
 

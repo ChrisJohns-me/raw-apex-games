@@ -1,12 +1,12 @@
 import { Legend } from "@allfather-app/app/common/legend/legend";
 import { MatchState } from "@allfather-app/app/common/match/state";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoLegendSelect } from "@allfather-app/app/common/services/overwolf";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { findValueByKeyRegEx, isEmpty } from "common/utilities/";
 import { Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
+import { BaseService } from "../base-service.abstract";
+import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoLegendSelect } from "../overwolf";
 import { MatchService } from "./match.service";
 
 /**

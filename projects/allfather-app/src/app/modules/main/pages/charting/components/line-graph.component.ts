@@ -1,5 +1,5 @@
+import { matchListAvgStatsGroupedBy, matchStatBounds } from "@allfather-app/app/common/utilities/match-stats";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
-import { matchListAvgStatsGroupedBy, matchStatBounds } from "@allfather-app/app/modules/core/utilities/match-stats";
 import { ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, ViewChild } from "@angular/core";
 import {
     ArcElement,

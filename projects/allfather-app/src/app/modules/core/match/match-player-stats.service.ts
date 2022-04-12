@@ -1,12 +1,12 @@
 import { MatchState } from "@allfather-app/app/common/match/state";
 import { PlayerState } from "@allfather-app/app/common/player-state";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { OverwolfGameDataService } from "@allfather-app/app/common/services/overwolf";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { cleanInt, isEmpty, parseBoolean } from "common/utilities/";
 import { BehaviorSubject } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
+import { BaseService } from "../base-service.abstract";
+import { OverwolfGameDataService } from "../overwolf";
 import { MatchArenasScoreboardService } from "./match-arenas-scoreboard.service";
 import { MatchPlayerInflictionService } from "./match-player-infliction.service";
 import { MatchPlayerService } from "./match-player.service";

@@ -1,8 +1,6 @@
 import { MatchRoster } from "@allfather-app/app/common/match/roster";
 import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
 import { MatchRosterTeammate } from "@allfather-app/app/common/match/roster-teammate";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoRoster, OWMatchInfoTeammate } from "@allfather-app/app/common/services/overwolf";
 import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
@@ -13,6 +11,8 @@ import { cleanInt, findKeyByKeyRegEx, findValueByKeyRegEx, isEmpty } from "commo
 import { unique } from "common/utilities/primitives/array";
 import { BehaviorSubject, combineLatest, Observable } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
+import { BaseService } from "../base-service.abstract";
+import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoRoster, OWMatchInfoTeammate } from "../overwolf";
 import { MatchLegendSelectService } from "./match-legend-select.service";
 
 type RosterUpdate = { rosterId: number; rosterItem: Optional<OWMatchInfoRoster>; rosterAction: "ADD" | "DEL" };

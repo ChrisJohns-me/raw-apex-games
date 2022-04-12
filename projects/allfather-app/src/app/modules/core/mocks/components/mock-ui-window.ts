@@ -1,5 +1,5 @@
+import { UIWindow, WindowState } from "@allfather-app/app/common/ui-window";
 import { Observable, of } from "rxjs";
-import { UIWindow, WindowState } from "../../_refactor/ui-window";
 
 export class MockUIWindow implements MockedClass<UIWindow> {
     public name = "";

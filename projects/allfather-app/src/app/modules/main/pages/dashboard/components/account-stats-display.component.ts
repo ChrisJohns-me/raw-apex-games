@@ -1,8 +1,8 @@
 import { PlayerAccountStats } from "@allfather-app/app/common/player-account-stats";
-import { GameProcessService } from "@allfather-app/app/common/services/game-process.service";
-import { MozambiqueherePlatform } from "@allfather-app/app/common/services/player-account-stats/player-account-stats-mozambiquehere-dto";
-import { PlayerAccountStatsService } from "@allfather-app/app/common/services/player-account-stats/player-account-stats.service";
+import { GameProcessService } from "@allfather-app/app/modules/core/game-process.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
+import { MozambiqueherePlatform } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats-mozambiquehere-dto";
+import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { isEmpty } from "common/utilities/";

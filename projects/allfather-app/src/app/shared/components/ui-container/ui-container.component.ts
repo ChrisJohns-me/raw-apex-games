@@ -1,9 +1,9 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
 import { FeatureState } from "@allfather-app/app/common/feature-status";
-import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
-import { OverwolfGameDataService } from "@allfather-app/app/common/services/overwolf";
-import { OverwolfFeatureStatusService } from "@allfather-app/app/common/services/overwolf/overwolf-feature-status.service";
-import { UIWindow, WindowState } from "@allfather-app/app/modules/core/_refactor/ui-window";
+import { UIWindow, WindowState } from "@allfather-app/app/common/ui-window";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
+import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
+import { OverwolfFeatureStatusService } from "@allfather-app/app/modules/core/overwolf/overwolf-feature-status.service";
 import { MainPage } from "@allfather-app/app/modules/main/pages/main-page";
 import { MainWindowService } from "@allfather-app/app/modules/main/windows/main-window.service";
 import { environment } from "@allfather-app/environments/environment";

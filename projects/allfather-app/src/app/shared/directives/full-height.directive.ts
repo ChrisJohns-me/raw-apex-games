@@ -1,4 +1,4 @@
-import { WINDOW } from "@allfather-app/app/common/services/window.service";
+import { WINDOW } from "@allfather-app/app/modules/core/global-window.provider";
 import { AfterViewChecked, AfterViewInit, Directive, ElementRef, Inject, Input, OnChanges, OnDestroy } from "@angular/core";
 import { fromEvent, Subject, takeUntil } from "rxjs";
 

@@ -1,9 +1,9 @@
+import { aXNWSVA } from "@allfather-app/app/common/vip";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { environment } from "@allfather-app/environments/environment";
 import { Injectable } from "@angular/core";
 import { isEmpty } from "common/utilities/";
 import { filter, map, take, takeUntil } from "rxjs/operators";
-import { aXNWSVA } from "../vip";
 import { BaseService } from "./base-service.abstract";
 import { OverwolfProfileService } from "./overwolf/overwolf-profile.service";
 

@@ -1,12 +1,12 @@
 import { MatchState } from "@allfather-app/app/common/match/state";
 import { PlayerState } from "@allfather-app/app/common/player-state";
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/common/services/overwolf";
 import { TriggerConditions } from "@allfather-app/app/common/utilities/trigger-conditions";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { BaseService } from "../base-service.abstract";
+import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "../overwolf";
 import { MatchService } from "./match.service";
 
 @Injectable({

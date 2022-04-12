@@ -1,9 +1,9 @@
+import { UIWindow } from "@allfather-app/app/common/ui-window";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, from, Observable, Subject } from "rxjs";
 import { concatAll, map, takeUntil, tap } from "rxjs/operators";
-import { WindowName } from "../../core/window-name";
-import { UIWindow } from "../../core/_refactor/ui-window";
+import { WindowName } from "../../../common/window-name";
 import { MainPage } from "../pages/main-page";
 
 @Injectable({

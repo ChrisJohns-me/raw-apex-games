@@ -1,4 +1,4 @@
-import { OWHotKey, OWHotKeyAssignHotkeyObject } from "@allfather-app/app/common/services/overwolf";
+import { OWHotKey, OWHotKeyAssignHotkeyObject } from "../modules/core/overwolf";
 import { Hotkey, HotkeyEnum } from "./hotkey";
 
 describe("Hotkey Class", () => {

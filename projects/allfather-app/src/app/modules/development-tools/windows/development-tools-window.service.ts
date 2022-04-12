@@ -1,8 +1,8 @@
+import { UIWindow } from "@allfather-app/app/common/ui-window";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { WindowName } from "../../core/window-name";
-import { UIWindow } from "../../core/_refactor/ui-window";
+import { WindowName } from "../../../common/window-name";
 
 @Injectable({
     providedIn: "root",

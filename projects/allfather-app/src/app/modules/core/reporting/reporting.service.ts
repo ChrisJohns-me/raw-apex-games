@@ -1,5 +1,5 @@
-import { BaseService } from "@allfather-app/app/common/services/base-service.abstract";
-import { GoogleAnalyticsService } from "@allfather-app/app/common/services/google-analytics.service";
+import { BaseService } from "@allfather-app/app/modules/core/base-service.abstract";
+import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable, OnDestroy } from "@angular/core";
 import { isEmpty } from "common/utilities/";

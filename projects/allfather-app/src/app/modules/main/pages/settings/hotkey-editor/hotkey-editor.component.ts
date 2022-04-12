@@ -1,4 +1,4 @@
-import { Hotkey } from "@allfather-app/app/modules/core/hotkey";
+import { Hotkey } from "@allfather-app/app/common/hotkey";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from "@angular/core";
 
 @Component({
