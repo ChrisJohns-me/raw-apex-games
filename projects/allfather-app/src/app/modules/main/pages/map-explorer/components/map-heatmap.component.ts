@@ -15,7 +15,7 @@ import {
 import { FormControl } from "@angular/forms";
 import * as d3 from "d3";
 import { combineLatest, Subject } from "rxjs";
-import { distinctUntilChanged, takeUntil, throttleTime } from "rxjs/operators";
+import { takeUntil, throttleTime } from "rxjs/operators";
 
 type MatchMapImageAxisScale = NonNullable<MatchMap["chartConfig"]>["imageAxisScale"];
 
@@ -35,21 +35,31 @@ export class MapHeatmapComponent implements OnInit, AfterViewInit, OnDestroy {
     public set map(value: Optional<MatchMap>) {
         this._map = value;
         this.isLoadingMapImage = true;
-        this.drawGraph();
+        this.drawAllGraphs();
         if (this.ENABLE_DEBUG_TOOLS) this.refreshMapDebugTools();
     }
     @Input()
-    public get coordinates(): MatchMapCoordinates[] {
-        return this._coordinates;
+    public get primaryCoordinates(): MatchMapCoordinates[] {
+        return this._primaryCoordinates;
     }
-    public set coordinates(value: MatchMapCoordinates[]) {
-        this._coordinates = value;
-        this.drawGraph();
+    public set primaryCoordinates(value: MatchMapCoordinates[]) {
+        this._primaryCoordinates = value;
+        this.drawAllGraphs();
+        this.refreshUI();
+    }
+    @Input()
+    public get secondaryCoordinates(): MatchMapCoordinates[] {
+        return this._secondaryCoordinates;
+    }
+    public set secondaryCoordinates(value: MatchMapCoordinates[]) {
+        this._secondaryCoordinates = value;
+        this.drawAllGraphs();
         this.refreshUI();
     }
     //#endregion
 
-    @ViewChild("mapOverlayGraph") public mapOverlayGraphRef?: ElementRef<HTMLDivElement>;
+    @ViewChild("mapOverlayGraphPrimary") public mapOverlayGraphRefPrimary?: ElementRef<HTMLDivElement>;
+    @ViewChild("mapOverlayGraphSecondary") public mapOverlayGraphRefSecondary?: ElementRef<HTMLDivElement>;
     public get isLoadingMapImage(): boolean {
         return this._isLoadingMapImage;
     }
@@ -57,9 +67,6 @@ export class MapHeatmapComponent implements OnInit, AfterViewInit, OnDestroy {
         this._isLoadingMapImage = value;
         this.refreshUI();
     }
-
-    // Form inputs
-    public locationHistoryRange = new FormControl(1000);
 
     // Debug
     public showMapDebugToolsForm = new FormControl(false);
@@ -72,27 +79,29 @@ export class MapHeatmapComponent implements OnInit, AfterViewInit, OnDestroy {
     public yEndRangeForm = new FormControl(600);
 
     // Graph
-    private graphSvg?: d3.Selection<SVGGElement, unknown, null, undefined>;
+    private graphSvgPrimary?: d3.Selection<SVGGElement, unknown, null, undefined>;
+    private graphSvgSecondary?: d3.Selection<SVGGElement, unknown, null, undefined>;
     private graphResolutionX = 720;
     private graphResolutionY = 720;
-    private heatSize = 4;
-    private heatAlpha = 0.25;
+    private graphHeatSize = 4;
+    private graphHeatAlpha = 0.25;
+    private graphThreshold = 10;
 
     private _map: Optional<MatchMap>;
-    private _coordinates: MatchMapCoordinates[] = [];
+    private _primaryCoordinates: MatchMapCoordinates[] = [];
+    private _secondaryCoordinates: MatchMapCoordinates[] = [];
     private _isLoadingMapImage = false;
     /** Num rows to add when user reaches the bottom of the scroll */
     private destroy$ = new Subject<void>();
 
     constructor(private readonly cdr: ChangeDetectorRef) {
-        this.heatSizeRange = new FormControl(this.heatSize);
+        this.heatSizeRange = new FormControl(this.graphHeatSize);
     }
 
     public getMapFilename = MatchMap.getLayoutFilename;
 
     //#region Lifecycle Methods
     public ngOnInit(): void {
-        this.setupEventListeners();
         if (this.ENABLE_DEBUG_TOOLS) this.setupDebug();
     }
 
@@ -106,30 +115,58 @@ export class MapHeatmapComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     //#endregion
 
-    //#region Setup
-    private setupEventListeners(): void {
-        // Timeline slider changed
-        this.locationHistoryRange.valueChanges.pipe(takeUntil(this.destroy$), distinctUntilChanged()).subscribe(() => {
-            this.drawGraph();
-            this.refreshUI();
-        });
-    }
-    //#endregion
-
-    //#region Low Order Functions
     private initGraph(): void {
-        if (!this.mapOverlayGraphRef?.nativeElement) return;
-        this.graphSvg = d3
-            .select(this.mapOverlayGraphRef.nativeElement)
+        if (!this.mapOverlayGraphRefPrimary?.nativeElement || !this.mapOverlayGraphRefSecondary?.nativeElement) return;
+        this.graphSvgPrimary = d3
+            .select(this.mapOverlayGraphRefPrimary.nativeElement)
+            .append("svg")
+            .attr("viewBox", `0 0 ${this.graphResolutionX} ${this.graphResolutionY}`) as any;
+        this.graphSvgSecondary = d3
+            .select(this.mapOverlayGraphRefSecondary.nativeElement)
             .append("svg")
             .attr("viewBox", `0 0 ${this.graphResolutionX} ${this.graphResolutionY}`) as any;
     }
 
-    private drawGraph(customImageAxisScale?: MatchMapImageAxisScale, customHeatSize?: number): void {
-        if (!this.mapOverlayGraphRef?.nativeElement) return void console.error(`Map graph element was not found.`);
+    private drawAllGraphs(customImageAxisScale?: MatchMapImageAxisScale, customHeatSize?: number): void {
+        const colorPrimary = d3.scaleLinear(
+            [0, 0.5, 1],
+            [
+                `rgba(0, 128, 0, ${this.graphHeatAlpha})`,
+                `rgba(255, 255, 0, ${this.graphHeatAlpha})`,
+                `rgba(255, 0, 0, ${this.graphHeatAlpha})`,
+            ]
+        );
+        const colorSecondary = d3.scaleLinear(
+            [0, 1],
+            [`rgba(255, 0, 0, ${this.graphHeatAlpha})`, `rgba(255, 0, 0, ${this.graphHeatAlpha})`]
+        );
+        this.drawGraph(
+            this.mapOverlayGraphRefPrimary,
+            this.graphSvgPrimary,
+            colorPrimary,
+            this.primaryCoordinates,
+            customImageAxisScale,
+            customHeatSize
+        );
+        this.drawGraph(
+            this.mapOverlayGraphRefSecondary,
+            this.graphSvgSecondary,
+            colorSecondary,
+            this.secondaryCoordinates,
+            customImageAxisScale,
+            customHeatSize
+        );
+    }
 
-        const maxHistory = this.locationHistoryRange?.value;
-        const coordinates = this.coordinates.slice(0, maxHistory) ?? [];
+    private drawGraph(
+        elementRef: Optional<ElementRef<HTMLDivElement>>,
+        d3SvgElement: Optional<d3.Selection<SVGGElement, unknown, null, undefined>>,
+        d3Color: d3.ScaleLinear<string, string, never>,
+        coordinates: MatchMapCoordinates[],
+        customImageAxisScale?: MatchMapImageAxisScale,
+        customHeatSize?: number
+    ): void {
+        if (!elementRef?.nativeElement) return void console.error(`Map graph element was not found.`);
 
         const xStart = customImageAxisScale?.xStart ?? this.map?.chartConfig?.imageAxisScale?.xStart ?? -500,
             xEnd = customImageAxisScale?.xEnd ?? this.map?.chartConfig?.imageAxisScale?.xEnd ?? 500,
@@ -137,7 +174,7 @@ export class MapHeatmapComponent implements OnInit, AfterViewInit, OnDestroy {
             yEnd = customImageAxisScale?.yEnd ?? this.map?.chartConfig?.imageAxisScale?.yEnd ?? 500;
 
         // clear the graph
-        this.graphSvg?.selectAll("g").remove();
+        d3SvgElement?.selectAll("g").remove();
 
         // read data
         const x = d3 // Add X axis
@@ -150,34 +187,28 @@ export class MapHeatmapComponent implements OnInit, AfterViewInit, OnDestroy {
             .domain([yStart, yEnd])
             .range([this.graphResolutionY, 0]);
 
-        const color = d3.scaleLinear(
-            [0, 0.5, 1],
-            [`rgba(0, 128, 0, ${this.heatAlpha})`, `rgba(255, 255, 0, ${this.heatAlpha})`, `rgba(255, 0, 0, ${this.heatAlpha})`]
-        );
-
         // compute the density data
         const densityData = d3
             .contourDensity()
             .x((d) => x((d as any)["x"]))
             .y((d) => y((d as any)["y"]))
             .size([this.graphResolutionX, this.graphResolutionY])
-            .bandwidth(customHeatSize ?? this.heatSize)(coordinates as any);
+            .bandwidth(customHeatSize ?? this.graphHeatSize)(coordinates as any);
 
         // show the shape
-        this.graphSvg
+        d3SvgElement
             ?.insert("g", "g")
             .selectAll("path")
             .data(densityData)
             .enter()
             .append("path")
             .attr("d", d3.geoPath())
-            .attr("fill", (d) => color(d.value));
+            .attr("fill", (d) => d3Color(d.value));
     }
 
     private refreshUI(): void {
         this.cdr.detectChanges();
     }
-    //#endregion
 
     //#region Debug Tools
     private setupDebug(): void {
@@ -194,8 +225,8 @@ export class MapHeatmapComponent implements OnInit, AfterViewInit, OnDestroy {
             .pipe(takeUntil(this.destroy$), throttleTime(10))
             .subscribe(([xShift, xStart, xEnd, yShift, yStart, yEnd, heatSize]) => {
                 const imageAxisScale = { xStart: xStart + xShift, xEnd: xEnd + xShift, yStart: yStart + yShift, yEnd: yEnd + yShift };
-                this.heatSize = heatSize;
-                this.drawGraph(imageAxisScale, heatSize);
+                this.graphHeatSize = heatSize;
+                this.drawAllGraphs(imageAxisScale, heatSize);
             });
     }
 

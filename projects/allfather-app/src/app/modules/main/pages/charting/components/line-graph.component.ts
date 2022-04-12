@@ -126,7 +126,7 @@ export class LineGraphComponent implements OnChanges {
 
     private drawGraph(): void {
         if (!this.chartRef?.nativeElement) return;
-        new Chart(this.chartRef?.nativeElement, {
+        new Chart(this.chartRef.nativeElement, {
             type: "bar",
             data: {
                 labels: this.dataLabels,

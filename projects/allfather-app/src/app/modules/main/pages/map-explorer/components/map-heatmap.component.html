@@ -22,7 +22,8 @@
             />
         </picture>
     </div>
-    <div class="d3-overlay" [hidden]="isLoadingMapImage" #mapOverlayGraph></div>
+    <div class="d3-overlay" [hidden]="isLoadingMapImage" #mapOverlayGraphPrimary></div>
+    <div class="d3-overlay" [hidden]="isLoadingMapImage" #mapOverlayGraphSecondary></div>
 
     <div class="map-debug-container" *ngIf="ENABLE_DEBUG_TOOLS">
         <ng-container [ngTemplateOutlet]="mapDebugTools"></ng-container>

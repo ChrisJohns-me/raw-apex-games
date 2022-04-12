@@ -7,6 +7,7 @@ import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/matc
 import { MatchPlayerStatsService } from "@allfather-app/app/modules/core/match/match-player-stats.service";
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
+import { MockFullHeightDirective } from "@allfather-app/app/modules/core/mocks/directives/mock-full-height.directive";
 import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/services/mock-configuration.service";
 import { MockMatchMapService } from "@allfather-app/app/modules/core/mocks/services/mock-match-map.service";
 import { MockMatchPlayerLegendService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player-legend.service";
@@ -19,7 +20,6 @@ import { MockReportingService } from "@allfather-app/app/modules/core/mocks/serv
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { MatchListingComponent } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
-import { FullHeightDirective } from "@allfather-app/app/shared/directives/full-height.directive";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MapHeatmapComponent } from "./components/map-heatmap.component";
@@ -32,7 +32,7 @@ describe("MapExplorerPageComponent", () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [ReactiveFormsModule],
-            declarations: [MapExplorerPageComponent, MatchListingComponent, MapHeatmapComponent, FullHeightDirective],
+            declarations: [MapExplorerPageComponent, MatchListingComponent, MapHeatmapComponent, MockFullHeightDirective],
             providers: [
                 { provide: WINDOW, useClass: BrowserWindowRef },
                 { provide: ConfigurationService, useClass: MockConfigurationService },

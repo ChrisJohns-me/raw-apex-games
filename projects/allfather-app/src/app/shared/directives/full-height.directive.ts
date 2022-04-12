@@ -1,19 +1,23 @@
 import { WINDOW } from "@allfather-app/app/common/services/window.service";
-import { AfterViewChecked, AfterViewInit, Directive, ElementRef, HostListener, Inject, Input, OnChanges } from "@angular/core";
+import { AfterViewChecked, AfterViewInit, Directive, ElementRef, Inject, Input, OnChanges, OnDestroy } from "@angular/core";
+import { fromEvent, Subject, takeUntil } from "rxjs";
 
 /**
  * Dynamically sets the height of an element to reach the bottom of the window
  * Also listens to Window's Resize events
  */
 @Directive({ selector: "[appFullHeight]" })
-export class FullHeightDirective implements AfterViewInit, AfterViewChecked, OnChanges {
+export class FullHeightDirective implements AfterViewInit, OnChanges, AfterViewChecked, OnDestroy {
     @Input() public marginBottom = 0;
     @Input() public overflowY: "auto" | "hidden" | "scroll" | "unset" | "inherit" = "auto";
+
+    private destroy$ = new Subject<void>();
 
     constructor(private readonly elementRef: ElementRef<HTMLElement>, @Inject(WINDOW) private readonly window: Window) {}
 
     public ngAfterViewInit(): void {
         this.setFullHeight();
+        this.setResizeEventListener();
     }
 
     public ngOnChanges(): void {
@@ -24,8 +28,18 @@ export class FullHeightDirective implements AfterViewInit, AfterViewChecked, OnC
         this.setFullHeight();
     }
 
-    @HostListener("window:resize")
-    public onResize(): void {
+    public ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
+    private setResizeEventListener(): void {
+        fromEvent(this.window, "resize")
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => this.onResize());
+    }
+
+    private onResize(): void {
         this.setFullHeight();
     }
 

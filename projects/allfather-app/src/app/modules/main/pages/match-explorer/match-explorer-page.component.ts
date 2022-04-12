@@ -169,12 +169,6 @@ export class MatchExplorerPageComponent implements OnInit, OnDestroy {
 
     //#region Setup
     private setupLiveMatchListeners(): void {
-        // Match started event
-        this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {});
-
-        // Match ended event
-        this.match.endedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {});
-
         // New match was reported to local database
         this.reportingService.reportingEvent$
             .pipe(

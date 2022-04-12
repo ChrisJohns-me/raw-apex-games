@@ -16,7 +16,7 @@ import { MatchRosterService } from "./match/match-roster.service";
 import { MatchService } from "./match/match.service";
 
 /** Amount of delay time to set GamePhase to "Pregame", after first legend is selected */
-const PREGAME_DELAY = 20000;
+const PREGAME_DELAY = 18500;
 
 /**
  * @classdesc Provides general information about the game and it's meta state

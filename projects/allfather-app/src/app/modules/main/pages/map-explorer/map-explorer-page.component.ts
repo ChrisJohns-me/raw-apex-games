@@ -5,15 +5,24 @@ import { MatchMapList, sortMatchMapList } from "@allfather-app/app/common/match/
 import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { LocationPhaseNum, MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
+import { ReportingEngineId, ReportingStatus } from "@allfather-app/app/modules/core/reporting/reporting-engine/reporting-engine";
+import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { DataItem } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, TrackByFunction } from "@angular/core";
-import { FormControl } from "@angular/forms";
 import { unique } from "common/utilities/primitives/array";
 import { intervalToDuration } from "date-fns";
-import { Observable, Subject } from "rxjs";
-import { finalize, takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+import { filter, finalize, takeUntil } from "rxjs/operators";
 
 const DEFAULT_NUM_ROWS = 25;
+
+enum HeatmapDisplayType {
+    Traveled = "Traveled",
+    Eliminations = "Kills",
+    Deaths = "Deaths",
+    DeathsAndEliminations = "Kills & Deaths",
+    Landings = "Landings",
+}
 
 @Component({
     selector: "app-map-explorer-page",
@@ -37,6 +46,14 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
         DataItem.Placement,
         DataItem.Damage,
     ];
+    public heatmapDisplayTypeList = [
+        HeatmapDisplayType.Traveled,
+        HeatmapDisplayType.Eliminations,
+        HeatmapDisplayType.Deaths,
+        HeatmapDisplayType.DeathsAndEliminations,
+        HeatmapDisplayType.Landings,
+    ];
+    public heatmapDisplayType: HeatmapDisplayType = HeatmapDisplayType.Traveled;
 
     public get isShowingAggregateData(): boolean {
         return !!this.selectedMap && !this.selectedMatch;
@@ -44,21 +61,75 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
     public get selectedMapMatchList(): MatchDataStore[] {
         return this.matchList.filter((m) => m.mapId === this.selectedMap?.mapId);
     }
-    public get displayedLocationHistory(): MatchMapCoordinates[] {
-        if (this.isShowingAggregateData) return this.aggregateMapLocationHistory;
+    // Typically of "positive" connotation; ie. player's kills
+    public get primaryCoordinates(): MatchMapCoordinates[] {
+        switch (this.heatmapDisplayType) {
+            case HeatmapDisplayType.Traveled:
+                return this.locationHistoryCoordinates;
+            case HeatmapDisplayType.Eliminations:
+            case HeatmapDisplayType.DeathsAndEliminations:
+                return this.eliminationLocationHistoryCoordinates;
+            case HeatmapDisplayType.Landings:
+                return this.landingLocationHistoryCoordinates;
+            default:
+                return [];
+        }
+    }
+
+    // Typically of "negative" connotation; ie. player's deaths
+    public get secondaryCoordinates(): MatchMapCoordinates[] {
+        switch (this.heatmapDisplayType) {
+            case HeatmapDisplayType.Deaths:
+            case HeatmapDisplayType.DeathsAndEliminations:
+                return this.deathLocationHistoryCoordinates;
+            default:
+                return [];
+        }
+    }
+
+    //#region Coordinate Calculations
+    private get locationHistoryCoordinates(): MatchMapCoordinates[] {
+        if (this.isShowingAggregateData) return this.aggregateLocationHistory;
         else if (!this.selectedMatch?.locationHistory || !Array.isArray(this.selectedMatch?.locationHistory)) return [];
         else return this.selectedMatch.locationHistory.filter((l) => l.value.phaseNum === LocationPhaseNum.HasLanded).map((l) => l.value);
     }
-
-    // Form inputs
-    public locationHistoryRange = new FormControl(1000);
+    private get landingLocationHistoryCoordinates(): MatchMapCoordinates[] {
+        if (this.isShowingAggregateData) return this.aggregateLandingLocationHistory;
+        else if (!this.selectedMatch?.locationHistory || !Array.isArray(this.selectedMatch?.locationHistory)) return [];
+        else {
+            const landedLocation = this.selectedMatch.locationHistory.find((l) => l.value.phaseNum === LocationPhaseNum.HasLanded);
+            const landedCoords: Optional<MatchMapCoordinates> = landedLocation?.value
+                ? { x: landedLocation.value.x, y: landedLocation.value.y, z: landedLocation.value.z }
+                : undefined;
+            return landedCoords ? [landedCoords] : [];
+        }
+    }
+    private get deathLocationHistoryCoordinates(): MatchMapCoordinates[] {
+        if (this.isShowingAggregateData) return this.aggregateDeathLocationHistory;
+        else if (!this.selectedMatch?.deathLocationHistory || !Array.isArray(this.selectedMatch?.deathLocationHistory)) return [];
+        else return this.selectedMatch.deathLocationHistory.map((l) => l.value);
+    }
+    private get eliminationLocationHistoryCoordinates(): MatchMapCoordinates[] {
+        if (this.isShowingAggregateData) return this.aggregateEliminationLocationHistory;
+        else if (!this.selectedMatch?.eliminationLocationHistory || !Array.isArray(this.selectedMatch?.eliminationLocationHistory))
+            return [];
+        else return this.selectedMatch.eliminationLocationHistory.map((l) => l.value);
+    }
+    //#endregion
 
     /** Num rows to add when user reaches the bottom of the scroll */
     private numAddRowsScroll = 25;
-    private aggregateMapLocationHistory: MatchMapCoordinates[] = [];
+    private aggregateLocationHistory: MatchMapCoordinates[] = [];
+    private aggregateDeathLocationHistory: MatchMapCoordinates[] = [];
+    private aggregateEliminationLocationHistory: MatchMapCoordinates[] = [];
+    private aggregateLandingLocationHistory: MatchMapCoordinates[] = [];
     private destroy$ = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef, private readonly match: MatchService) {
+    constructor(
+        private readonly cdr: ChangeDetectorRef,
+        private readonly match: MatchService,
+        private readonly reportingService: ReportingService
+    ) {
         this.mapList = unique(MatchMapList, (m) => m.mapName);
         this.mapList = this.mapList.filter((m) => {
             const hasSupportedGameMode = m.gameModeTypes?.some((genericGameModeId) => {
@@ -79,20 +150,8 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
 
     //#region Lifecycle Methods
     public ngOnInit(): void {
-        this.getMatchList()
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((matchList) => {
-                this.matchList = matchList.filter((match) => {
-                    if (!match.gameModeId) return false;
-                    const gameMode = MatchGameMode.getFromId(MatchGameModeList, match.gameModeId);
-                    const foundMatchMap = this.mapList.find((m) => m.isChartable && m.mapId === match.mapId);
-                    return gameMode.isAFSupported && !!foundMatchMap;
-                });
-                // Select the last played map
-                const lastPlayedMap = this.mapList.find((m) => m.isChartable && m.mapId === matchList[0].mapId);
-                this.onSelectMapIdClick(lastPlayedMap?.mapId);
-                this.refreshUI();
-            });
+        this.setupLiveMatchListeners();
+        this.loadMatchList();
     }
 
     public ngOnDestroy(): void {
@@ -105,17 +164,16 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
         const map = this.mapList.find((m) => m.mapId === mapId);
         this.setSelectedMap(map);
         this.setSelectedMatch(undefined);
-        this.setShowAggregateMapData(true);
+        this.calcAggregateDataFromSelectedMap();
         this.refreshUI();
     }
 
     public onSelectMatchIdClick(matchId?: MatchDataStore["matchId"]): void {
         const match = this.matchList.find((m) => m.matchId === matchId);
         const matchMap = this.mapList.find((m) => m.mapId === match?.mapId);
-        this.locationHistoryRange.enable({ emitEvent: false });
         this.setSelectedMap(matchMap);
         this.setSelectedMatch(match);
-        this.setShowAggregateMapData(false);
+        this.calcAggregateDataFromSelectedMap();
         this.refreshUI();
     }
 
@@ -139,36 +197,118 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
 
     private setSelectedMatch(match?: MatchDataStore): void {
         this.selectedMatch = match;
-        if (match?.matchId) {
-            this.locationHistoryRange.enable({ emitEvent: false });
-            this.locationHistoryRange.setValue(this.displayedLocationHistory?.length ?? Infinity, { emitEvent: false });
-        }
     }
 
-    private setShowAggregateMapData(show = true): void {
-        if (show && this.selectedMap) {
-            this.aggregateMapLocationHistory = this.extractAggregateMapLocationHistory(this.matchList, this.selectedMap);
-            this.locationHistoryRange.disable({ emitEvent: false });
-            this.locationHistoryRange.setValue(Infinity, { emitEvent: false });
+    private setupLiveMatchListeners(): void {
+        // New match was reported to local database
+        this.reportingService.reportingEvent$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((reportingEvent) => reportingEvent.engine.engineId === ReportingEngineId.Local),
+                filter((localReportingStatus) => localReportingStatus.status === ReportingStatus.SUCCESS)
+            )
+            .subscribe(() => this.loadMatchList());
+    }
+
+    private loadMatchList(): void {
+        this.isLoadingMatchList = true;
+        this.match
+            .getAllMatchData$()
+            .pipe(
+                takeUntil(this.destroy$),
+                finalize(() => (this.isLoadingMatchList = false))
+            )
+            .subscribe((matchList) => {
+                this.matchList = matchList.filter((match) => {
+                    if (!match.gameModeId) return false;
+                    const gameMode = MatchGameMode.getFromId(MatchGameModeList, match.gameModeId);
+                    const foundMatchMap = this.mapList.find((m) => m.isChartable && m.mapId === match.mapId);
+                    return gameMode.isAFSupported && !!foundMatchMap;
+                });
+                // Select the last played map
+                const lastPlayedMap = this.mapList.find((m) => m.isChartable && m.mapId === matchList[0].mapId);
+                this.onSelectMapIdClick(lastPlayedMap?.mapId);
+                this.refreshUI();
+            });
+    }
+
+    /**
+     * Calculates the aggregate data from selectedMap; if selectedMap is undefined, aggregate data is set to empty
+     */
+    private calcAggregateDataFromSelectedMap(): void {
+        if (this.selectedMap) {
+            this.aggregateLocationHistory = this.extractAggregateLocationHistory(this.matchList, this.selectedMap);
+            this.aggregateDeathLocationHistory = this.extractAggregateDeathLocationHistory(this.matchList, this.selectedMap);
+            this.aggregateEliminationLocationHistory = this.extractAggregateEliminationLocationHistory(this.matchList, this.selectedMap);
+            this.aggregateLandingLocationHistory = this.extractAggregateLandingLocationHistory(this.matchList, this.selectedMap);
         } else {
-            this.aggregateMapLocationHistory = [];
+            this.aggregateLocationHistory = [];
+            this.aggregateDeathLocationHistory = [];
+            this.aggregateEliminationLocationHistory = [];
+            this.aggregateLandingLocationHistory = [];
         }
     }
     //#endregion
 
     //#region Low Order Functions
-    private getMatchList(): Observable<MatchDataStore[]> {
-        this.isLoadingMatchList = true;
-        return this.match.getAllMatchData$().pipe(finalize(() => (this.isLoadingMatchList = false)));
-    }
-
-    private extractAggregateMapLocationHistory(matchList: MatchDataStore[], map: MatchMap): MatchMapCoordinates[] {
+    /**
+     * Returns combined map location history for matches of the same map
+     */
+    private extractAggregateLocationHistory(matchList: MatchDataStore[], map: MatchMap): MatchMapCoordinates[] {
         return matchList
             .filter((m) => m.mapId === map.mapId)
             .reduce((prev, curr) => {
                 if (!curr.locationHistory || !Array.isArray(curr.locationHistory)) return prev;
                 const coordinates = curr.locationHistory.filter((l) => l.value.phaseNum === LocationPhaseNum.HasLanded).map((l) => l.value);
                 return prev.concat(coordinates);
+            }, [] as MatchMapCoordinates[]);
+    }
+
+    /**
+     * Returns combined map death location history for matches of the same map
+     */
+    private extractAggregateDeathLocationHistory(matchList: MatchDataStore[], map: MatchMap): MatchMapCoordinates[] {
+        return matchList
+            .filter((m) => m.mapId === map.mapId)
+            .reduce((prev, curr) => {
+                if (!curr.deathLocationHistory || !Array.isArray(curr.deathLocationHistory)) return prev;
+                const coordinates = curr.deathLocationHistory.map((l) => l.value);
+                return prev.concat(coordinates);
+            }, [] as MatchMapCoordinates[]);
+    }
+
+    /**
+     * Returns combined map elimination location history for matches of the same map
+     */
+    private extractAggregateEliminationLocationHistory(matchList: MatchDataStore[], map: MatchMap): MatchMapCoordinates[] {
+        return matchList
+            .filter((m) => m.mapId === map.mapId)
+            .reduce((prev, curr) => {
+                if (!curr.eliminationLocationHistory || !Array.isArray(curr.eliminationLocationHistory)) return prev;
+                const coordinates = curr.eliminationLocationHistory.map((l) => l.value);
+                return prev.concat(coordinates);
+            }, [] as MatchMapCoordinates[]);
+    }
+
+    /**
+     * Returns combined map landing location history for matches of the same map
+     */
+    private extractAggregateLandingLocationHistory(matchList: MatchDataStore[], map: MatchMap): MatchMapCoordinates[] {
+        return matchList
+            .filter((m) => m.mapId === map.mapId)
+            .reduce((prev, curr) => {
+                if (!curr.locationHistory || !Array.isArray(curr.locationHistory)) return prev;
+                const firstLandingLocationData = curr.locationHistory
+                    .sort((a, b) => a.timestamp - b.timestamp)
+                    .find((l) => l.value.phaseNum === LocationPhaseNum.HasLanded)?.value;
+                if (!firstLandingLocationData) return prev;
+
+                const firstLandingCoords: MatchMapCoordinates = {
+                    x: firstLandingLocationData.x,
+                    y: firstLandingLocationData.y,
+                    z: firstLandingLocationData.z,
+                };
+                return prev.concat([firstLandingCoords]);
             }, [] as MatchMapCoordinates[]);
     }
 

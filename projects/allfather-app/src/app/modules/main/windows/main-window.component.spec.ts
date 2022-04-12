@@ -7,7 +7,6 @@ import { MapRotationService } from "@allfather-app/app/modules/core/map-rotation
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { MockBackgroundService } from "@allfather-app/app/modules/core/mocks/services/mock-background.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
-import { FullHeightDirective } from "@allfather-app/app/shared/directives/full-height.directive";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -18,6 +17,7 @@ import { ConfigurationService } from "../../core/configuration.service";
 import { LocalDatabaseService } from "../../core/local-database/local-database.service";
 import { MatchMapService } from "../../core/match/match-map.service";
 import { MockUIContainerComponent } from "../../core/mocks/components/mock-ui-container.component";
+import { MockFullHeightDirective } from "../../core/mocks/directives/mock-full-height.directive";
 import { MockConfigurationService } from "../../core/mocks/services/mock-configuration.service";
 import { MockFileService } from "../../core/mocks/services/mock-file.service";
 import { MockGameProcessService } from "../../core/mocks/services/mock-game-process.service";
@@ -65,7 +65,7 @@ describe("MainWindowComponent", () => {
                 SettingsPageComponent,
                 MapRotationDisplayComponent,
                 AccountStatsDisplayComponent,
-                FullHeightDirective,
+                MockFullHeightDirective,
             ],
             providers: [
                 { provide: BackgroundService, useClass: MockBackgroundService },
