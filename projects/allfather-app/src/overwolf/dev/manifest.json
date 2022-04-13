@@ -183,7 +183,7 @@
                 "transparent": true,
                 "disable_blur": true,
                 "show_in_taskbar": true,
-                "clickthrough": false,
+                "style": "InputPassThrough",
                 "mute": true,
                 "popup_blocker": true,
                 "allow_local_file_access": true,

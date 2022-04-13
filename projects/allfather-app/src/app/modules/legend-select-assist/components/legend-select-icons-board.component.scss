@@ -15,6 +15,5 @@ $skewX: -30deg;
     width: 10.555vw;
     margin-left: 0.3vw;
     margin-right: 0.3vw;
-    /** Used to capture mouse hover events, without blocking click events */
-    border: 1vw solid #cc22000d;
+    background: #cc22000d;
 }

@@ -8,7 +8,7 @@ import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { combineLatest, Observable, Subject, Subscription } from "rxjs";
-import { filter, map, takeUntil } from "rxjs/operators";
+import { filter, map, startWith, takeUntil } from "rxjs/operators";
 
 type LegendIdsRow = string[];
 
@@ -102,22 +102,21 @@ export class DashboardPageComponent implements OnInit {
     }
 
     public hoverLegend(legendId: string): void {
-        this.focusedLegendId = legendId;
         this.hoverLegendSubscription?.unsubscribe();
         this.hoverLegendSubscription = combineLatest([
-            this.getBattleRoyaleLegendStats$(legendId),
-            this.getArenasLegendStats$(legendId),
-            this.getComplimentaryLegends$(legendId),
+            this.getBattleRoyaleLegendStats$(legendId).pipe(startWith(undefined)),
+            this.getArenasLegendStats$(legendId).pipe(startWith(undefined)),
+            this.getComplimentaryLegends$(legendId).pipe(startWith(undefined)),
         ])
             .pipe(takeUntil(this.destroy$))
             .subscribe(([legendBattleRoyaleStats, legendArenasStats, legendComplimentaryLegendWeights]) => {
-                // this.focusedLegendId = legendId;
                 if (legendId !== this.focusedLegendId) return;
                 this.legendBattleRoyaleStats = legendBattleRoyaleStats;
                 this.legendArenasStats = legendArenasStats;
                 this.legendComplimentaryLegendWeights = legendComplimentaryLegendWeights;
                 this.cdr.detectChanges();
             });
+        this.focusedLegendId = legendId;
         this.googleAnalytics.sendEvent("Dashboard", "Legend Icon Hover", legendId);
     }
 

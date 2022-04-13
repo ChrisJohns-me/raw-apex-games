@@ -7,7 +7,7 @@ import { ConfigurationService } from "@allfather-app/app/modules/core/configurat
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { combineLatest, Observable, of, Subject, Subscription } from "rxjs";
-import { map, switchMap, takeUntil, tap } from "rxjs/operators";
+import { map, startWith, switchMap, takeUntil, tap } from "rxjs/operators";
 import { MatchService } from "../../core/match/match.service";
 import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { LegendIconRow } from "../legend-select-icon-row.interface";
@@ -65,9 +65,9 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     public hoverLegend(legendId: string): void {
         this.hoverLegendSubscription?.unsubscribe();
         this.hoverLegendSubscription = combineLatest([
-            this.getLegendStats$(legendId),
-            this.getLegendGameModeStats$(legendId),
-            this.getComplimentaryLegends$(legendId),
+            this.getLegendStats$(legendId).pipe(startWith(undefined)),
+            this.getLegendGameModeStats$(legendId).pipe(startWith(undefined)),
+            this.getComplimentaryLegends$(legendId).pipe(startWith([])),
         ])
             .pipe(takeUntil(this.destroy$))
             .subscribe(([legendStats, legendGameModeStats, complimentaryLegendWeights]) => {

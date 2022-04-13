@@ -175,7 +175,7 @@
                 "resizable": false,
                 "transparent": true,
                 "show_in_taskbar": false,
-                "clickthrough": false,
+                "style": "InputPassThrough",
                 "mute": true,
                 "popup_blocker": true,
                 "allow_local_file_access": true,
