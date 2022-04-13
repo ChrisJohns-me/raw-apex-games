@@ -4,6 +4,7 @@ import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { SharedModule } from "@shared/shared.module";
 import { NavbarComponent } from "./components/navbar.component";
+import { AcademyPageModule } from "./pages/academy/academy-page.module";
 import { ChartingPageModule } from "./pages/charting/charting-page.module";
 import { DashboardPageModule } from "./pages/dashboard/dashboard-page.module";
 import { DatasheetPageModule } from "./pages/datasheet/datasheet-page.module";
@@ -13,6 +14,7 @@ import { SettingsPageModule } from "./pages/settings/settings-page.module";
 import { MainWindowComponent } from "./windows/main-window.component";
 
 const PAGES = [
+    AcademyPageModule,
     ChartingPageModule,
     DashboardPageModule,
     DatasheetPageModule,

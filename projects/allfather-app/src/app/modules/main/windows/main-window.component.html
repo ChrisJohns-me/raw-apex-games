@@ -60,6 +60,7 @@
     >
         <app-navbar (navPage)="goToPage($event)" [currentPage]="activePage"></app-navbar>
         <ng-container [ngSwitch]="activePage">
+            <app-academy-page *ngSwitchCase="MainPage.Academy"></app-academy-page>
             <app-charting-page *ngSwitchCase="MainPage.Charting"></app-charting-page>
             <app-match-explorer-page *ngSwitchCase="MainPage.MatchExplorer"></app-match-explorer-page>
             <app-map-explorer-page *ngSwitchCase="MainPage.MapExplorer"></app-map-explorer-page>

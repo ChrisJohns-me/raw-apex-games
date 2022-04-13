@@ -71,12 +71,12 @@
                     "height": 750
                 },
                 "min_size": {
-                    "width": 768,
-                    "height": 400
+                    "width": 1000,
+                    "height": 750
                 },
                 "max_size": {
-                    "width": 1440,
-                    "height": 1440
+                    "width": 1000,
+                    "height": 750
                 }
             },
             "hud-match-timer": {
@@ -226,7 +226,8 @@
                 "https://twitter.com/",
                 "https://www.facebook.com",
                 "https://www.reddit.com",
-                "https://*.google.com"
+                "https://*.google.com",
+                "https://*.youtube.com"
             ]
         },
         "force_browser": "user",
