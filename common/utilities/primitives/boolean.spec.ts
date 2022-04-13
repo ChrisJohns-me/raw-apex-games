@@ -147,6 +147,16 @@ describe("BooleanUtilities", () => {
             const actual = isEmpty(new Date(0));
             expect(actual).toBeFalse();
         });
+
+        it("should return false for true boolean", () => {
+            const actual = isEmpty(true);
+            expect(actual).toBeFalse();
+        });
+
+        it("should return false for false boolean", () => {
+            const actual = isEmpty(false);
+            expect(actual).toBeFalse();
+        });
         //#endregion
     });
 });

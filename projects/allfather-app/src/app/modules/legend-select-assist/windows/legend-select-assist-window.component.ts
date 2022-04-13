@@ -1,7 +1,7 @@
 import { Legend } from "@allfather-app/app/common/legend/legend";
 import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
 import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
-import { DefaultSetting, SettingKey } from "@allfather-app/app/common/settings";
+import { SettingKey } from "@allfather-app/app/common/settings";
 import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
@@ -141,8 +141,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
         combineLatest([this.configuration.config$, this.settings.streamSetting$<boolean>(SettingKey.EnableLegendSelectLegendStats)])
             .pipe(takeUntil(this.destroy$))
             .subscribe(([config, setting]) => {
-                const defaultValue = DefaultSetting.enableLegendSelectLegendStats as boolean;
-                const isSettingEnabled = setting?.value != null ? setting.value : defaultValue;
+                const isSettingEnabled = !!setting?.value;
                 const isConfigEnabled = config.featureFlags.legendSelectAssist.legendStats;
                 this.isLegendStatsEnabled = isSettingEnabled && isConfigEnabled;
                 this.refreshUI();
@@ -151,8 +150,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
         combineLatest([this.configuration.config$, this.settings.streamSetting$<boolean>(SettingKey.EnableLegendSelectLegendSuggestions)])
             .pipe(takeUntil(this.destroy$))
             .subscribe(([config, setting]) => {
-                const defaultValue = DefaultSetting.enableLegendSelectLegendSuggestions as boolean;
-                const isSettingEnabled = setting?.value != null ? setting.value : defaultValue;
+                const isSettingEnabled = !!setting?.value;
                 const isConfigEnabled = config.featureFlags.legendSelectAssist.complimentaryLegends;
                 this.isComplimentaryLegendsEnabled = isSettingEnabled && isConfigEnabled;
                 this.refreshUI();

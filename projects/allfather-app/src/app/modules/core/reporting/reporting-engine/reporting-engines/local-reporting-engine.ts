@@ -58,7 +58,7 @@ export class LocalReportingEngine implements ReportingEngine {
                 .pipe(takeUntil(this.destroy$))
                 .subscribe((success) => {
                     this.reportingStatus$.next(success ? ReportingStatus.SUCCESS : ReportingStatus.FAIL);
-                    console.log(`[${this.constructor.name}] Local Reporting Succeeded: ${success ? "Yes" : "No :("}`);
+                    console.log(`[${this.constructor.name}] Local Reporting ${success ? "Succeeded" : "Failed"}`);
                 });
         } else {
             this.reportingStatus$.next(ReportingStatus.CRITERIA_NOT_MET);

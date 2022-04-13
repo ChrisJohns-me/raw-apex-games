@@ -18,7 +18,7 @@ export class RunCondition implements RunCondition {
             throw new Error(`RunCondition condition: "${this.id}" is not valid condition function. (typeof ${typeof this.condition})`);
         }
         const result = !!this.condition();
-        console.log(`RunCondition condition: "${this.id}" is ${result ? "met" : "not met"}`);
+        console.info(`RunCondition condition: "${this.id}" is ${result ? "met" : "not met"}`);
         return result;
     }
 }

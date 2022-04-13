@@ -6,6 +6,7 @@ export type SettingValue = BasicPrimitive | BasicPrimitive[];
 export type AllSettings = { [key in SettingKey]: SettingValue };
 
 export enum SettingKey {
+    EnableLocalReporting = "enableLocalReporting",
     EnableAllInGameHUD = "enableAllInGameHUD",
     EnableInGameMatchTimerHUD = "enableInGameMatchTimerHUD",
     EnableInGameMiniInventoryHUD = "enableInGameMiniInventoryHUD",
@@ -23,6 +24,7 @@ export enum SettingKey {
 }
 
 export const DefaultSetting: { [P in SettingKey]: SettingValue } = {
+    enableLocalReporting: true,
     enableAllInGameHUD: true,
     enableInGameMatchTimerHUD: true,
     enableInGameMiniInventoryHUD: true,

@@ -18,7 +18,7 @@ import format from "date-fns/format";
 import "dexie-export-import";
 import { importInto, ImportOptions } from "dexie-export-import";
 import { from, merge, of, Subject } from "rxjs";
-import { debounceTime, finalize, map, switchMap, takeUntil } from "rxjs/operators";
+import { debounceTime, finalize, map, switchMap, takeUntil, tap } from "rxjs/operators";
 
 const SAVE_SETTINGS_DEBOUNCETIME = 1000;
 
@@ -56,6 +56,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     //#region Forms
     public hotKeyFormGroup = this.formBuilder.group({});
     public settingsForm = this.formBuilder.group({
+        [SettingKey.EnableLocalReporting]: false,
         [SettingKey.EnableAllInGameHUD]: false,
         inGameHUDFormGroup: this.formBuilder.group({
             [SettingKey.EnableInGameMatchTimerHUD]: [false],
@@ -86,6 +87,9 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     }
     public get legendSelectHUDFormGroup(): FormGroup {
         return this.settingsForm.get("legendSelectHUDFormGroup") as FormGroup;
+    }
+    public get [SettingKey.EnableLocalReporting](): FormControl {
+        return this.settingsForm.get([SettingKey.EnableLocalReporting]) as FormControl;
     }
     //#endregion
     /** Which item to preview */
@@ -162,9 +166,10 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     }
 
     public ngOnInit(): void {
-        this.setupHotKeyForm();
+        this.setupHotkeyForm();
         this.setupInGameHUDForm();
         this.setupLegendSelectHUDForm();
+        this.setupLocalReportingForm();
         this.setupSettingsListener();
     }
 
@@ -221,6 +226,9 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     private setupSettingsListener(): void {
         const applyAllSettingsFn = (settings: AllSettings): void => {
             this.settingsForm
+                .get([SettingKey.EnableLocalReporting])
+                ?.patchValue(settings[SettingKey.EnableLocalReporting], { emitEvent: false });
+            this.settingsForm
                 .get([SettingKey.EnableAllInGameHUD])
                 ?.patchValue(settings[SettingKey.EnableAllInGameHUD], { emitEvent: false });
             this.settingsForm
@@ -246,7 +254,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     }
 
     private refreshAllFormStates(): void {
-        this.refreshInGameFormHUDState();
+        this.refreshInGameHUDFormState();
         this.refreshLegendSelectHUDFormState();
         this.refreshAimingReticleFormState();
     }
@@ -271,7 +279,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     }
 
     //#region HotKeys
-    private setupHotKeyForm(): void {
+    private setupHotkeyForm(): void {
         this.refreshHotkeys();
     }
 
@@ -289,7 +297,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             .get([SettingKey.EnableAllInGameHUD])
             ?.valueChanges.pipe(takeUntil(this.destroy$))
             .subscribe(() => {
-                this.refreshInGameFormHUDState();
+                this.refreshInGameHUDFormState();
             });
 
         merge(
@@ -302,7 +310,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             .subscribe(this.saveSettingsChanges.bind(this));
     }
 
-    private refreshInGameFormHUDState(): void {
+    private refreshInGameHUDFormState(): void {
         if (this.settingsForm.get([SettingKey.EnableAllInGameHUD])?.value) {
             this.inGameHUDFormGroup.enable({ emitEvent: false });
         } else {
@@ -356,6 +364,18 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         } else {
             this.legendSelectHUDFormGroup.disable({ emitEvent: false });
         }
+    }
+    //#endregion
+
+    //#region Local Reporting
+    private setupLocalReportingForm(): void {
+        this.enableLocalReporting.valueChanges
+            .pipe(
+                takeUntil(this.destroy$),
+                map((value) => ({ [SettingKey.EnableLocalReporting]: value })),
+                debounceTime(SAVE_SETTINGS_DEBOUNCETIME),
+            )
+            .subscribe(this.saveSettingsChanges.bind(this));
     }
     //#endregion
 

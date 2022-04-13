@@ -28,6 +28,7 @@ export function isEmpty(value?: unknown): value is boolean {
 
     if (typeof value === "string") return !value.trim();
     else if (typeof value === "number" && !isNaN(value as number)) return false;
+    else if (typeof value === "boolean") return false;
 
     return !value;
 }

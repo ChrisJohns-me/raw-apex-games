@@ -1,3 +1,4 @@
+import { SettingKey } from "@allfather-app/app/common/settings";
 import { BaseService } from "@allfather-app/app/modules/core/base-service.abstract";
 import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
@@ -6,6 +7,7 @@ import { isEmpty } from "common/utilities/";
 import { combineLatest, of, Subject } from "rxjs";
 import { catchError, filter, switchMap, takeUntil } from "rxjs/operators";
 import { MatchService } from "../match/match.service";
+import { SettingsService } from "../settings.service";
 import { ReportableDataManagerService } from "./reporting-engine/reportable-data-manager";
 import { ReportingEngine, ReportingEngineId, ReportingStatus } from "./reporting-engine/reporting-engine";
 import { GoogleAnalyticsReportingEngine } from "./reporting-engine/reporting-engines/google-analytics-reporting-engine";
@@ -22,21 +24,24 @@ interface ReportingEvent {
  */
 @Injectable({
     providedIn: "root",
-    deps: [GoogleAnalyticsService, MatchService, ReportableDataManagerService],
+    deps: [GoogleAnalyticsService, MatchService, ReportableDataManagerService, SettingsService],
     useFactory: (...deps: any[]) => SingletonServiceProviderFactory("ReportingService", ReportingService, deps),
 })
 export class ReportingService extends BaseService implements OnDestroy {
     public reportingEvent$ = new Subject<ReportingEvent>();
     public runningReportingEngines: ReportingEngine[] = [];
 
+    private localReportingEnabled = false;
+
     constructor(
         private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly match: MatchService,
-        private readonly reportableDataManager: ReportableDataManagerService
+        private readonly reportableDataManager: ReportableDataManagerService,
+        private readonly settings: SettingsService
     ) {
         super();
-        // TODO: Get settings, enable only those that are in user's settings
         this.restartEngines();
+        this.setupSettingsListener();
 
         this.setupOnMatchStart();
         this.setupOnMatchEnd();
@@ -73,13 +78,13 @@ export class ReportingService extends BaseService implements OnDestroy {
 
     public restartEngine(engineId: ReportingEngineId): void {
         this.stopEngine(engineId);
-        console.debug(`[${this.constructor.name}] Starting Report Engine "${engineId}"`);
+        console.debug(`[ReportingService] Starting Report Engine "${engineId}"`);
         if (engineId === ReportingEngineId.Local) this.runningReportingEngines.push(this.buildLocalReportingEngine());
         if (engineId === ReportingEngineId.GoogleAnalytics) this.runningReportingEngines.push(this.buildGoogleAnalyticsReportingEngine());
     }
 
     public stopEngine(engineId: ReportingEngineId): void {
-        console.debug(`[${this.constructor.name}] Stopping Report Engine "${engineId}"`);
+        console.debug(`[ReportingService] Stopping Report Engine "${engineId}"`);
         this.runningReportingEngines.forEach((engine) => {
             if (engine.engineId === engineId) engine.teardown();
         });
@@ -87,11 +92,16 @@ export class ReportingService extends BaseService implements OnDestroy {
         this.runningReportingEngines = this.runningReportingEngines.filter((engine) => engine.engineId !== engineId);
     }
 
-    private setupOnMatchStart(): void {
-        this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-            // this.reportableDataItems.forEach(dataItem => dataItem.doSomething());
-        });
+    private setupSettingsListener(): void {
+        this.settings
+            .streamSetting$<boolean>(SettingKey.EnableLocalReporting)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((setting) => {
+                if (!isEmpty(setting?.value)) this.localReportingEnabled = !!setting!.value;
+            });
     }
+
+    private setupOnMatchStart(): void {}
 
     private setupOnMatchEnd(): void {
         this.match.endedEvent$
@@ -126,7 +136,7 @@ export class ReportingService extends BaseService implements OnDestroy {
 
                 if (allFinished) {
                     console.debug(
-                        `[${this.constructor.name}] [Reporting Engines] ` +
+                        `[ReportingService] [Reporting Engines] ` +
                             `All Finished (${numFailed} Failed, ${numSucceeded} Succeeded, ${numSkipped} Skipped)`
                     );
 
@@ -146,6 +156,10 @@ export class ReportingService extends BaseService implements OnDestroy {
                 new RunCondition({
                     id: "LocalReportingEngine GameMode",
                     condition: () => !!this.match.gameMode$.value?.isReportable,
+                }),
+                new RunCondition({
+                    id: "LocalReportingEngine Setting Enabled",
+                    condition: () => !!this.localReportingEnabled,
                 }),
             ],
         };

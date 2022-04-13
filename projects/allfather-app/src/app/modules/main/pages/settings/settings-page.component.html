@@ -267,6 +267,14 @@
                 </thead>
                 <tbody>
                     <tr (mouseover)="selectedPreviewSetting = undefined">
+                        <td class="ps-4 ps-lg-5">Stats Tracking</td>
+                        <td class="text-end pe-5">
+                            <div class="form-check form-switch d-inline-flex">
+                                <input class="form-check-input" type="checkbox" [formControl]="enableLocalReporting" />
+                            </div>
+                        </td>
+                    </tr>
+                    <tr (mouseover)="selectedPreviewSetting = undefined">
                         <td class="ps-4 ps-lg-5">Export Local Data</td>
                         <td class="text-end pe-5">
                             <button class="btn btn-sm btn-primary" type="button" (click)="exportLocalDatabase()">Export</button>
