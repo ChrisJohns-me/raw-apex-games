@@ -1,4 +1,4 @@
-<!-- Academy Video Modal -->
+<!-- #region Academy Video Modal -->
 <div class="modal fade" tabindex="-1" #academyVideoModal>
     <div class="modal-dialog modal-dialog-centered modal-xl" id="academy-video-modal">
         <div class="modal-content academy-video-modal-content">
@@ -14,10 +14,11 @@
         </div>
     </div>
 </div>
+<!-- #endregion -->
 
 <div class="container mt-3">
     <div class="row">
-        <div class="col" appFullHeight [marginBottom]="10">
+        <div class="col" appFullHeight [marginBottom]="25">
             <ng-container *ngFor="let academyVideoCategory of academyVideoCategories">
                 <h3>{{ academyVideoCategory.friendlyName }}</h3>
                 <div class="youtube-thumbnail-category">

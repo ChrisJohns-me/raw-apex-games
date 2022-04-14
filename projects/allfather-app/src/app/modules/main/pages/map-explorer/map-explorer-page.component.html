@@ -27,14 +27,14 @@
 
 <div class="container-fluid">
     <div class="row justify-content-center">
-        <div class="col col-xl-auto" appFullHeight [marginBottom]="10">
+        <div class="col col-xl-auto" appFullHeight [marginBottom]="25">
             <app-map-heatmap
                 [map]="selectedMap"
                 [primaryCoordinates]="primaryCoordinates"
                 [secondaryCoordinates]="secondaryCoordinates"
             ></app-map-heatmap>
         </div>
-        <div class="col-8 col-lg-6 col-md-7 col-xl-5 col-xxl-5" appFullHeight [marginBottom]="10">
+        <div class="col-8 col-lg-6 col-md-7 col-xl-5 col-xxl-5" appFullHeight [marginBottom]="25">
             <!-- Aggregate Option -->
             <table class="table table-dark table-hover mb-0" *ngIf="selectedMap">
                 <tbody>
@@ -52,7 +52,7 @@
             </table>
 
             <!-- Match List -->
-            <div class="matches-container" appFullHeight [marginBottom]="10" (scroll)="onMatchListingScroll($event)">
+            <div class="matches-container" appFullHeight [marginBottom]="25" (scroll)="onMatchListingScroll($event)">
                 <app-match-listing
                     [matches]="selectedMapMatchList"
                     [isMatchClickable]="true"

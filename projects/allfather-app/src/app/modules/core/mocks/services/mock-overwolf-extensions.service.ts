@@ -10,6 +10,10 @@ export class MockOverwolfExtensionsService implements MockedClass<OverwolfExtens
 
     public relaunchApp(): void {}
 
+    public getManifest(): ReturnType<OverwolfExtensionsService["getManifest"]> {
+        return of();
+    }
+
     public writeTextFile(
         ...args: Parameters<OverwolfExtensionsService["writeTextFile"]>
     ): ReturnType<OverwolfExtensionsService["writeTextFile"]> {

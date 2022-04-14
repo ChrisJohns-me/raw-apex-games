@@ -43,3 +43,21 @@
         transform: translateX(1%);
     }
 }
+
+.info-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1.5rem;
+    background-color: $secondary;
+    font-size: 0.75rem;
+    color: $black;
+
+    .info-bar-item {
+        padding: 0 1rem;
+    }
+}

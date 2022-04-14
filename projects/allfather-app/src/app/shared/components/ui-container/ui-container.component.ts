@@ -1,9 +1,7 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
-import { FeatureState } from "@allfather-app/app/common/feature-status";
 import { OverwolfWindow, OverwolfWindowState } from "@allfather-app/app/common/overwolf-window";
 import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
-import { OverwolfFeatureStatusService } from "@allfather-app/app/modules/core/overwolf/overwolf-feature-status.service";
 import { MainPage } from "@allfather-app/app/modules/main/pages/main-page";
 import { MainWindowService } from "@allfather-app/app/modules/main/windows/main-window.service";
 import { environment } from "@allfather-app/environments/environment";
@@ -75,9 +73,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     /** If function is not provided, the window will be closed */
     @Input("onCloseButtonClick") public onCloseFn?: () => void;
     @Input() public showSettingsLink = false;
-    @Input() public showOverwolfAllFeatureStates = false;
 
-    public allFeatureStates?: FeatureState;
     public state: OverwolfWindowState = OverwolfWindowState.Normal;
     public isDev = environment.DEV;
     public WindowState = OverwolfWindowState;
@@ -96,7 +92,6 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         private readonly cdr: ChangeDetectorRef,
         private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly mainWindow: MainWindowService,
-        private readonly overwolfFeatureStatus: OverwolfFeatureStatusService,
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly titleService: Title
     ) {
@@ -114,7 +109,6 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         this.setupPageviewTracking();
         this.setupDefaultSize();
         this.setupDefaultPosition();
-        this.setupOverwolfGameEventStatus();
         this.getState()
             .pipe(
                 takeUntil(this.destroy$),
@@ -175,18 +169,6 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         if (!this.isContentDraggable) return;
         if (!(event instanceof MouseEvent)) return;
         this.onDrag(event);
-    }
-
-    private setupOverwolfGameEventStatus(): void {
-        this.overwolfFeatureStatus.featureStates$
-            .pipe(
-                map(() => this.overwolfFeatureStatus.checkAllFeatureStates()),
-                takeUntil(this.destroy$)
-            )
-            .subscribe((allFeatureStates) => {
-                this.allFeatureStates = allFeatureStates;
-                this.cdr.detectChanges();
-            });
     }
 
     private setupPageviewTracking(): void {

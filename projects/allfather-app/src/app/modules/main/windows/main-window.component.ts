@@ -1,4 +1,5 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
+import { FeatureState } from "@allfather-app/app/common/feature-status";
 import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import {
     AfterViewInit,
@@ -15,12 +16,14 @@ import { scaleInOutAnimationFactory } from "@shared/animations/scale-in-out-fact
 import { Modal } from "bootstrap";
 import { isEmpty, wordsToUpperCase } from "common/utilities/";
 import { exhaustiveEnumSwitch } from "common/utilities/switch";
-import { interval, Subject } from "rxjs";
+import { combineLatest, interval, Subject } from "rxjs";
 import { delayWhen, filter, map, take, takeUntil } from "rxjs/operators";
 import { Hotkey, HotkeyEnum } from "../../../common/hotkey";
 import { BackgroundService } from "../../background/background.service";
 import { HotkeyService } from "../../background/hotkey.service";
 import { ConfigLoadStatus, ConfigurationService } from "../../core/configuration.service";
+import { OverwolfFeatureStatusService } from "../../core/overwolf/overwolf-feature-status.service";
+import { VersionService } from "../../core/version.service";
 import { MainPage } from "../pages/main-page";
 import { MainWindowService } from "./main-window.service";
 
@@ -47,8 +50,10 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     public isLoading = false;
     public isAppStarting = false;
+    public appVersion?: string;
     public toggleMainHotkey?: Hotkey;
     public randomCaption = this.captionGenerator();
+    public allFeatureStates?: FeatureState;
 
     private _activePage: MainPage = MainPage.Dashboard;
     private destroy$ = new Subject<void>();
@@ -59,12 +64,16 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         private readonly config: ConfigurationService,
         private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly hotkey: HotkeyService,
-        private readonly mainWindow: MainWindowService
+        private readonly mainWindow: MainWindowService,
+        private readonly overwolfFeatureStatus: OverwolfFeatureStatusService,
+        private readonly version: VersionService
     ) {
         this.setupHotkeys();
     }
 
     public ngOnInit(): void {
+        this.setupAppVersion();
+        this.setupOverwolfGameEventStatus();
         this.mainWindow.isStarting$.pipe(takeUntil(this.destroy$)).subscribe((isStarting) => {
             this.isAppStarting = isStarting;
             this.cdr.detectChanges();
@@ -174,6 +183,29 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
             )
             .subscribe((toggleMainHotkey) => {
                 this.toggleMainHotkey = toggleMainHotkey;
+                this.cdr.detectChanges();
+            });
+    }
+
+    private setupAppVersion(): void {
+        combineLatest([this.version.packageVersion$, this.version.overwolfExtensionVersion$])
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(([packageVersion, overwolfExtVersion]) => {
+                this.appVersion = `v${packageVersion}`;
+                if (packageVersion !== overwolfExtVersion)
+                    this.appVersion = `${this.appVersion} (Overwolf Extension ${overwolfExtVersion})`;
+                this.cdr.detectChanges();
+            });
+    }
+
+    private setupOverwolfGameEventStatus(): void {
+        this.overwolfFeatureStatus.featureStates$
+            .pipe(
+                map(() => this.overwolfFeatureStatus.checkAllFeatureStates()),
+                takeUntil(this.destroy$)
+            )
+            .subscribe((allFeatureStates) => {
+                this.allFeatureStates = allFeatureStates;
                 this.cdr.detectChanges();
             });
     }

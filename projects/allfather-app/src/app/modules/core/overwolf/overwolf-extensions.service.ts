@@ -3,8 +3,9 @@ import { Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs";
 import { BaseService } from "../base-service.abstract";
 import { ExtensionsDelegate } from "./api/extensions-delegate";
+import { CurrentDelegate } from "./api/extensions/current-delegate";
 import { IODelegate } from "./api/extensions/io-delegate";
-import { OWAppLaunchTriggeredEvent } from "./types/overwolf-types";
+import { OWAppLaunchTriggeredEvent, OWGetManifestResult } from "./types/overwolf-types";
 
 /**
  * @class OverwolfExtensionsService
@@ -21,6 +22,7 @@ export class OverwolfExtensionsService extends BaseService {
         return this.extensionsDelegate.appLaunchTriggeredEvent$;
     }
 
+    private readonly currentDelegate = new CurrentDelegate();
     private readonly extensionsDelegate = new ExtensionsDelegate();
     private readonly ioDelegate = new IODelegate();
     //#endregion
@@ -37,6 +39,10 @@ export class OverwolfExtensionsService extends BaseService {
 
     public relaunchApp(): void {
         this.extensionsDelegate.relaunchApp();
+    }
+
+    public getManifest(): Observable<OWGetManifestResult> {
+        return this.currentDelegate.getManifest();
     }
 
     public writeTextFile(storageSpace: overwolf.extensions.io.enums.StorageSpace, filePath: string, content: string): Observable<true> {

@@ -7,6 +7,7 @@ import { MatchService } from "@allfather-app/app/modules/core/match/match.servic
 import { MockBackgroundService } from "@allfather-app/app/modules/core/mocks/services/mock-background.service";
 import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
+import { GameEventsStatusIndicatorComponent } from "@allfather-app/app/shared/components/game-events-status-indicator/game-events-status-indicator.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -28,11 +29,16 @@ import { MockMainWindowService } from "../../core/mocks/services/mock-main-windo
 import { MockMapRotationService } from "../../core/mocks/services/mock-map-rotation.service";
 import { MockMatchMapService } from "../../core/mocks/services/mock-match-map.service";
 import { MockMatchService } from "../../core/mocks/services/mock-match.service";
+import { MockOverwolfExtensionsService } from "../../core/mocks/services/mock-overwolf-extensions.service";
+import { MockOverwolfFeatureStatusService } from "../../core/mocks/services/mock-overwolf-feature-status.service";
 import { MockPlayerStatsService } from "../../core/mocks/services/mock-player-stats.service";
 import { MockPlayerService } from "../../core/mocks/services/mock-player.service";
 import { MockSettingsService } from "../../core/mocks/services/mock-settings.service";
+import { OverwolfExtensionsService } from "../../core/overwolf/overwolf-extensions.service";
+import { OverwolfFeatureStatusService } from "../../core/overwolf/overwolf-feature-status.service";
 import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { PlayerService } from "../../core/player.service";
+import { VersionService } from "../../core/version.service";
 import { NavbarComponent } from "../components/navbar.component";
 import { ChartingPageComponent } from "../pages/charting/charting-page.component";
 import { LineGraphComponent } from "../pages/charting/components/line-graph.component";
@@ -53,6 +59,7 @@ describe("MainWindowComponent", () => {
         await TestBed.configureTestingModule({
             imports: [ReactiveFormsModule, NoopAnimationsModule],
             declarations: [
+                GameEventsStatusIndicatorComponent,
                 ChartingPageComponent,
                 LineGraphComponent,
                 DashboardPageComponent,
@@ -83,6 +90,9 @@ describe("MainWindowComponent", () => {
                 { provide: PlayerLocalStatsService, useClass: MockPlayerStatsService },
                 { provide: PlayerService, useClass: MockPlayerService },
                 { provide: SettingsService, useClass: MockSettingsService },
+                { provide: OverwolfFeatureStatusService, useClass: MockOverwolfFeatureStatusService },
+                { provide: OverwolfExtensionsService, useClass: MockOverwolfExtensionsService },
+                { provide: VersionService },
                 { provide: WINDOW, useClass: BrowserWindowRef },
             ],
         }).compileComponents();

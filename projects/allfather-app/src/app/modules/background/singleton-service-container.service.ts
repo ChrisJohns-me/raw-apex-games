@@ -35,6 +35,7 @@ import { PlayerLocalStatsService } from "../core/player-local-stats.service";
 import { PlayerService } from "../core/player.service";
 import { ReportableDataManagerService } from "../core/reporting/reporting-engine/reportable-data-manager";
 import { ReportingService } from "../core/reporting/reporting.service";
+import { VersionService } from "../core/version.service";
 import { VideoRecordingService } from "../core/video-recording/video-recording.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
 import { InflictionInsightWindowService } from "../HUD/infliction-insight/windows/infliction-insight-window.service";
@@ -99,6 +100,7 @@ import { SystemTrayService } from "./system-tray.service";
         SettingsService,
         SystemTrayService,
         UltTimerWindowService,
+        VersionService,
         VideoRecordingService,
     ],
     useFactory: (...deps: unknown[]) =>
@@ -151,6 +153,7 @@ export class SingletonServiceContainerService {
         public readonly SettingsService: SettingsService,
         public readonly SystemTrayService: SystemTrayService,
         public readonly UltTimerWindowService: UltTimerWindowService,
+        public readonly VersionService: VersionService,
         public readonly VideoRecordingService: VideoRecordingService
     ) {}
 }

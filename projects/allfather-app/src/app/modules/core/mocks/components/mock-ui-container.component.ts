@@ -1,5 +1,4 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
-import { FeatureState } from "@allfather-app/app/common/feature-status";
 import { OverwolfWindowState } from "@allfather-app/app/common/overwolf-window";
 import {
     ConfigPositionXAnchor,
@@ -53,9 +52,7 @@ export class MockUIContainerComponent implements MockedClass<UIContainerComponen
     @Input() public enablePageviewTracking = true;
     @Input() public showSettingsLink = false;
     @Input("onCloseButtonClick") public onCloseFn?: () => void;
-    @Input() public showOverwolfAllFeatureStates = false;
 
-    public allFeatureStates?: FeatureState;
     public state: OverwolfWindowState = OverwolfWindowState.Normal;
     public isDev = false;
     public WindowState = OverwolfWindowState;
