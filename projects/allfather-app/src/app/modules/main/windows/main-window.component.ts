@@ -11,6 +11,7 @@ import {
     OnInit,
     ViewChild,
 } from "@angular/core";
+import { mdiDiscord } from "@mdi/js";
 import { fadeInOutAnimation } from "@shared/animations/fade-in-out.animation";
 import { scaleInOutAnimationFactory } from "@shared/animations/scale-in-out-factory.animation";
 import { Modal } from "bootstrap";
@@ -39,8 +40,6 @@ const CAPTION_DISPLAY_CHANCE = 0.1;
 })
 export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild("confirmExitModal") private confirmExitModal?: ElementRef;
-    public MainPage = MainPage;
-    public APP_NAME = APP_NAME;
     public get activePage(): MainPage {
         return this._activePage;
     }
@@ -54,6 +53,12 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     public toggleMainHotkey?: Hotkey;
     public randomCaption = this.captionGenerator();
     public allFeatureStates?: FeatureState;
+
+    //#region Passthrough Variables
+    public MainPage = MainPage;
+    public APP_NAME = APP_NAME;
+    public mdiDiscord = mdiDiscord;
+    //#endregion
 
     private _activePage: MainPage = MainPage.Dashboard;
     private destroy$ = new Subject<void>();

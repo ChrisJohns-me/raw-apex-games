@@ -68,11 +68,19 @@
         </ng-container>
 
         <div class="info-bar">
+            <div class="info-bar-item" *ngIf="appVersion">{{ appVersion }}</div>
             <div class="info-bar-item">
                 Service Status:&nbsp;
                 <app-game-events-status-indicator [allFeatureStates]="allFeatureStates"></app-game-events-status-indicator>
             </div>
-            <div class="info-bar-item" *ngIf="appVersion">{{ appVersion }}</div>
+            <div class="info-bar-item">
+                by <img src="../../../../assets/images/masterkriff_icon_sm.png" alt="" />
+                MasterKriff
+                <!-- TODO -->
+                <!-- <icon [path]="mdiDiscord"></icon>
+                <icon [path]="mdiDiscord"></icon>
+                <icon [path]="mdiDiscord"></icon> -->
+            </div>
         </div>
     </app-ui-container>
 </div>
