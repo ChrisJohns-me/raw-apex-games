@@ -11,7 +11,7 @@ import {
     OnInit,
     ViewChild,
 } from "@angular/core";
-import { mdiDiscord } from "@mdi/js";
+import { mdiDiscord, mdiYoutube } from "@mdi/js";
 import { fadeInOutAnimation } from "@shared/animations/fade-in-out.animation";
 import { scaleInOutAnimationFactory } from "@shared/animations/scale-in-out-factory.animation";
 import { Modal } from "bootstrap";
@@ -58,6 +58,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     public MainPage = MainPage;
     public APP_NAME = APP_NAME;
     public mdiDiscord = mdiDiscord;
+    public mdiYoutube = mdiYoutube;
     //#endregion
 
     private _activePage: MainPage = MainPage.Dashboard;

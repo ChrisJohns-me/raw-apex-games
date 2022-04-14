@@ -12,13 +12,7 @@ import { mdiAlert } from "@mdi/js";
     selector: "icon",
     template: `
         <svg version="1.1" viewBox="0 0 24 24" style="display:inline-block;width:1.5rem">
-            <!-- <g style="{style}">
-                <ng-container *ngTemplateOutlet="Tpl"></ng-container>
-                {pathElement} -->
             <path [attr.d]="data" d="" [style]="pathStyle" #path />
-
-            <!-- <rect width="24" height="24" fill="transparent" />
-            </g> -->
         </svg>
     `,
 })

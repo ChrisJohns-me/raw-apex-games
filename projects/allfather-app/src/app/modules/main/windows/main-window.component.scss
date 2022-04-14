@@ -61,3 +61,11 @@
         padding: 0 1rem;
     }
 }
+
+.social-link {
+    color: $white;
+
+    &:hover {
+        color: $gray-500;
+    }
+}

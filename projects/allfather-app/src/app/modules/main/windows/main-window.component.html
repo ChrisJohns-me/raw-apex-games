@@ -26,7 +26,7 @@
     @scaleInOut
     *ngIf="isLoading || isAppStarting"
     [injectBootstrapCSS]="true"
-    [primaryTitle]="'Allfather - Loading...'"
+    [primaryTitle]="''"
     [isMaximizable]="false"
     [isMinimizable]="false"
     [isDesktopWindow]="false"
@@ -74,12 +74,10 @@
                 <app-game-events-status-indicator [allFeatureStates]="allFeatureStates"></app-game-events-status-indicator>
             </div>
             <div class="info-bar-item">
-                by <img src="../../../../assets/images/masterkriff_icon_sm.png" alt="" />
+                Made by <img src="../../../../assets/images/masterkriff_icon_sm.png" alt="" />
                 MasterKriff
-                <!-- TODO -->
-                <!-- <icon [path]="mdiDiscord"></icon>
-                <icon [path]="mdiDiscord"></icon>
-                <icon [path]="mdiDiscord"></icon> -->
+                <a class="social-link" href="https://discord.com/invite/Hq98EfdcHP"><icon [path]="mdiDiscord"></icon></a>
+                <a class="social-link" href="https://www.youtube.com/c/MasterKriff"><icon [path]="mdiYoutube"></icon></a>
             </div>
         </div>
     </app-ui-container>

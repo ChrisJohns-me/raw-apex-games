@@ -25,18 +25,21 @@
                             <h6 class="card-title">
                                 <!-- BATTLE ROYALE STATS -->
                                 STATS ({{
-                                    (focusedLegendId ? legendBattleRoyaleStats?.numMatches : myBattleRoyaleStats?.numMatches) ?? 0
+                                    (focusedLegendId ? legendBattleRoyaleStats?.numMatches : playerBattleRoyaleStats?.numMatches) ?? 0
                                         | number: "1.0":"en-US"
                                 }}
                                 {{
-                                    (focusedLegendId ? legendBattleRoyaleStats?.numMatches : myBattleRoyaleStats?.numMatches) == 1
+                                    (focusedLegendId ? legendBattleRoyaleStats?.numMatches : playerBattleRoyaleStats?.numMatches) == 1
                                         ? "match"
                                         : "matches"
                                 }})
                             </h6>
                         </div>
                         <div class="card-content">
-                            <div class="row" *ngIf="legendBattleRoyaleStats ?? myBattleRoyaleStats ?? emptyStats; let stats">
+                            <div
+                                class="row"
+                                *ngIf="(focusedLegendId ? legendBattleRoyaleStats : playerBattleRoyaleStats) ?? emptyStats; let stats"
+                            >
                                 <div class="col-3 stat-group">
                                     <h1 class="stat-digit">
                                         {{ ((stats?.avgWins ?? 0) >= 0 && (stats?.avgWins ?? 0) < 1 ? stats.avgWins : 0) | percent }}
@@ -87,16 +90,16 @@
                     <div class="card">
                         <div class="card-header">
                             <h6 class="card-title">
-                                ARENAS STATS ({{ ((focusedLegendId ? legendArenasStats?.numMatches : myArenasStats?.numMatches) ?? 0) | number:'1.0':'en-US' }}
+                                ARENAS STATS ({{ ((focusedLegendId ? legendArenasStats?.numMatches : playerArenasStats?.numMatches) ?? 0) | number:'1.0':'en-US' }}
                                 {{
-                                    (focusedLegendId ? legendArenasStats?.numMatches : myArenasStats?.numMatches) == 1
-                                        ? "match"
-                                        : "matches"
+                                    (focusedLegendId ? legendArenasStats?.numMatches : playerArenasStats?.numMatches) == 1
+                                    ? "match"
+                                    : "matches"
                                 }})
                             </h6>
                         </div>
                         <div class="card-content">
-                            <div class="row" *ngIf="legendArenasStats ?? myArenasStats ?? emptyStats; let stats">
+                            <div class="row" *ngIf="(focusedLegendId ? legendArenasStats : playerArenasStats) ?? emptyStats; let stats">
                                 <div class="col-3 stat-group">
                                     <h1 class="stat-digit">
                                         {{ ((stats?.avgWins ?? 0) >= 0 && (stats?.avgWins ?? 0) < 1 ? stats.avgWins : 0) | percent }}
@@ -136,12 +139,20 @@
                             <h6 class="card-title">SUGGESTED SQUAD</h6>
                         </div>
                         <div class="card-content">
+                            <!-- <app-complimentary-legends
+                                class="complimentary-legends"
+                                *ngIf="
+                                    legendComplimentaryLegendWeights?.length
+                                        ? legendComplimentaryLegendWeights
+                                        : playerComplimentaryLegendWeights;
+                                    let legendWeights
+                                "
+                                [complimentaryLegendWeights]="legendWeights"
+                            ></app-complimentary-legends> -->
                             <app-complimentary-legends
                                 class="complimentary-legends"
                                 *ngIf="
-                                    legendComplimentaryLegendWeights && legendComplimentaryLegendWeights.length
-                                        ? legendComplimentaryLegendWeights
-                                        : myComplimentaryLegendWeights;
+                                    focusedLegendId ? legendComplimentaryLegendWeights : playerComplimentaryLegendWeights;
                                     let legendWeights
                                 "
                                 [complimentaryLegendWeights]="legendWeights"
