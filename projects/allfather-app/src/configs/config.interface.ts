@@ -54,6 +54,7 @@ export interface Facts {
  */
 export interface FeatureFlags {
     enableMatchTimerWindow: boolean;
+    enableLegendSelectAssistWindow: boolean;
     enableMiniInventoryWindow: boolean;
     enableUltTimerWindow: boolean;
     enableInflictionInsightWindow: boolean;

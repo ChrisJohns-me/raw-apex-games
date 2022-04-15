@@ -1,10 +1,12 @@
 import { Hotkey } from "@allfather-app/app/common/hotkey";
 import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
+import { aXNWSVA } from "@allfather-app/app/common/vip";
 import { HotkeyService } from "@allfather-app/app/modules/background/hotkey.service";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { FileService } from "@allfather-app/app/modules/core/file.service";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
 import { SettingsDataStore } from "@allfather-app/app/modules/core/local-database/settings-data-store";
+import { OverwolfProfileService } from "@allfather-app/app/modules/core/overwolf/overwolf-profile.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { InflictionInsightType } from "@allfather-app/app/modules/HUD/infliction-insight/windows/infliction-insight-window.component";
 import { AimingReticle, AimingReticleList } from "@allfather-app/app/modules/HUD/reticle-helper/components/aiming-reticle/aiming-reticles";
@@ -14,11 +16,12 @@ import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { mdiAttachment } from "@mdi/js";
+import { isEmpty } from "common/utilities";
 import format from "date-fns/format";
 import "dexie-export-import";
 import { importInto, ImportOptions } from "dexie-export-import";
 import { from, merge, of, Subject } from "rxjs";
-import { debounceTime, finalize, map, switchMap, takeUntil, tap } from "rxjs/operators";
+import { debounceTime, filter, finalize, map, switchMap, take, takeUntil } from "rxjs/operators";
 
 const SAVE_SETTINGS_DEBOUNCETIME = 1000;
 
@@ -50,6 +53,8 @@ enum AimingReticlePreview {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsPageComponent implements OnInit, OnDestroy {
+    /** isVIP: has access to all configuration/settings */
+    public aXNWSVA = false;
     public config?: Configuration;
     public hotkeysList?: Hotkey[] = [];
     public editingHotkey: Hotkey | undefined;
@@ -93,7 +98,14 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     }
     //#endregion
     /** Which item to preview */
-    public selectedPreviewSetting?: SettingPreview;
+    public get selectedPreviewSetting(): Optional<SettingPreview> {
+        return this._selectedPreviewSetting;
+    }
+    public set selectedPreviewSetting(value: Optional<SettingPreview>) {
+        this._selectedPreviewSetting = value;
+        this.cdr.detectChanges();
+    }
+    private _selectedPreviewSetting?: SettingPreview;
     /** Which background to show for aiming reticle preview */
     public selectedAimingReticleBackground: AimingReticlePreview = AimingReticlePreview.NoWeapon;
     /** Actual aiming reticle */
@@ -160,9 +172,20 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         private readonly formBuilder: FormBuilder,
         private readonly hotkey: HotkeyService,
         private readonly localDatabase: LocalDatabaseService,
+        private readonly overwolfProfile: OverwolfProfileService,
         private readonly settings: SettingsService
     ) {
         this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => (this.config = config));
+        // Setup VIP
+        this.overwolfProfile
+            .getCurrentUser()
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((userData) => !isEmpty(userData?.username)),
+                map((userData) => userData.username),
+                take(1)
+            )
+            .subscribe((un) => (this.aXNWSVA = aXNWSVA(un!)));
     }
 
     public ngOnInit(): void {
@@ -373,7 +396,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this.destroy$),
                 map((value) => ({ [SettingKey.EnableLocalReporting]: value })),
-                debounceTime(SAVE_SETTINGS_DEBOUNCETIME),
+                debounceTime(SAVE_SETTINGS_DEBOUNCETIME)
             )
             .subscribe(this.saveSettingsChanges.bind(this));
     }

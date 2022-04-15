@@ -1,5 +1,6 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
 import { FeatureState } from "@allfather-app/app/common/feature-status";
+import { aXNWSVA } from "@allfather-app/app/common/vip";
 import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import {
     AfterViewInit,
@@ -24,6 +25,7 @@ import { BackgroundService } from "../../background/background.service";
 import { HotkeyService } from "../../background/hotkey.service";
 import { ConfigLoadStatus, ConfigurationService } from "../../core/configuration.service";
 import { OverwolfFeatureStatusService } from "../../core/overwolf/overwolf-feature-status.service";
+import { OverwolfProfileService } from "../../core/overwolf/overwolf-profile.service";
 import { VersionService } from "../../core/version.service";
 import { MainPage } from "../pages/main-page";
 import { MainWindowService } from "./main-window.service";
@@ -39,6 +41,8 @@ const CAPTION_DISPLAY_CHANCE = 0.1;
     animations: [fadeInOutAnimation, scaleInOutAnimationFactory(0, 0.925)],
 })
 export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
+    /** isVIP text */
+    public aXNWSVA = "";
     @ViewChild("confirmExitModal") private confirmExitModal?: ElementRef;
     public get activePage(): MainPage {
         return this._activePage;
@@ -72,9 +76,20 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         private readonly hotkey: HotkeyService,
         private readonly mainWindow: MainWindowService,
         private readonly overwolfFeatureStatus: OverwolfFeatureStatusService,
+        private readonly overwolfProfile: OverwolfProfileService,
         private readonly version: VersionService
     ) {
         this.setupHotkeys();
+        // Setup VIP
+        this.overwolfProfile
+            .getCurrentUser()
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((userData) => !isEmpty(userData?.username)),
+                map((userData) => userData.username),
+                take(1)
+            )
+            .subscribe((un) => (this.aXNWSVA = aXNWSVA(un!) ? window.atob("VklQ") : ""));
     }
 
     public ngOnInit(): void {

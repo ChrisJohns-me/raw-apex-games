@@ -31,11 +31,13 @@ import { MockMatchMapService } from "../../core/mocks/services/mock-match-map.se
 import { MockMatchService } from "../../core/mocks/services/mock-match.service";
 import { MockOverwolfExtensionsService } from "../../core/mocks/services/mock-overwolf-extensions.service";
 import { MockOverwolfFeatureStatusService } from "../../core/mocks/services/mock-overwolf-feature-status.service";
+import { MockOverwolfProfileService } from "../../core/mocks/services/mock-overwolf-profile.service";
 import { MockPlayerStatsService } from "../../core/mocks/services/mock-player-stats.service";
 import { MockPlayerService } from "../../core/mocks/services/mock-player.service";
 import { MockSettingsService } from "../../core/mocks/services/mock-settings.service";
 import { OverwolfExtensionsService } from "../../core/overwolf/overwolf-extensions.service";
 import { OverwolfFeatureStatusService } from "../../core/overwolf/overwolf-feature-status.service";
+import { OverwolfProfileService } from "../../core/overwolf/overwolf-profile.service";
 import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { PlayerService } from "../../core/player.service";
 import { VersionService } from "../../core/version.service";
@@ -90,6 +92,7 @@ describe("MainWindowComponent", () => {
                 { provide: PlayerLocalStatsService, useClass: MockPlayerStatsService },
                 { provide: PlayerService, useClass: MockPlayerService },
                 { provide: SettingsService, useClass: MockSettingsService },
+                { provide: OverwolfProfileService, useClass: MockOverwolfProfileService },
                 { provide: OverwolfFeatureStatusService, useClass: MockOverwolfFeatureStatusService },
                 { provide: OverwolfExtensionsService, useClass: MockOverwolfExtensionsService },
                 { provide: VersionService },

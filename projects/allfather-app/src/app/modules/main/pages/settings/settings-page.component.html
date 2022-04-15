@@ -33,7 +33,7 @@
                 </thead>
                 <tbody [formGroup]="inGameHUDFormGroup">
                     <tr
-                        *ngIf="config?.featureFlags?.enableMatchTimerWindow"
+                        *ngIf="config?.featureFlags?.enableMatchTimerWindow || aXNWSVA"
                         (mouseover)="selectedPreviewSetting = SettingPreview.MatchTimer"
                     >
                         <td class="ps-4 ps-lg-5">Match Timer</td>
@@ -44,7 +44,7 @@
                         </td>
                     </tr>
                     <tr
-                        *ngIf="config?.featureFlags?.enableMiniInventoryWindow"
+                        *ngIf="config?.featureFlags?.enableMiniInventoryWindow || aXNWSVA"
                         (mouseover)="selectedPreviewSetting = SettingPreview.MiniInventory"
                     >
                         <td class="ps-4 ps-lg-5">Mini Inventory</td>
@@ -58,7 +58,10 @@
                             </div>
                         </td>
                     </tr>
-                    <tr *ngIf="config?.featureFlags?.enableUltTimerWindow" (mouseover)="selectedPreviewSetting = SettingPreview.UltTimer">
+                    <tr
+                        *ngIf="config?.featureFlags?.enableUltTimerWindow || aXNWSVA"
+                        (mouseover)="selectedPreviewSetting = SettingPreview.UltTimer"
+                    >
                         <td class="ps-4 ps-lg-5">Ultimate Timer Display</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
@@ -75,7 +78,7 @@
                         </td>
                     </tr>
                     <tr
-                        *ngIf="config?.featureFlags?.enableInflictionInsightWindow"
+                        *ngIf="config?.featureFlags?.enableInflictionInsightWindow || aXNWSVA"
                         (mouseover)="selectedPreviewSetting = SettingPreview.InflictionInsight"
                     >
                         <td class="ps-4 ps-lg-5">Infliction Insight Display</td>
@@ -97,10 +100,10 @@
                         </td>
                     </tr>
                     <tr
-                        *ngIf="config?.featureFlags?.enableHealingHelperWindow"
+                        *ngIf="config?.featureFlags?.enableHealingHelperWindow || aXNWSVA"
                         (mouseover)="selectedPreviewSetting = SettingPreview.HealingHelper"
                     >
-                        <td class="ps-4 ps-lg-5">In-Ring Healing Info</td>
+                        <td class="ps-4 ps-lg-5">In-Ring Healing Guide</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
                                 <input
@@ -112,7 +115,7 @@
                         </td>
                     </tr>
                     <!-- #region Aiming Reticle -->
-                    <ng-container *ngIf="config?.featureFlags?.enableReticleHelperWindow">
+                    <ng-container *ngIf="config?.featureFlags?.enableReticleHelperWindow || aXNWSVA">
                         <tr (mouseover)="selectedPreviewSetting = SettingPreview.AimingReticle">
                             <td class="ps-4 ps-lg-5">Permanent Aiming Reticle</td>
                             <td class="text-end pe-5">
@@ -204,13 +207,16 @@
                     <!-- #endregion -->
                 </tbody>
             </table>
+
             <!-- #endregion -->
 
             <!-- #region Legend Select -->
             <table
                 class="table table-dark table-striped table-hover"
                 *ngIf="
-                    config?.featureFlags?.legendSelectAssist?.legendStats || config?.featureFlags?.legendSelectAssist?.complimentaryLegends
+                    config?.featureFlags?.legendSelectAssist?.legendStats ||
+                    config?.featureFlags?.legendSelectAssist?.complimentaryLegends ||
+                    aXNWSVA
                 "
             >
                 <thead>
@@ -225,7 +231,7 @@
                 </thead>
                 <tbody [formGroup]="legendSelectHUDFormGroup">
                     <tr
-                        *ngIf="config?.featureFlags?.legendSelectAssist?.legendStats"
+                        *ngIf="config?.featureFlags?.legendSelectAssist?.legendStats || aXNWSVA"
                         (mouseover)="selectedPreviewSetting = SettingPreview.LegendSelectionStats"
                     >
                         <td class="ps-4 ps-lg-5">Legend Statistics</td>
@@ -240,7 +246,7 @@
                         </td>
                     </tr>
                     <tr
-                        *ngIf="config?.featureFlags?.legendSelectAssist?.complimentaryLegends"
+                        *ngIf="config?.featureFlags?.legendSelectAssist?.complimentaryLegends || aXNWSVA"
                         (mouseover)="selectedPreviewSetting = SettingPreview.LegendSelectionSuggestions"
                     >
                         <td class="ps-4 ps-lg-5">Legend Suggestions</td>
@@ -303,6 +309,7 @@
                     <div *ngIf="selectedPreviewSetting === SettingPreview.MatchTimer" class="preview-image preview-match-timer"></div>
                     <div *ngIf="selectedPreviewSetting === SettingPreview.MiniInventory" class="preview-image preview-mini-inventory"></div>
                     <div *ngIf="selectedPreviewSetting === SettingPreview.UltTimer" class="preview-image preview-ult-timer"></div>
+                    <div *ngIf="selectedPreviewSetting === SettingPreview.HealingHelper" class="preview-image preview-healing-helper"></div>
                     <div
                         *ngIf="selectedPreviewSetting === SettingPreview.InflictionInsight"
                         class="preview-image preview-infliction-insight"

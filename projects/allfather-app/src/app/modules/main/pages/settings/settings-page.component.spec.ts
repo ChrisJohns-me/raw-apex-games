@@ -6,7 +6,9 @@ import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/
 import { MockFileService } from "@allfather-app/app/modules/core/mocks/services/mock-file.service";
 import { MockHotkeyService } from "@allfather-app/app/modules/core/mocks/services/mock-hotkey.service";
 import { MockLocalDatabaseService } from "@allfather-app/app/modules/core/mocks/services/mock-local-database.service";
+import { MockOverwolfProfileService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-profile.service";
 import { MockSettingsService } from "@allfather-app/app/modules/core/mocks/services/mock-settings.service";
+import { OverwolfProfileService } from "@allfather-app/app/modules/core/overwolf/overwolf-profile.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -26,6 +28,7 @@ describe("SettingsPageComponent", () => {
                 { provide: FileService, useClass: MockFileService },
                 { provide: HotkeyService, useClass: MockHotkeyService },
                 { provide: LocalDatabaseService, useClass: MockLocalDatabaseService },
+                { provide: OverwolfProfileService, useClass: MockOverwolfProfileService },
                 { provide: SettingsService, useClass: MockSettingsService },
             ],
         }).compileComponents();

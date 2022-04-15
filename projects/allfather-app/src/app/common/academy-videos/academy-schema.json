@@ -24,9 +24,6 @@
                                 "friendlyName": {
                                     "type": "string"
                                 },
-                                "category": {
-                                    "type": "string"
-                                },
                                 "order": {
                                     "type": "number"
                                 },

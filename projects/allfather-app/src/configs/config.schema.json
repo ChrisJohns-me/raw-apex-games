@@ -106,6 +106,9 @@
                 "enableMatchTimerWindow": {
                     "type": "boolean"
                 },
+                "enableLegendSelectAssistWindow": {
+                    "type": "boolean"
+                },
                 "enableMiniInventoryWindow": {
                     "type": "boolean"
                 },

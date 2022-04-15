@@ -73,6 +73,7 @@
     },
     "featureFlags": {
         "enableMatchTimerWindow": true,
+        "enableLegendSelectAssistWindow": true,
         "enableMiniInventoryWindow": true,
         "enableUltTimerWindow": true,
         "enableInflictionInsightWindow": true,
