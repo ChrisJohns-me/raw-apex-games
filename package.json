@@ -13,6 +13,7 @@
         "afapp:serve-debug": "ng build --project=allfatherApp --watch --plugin ~./projects/allfather-app/webpack.partial.dev.js --optimization false",
         "afapp:serve-dev": "ng build --project=allfatherApp --watch --plugin ~./projects/allfather-app/webpack.partial.dev.js",
         "afapp:build-prod": "ng build --project=allfatherApp --configuration production",
+        "afapp:compose-opk": "",
         "afapp:stats": "ng build --project=allfatherApp --stats-json",
         "afapp:analyze-dev": "webpack-bundle-analyzer dist/allfatherApp_dev/stats.json",
         "affunc:serve-dev": "cd projects/allfather-func/functions && npm run serve",

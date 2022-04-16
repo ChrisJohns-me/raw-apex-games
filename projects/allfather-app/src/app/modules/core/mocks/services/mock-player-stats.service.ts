@@ -1,51 +1,57 @@
 import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
-import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
-import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
 import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-local-stats.service";
-import { Observable, of } from "rxjs";
+import { of } from "rxjs";
 
 export class MockPlayerStatsService implements MockedClass<PlayerLocalStatsService> {
     public clearPlayerCache(): void {}
 
     public clearLegendCache(): void {}
 
-    public getPlayerStats$(limit?: number, breakCache = false): ReturnType<PlayerLocalStatsService["getPlayerStats$"]> {
+    public getPlayerStats$(
+        ...args: Parameters<PlayerLocalStatsService["getPlayerStats$"]>
+    ): ReturnType<PlayerLocalStatsService["getPlayerStats$"]> {
         return of();
     }
 
     public getPlayerGameModeGenericStats$(
-        gameModeGenericIds: MatchGameModeGenericId[],
-        limit?: number,
-        breakCache?: boolean
-    ): Observable<AvgMatchStats> {
-        return of();
-    }
-
-    public getLegendStats$(legendId: string, limit?: number, breakCache = false): ReturnType<PlayerLocalStatsService["getLegendStats$"]> {
-        return of();
-    }
-
-    public getLegendGameModeGenericStats$(
-        legendId: string,
-        gameModeGenericIds: MatchGameModeGenericId[],
-        limit?: number,
-        breakCache?: boolean
-    ): Observable<AvgMatchStats> {
+        ...args: Parameters<PlayerLocalStatsService["getPlayerGameModeGenericStats$"]>
+    ): ReturnType<PlayerLocalStatsService["getPlayerGameModeGenericStats$"]> {
         return of();
     }
 
     public getPlayerComplimentaryLegendWeights$(
-        limit?: number,
-        breakCache = false
+        ...args: Parameters<PlayerLocalStatsService["getPlayerComplimentaryLegendWeights$"]>
     ): ReturnType<PlayerLocalStatsService["getPlayerComplimentaryLegendWeights$"]> {
         return of();
     }
 
+    public getPlayerComplimentaryWeaponAvgEliminations$(
+        ...args: Parameters<PlayerLocalStatsService["getPlayerComplimentaryWeaponAvgEliminations$"]>
+    ): ReturnType<PlayerLocalStatsService["getPlayerComplimentaryWeaponAvgEliminations$"]> {
+        return of();
+    }
+
+    public getLegendStats$(
+        ...args: Parameters<PlayerLocalStatsService["getLegendStats$"]>
+    ): ReturnType<PlayerLocalStatsService["getLegendStats$"]> {
+        return of();
+    }
+
+    public getLegendGameModeGenericStats$(
+        ...args: Parameters<PlayerLocalStatsService["getLegendGameModeGenericStats$"]>
+    ): ReturnType<PlayerLocalStatsService["getLegendGameModeGenericStats$"]> {
+        return of();
+    }
+
     public getLegendComplimentaryLegendWeights$(
-        legendId: string,
-        limit?: number,
-        breakCache = false
+        ...args: Parameters<PlayerLocalStatsService["getLegendComplimentaryLegendWeights$"]>
     ): ReturnType<PlayerLocalStatsService["getLegendComplimentaryLegendWeights$"]> {
+        return of();
+    }
+
+    public getLegendComplimentaryAvgWeaponEliminations$(
+        ...args: Parameters<PlayerLocalStatsService["getLegendComplimentaryAvgWeaponEliminations$"]>
+    ): ReturnType<PlayerLocalStatsService["getLegendComplimentaryAvgWeaponEliminations$"]> {
         return of();
     }
 

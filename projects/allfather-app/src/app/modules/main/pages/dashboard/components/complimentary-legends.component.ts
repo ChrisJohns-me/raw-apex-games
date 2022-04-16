@@ -9,12 +9,8 @@ import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ComplimentaryLegendsComponent {
-    @Input() public legendId?: string;
     @Input() public complimentaryLegendWeights: { legendId: string; weightScore: number }[] = [];
 
-    public get legendName(): Optional<string> {
-        return this.legendId ? Legend.getName(this.legendId) : undefined;
-    }
     public getLegendImageName = (legendId: string): string => Legend.getSquarePortraitFilename(legendId);
     public getLegendBGColor = (legendId?: string): string => getLegendBGColor(legendId);
 }

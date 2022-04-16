@@ -18,20 +18,19 @@ export interface MatchDataStore {
     legendId?: string;
     assists?: number;
     damage?: number;
+    damageEventsHistory?: TimestampedStream<DamageEvent>;
     deaths?: number;
+    deathLocationHistory?: TimestampedStream<Coordinates>;
     eliminations?: number;
+    eliminationLocationHistory?: TimestampedStream<Coordinates>;
+    eliminationWeaponIds?: Stream<string>;
     knockdowns?: number;
     maxPlacement?: number;
     placement?: number;
-    damageEventsHistory?: TimestampedStream<DamageEvent>;
     killfeedHistory?: TimestampedStream<MatchKillfeed>;
     locationHistory?: TimestampedStream<LocationHistory>;
-    deathLocationHistory?: TimestampedStream<Coordinates>;
-    eliminationLocationHistory?: TimestampedStream<Coordinates>;
     matchRoster?: Stream<MatchRosterPlayer>;
     teamRoster?: TeamRosterPlayer[];
-    ultimateUsageDates?: Stream<Date>;
-    weaponIdsHistory?: TimestampedStream<WeaponIds>;
 }
 
 type Stream<T> = T[];
@@ -96,8 +95,4 @@ export enum LocationPhaseNum {
 
 interface LocationHistory extends Coordinates {
     phaseNum: LocationPhaseNum;
-}
-
-interface WeaponIds {
-    [id: number]: string;
 }

@@ -1,0 +1,11 @@
+<div class="weapon-items-container">
+    <ng-container *ngFor="let weaponAvgEliminations of complimentaryWeaponsAvgEliminations">
+        <div class="weapon-group" *ngIf="weaponAvgEliminations.avgEliminations > 0">
+            <div class="selected-border">
+                <img class="weapon-icon" [src]="'./assets/images/item-icons/' + weaponAvgEliminations.weapon.itemId + '.webp'" alt="" />
+            </div>
+
+            <h3 class="average-eliminations">{{ weaponAvgEliminations.avgEliminations | number: "1.2-2" }} kill rate</h3>
+        </div>
+    </ng-container>
+</div>

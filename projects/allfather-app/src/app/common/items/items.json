@@ -152,42 +152,49 @@
         {
             "id": "30_30_repeater",
             "friendlyName": "30-30 Repeater",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^30-30 Repeater$",
             "inGameEventNameRegExPattern": "^3030repeater$"
         },
         {
             "id": "alternator",
             "friendlyName": "Alternator",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^Alternator SMG$",
             "inGameEventNameRegExPattern": "^alternator$"
         },
         {
             "id": "bocek_bow",
             "friendlyName": "Bocek Bow",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "Bocek Compound Bow$",
             "inGameEventNameRegExPattern": "^bow$"
         },
         {
             "id": "charge_rifle",
             "friendlyName": "Charge Rifle",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^Charge Rifle$",
             "inGameEventNameRegExPattern": "^charge_rifle$"
         },
         {
             "id": "devotion",
             "friendlyName": "Devotion",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^Devotion$",
             "inGameEventNameRegExPattern": "^devotion$"
         },
         {
             "id": "rampage",
             "friendlyName": "Rampage LMG",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^Rampage LMG$",
             "inGameEventNameRegExPattern": "^rampage"
         },
         {
             "id": "eva_8",
             "friendlyName": "EVA-8 Auto",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^EVA-8 Auto$",
             "inGameEventNameRegExPattern": "^eva8$"
         },
@@ -200,120 +207,140 @@
         {
             "id": "havoc",
             "friendlyName": "HAVOC Rifle",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^HAVOC$",
             "inGameEventNameRegExPattern": "^energy_ar$"
         },
         {
             "id": "hemlok",
             "friendlyName": "Hemlok Burst",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^Hemlok Burst AR$",
             "inGameEventNameRegExPattern": "^hemlock$"
         },
         {
             "id": "prowler_burst",
             "friendlyName": "Prowler Burst",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^Prowler Burst PDW$",
             "inGameEventNameRegExPattern": "^prowler$"
         },
         {
             "id": "kraber",
             "friendlyName": "Kraber .50-Cal",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "Kraber",
             "inGameEventNameRegExPattern": "^kraber$"
         },
         {
             "id": "l_star",
             "friendlyName": "L-STAR",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^L-Star$",
             "inGameEventNameRegExPattern": "^lstar$"
         },
         {
             "id": "longbow",
             "friendlyName": "Longbow DMR",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^Longbow DMR$",
             "inGameEventNameRegExPattern": "^longbow$"
         },
         {
-            "id": "m600_spitfire",
+            "id": "spitfire",
             "friendlyName": "M600 Spitfire",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^M600 Spitfire$",
             "inGameEventNameRegExPattern": "^spitfire$"
         },
         {
             "id": "mastiff",
             "friendlyName": "Mastiff",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^Mastiff Shotgun$",
             "inGameEventNameRegExPattern": "^mastiff$"
         },
         {
             "id": "mozambique",
             "friendlyName": "Mozambique",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^Mozambique Shotgun$",
             "inGameEventNameRegExPattern": "^mozambique$"
         },
         {
             "id": "p2020",
             "friendlyName": "P2020",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^P2020$",
             "inGameEventNameRegExPattern": "^p2020$"
         },
         {
             "id": "peacekeeper",
             "friendlyName": "Peacekeeper",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^Peacekeeper$",
             "inGameEventNameRegExPattern": "^peacekeeper$"
         },
         {
             "id": "r301",
             "friendlyName": "R-301",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^R-301 Carbine$",
             "inGameEventNameRegExPattern": "^r301$"
         },
         {
             "id": "r99",
             "friendlyName": "R-99",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^R-99$",
             "inGameEventNameRegExPattern": "^r97$"
         },
         {
             "id": "car_smg",
             "friendlyName": "C.A.R. SMG",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^C.A.R. SMG$",
             "inGameEventNameRegExPattern": "^car$"
         },
         {
             "id": "re45",
             "friendlyName": "RE-45",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^RE-45 Auto$",
             "inGameEventNameRegExPattern": "^r45$"
         },
         {
             "id": "sentinel",
             "friendlyName": "Sentinel",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^sentinel$",
             "inGameEventNameRegExPattern": "^sentinel$"
         },
         {
             "id": "triple_take",
             "friendlyName": "Triple Take",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^Triple Take$",
             "inGameEventNameRegExPattern": "^triple_take$"
         },
         {
-            "id": "vk47_flatline",
+            "id": "flatline",
             "friendlyName": "VK47 Flatline",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^VK-47 Flatline$",
             "inGameEventNameRegExPattern": "^flatline$"
         },
         {
             "id": "volt",
             "friendlyName": "Volt",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^Volt SMG$",
             "inGameEventNameRegExPattern": "^volt$"
         },
         {
             "id": "wingman",
             "friendlyName": "Wingman",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^wingman$",
             "inGameEventNameRegExPattern": "^wingman$"
         },

@@ -2,6 +2,7 @@ import { InventorySlot, InventorySlots } from "@allfather-app/app/common/invento
 import { Item } from "@allfather-app/app/common/items/item";
 import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
+import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { TestBed } from "@angular/core/testing";
 import { TestScheduler } from "rxjs/testing";
 import { MockMatchService } from "../mocks/services/mock-match.service";
@@ -49,6 +50,7 @@ describe("MatchPlayerInventoryService", () => {
     });
 
     beforeEach(() => {
+        supressConsoleLog();
         jasmine.clock().uninstall();
         jasmine.clock().install();
         sut = TestBed.inject(MatchPlayerInventoryService);
@@ -272,7 +274,7 @@ describe("MatchPlayerInventoryService", () => {
                 },
                 B: {
                     0: { item: new WeaponItem({ fromId: "r301" }) },
-                    1: { item: new WeaponItem({ fromId: "vk47_flatline" }) },
+                    1: { item: new WeaponItem({ fromId: "flatline" }) },
                 },
             });
         });

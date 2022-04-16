@@ -1,6 +1,8 @@
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import { isEmpty, mathClamp } from "common/utilities/";
+import { unique } from "common/utilities/primitives/array";
 import isDate from "date-fns/isDate";
+import { WeaponItem } from "../items/weapon-item";
 
 // Safe-guards
 const MAX_PLACEMENT = 50;
@@ -149,6 +151,48 @@ export function complimentaryLegendsWeights(
 
     console.log(`Loaded Complimentary Legends for "${legendId ?? "all legends"}":`, avgCompLegendWeights);
     return avgCompLegendWeights;
+}
+
+/**
+ * Map all weapons with average eliminations per match.
+ * Respective to the given Legend (optionally).
+ * @returns {Map<WeaponId, Eliminations>}
+ */
+export function complimentaryWeaponsAvgEliminations(matchList: MatchDataStore[], legendId?: string): Map<string, number> {
+    type WeaponId = string;
+    const filteredMatchList = legendId
+        ? matchList.filter((m) => m.teamRoster?.find((tr) => !!tr.isMe && tr.legendId === legendId))
+        : matchList;
+    const numWeaponMatches = new Map<WeaponId, number>(); // number of matches with each Weapon
+    const sumWeaponEliminations = new Map<WeaponId, number>(); // summed eliminations with each Weapon
+    const avgWeaponEliminations = new Map<WeaponId, number>(); // summed eliminations with each Weapon per match
+
+    for (let i = 0; i < filteredMatchList.length; i++) {
+        const match: MatchDataStore = filteredMatchList[i];
+        const matchWeaponEliminations = match.eliminationWeaponIds
+            ?.map((weaponId) => (WeaponItem.isWeaponId(weaponId) ? weaponId : undefined))
+            .filter((weaponId) => !!weaponId) as string[];
+        if (!matchWeaponEliminations || !Array.isArray(matchWeaponEliminations) || isEmpty(matchWeaponEliminations)) continue;
+
+        // Number of matches with each weapon
+        unique(matchWeaponEliminations)?.forEach((weaponId) => {
+            numWeaponMatches.set(weaponId, (numWeaponMatches.get(weaponId) ?? 0) + 1);
+        });
+
+        // Sum of eliminations with each weapon
+        matchWeaponEliminations?.forEach((weaponId) => {
+            sumWeaponEliminations.set(weaponId, (sumWeaponEliminations.get(weaponId) ?? 0) + 1);
+        });
+    }
+
+    // Average number of eliminations with each weapon
+    sumWeaponEliminations.forEach((sumEliminations, weaponId) => {
+        const avgEliminations = sumEliminations / (numWeaponMatches.get(weaponId) ?? 0);
+        avgWeaponEliminations.set(weaponId, avgEliminations);
+    });
+
+    console.log(`Loaded Complimentary Weapons for "${legendId ?? "all legends"}"`);
+    return avgWeaponEliminations;
 }
 
 /**

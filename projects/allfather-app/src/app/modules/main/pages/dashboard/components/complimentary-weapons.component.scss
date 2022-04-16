@@ -1,0 +1,44 @@
+@import "window-styles";
+
+.weapon-items-container {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.weapon-group {
+    text-align: center;
+}
+
+.selected-border {
+    padding: 5px;
+    // border: 5px solid white;
+}
+
+.suggested-border {
+    &:first-of-type {
+        border-left: 5px solid white;
+    }
+
+    &:last-of-type {
+        border-right: 5px solid white;
+    }
+}
+
+.average-eliminations {
+    font-size: 1.75rem;
+    color: white;
+    font-family: "Quantico", sans-serif;
+    font-size: calc(0.25rem + 1vw);
+    line-height: calc(0.25rem + 1vw);
+}
+
+.weapon-icon {
+    height: 100%;
+    width: 100%;
+    max-width: 10vw;
+    max-height: 65px;
+    padding: 0.8rem;
+}

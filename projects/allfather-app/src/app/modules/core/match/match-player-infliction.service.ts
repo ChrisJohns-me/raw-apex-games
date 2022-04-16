@@ -39,9 +39,15 @@ export class MatchPlayerInflictionService extends BaseService {
     public readonly notMyKillfeedEvent$: Observable<MatchInflictionEvent>;
     /** Damage event stream for the local user */
     public readonly myDamageEvent$ = new Subject<MatchInflictionEvent>();
-    /** Knockdown stream for the local user */
+    /**
+     * Knockdown stream for the local user
+     * Does not contain weapon information.
+     */
     public readonly myKnockdownEvent$ = new Subject<MatchInflictionEvent>();
-    /** Elimination event stream for the local user */
+    /**
+     * Elimination event stream for the local user
+     * Does not contain weapon information.
+     */
     public readonly myEliminationEvent$ = new Subject<MatchInflictionEvent>();
 
     constructor(

@@ -122,8 +122,11 @@ export class LocalReportingEngine implements ReportingEngine {
             mapId: map?.mapId ?? "",
             assists: matchSummary.assists,
             damage: matchSummary.damage,
+            damageEventsHistory: getDataById("damageEventsHistory")?.value ?? [],
             deaths: matchSummary.deaths,
             eliminations: matchSummary.eliminations,
+            eliminationLocationHistory: getDataById("eliminationLocationHistory")?.value ?? [],
+            eliminationWeaponIds: getDataById("eliminationWeaponIds")?.value ?? [],
             knockdowns: matchSummary.knockdowns,
             maxPlacement: matchSummary.maxPlacement,
             placement: matchSummary.placement,
@@ -131,12 +134,8 @@ export class LocalReportingEngine implements ReportingEngine {
             teamRoster: getDataById("teamRoster")?.value ?? [],
             legendId: getDataById("legendId")?.value?.legendId ?? "",
             killfeedHistory: getDataById("killfeedHistory")?.value ?? [],
-            damageEventsHistory: getDataById("damageEventsHistory")?.value ?? [],
             deathLocationHistory: getDataById("deathLocationHistory")?.value ?? [],
-            eliminationLocationHistory: getDataById("eliminationLocationHistory")?.value ?? [],
             locationHistory: getDataById("locationHistory")?.value.map((loc) => composeLocationCoordinate(loc)) ?? [],
-            weaponIdsHistory: getDataById("weaponIdsHistory")?.value ?? [],
-            ultimateUsageDates: getDataById("ultimateUsageDates")?.value ?? [],
         };
 
         if (!matchData.matchRoster?.length || isEmpty(matchData.matchId)) throw Error(`Match data is missing or corrupt`);

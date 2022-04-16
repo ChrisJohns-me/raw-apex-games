@@ -1,6 +1,9 @@
 import ItemListJSONData from "./items.json";
 
 type ItemJSON = typeof ItemListJSONData["items"][number];
+export enum ItemType {
+    Weapon = "weapon",
+}
 type ItemConstructor = {
     fromId?: string;
     fromInGameEventName?: string;
@@ -11,7 +14,7 @@ type ItemConstructor = {
 export class Item {
     public itemId?: string;
     public friendlyName?: string;
-    public imageName?: string;
+    public itemType?: ItemType;
 
     /**
      * @param {string} fromId Unique identifier; unique to this app.
@@ -84,6 +87,6 @@ export class Item {
 
         this.itemId = foundItem.id;
         this.friendlyName = foundItem.friendlyName;
-        // this.imageName = foundItem.imageName;
+        this.itemType = foundItem.itemType as ItemType;
     }
 }

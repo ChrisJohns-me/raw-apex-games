@@ -25,6 +25,7 @@ import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AccountStatsDisplayComponent } from "./components/account-stats-display.component";
 import { ComplimentaryLegendsComponent } from "./components/complimentary-legends.component";
+import { ComplimentaryWeaponsComponent } from "./components/complimentary-weapons.component";
 import { LegendIconsBoardComponent } from "./components/legend-icons-board.component";
 import { MapRotationDisplayComponent } from "./components/map-rotation-display.component";
 import { DashboardPageComponent } from "./dashboard-page.component";
@@ -38,6 +39,7 @@ describe("DashboardPageComponent", () => {
             declarations: [
                 AccountStatsDisplayComponent,
                 ComplimentaryLegendsComponent,
+                ComplimentaryWeaponsComponent,
                 DashboardPageComponent,
                 LegendIconsBoardComponent,
                 MapRotationDisplayComponent,

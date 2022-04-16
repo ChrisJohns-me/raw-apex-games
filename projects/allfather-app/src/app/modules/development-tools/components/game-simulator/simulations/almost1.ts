@@ -1,6 +1,9 @@
 import { v4 as uuid } from "uuid";
 
 export const almost1 = (): string => `
+[2021-06-13 02:49:05.000 AM] {"info":{"match_info":{"game_mode":"#PL_DUO"}},"feature":"match_info"}
+[2021-06-13 02:49:05.000 AM] {"info":{"me":{"name":"MasterKriff"}},"feature":"me"}
+[2021-06-13 02:49:05.000 AM] {"info":{"match_info":{"game_mode":"#PL_TRIO"}},"feature":"match_info"}
 [2021-06-13 02:49:05.116 AM] {"info":{"match_info":{"roster_0":{"name":"LukWho","isTeammate":false,"team_id":21,"platform_hw":2,"platform_sw":7}}},"feature":"roster"}
 [2021-06-13 02:49:05.128 AM] {"info":{"match_info":{"roster_1":{"name":"Sir Durvington","isTeammate":false,"team_id":12,"platform_hw":2,"platform_sw":7}}},"feature":"roster"}
 [2021-06-13 02:49:05.131 AM] {"info":{"match_info":{"roster_3":{"name":"a slug","isTeammate":false,"team_id":7,"platform_hw":2,"platform_sw":7}}},"feature":"roster"}

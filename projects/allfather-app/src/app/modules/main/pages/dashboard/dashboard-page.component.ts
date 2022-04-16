@@ -31,7 +31,9 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     public legendBattleRoyaleStats?: AvgMatchStats;
     public legendArenasStats?: AvgMatchStats;
     public playerComplimentaryLegendWeights?: { legendId: string; weightScore: number }[];
+    public playerComplimentaryWeaponAvgEliminations?: { weaponId: string; avgEliminations: number }[];
     public legendComplimentaryLegendWeights?: { legendId: string; weightScore: number }[];
+    public legendComplimentaryWeaponAvgEliminations?: { weaponId: string; avgEliminations: number }[];
     public get focusedLegendName(): Optional<string> {
         return this.focusedLegendId ? Legend.getName(this.focusedLegendId) : undefined;
     }
@@ -102,6 +104,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
         this.loadPlayerBattleRoyaleStats();
         this.loadPlayerArenasStats();
         this.loadPlayerComplimentaryLegends();
+        this.loadPlayerComplimentaryWeapons();
         this.watchLocalDatabaseMatchChanges();
     }
 
@@ -133,6 +136,14 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
                 filter(() => legendId === this.focusedLegendId),
                 tap((legendComplimentaryLegendWeights) => (this.legendComplimentaryLegendWeights = legendComplimentaryLegendWeights))
             ),
+            this.getComplimentaryWeapons$(legendId).pipe(
+                startWith([]),
+                filter(() => legendId === this.focusedLegendId),
+                tap(
+                    (legendComplimentaryWeaponAvgEliminations) =>
+                        (this.legendComplimentaryWeaponAvgEliminations = legendComplimentaryWeaponAvgEliminations)
+                )
+            ),
         ])
             .pipe(takeUntil(this.destroy$))
             .subscribe(() => this.refreshUI());
@@ -144,6 +155,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
         this.legendBattleRoyaleStats = undefined;
         this.legendArenasStats = undefined;
         this.legendComplimentaryLegendWeights = undefined;
+        this.legendComplimentaryWeaponAvgEliminations = undefined;
         this.refreshUI();
     }
     //#endregion
@@ -184,6 +196,17 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
             });
     }
 
+    private loadPlayerComplimentaryWeapons(): void {
+        this.getPlayerComplimentaryWeaponAvgEliminations$(true)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((weaponAvgEliminations) => {
+                console.log(`Weapon Avg Eliminations:`, weaponAvgEliminations);
+                const limitedWeaponAvgEliminations = weaponAvgEliminations.slice(0, NUM_SUGGESTED_WEAPONS);
+                this.playerComplimentaryWeaponAvgEliminations = limitedWeaponAvgEliminations;
+                this.refreshUI();
+            });
+    }
+
     private watchLocalDatabaseMatchChanges(): void {
         this.localDatabase.onChanges$
             .pipe(
@@ -196,6 +219,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
                 this.loadPlayerBattleRoyaleStats();
                 this.loadPlayerArenasStats();
                 this.loadPlayerComplimentaryLegends();
+                this.loadPlayerComplimentaryWeapons();
                 this.preloadLegendStats(this.legendIdsRows);
             });
     }
@@ -214,6 +238,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
                         this.getBattleRoyaleLegendStats$(legendId, true),
                         this.getArenasLegendStats$(legendId, true),
                         this.getComplimentaryLegends$(legendId, true),
+                        this.getComplimentaryWeapons$(legendId, true),
                     ])
                 ),
                 finalize(() => {
@@ -249,6 +274,12 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
             .getLegendComplimentaryLegendWeights$(legendId, undefined, breakCache)
             .pipe(map((legendWeights) => legendWeights.slice(0, NUM_LEGEND_SUGGESTED_LEGENDS)));
     }
+
+    private getComplimentaryWeapons$(legendId: string, breakCache = false): Observable<{ weaponId: string; avgEliminations: number }[]> {
+        return this.playerLocalStats
+            .getLegendComplimentaryAvgWeaponEliminations$(legendId, undefined, breakCache)
+            .pipe(map((weaponAvgEliminations) => weaponAvgEliminations.slice(0, NUM_SUGGESTED_WEAPONS)));
+    }
     //#endregion
 
     //#region Player Stats Observables
@@ -271,7 +302,12 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     private getPlayerComplimentaryLegendWeights$(breakCache = false): Observable<{ legendId: string; weightScore: number }[]> {
         return this.playerLocalStats.getPlayerComplimentaryLegendWeights$(undefined, breakCache);
     }
+
+    private getPlayerComplimentaryWeaponAvgEliminations$(breakCache = false): Observable<{ weaponId: string; avgEliminations: number }[]> {
+        return this.playerLocalStats.getPlayerComplimentaryWeaponAvgEliminations$(undefined, breakCache);
+    }
     //#endregion
+
     private refreshUI(): void {
         this.cdr.detectChanges();
         // setTimeout(() => this.cdr.detectChanges(), 1000);

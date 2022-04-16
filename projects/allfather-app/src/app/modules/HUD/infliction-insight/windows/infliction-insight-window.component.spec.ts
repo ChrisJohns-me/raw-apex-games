@@ -3,6 +3,7 @@ import { MatchInflictionEvent, MatchInflictionEventAccum } from "@allfather-app/
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
 import { PlayerState } from "@allfather-app/app/common/player-state";
+import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { MatchKillfeedService } from "@allfather-app/app/modules/core/match/match-killfeed.service";
@@ -61,6 +62,7 @@ describe("InflictionInsightWindowComponent", () => {
     });
 
     beforeEach(async () => {
+        supressConsoleLog();
         jasmine.clock().uninstall();
         jasmine.clock().install();
         scheduler = new TestScheduler((actual, expected) => {

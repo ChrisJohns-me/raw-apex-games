@@ -16,6 +16,7 @@ import { DamageDataFactory } from "./reportable-data/damage";
 import { DamageEventsHistoryDataFactory } from "./reportable-data/damage-events-history";
 import { DeathLocationHistoryDataFactory } from "./reportable-data/death-location-history";
 import { EliminationLocationHistoryDataFactory } from "./reportable-data/elimination-location-history";
+import { EliminationWeaponIdsDataFactory } from "./reportable-data/elimination-weapon-ids";
 import { EliminationsDataFactory } from "./reportable-data/eliminations";
 import { GameModeDataFactory } from "./reportable-data/game-mode";
 import { KillfeedHistoryDataFactory } from "./reportable-data/killfeed-history";
@@ -29,8 +30,6 @@ import { MatchSummaryDataFactory } from "./reportable-data/match-summary";
 import { NameDataFactory } from "./reportable-data/name";
 import { PlacementDataFactory } from "./reportable-data/placement";
 import { TeamRosterDataFactory } from "./reportable-data/team-roster";
-import { UltimateUsageDatesDataFactory } from "./reportable-data/ultimate-usage-dates";
-import { WeaponIdsHistoryDataFactory } from "./reportable-data/weapon-ids-history";
 
 /**
  * @class ReportableDataManager
@@ -90,8 +89,9 @@ export class ReportableDataManagerService {
             DamageDataFactory(this.matchPlayerStats.myDamage$),
             DamageEventsHistoryDataFactory(this.matchPlayerInfliction.myDamageEvent$),
             DeathLocationHistoryDataFactory(this.matchPlayerLocation.myDeathCoordinates$),
-            EliminationLocationHistoryDataFactory(this.matchPlayerLocation.myEliminationCoordinates$),
             EliminationsDataFactory(this.matchPlayerStats.myEliminations$),
+            EliminationLocationHistoryDataFactory(this.matchPlayerLocation.myEliminationCoordinates$),
+            EliminationWeaponIdsDataFactory(this.matchPlayerInfliction.myKillfeedEvent$),
             GameModeDataFactory(this.match.gameMode$),
             KillfeedHistoryDataFactory(this.matchKillfeed.killfeedEvent$),
             KnockdownsDataFactory(this.matchPlayerStats.myKnockdowns$),
@@ -112,8 +112,6 @@ export class ReportableDataManagerService {
             NameDataFactory(this.player.myName$),
             PlacementDataFactory(this.matchPlayerStats.myPlacement$),
             TeamRosterDataFactory(this.matchRoster.teammateRoster$),
-            UltimateUsageDatesDataFactory(this.matchPlayerLegend.myUltimateUsage$),
-            WeaponIdsHistoryDataFactory(this.matchPlayerInventory.myWeaponSlots$),
         ];
     }
 }

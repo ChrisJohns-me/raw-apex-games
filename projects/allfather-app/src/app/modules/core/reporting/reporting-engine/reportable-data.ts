@@ -4,6 +4,7 @@ import { DamageDataFactory } from "./reportable-data/damage";
 import { DamageEventsHistoryDataFactory } from "./reportable-data/damage-events-history";
 import { DeathLocationHistoryDataFactory } from "./reportable-data/death-location-history";
 import { EliminationLocationHistoryDataFactory } from "./reportable-data/elimination-location-history";
+import { EliminationWeaponIdsDataFactory } from "./reportable-data/elimination-weapon-ids";
 import { EliminationsDataFactory } from "./reportable-data/eliminations";
 import { GameModeDataFactory } from "./reportable-data/game-mode";
 import { KillfeedHistoryDataFactory } from "./reportable-data/killfeed-history";
@@ -17,8 +18,6 @@ import { MatchSummaryDataFactory } from "./reportable-data/match-summary";
 import { NameDataFactory } from "./reportable-data/name";
 import { PlacementDataFactory } from "./reportable-data/placement";
 import { TeamRosterDataFactory } from "./reportable-data/team-roster";
-import { UltimateUsageDatesDataFactory } from "./reportable-data/ultimate-usage-dates";
-import { WeaponIdsHistoryDataFactory } from "./reportable-data/weapon-ids-history";
 
 /**
  * Helper to map DataItem types
@@ -29,6 +28,7 @@ export interface ReportableDataFactoryMap {
     damageEventsHistory: ReturnType<typeof DamageEventsHistoryDataFactory>;
     deathLocationHistory: ReturnType<typeof DeathLocationHistoryDataFactory>;
     eliminationLocationHistory: ReturnType<typeof EliminationLocationHistoryDataFactory>;
+    eliminationWeaponIds: ReturnType<typeof EliminationWeaponIdsDataFactory>;
     eliminations: ReturnType<typeof EliminationsDataFactory>;
     gameMode: ReturnType<typeof GameModeDataFactory>;
     killfeedHistory: ReturnType<typeof KillfeedHistoryDataFactory>;
@@ -42,8 +42,6 @@ export interface ReportableDataFactoryMap {
     name: ReturnType<typeof NameDataFactory>;
     placement: ReturnType<typeof PlacementDataFactory>;
     teamRoster: ReturnType<typeof TeamRosterDataFactory>;
-    ultimateUsageDates: ReturnType<typeof UltimateUsageDatesDataFactory>;
-    weaponIdsHistory: ReturnType<typeof WeaponIdsHistoryDataFactory>;
 }
 
 type ReportableDataConstructor<T> = { dataId: keyof ReportableDataFactoryMap; source$: Observable<T> };

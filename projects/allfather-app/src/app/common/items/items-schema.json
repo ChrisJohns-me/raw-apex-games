@@ -11,6 +11,9 @@
                 "friendlyName": {
                     "type": "string"
                 },
+                "itemType": {
+                    "type": "string"
+                },
                 "inGameInfoNameRegExPattern": {
                     "type": "string"
                 },
