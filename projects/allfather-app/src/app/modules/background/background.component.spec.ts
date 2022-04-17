@@ -7,7 +7,9 @@ import { MockGameProcessService } from "../core/mocks/services/mock-game-process
 import { MockHotkeyService } from "../core/mocks/services/mock-hotkey.service";
 import { MockMainWindowService } from "../core/mocks/services/mock-main-window.service";
 import { MockOverwolfExtensionsService } from "../core/mocks/services/mock-overwolf-extensions.service";
+import { MockSettingsService } from "../core/mocks/services/mock-settings.service";
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
+import { SettingsService } from "../core/settings.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
 import { MainWindowService } from "../main/windows/main-window.service";
 import { BackgroundComponent } from "./background.component";
@@ -43,6 +45,7 @@ describe("BackgroundComponent", () => {
                 { provide: MainWindowService, useClass: MockMainWindowService },
                 { provide: OverwolfExtensionsService, useClass: MockOverwolfExtensionsService },
                 { provide: SystemTrayService, useClass: MockSystemTrayService },
+                { provide: SettingsService, useClass: MockSettingsService },
                 { provide: Title, useClass: MockTitle },
                 { provide: BackgroundService, useClass: MockBackgroundService },
             ],

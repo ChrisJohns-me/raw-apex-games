@@ -1,3 +1,4 @@
+import { APP_NAME } from "@allfather-app/app/common/app";
 import { Hotkey } from "@allfather-app/app/common/hotkey";
 import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@allfather-app/app/common/settings";
 import { aXNWSVA } from "@allfather-app/app/common/vip";
@@ -15,7 +16,7 @@ import { Configuration } from "@allfather-app/configs/config.interface";
 import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { mdiAttachment } from "@mdi/js";
+import { mdiAttachment, mdiInformationOutline } from "@mdi/js";
 import { isEmpty } from "common/utilities";
 import format from "date-fns/format";
 import "dexie-export-import";
@@ -27,6 +28,7 @@ const SAVE_SETTINGS_DEBOUNCETIME = 1000;
 
 enum SettingPreview {
     AimingReticle = "aimingreticle",
+    MinimizeToTray = "minimizetotray",
     MatchTimer = "matchtimer",
     MiniInventory = "miniinventory",
     HealingHelper = "healinghelper",
@@ -62,6 +64,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     public hotKeyFormGroup = this.formBuilder.group({});
     public settingsForm = this.formBuilder.group({
         [SettingKey.EnableLocalReporting]: false,
+        [SettingKey.MinimizeToTray]: false,
         [SettingKey.EnableAllInGameHUD]: false,
         inGameHUDFormGroup: this.formBuilder.group({
             [SettingKey.EnableInGameMatchTimerHUD]: [false],
@@ -81,6 +84,9 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             [SettingKey.EnableLegendSelectLegendSuggestions]: [false],
         }),
     });
+    public get [SettingKey.MinimizeToTray](): FormControl {
+        return this.settingsForm.get([SettingKey.MinimizeToTray]) as FormControl;
+    }
     public get [SettingKey.EnableAllInGameHUD](): FormControl {
         return this.settingsForm.get([SettingKey.EnableAllInGameHUD]) as FormControl;
     }
@@ -125,6 +131,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     //#endregion
 
     //#region Pass-through variables
+    public APP_NAME = APP_NAME;
     public SettingKey = SettingKey;
     public SettingPreview = SettingPreview;
     public UltimateTimerTypeList: { key: UltimateTimerType; value: string }[] = [
@@ -158,6 +165,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     public AimingReticlePreview = AimingReticlePreview;
     public AimingReticleList = AimingReticleList;
     public mdiAttachment = mdiAttachment;
+    public mdiInformationOutline = mdiInformationOutline;
     //#endregion
 
     private dbExportFilename = `${environment.DEV ? "DEV_" : ""}allfather_db_${format(new Date(), "yyyy_MM_dd")}.json`;
@@ -190,6 +198,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
 
     public ngOnInit(): void {
         this.setupHotkeyForm();
+        this.setupMinimizeToTrayForm();
         this.setupInGameHUDForm();
         this.setupLegendSelectHUDForm();
         this.setupLocalReportingForm();
@@ -248,6 +257,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
 
     private setupSettingsListener(): void {
         const applyAllSettingsFn = (settings: AllSettings): void => {
+            this.settingsForm.get([SettingKey.MinimizeToTray])?.patchValue(settings[SettingKey.MinimizeToTray], { emitEvent: false });
             this.settingsForm
                 .get([SettingKey.EnableLocalReporting])
                 ?.patchValue(settings[SettingKey.EnableLocalReporting], { emitEvent: false });
@@ -311,6 +321,18 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             this.hotkeysList = hotkeys;
             this.cdr.detectChanges();
         });
+    }
+    //#endregion
+
+    //#region General
+    private setupMinimizeToTrayForm(): void {
+        this.minimizeToTray.valueChanges
+            .pipe(
+                takeUntil(this.destroy$),
+                map((value) => ({ [SettingKey.MinimizeToTray]: value })),
+                debounceTime(SAVE_SETTINGS_DEBOUNCETIME)
+            )
+            .subscribe(this.saveSettingsChanges.bind(this));
     }
     //#endregion
 

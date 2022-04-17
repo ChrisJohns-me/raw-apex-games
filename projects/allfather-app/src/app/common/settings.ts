@@ -21,6 +21,7 @@ export enum SettingKey {
     InGameAimingReticleColor = "inGameAimingReticleColor",
     InGameAimingReticleAlpha = "inGameAimingReticleAlpha",
     InGameAimingReticleDynamicHide = "inGameAimingReticleDynamicHide",
+    MinimizeToTray = "minimizeToTray",
 }
 
 export const DefaultSetting: { [P in SettingKey]: SettingValue } = {
@@ -39,4 +40,5 @@ export const DefaultSetting: { [P in SettingKey]: SettingValue } = {
     inGameAimingReticleColor: AimingReticleList[0].hexColor,
     inGameAimingReticleAlpha: AimingReticleList[0].alpha,
     inGameAimingReticleDynamicHide: false,
+    minimizeToTray: false,
 };

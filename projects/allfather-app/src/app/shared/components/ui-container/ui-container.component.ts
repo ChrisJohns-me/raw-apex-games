@@ -1,7 +1,9 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
 import { OverwolfWindow, OverwolfWindowState } from "@allfather-app/app/common/overwolf-window";
+import { SettingKey } from "@allfather-app/app/common/settings";
 import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
+import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { MainPage } from "@allfather-app/app/modules/main/pages/main-page";
 import { MainWindowService } from "@allfather-app/app/modules/main/windows/main-window.service";
 import { environment } from "@allfather-app/environments/environment";
@@ -93,6 +95,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
         private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly mainWindow: MainWindowService,
         private readonly overwolfGameData: OverwolfGameDataService,
+        private readonly settings: SettingsService,
         private readonly titleService: Title
     ) {
         this.titleService.setTitle(APP_NAME);
@@ -137,7 +140,17 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
 
     public onMinimizeButtonClick(): void {
         if (!this.isMinimizable) return;
-        this.minimizeToggle();
+
+        this.settings
+            .getSetting$<boolean>(SettingKey.MinimizeToTray)
+            .pipe(
+                takeUntil(this.destroy$),
+                map((minimizeToTraySetting) => minimizeToTraySetting?.value ?? false)
+            )
+            .subscribe((minimizeToTray) => {
+                if (minimizeToTray) this.close();
+                else this.minimizeToggle();
+            });
     }
 
     public onMaximizeButtonClick(): void {

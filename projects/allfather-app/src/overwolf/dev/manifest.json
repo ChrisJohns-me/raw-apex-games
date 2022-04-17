@@ -211,8 +211,9 @@
         "hotkeys": {
             "toggle_main": {
                 "title": "Show/Hide In-Game Window",
-                "action-type": "toggle",
-                "default": "Alt+F"
+                "action-type": "custom",
+                "default": "Alt+F",
+                "passthrough": true
             }
         },
         "protocol_override_domains": {

@@ -1,12 +1,14 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
+import { SettingKey } from "@allfather-app/app/common/settings";
 import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Subject } from "rxjs";
-import { filter, switchMap, takeUntil } from "rxjs/operators";
+import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { HotkeyEnum } from "../../common/hotkey";
 import { GameProcessService } from "../core/game-process.service";
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
+import { SettingsService } from "../core/settings.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
 import { MainWindowService } from "../main/windows/main-window.service";
 import { BackgroundService } from "./background.service";
@@ -33,6 +35,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
         private readonly hudWindowController: HUDWindowControllerService,
         private readonly mainWindow: MainWindowService,
         private readonly overwolfExtensions: OverwolfExtensionsService,
+        private readonly settings: SettingsService,
         private readonly systemTray: SystemTrayService,
         private readonly titleService: Title,
         public readonly backgroundService: BackgroundService
@@ -97,15 +100,17 @@ export class BackgroundComponent implements OnInit, OnDestroy {
     //#region App Actions
     /**
      * Toggles the main window:
-     *  - If the game is focused, the main window toggles between closed and restored.
-     *  - If the game is not focused, the main window toggles between minimized and restored.
+     *  - If the setting is set to minimizeToTray, the main window toggles between closed and restored.
+     *  - If the setting is not set to minimizeToTray, the main window toggles between minimized and restored.
      * @todo Unit test this method.
      */
     private toggleMainWindow(): void {
-        this.gameProcess.isInFocus$
+        this.settings
+            .getSetting$<boolean>(SettingKey.MinimizeToTray)
             .pipe(
                 takeUntil(this.destroy$),
-                switchMap((isInFocus) => this.mainWindow.toggle(isInFocus))
+                map((minimizeToTraySetting) => minimizeToTraySetting?.value ?? false),
+                switchMap((minimizeToTray) => this.mainWindow.toggle(minimizeToTray))
             )
             .subscribe();
     }

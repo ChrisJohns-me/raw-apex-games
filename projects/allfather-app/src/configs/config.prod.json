@@ -111,13 +111,13 @@
             "limitLegendStatsMatches": 250,
             "limitComplimentaryLegendsMatches": 500,
             "complimentaryLegendsWeights": {
-                "winWeight": 0.14,
-                "placementWeight": 0.14,
-                "damageWeight": 0.14,
-                "eliminationWeight": 0.14,
-                "deathWeight": 0.14,
-                "assistWeight": 0.14,
-                "knockdownWeight": 0.14,
+                "winWeight": 0.1,
+                "placementWeight": 0.15,
+                "damageWeight": 0.2,
+                "eliminationWeight": 0.35,
+                "deathWeight": 0.1,
+                "assistWeight": 0.05,
+                "knockdownWeight": 0.05,
                 "durationWeight": 0
             },
             "legendRows": [

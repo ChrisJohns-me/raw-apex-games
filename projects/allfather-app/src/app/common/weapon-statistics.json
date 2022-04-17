@@ -62,7 +62,7 @@
             "ammoType": "sniper"
         },
         {
-            "id": "m600_spitfire",
+            "id": "spitfire",
             "class": "lmg",
             "ammoType": "heavy"
         },
@@ -117,7 +117,7 @@
             "ammoType": "sniper"
         },
         {
-            "id": "vk47_flatline",
+            "id": "flatline",
             "class": "assault_rifle",
             "ammoType": "heavy"
         },

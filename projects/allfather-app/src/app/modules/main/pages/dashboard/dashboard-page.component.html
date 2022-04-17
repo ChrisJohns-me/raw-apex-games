@@ -2,6 +2,7 @@
     <div class="row">
         <div class="col pe-4">
             <app-legend-icons-board
+                *ngIf="legendIdsRows$ | async as legendIdsRows"
                 [legendIconRows]="legendIdsRows"
                 (onLegendHover)="hoverLegend($event)"
                 (onLegendUnhover)="unhoverLegend()"
@@ -139,24 +140,39 @@
                             <h6 class="card-title">SUGGESTED SQUAD</h6>
                         </div>
                         <div class="card-content">
-                            <!-- <app-complimentary-legends
-                                class="complimentary-legends"
-                                *ngIf="
-                                    legendComplimentaryLegendWeights?.length
-                                        ? legendComplimentaryLegendWeights
-                                        : playerComplimentaryLegendWeights;
-                                    let legendWeights
-                                "
-                                [complimentaryLegendWeights]="legendWeights"
-                            ></app-complimentary-legends> -->
-                            <app-complimentary-legends
-                                class="complimentary-legends"
-                                *ngIf="
-                                    focusedLegendId ? legendComplimentaryLegendWeights : playerComplimentaryLegendWeights;
-                                    let legendWeights
-                                "
-                                [complimentaryLegendWeights]="legendWeights"
-                            ></app-complimentary-legends>
+                            <ng-container *ngIf="focusedLegendId">
+                                <ng-container
+                                    *ngIf="
+                                        (legendBattleRoyaleStats?.numMatches ?? 0) >= ((minShowComplimentaryLegendsMatches$ | async) ?? 0)
+                                    "
+                                >
+                                    <app-complimentary-legends
+                                        class="complimentary-legends"
+                                        *ngIf="legendComplimentaryLegendWeights; let legendWeights"
+                                        [complimentaryLegendWeights]="legendWeights"
+                                    ></app-complimentary-legends>
+                                </ng-container>
+                                <div
+                                    class="my-1 p-2 text-center small"
+                                    *ngIf="
+                                        (legendBattleRoyaleStats?.numMatches ?? 0) < ((minShowComplimentaryLegendsMatches$ | async) ?? 0)
+                                    "
+                                >
+                                    Play
+                                    {{ ((minShowComplimentaryLegendsMatches$ | async) ?? 0) - (legendBattleRoyaleStats?.numMatches ?? 0) }}
+                                    more matches with {{ getLegendName(focusedLegendId) | titlecase }} to see suggested squad.
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="!focusedLegendId">
+                                <app-complimentary-legends
+                                    class="complimentary-legends"
+                                    *ngIf="
+                                        focusedLegendId ? legendComplimentaryLegendWeights : playerComplimentaryLegendWeights;
+                                        let legendWeights
+                                    "
+                                    [complimentaryLegendWeights]="legendWeights"
+                                ></app-complimentary-legends>
+                            </ng-container>
                         </div>
                     </div>
                 </div>

@@ -34,7 +34,7 @@ export class MainWindowService implements OnDestroy {
     }
 
     /**
-     * @param {boolean} close - If true, the app will close instead of minimizing.
+     * @param {boolean} close - If true, the app will close the window instead of minimizing.
      */
     public toggle(close: boolean): Observable<void> {
         return this.overwolfWindow.toggleMinimize(close).pipe(map(() => undefined));

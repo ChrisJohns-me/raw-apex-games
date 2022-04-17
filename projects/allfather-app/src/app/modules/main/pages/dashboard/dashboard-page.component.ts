@@ -8,8 +8,8 @@ import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { Stopwatch } from "common/utilities";
-import { combineLatest, from, Observable, Subject, Subscription } from "rxjs";
-import { concatMap, filter, finalize, map, startWith, takeUntil, tap } from "rxjs/operators";
+import { combineLatest, concat, from, Observable, Subject, Subscription } from "rxjs";
+import { concatMap, filter, finalize, map, shareReplay, startWith, switchMap, take, takeUntil, tap } from "rxjs/operators";
 
 type LegendIdsRow = string[];
 
@@ -25,7 +25,7 @@ const NUM_SUGGESTED_WEAPONS = 2;
 })
 export class DashboardPageComponent implements OnInit, OnDestroy {
     public focusedLegendId?: string;
-    public legendIdsRows: LegendIdsRow[] = [];
+    public legendIdsRows$: Observable<LegendIdsRow[]>;
     public playerBattleRoyaleStats?: AvgMatchStats;
     public playerArenasStats?: AvgMatchStats;
     public legendBattleRoyaleStats?: AvgMatchStats;
@@ -49,7 +49,11 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
         avgWins: 0,
         numMatches: 0,
     };
-
+    public get minShowComplimentaryLegendsMatches$(): Observable<Optional<number>> {
+        return this.configuration.config$.pipe(
+            map((config) => config.featureConfigs.legendSelectAssist.minShowComplimentaryLegendsMatches)
+        );
+    }
     private hoverLegendSubscription?: Subscription;
     private destroy$ = new Subject<void>();
 
@@ -61,10 +65,10 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
         private readonly player: PlayerService,
         private readonly playerLocalStats: PlayerLocalStatsService
     ) {
-        this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => {
-            this.legendIdsRows = config.featureConfigs.legendSelectAssist.legendRows.map((iconRows) => iconRows.legendIds);
-            this.preloadLegendStats(this.legendIdsRows);
-        });
+        this.legendIdsRows$ = this.configuration.config$.pipe(
+            map((config) => config.featureConfigs.legendSelectAssist.legendRows.map((iconRows) => iconRows.legendIds)),
+            shareReplay(1)
+        );
 
         // TODO: Remove, used for testing
         // const getMozambiqueherePlatform = (hw?: PlatformHardware): MozambiqueherePlatform => {
@@ -100,11 +104,16 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 
     //#region Lifecycle Hooks
     public ngOnInit(): void {
-        this.setupPlayerName();
-        this.loadPlayerBattleRoyaleStats();
-        this.loadPlayerArenasStats();
-        this.loadPlayerComplimentaryLegends();
-        this.loadPlayerComplimentaryWeapons();
+        concat(
+            this.loadPlayerName$().pipe(take(1)),
+            this.loadPlayerBattleRoyaleStats$(),
+            this.loadPlayerArenasStats$(),
+            this.loadPlayerComplimentaryLegends$(),
+            this.loadPlayerComplimentaryWeapons$(),
+            this.preloadAllLegendStats$()
+        )
+            .pipe(takeUntil(this.destroy$))
+            .subscribe();
         this.watchLocalDatabaseMatchChanges();
     }
 
@@ -161,93 +170,104 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     //#endregion
 
     //#region Intermediate Methods
-    private setupPlayerName(): void {
-        this.player.myName$.pipe(takeUntil(this.destroy$)).subscribe((myName) => {
-            this.playerName = myName;
-            this.refreshUI();
-        });
+    private loadPlayerName$(): Observable<string> {
+        return this.player.myName$.pipe(
+            filter((playerName) => !!playerName),
+            map((playerName) => playerName as string),
+            tap((playerName) => {
+                this.playerName = playerName;
+                this.refreshUI();
+            })
+        );
     }
 
-    private loadPlayerBattleRoyaleStats(): void {
-        this.getPlayerBattleRoyaleStats$(true)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((avgStats) => {
+    private loadPlayerBattleRoyaleStats$(): Observable<AvgMatchStats> {
+        return this.getPlayerBattleRoyaleStats$(true).pipe(
+            tap((avgStats) => {
                 this.playerBattleRoyaleStats = avgStats;
                 this.refreshUI();
-            });
+            })
+        );
     }
 
-    private loadPlayerArenasStats(): void {
-        this.getPlayerArenasStats$(true)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((avgStats) => {
+    private loadPlayerArenasStats$(): Observable<AvgMatchStats> {
+        return this.getPlayerArenasStats$(true).pipe(
+            tap((avgStats) => {
                 this.playerArenasStats = avgStats;
                 this.refreshUI();
-            });
+            })
+        );
     }
 
-    private loadPlayerComplimentaryLegends(): void {
-        this.getPlayerComplimentaryLegendWeights$(true)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((legendWeights) => {
+    private loadPlayerComplimentaryLegends$(): Observable<
+        {
+            legendId: string;
+            weightScore: number;
+        }[]
+    > {
+        return this.getPlayerComplimentaryLegendWeights$(true).pipe(
+            tap((legendWeights) => {
                 const limitedLegendWeights = legendWeights.slice(0, NUM_MY_SUGGESTED_LEGENDS);
                 this.playerComplimentaryLegendWeights = limitedLegendWeights;
                 this.refreshUI();
-            });
+            })
+        );
     }
 
-    private loadPlayerComplimentaryWeapons(): void {
-        this.getPlayerComplimentaryWeaponAvgEliminations$(true)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((weaponAvgEliminations) => {
-                console.log(`Weapon Avg Eliminations:`, weaponAvgEliminations);
+    private loadPlayerComplimentaryWeapons$(): Observable<
+        {
+            weaponId: string;
+            avgEliminations: number;
+        }[]
+    > {
+        return this.getPlayerComplimentaryWeaponAvgEliminations$(true).pipe(
+            tap((weaponAvgEliminations) => {
                 const limitedWeaponAvgEliminations = weaponAvgEliminations.slice(0, NUM_SUGGESTED_WEAPONS);
                 this.playerComplimentaryWeaponAvgEliminations = limitedWeaponAvgEliminations;
                 this.refreshUI();
-            });
+            })
+        );
     }
 
     private watchLocalDatabaseMatchChanges(): void {
         this.localDatabase.onChanges$
             .pipe(
+                tap(() => console.info(`>>> Local Database Match Changed`)),
                 takeUntil(this.destroy$),
                 map((changes) => changes.find((c) => c.table === this.localDatabase.matches.name)),
                 map((change) => (change as any)?.obj),
-                filter((value) => value != null)
-            )
-            .subscribe(() => {
-                this.loadPlayerBattleRoyaleStats();
-                this.loadPlayerArenasStats();
-                this.loadPlayerComplimentaryLegends();
-                this.loadPlayerComplimentaryWeapons();
-                this.preloadLegendStats(this.legendIdsRows);
-            });
-    }
-
-    private preloadLegendStats(legendIdsRows: LegendIdsRow[]): void {
-        const allLegendIds = legendIdsRows.flatMap((row) => row);
-        console.info(`[DashboardPage] Preloading Legend Stats for ${allLegendIds.length} legends`);
-
-        const stopwatch = new Stopwatch();
-        stopwatch.start();
-        from(allLegendIds)
-            .pipe(
-                takeUntil(this.destroy$),
-                concatMap((legendId) =>
-                    combineLatest([
-                        this.getBattleRoyaleLegendStats$(legendId, true),
-                        this.getArenasLegendStats$(legendId, true),
-                        this.getComplimentaryLegends$(legendId, true),
-                        this.getComplimentaryWeapons$(legendId, true),
-                    ])
-                ),
-                finalize(() => {
-                    stopwatch.stop();
-                    console.info(`[DashboardPage] Finished Preloading Legend Stats in ${stopwatch.result()}ms`);
-                    this.refreshUI();
-                })
+                filter((value) => value != null),
+                switchMap(() => this.loadPlayerBattleRoyaleStats$()),
+                switchMap(() => this.loadPlayerComplimentaryLegends$()),
+                switchMap(() => this.loadPlayerComplimentaryWeapons$()),
+                switchMap(() => this.loadPlayerArenasStats$()),
+                switchMap(() => this.preloadAllLegendStats$())
             )
             .subscribe();
+    }
+
+    private preloadAllLegendStats$(): Observable<void> {
+        const stopwatch = new Stopwatch();
+        console.info(`[DashboardPage] Preloading All Legend Stats`);
+        stopwatch.start();
+        return this.legendIdsRows$.pipe(
+            map((legendIdsRows) => legendIdsRows.flatMap((row) => row)),
+            switchMap((allLegendIds) => from(allLegendIds)),
+            concatMap((legendId) =>
+                combineLatest([
+                    this.getBattleRoyaleLegendStats$(legendId, true),
+                    this.getArenasLegendStats$(legendId, true),
+                    this.getComplimentaryLegends$(legendId, true),
+                    this.getComplimentaryWeapons$(legendId, true),
+                ])
+            ),
+            map(() => undefined),
+            finalize(() => {
+                stopwatch.stop();
+                console.info(`[DashboardPage] Finished Preloading Legend Stats in ${stopwatch.result()}ms`);
+                this.refreshUI();
+            })
+        );
     }
     //#endregion
 
@@ -310,8 +330,5 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 
     private refreshUI(): void {
         this.cdr.detectChanges();
-        // setTimeout(() => this.cdr.detectChanges(), 1000);
-        // setTimeout(() => this.cdr.detectChanges(), 2000);
-        // setTimeout(() => this.cdr.detectChanges(), 3000);
     }
 }
