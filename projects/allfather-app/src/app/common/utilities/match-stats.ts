@@ -90,6 +90,7 @@ interface StatBounds {
 export function listComplimentaryLegends(matchList: MatchDataStore[], statWeights: StatWeights): string[] {
     const avgCompLegendWeights = complimentaryLegendsWeights(matchList, statWeights);
     const avgCompLegend = Array.from(avgCompLegendWeights)
+        .slice()
         .sort((a, b) => b[1].totalAvgWeight - a[1].totalAvgWeight)
         .map((l) => l[0]);
     return avgCompLegend;

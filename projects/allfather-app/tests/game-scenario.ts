@@ -177,7 +177,9 @@ export class GameScenario implements GameScenarioConstructor {
             ...this.generateKillEvents(),
             ...this.generatePlayerEvents(),
             ...this.generateMatchEnd(this.matchEndDate),
-        ].sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+        ]
+            .slice()
+            .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
     }
 
     private generateInGameLobby(initialDate = this.matchStartDate): Timestamp<string>[] {
@@ -403,7 +405,7 @@ export class GameScenario implements GameScenarioConstructor {
 
     /** Verifies that the duration is not too large or throws error */
     private validateTimestamps(gameLogs: Timestamp<overwolf.games.events.InfoUpdates2Event | overwolf.games.events.GameEvent>[]): void {
-        const sortedGameLogs = gameLogs.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+        const sortedGameLogs = gameLogs.slice().sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
         const firstGameLog = sortedGameLogs[0];
         const lastGameLog = sortedGameLogs[sortedGameLogs.length - 1];
         const duration = Math.abs(differenceInMilliseconds(lastGameLog.timestamp, firstGameLog.timestamp));

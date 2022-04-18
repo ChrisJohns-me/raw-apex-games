@@ -75,7 +75,7 @@ export function generateLegendBGLinearColor(legendId?: string): string {
  *  - Alphabetically
  */
 export function sortLegendList(legendList: Legend[]): Legend[] {
-    return legendList.sort((a, b) => {
+    return legendList.slice().sort((a, b) => {
         if ((a.name?.toLowerCase() ?? "") < (b.name?.toLowerCase() ?? "")) return -1;
         if ((a.name?.toLowerCase() ?? "") > (b.name?.toLowerCase() ?? "")) return 1;
         return 0;

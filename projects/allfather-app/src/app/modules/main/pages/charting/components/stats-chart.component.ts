@@ -155,8 +155,11 @@ export class StatsChartComponent implements AfterViewInit, OnChanges {
         const placementData: number[] = [];
         const damageData: number[] = [];
 
+        const matchList = this.matchList
+            .slice()
+            .sort((a, b) => (a.startDate?.getTime() ?? Infinity) - (b.startDate?.getTime() ?? Infinity));
         const recentStartDate = subDays(now, this.numDaysToShow);
-        const recentMatchList = this.matchList.filter((match) => (match.endDate ?? 0) > recentStartDate);
+        const recentMatchList = matchList.filter((match) => (match.endDate ?? 0) > recentStartDate);
         const groupedAvgMatchList = matchListAvgStatsGroupedBy(recentMatchList, (m) => format(m.endDate!, this.dateKeyFormat));
 
         this.dataLabels = [];

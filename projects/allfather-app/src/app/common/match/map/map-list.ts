@@ -37,7 +37,7 @@ export const MatchMapList: MatchMap[] = [
  *  - Alphabetically
  */
 export function sortMatchMapList(matchMapList: MatchMap[]): MatchMap[] {
-    return matchMapList.sort((a, b) => {
+    return matchMapList.slice().sort((a, b) => {
         if (a.isBattleRoyaleMap && !b.isBattleRoyaleMap) return -1;
         if (!a.isBattleRoyaleMap && b.isBattleRoyaleMap) return 1;
         if (a.isArenasMap && !b.isArenasMap) return -1;
@@ -86,12 +86,14 @@ export function latestGenericMap(genericId: MatchMapGenericId, matchMapList: Mat
         return 0;
     };
     const latestMapActiveDatesFn = (activeDates: Array<{ from: Date; to?: Date }>): { from: Date; to?: Date } => {
-        return activeDates.sort(activeDatesSortFn)[0];
+        return activeDates.slice().sort(activeDatesSortFn)[0];
     };
 
     let latestMap: Optional<MatchMap>;
-    matchMapList // Sort Descending
+    matchMapList
+        .slice()
         .sort((a, b) => {
+            // Sort Descending
             const aLatest = a.activeDates?.length ? latestMapActiveDatesFn(a.activeDates) : undefined;
             const bLatest = b.activeDates?.length ? latestMapActiveDatesFn(b.activeDates) : undefined;
 

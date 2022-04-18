@@ -120,6 +120,7 @@ export class PlayerLocalStatsService extends BaseService {
                     config.featureConfigs.legendSelectAssist.complimentaryLegendsWeights
                 );
                 const weights = Array.from(weightsMap)
+                    .slice()
                     .sort((a, b) => b[1].totalAvgWeight - a[1].totalAvgWeight)
                     .map((l) => ({ legendId: l[0], weightScore: l[1].totalAvgWeight }));
                 return weights;
@@ -150,6 +151,7 @@ export class PlayerLocalStatsService extends BaseService {
             map((matchList) => {
                 const weaponsAvgEliminationsMap = complimentaryWeaponsAvgEliminations(matchList as MatchDataStore[]);
                 const weaponsAvgEliminations = Array.from(weaponsAvgEliminationsMap)
+                    .slice()
                     .sort((a, b) => b[1] - a[1])
                     .map((w) => ({ weaponId: w[0], avgEliminations: w[1] }));
                 return weaponsAvgEliminations;
@@ -231,6 +233,7 @@ export class PlayerLocalStatsService extends BaseService {
                     legendId
                 );
                 const legendWeights = Array.from(legendWeightsMap)
+                    .slice()
                     .sort((a, b) => b[1].totalAvgWeight - a[1].totalAvgWeight)
                     .map((l) => ({ legendId: l[0], weightScore: l[1].totalAvgWeight }));
                 return legendWeights;
@@ -265,6 +268,7 @@ export class PlayerLocalStatsService extends BaseService {
             map((matchList) => {
                 const weaponsAvgEliminationsMap = complimentaryWeaponsAvgEliminations(matchList as MatchDataStore[], legendId);
                 const weaponsAvgEliminations = Array.from(weaponsAvgEliminationsMap)
+                    .slice()
                     .sort((a, b) => b[1] - a[1])
                     .map((w) => ({ weaponId: w[0], avgEliminations: w[1] }));
                 return weaponsAvgEliminations;

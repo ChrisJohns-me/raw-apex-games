@@ -86,7 +86,7 @@ export class MatchExplorerPageComponent implements OnInit, OnDestroy {
         private readonly cdr: ChangeDetectorRef,
         private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly match: MatchService,
-        private readonly reportingService: ReportingService
+        private readonly reporting: ReportingService
     ) {}
 
     //#region Lifecycle Methods
@@ -162,7 +162,7 @@ export class MatchExplorerPageComponent implements OnInit, OnDestroy {
     //#region Setup
     private setupLiveMatchListeners(): void {
         // New match was reported to local database
-        this.reportingService.reportingEvent$
+        this.reporting.reportingEvent$
             .pipe(
                 takeUntil(this.destroy$),
                 filter((reportingEvent) => reportingEvent.engine.engineId === ReportingEngineId.Local),

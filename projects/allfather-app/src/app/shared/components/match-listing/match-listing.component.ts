@@ -111,8 +111,7 @@ export class MatchListingComponent implements OnInit, OnDestroy {
         if (isEmpty(match?.teamRoster)) return [];
         const teamRoster = unique(match.teamRoster, (p) => p.legendId);
         teamRoster.length = Math.min(teamRoster.length, this.maxSquadSize);
-        teamRoster.sort((a) => (a.isMe ? -1 : 0));
-        return teamRoster;
+        return teamRoster.slice().sort((a) => (a.isMe ? -1 : 0));
     }
 
     public onMatchClick(match: MatchDataStore): void {

@@ -117,7 +117,7 @@ export const MatchGameModeList: MatchGameMode[] = [
  *  - Alphabetically
  */
 export function sortMatchGameModeList(matchGameModeList: MatchGameMode[]): MatchGameMode[] {
-    return matchGameModeList.sort((a, b) => {
+    return matchGameModeList.slice().sort((a, b) => {
         if (a.isBattleRoyaleGameMode && !b.isBattleRoyaleGameMode) return -1;
         if (!a.isBattleRoyaleGameMode && b.isBattleRoyaleGameMode) return 1;
         if (a.isArenasGameMode && !b.isArenasGameMode) return -1;

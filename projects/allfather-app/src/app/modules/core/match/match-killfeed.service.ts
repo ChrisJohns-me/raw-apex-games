@@ -48,6 +48,7 @@ export class MatchKillfeedService extends BaseService {
         if (isEmpty(this.matchRoster.matchRoster$.value.allPlayers)) return undefined;
         const playerKillfeedHistory = this.killfeedEventHistory$.value
             .filter((kf) => isPlayerNameEqual(kf.victim.name, player.name) || isPlayerNameEqual(kf.attacker?.name, player.name))
+            .slice()
             .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
         const lastKnownActivity = playerKillfeedHistory[0];
         const lastKnownActivityDate = lastKnownActivity?.timestamp ?? this.match.state$.value.startDate;

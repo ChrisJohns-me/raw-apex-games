@@ -4,10 +4,12 @@ import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { MatchFilters } from "@allfather-app/app/common/utilities/match-filters";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
+import { ReportingEngineId, ReportingStatus } from "@allfather-app/app/modules/core/reporting/reporting-engine/reporting-engine";
+import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { mdiFilterVariantRemove } from "@mdi/js";
 import { Observable, Subject } from "rxjs";
-import { finalize, takeUntil, tap } from "rxjs/operators";
+import { filter, finalize, switchMap, takeUntil, tap } from "rxjs/operators";
 
 const MONTHLYAVG_REQUIRED_DAYS = 60;
 
@@ -55,10 +57,16 @@ export class ChartingPageComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private destroy$ = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef, private readonly match: MatchService) {}
+    constructor(
+        private readonly cdr: ChangeDetectorRef,
+        private readonly match: MatchService,
+        private readonly reporting: ReportingService
+    ) {}
 
     //#region Lifecycle Methods
-    public ngOnInit(): void {}
+    public ngOnInit(): void {
+        this.setupLiveMatchListeners();
+    }
 
     public ngAfterViewInit(): void {
         this.refreshUI();
@@ -104,6 +112,22 @@ export class ChartingPageComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     //#endregion
 
+    private setupLiveMatchListeners(): void {
+        // New match was reported to local database
+        this.reporting.reportingEvent$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((reportingEvent) => reportingEvent.engine.engineId === ReportingEngineId.Local),
+                filter((localReportingStatus) => localReportingStatus.status === ReportingStatus.SUCCESS),
+                switchMap(() => this.getMatchList$())
+            )
+            .subscribe((matchList) => {
+                this.matchFilters.matchList = matchList;
+                this.matchFilters.applyFilters();
+                this.refreshUI();
+            });
+    }
+
     /** @returns Match List */
     private getMatchList$(): Observable<MatchDataStore[]> {
         this.isLoadingMatchList = true;
@@ -116,9 +140,10 @@ export class ChartingPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private shouldShowMonthlyAvgGraph(matchList: MatchDataStore[]): boolean {
         const now = new Date();
         const oldestMatchDate = matchList
+            .slice()
             .sort((a, b) => (b.startDate?.getDate() ?? Infinity) - (a.startDate?.getDate() ?? Infinity))
             .find((match) => match.startDate?.getTime() ?? 0 > 0)?.startDate;
-        // const oldestMatchDate = matchList[0].startDate;
+
         if (!oldestMatchDate) return false;
         const lifespan = now.getTime() - oldestMatchDate.getTime();
         return lifespan > 1000 * 60 * 60 * 24 * MONTHLYAVG_REQUIRED_DAYS;

@@ -1,6 +1,8 @@
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { MockFullHeightDirective } from "@allfather-app/app/modules/core/mocks/directives/mock-full-height.directive";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
+import { MockReportingService } from "@allfather-app/app/modules/core/mocks/services/mock-reporting.service";
+import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { GameModesDropdownFilterComponent } from "@allfather-app/app/shared/components/game-modes-dropdown-filter/game-modes-dropdown-filter.component";
 import { LegendsDropdownFilterComponent } from "@allfather-app/app/shared/components/legends-dropdown-filter/legends-dropdown-filter.component";
 import { MapsDropdownFilterComponent } from "@allfather-app/app/shared/components/maps-dropdown-filter/maps-dropdown-filter.component";
@@ -32,7 +34,10 @@ describe("ChartingPageComponent", () => {
                 GameModeLineupChartComponent,
                 MockFullHeightDirective,
             ],
-            providers: [{ provide: MatchService, useClass: MockMatchService }],
+            providers: [
+                { provide: MatchService, useClass: MockMatchService },
+                { provide: ReportingService, useClass: MockReportingService },
+            ],
         }).compileComponents();
     });
 

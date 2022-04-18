@@ -155,7 +155,7 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly match: MatchService,
-        private readonly reportingService: ReportingService
+        private readonly reporting: ReportingService
     ) {}
 
     //#region Lifecycle Methods
@@ -247,7 +247,7 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
 
     private setupLiveMatchListeners(): void {
         // New match was reported to local database
-        this.reportingService.reportingEvent$
+        this.reporting.reportingEvent$
             .pipe(
                 takeUntil(this.destroy$),
                 filter((reportingEvent) => reportingEvent.engine.engineId === ReportingEngineId.Local),
@@ -335,6 +335,7 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
             .reduce((prev, curr) => {
                 if (!curr.locationHistory || !Array.isArray(curr.locationHistory)) return prev;
                 const firstLandingLocationData = curr.locationHistory
+                    .slice()
                     .sort((a, b) => a.timestamp - b.timestamp)
                     .find((l) => l.value.phaseNum === LocationPhaseNum.HasLanded)?.value;
                 if (!firstLandingLocationData) return prev;

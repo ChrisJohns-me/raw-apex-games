@@ -43,18 +43,22 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
      *  - roster ID
      */
     public get sortedOpponentBannerList(): OpponentBanner[] {
-        return [...this.opponentBannerList].sort((ob1, ob2) => {
+        return [...this.opponentBannerList].slice().sort((ob1, ob2) => {
             if (ob1.rosterPlayer.teamId !== ob2.rosterPlayer.teamId) {
-                const ob1LatestInfl = [...this.opponentBannerList.filter((o) => o.rosterPlayer.teamId === ob1.rosterPlayer.teamId)].sort(
-                    (a, b) =>
-                        (b.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
-                        (a.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
-                )[0];
-                const ob2LatestInfl = [...this.opponentBannerList.filter((o) => o.rosterPlayer.teamId === ob2.rosterPlayer.teamId)].sort(
-                    (a, b) =>
-                        (b.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
-                        (a.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
-                )[0];
+                const ob1LatestInfl = [...this.opponentBannerList.filter((o) => o.rosterPlayer.teamId === ob1.rosterPlayer.teamId)]
+                    .slice()
+                    .sort(
+                        (a, b) =>
+                            (b.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
+                            (a.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
+                    )[0];
+                const ob2LatestInfl = [...this.opponentBannerList.filter((o) => o.rosterPlayer.teamId === ob2.rosterPlayer.teamId)]
+                    .slice()
+                    .sort(
+                        (a, b) =>
+                            (b.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
+                            (a.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
+                    )[0];
                 return (
                     (ob2LatestInfl.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
                     (ob1LatestInfl.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
