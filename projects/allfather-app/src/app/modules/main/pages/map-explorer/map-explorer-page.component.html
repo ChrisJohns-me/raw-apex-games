@@ -1,15 +1,35 @@
 <ul class="nav m-3">
     <li class="nav-item me-2">
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                {{ selectedMap?.mapName ?? "Select a map" }}
+            <button
+                class="btn btn-secondary dropdown-toggle"
+                [ngClass]="{ 'btn-outline-warning': !viewingMap }"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+            >
+                {{ viewingMap?.mapName ?? "Select a map" }}
             </button>
             <ul class="dropdown-menu">
-                <li *ngFor="let map of mapList">
-                    <button class="dropdown-item" type="button" (click)="onSelectMapIdClick(map.mapId)">{{ map.mapName }}</button>
+                <li *ngFor="let map of genericMapList">
+                    <button class="dropdown-item" type="button" (click)="onSelectViewingMapClick(map)">{{ map.mapName }}</button>
                 </li>
             </ul>
         </div>
+    </li>
+    <li class="nav-item me-2">
+        <app-game-modes-dropdown-filter
+            [gameModeList]="gameModeList"
+            (selectedGameModes)="onSelectedGameModesChange($event)"
+            [selectAll]="resetFilters"
+        ></app-game-modes-dropdown-filter>
+    </li>
+    <li class="nav-item me-2">
+        <app-legends-dropdown-filter
+            [legendList]="legendList"
+            (selectedLegends)="onSelectedLegendsChange($event)"
+            [selectAll]="resetFilters"
+        ></app-legends-dropdown-filter>
     </li>
     <li class="nav-item me-2">
         <div class="dropdown">
@@ -23,29 +43,34 @@
             </ul>
         </div>
     </li>
+    <li class="nav-item me-2" *ngIf="areFiltersResettable">
+        <button class="btn btn-outline-danger btn-sm btn-reset" (click)="onResetClick()" type="button">
+            <icon [path]="mdiFilterVariantRemove"></icon>
+        </button>
+    </li>
 </ul>
 
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col col-xl-auto" appFullHeight [marginBottom]="25">
             <app-map-heatmap
-                [map]="selectedMap"
+                [map]="viewingMap"
                 [primaryCoordinates]="primaryCoordinates"
                 [secondaryCoordinates]="secondaryCoordinates"
             ></app-map-heatmap>
         </div>
         <div class="col-8 col-lg-6 col-md-7 col-xl-5 col-xxl-5" appFullHeight [marginBottom]="25">
             <!-- Aggregate Option -->
-            <table class="table table-dark table-hover mb-0" *ngIf="selectedMap">
+            <table class="table table-dark table-hover mb-0" *ngIf="viewingMap">
                 <tbody>
                     <tr
-                        (click)="onSelectMapIdClick(selectedMap.mapId)"
+                        (click)="onSelectViewingMapClick(viewingMap)"
                         class="clickable"
-                        [ngClass]="{ 'table-active table-primary': selectedMapMatchList && !selectedMatch }"
+                        [ngClass]="{ 'table-active table-primary': filteredMatchList.length && !viewingMatch }"
                     >
                         <td>
-                            {{ selectedMapMatchList.length }} {{ selectedMapMatchList.length == 1 ? "Match" : "Matches" }} on
-                            <strong>{{ selectedMap.mapName }}</strong>
+                            {{ filteredMatchList.length }} {{ filteredMatchList.length == 1 ? "Match" : "Matches" }} on
+                            <strong>{{ viewingMap.mapName }}</strong>
                         </td>
                     </tr>
                 </tbody>
@@ -54,10 +79,10 @@
             <!-- Match List -->
             <div class="matches-container" appFullHeight [marginBottom]="25" (scroll)="onMatchListingScroll($event)">
                 <app-match-listing
-                    [matches]="selectedMapMatchList"
+                    [matches]="filteredMatchList"
                     [isMatchClickable]="true"
-                    [selectedMatchId]="selectedMatch?.matchId"
-                    (matchClick)="onSelectMatchIdClick($event.matchId)"
+                    [selectedMatchId]="viewingMatch?.matchId"
+                    (matchClick)="onSelectViewingMatchClick($event)"
                     [showDataItems]="showMatchItems"
                     [numDisplayMatches]="numDisplayMatches"
                 ></app-match-listing>

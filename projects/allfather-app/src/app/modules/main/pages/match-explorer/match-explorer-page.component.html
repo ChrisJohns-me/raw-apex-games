@@ -3,25 +3,25 @@
         <input class="form-control bg-dark text-white" placeholder="Search..." type="text" [formControl]="searchForm" />
     </li>
     <li class="nav-item me-2">
-        <app-selected-maps
-            [mapGenericList]="mapGenericList"
+        <app-maps-dropdown-filter
+            [genericMapList]="genericMapList"
             (selectedMaps)="onSelectedMapsChange($event)"
             [selectAll]="resetFilters"
-        ></app-selected-maps>
+        ></app-maps-dropdown-filter>
     </li>
     <li class="nav-item me-2">
-        <app-selected-game-modes
+        <app-game-modes-dropdown-filter
             [gameModeList]="gameModeList"
             (selectedGameModes)="onSelectedGameModesChange($event)"
             [selectAll]="resetFilters"
-        ></app-selected-game-modes>
+        ></app-game-modes-dropdown-filter>
     </li>
     <li class="nav-item me-2">
-        <app-selected-legends
+        <app-legends-dropdown-filter
             [legendList]="legendList"
             (selectedLegends)="onSelectedLegendsChange($event)"
             [selectAll]="resetFilters"
-        ></app-selected-legends>
+        ></app-legends-dropdown-filter>
     </li>
     <li class="nav-item me-2" *ngIf="areFiltersResettable">
         <button class="btn btn-outline-danger btn-sm btn-reset" (click)="onResetClick()" type="button">

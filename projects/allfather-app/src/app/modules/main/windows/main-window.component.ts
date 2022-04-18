@@ -236,6 +236,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         const captionPickNum = Math.random();
 
         const captions = [
+            "The Allfather guides you now",
             "Allfather give me sight",
             "The gustr of wind calls our victory",
             "Fate will be on our side, félagi fighter",

@@ -1,8 +1,70 @@
+<ul class="nav m-3">
+    <li class="nav-item me-2">
+        <app-maps-dropdown-filter
+            [genericMapList]="genericMapList"
+            (selectedMaps)="onSelectedMapsChange($event)"
+            [selectAll]="resetFilters"
+        ></app-maps-dropdown-filter>
+    </li>
+    <li class="nav-item me-2">
+        <app-game-modes-dropdown-filter
+            [gameModeList]="gameModeList"
+            (selectedGameModes)="onSelectedGameModesChange($event)"
+            [selectAll]="resetFilters"
+        ></app-game-modes-dropdown-filter>
+    </li>
+    <li class="nav-item me-2">
+        <app-legends-dropdown-filter
+            [legendList]="legendList"
+            (selectedLegends)="onSelectedLegendsChange($event)"
+            [selectAll]="resetFilters"
+        ></app-legends-dropdown-filter>
+    </li>
+    <li class="nav-item me-2" *ngIf="areFiltersResettable">
+        <button class="btn btn-outline-danger btn-sm btn-reset" (click)="onResetClick()" type="button">
+            <icon [path]="mdiFilterVariantRemove"></icon>
+        </button>
+    </li>
+</ul>
+
 <div class="container mt-3">
     <div class="row">
-        <div class="col">
-            <h5>Daily Averages</h5>
-            <app-line-graph [matchList]="matchList"></app-line-graph>
+        <div class="col" appFullHeight [marginBottom]="25">
+            <div class="row mb-5">
+                <div class="col">
+                    <h4>Daily Average Stats</h4>
+                    <app-stats-chart [matchList]="filteredMatchList" unit="day"></app-stats-chart>
+                </div>
+            </div>
+
+            <div *ngIf="showMonthlyAvgGraph" class="row my-5">
+                <div class="col">
+                    <h4>Monthly Average Stats</h4>
+                    <app-stats-chart [matchList]="filteredMatchList" unit="month"></app-stats-chart>
+                </div>
+            </div>
+
+            <div class="row my-5">
+                <div class="col-8">
+                    <h4>Per Legend Average Stats</h4>
+                    <app-legend-lineup-chart [matchList]="filteredMatchList" [legendList]="legendList"></app-legend-lineup-chart>
+                </div>
+                <div class="col-4">
+                    <h4>Legend Pick Rate</h4>
+                    <app-legend-pickrate-chart [matchList]="filteredMatchList" [legendList]="legendList"></app-legend-pickrate-chart>
+                </div>
+            </div>
+
+            <div class="row my-5">
+                <div class="col-8">
+                    <h4>Per Game Mode Average Stats</h4>
+                    <app-game-mode-lineup-chart [matchList]="filteredMatchList" [gameModeList]="gameModeList"></app-game-mode-lineup-chart>
+                </div>
+                <div class="col-4">
+                    <h4>Game Mode Play Rate</h4>
+                    <app-game-mode-playrate-chart [matchList]="matchList" [gameModeList]="gameModeList"></app-game-mode-playrate-chart>
+                </div>
+            </div>
         </div>
     </div>
 </div>

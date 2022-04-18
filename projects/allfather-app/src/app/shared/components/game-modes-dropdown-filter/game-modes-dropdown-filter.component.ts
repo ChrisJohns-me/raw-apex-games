@@ -5,11 +5,11 @@ import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
 @Component({
-    selector: "app-selected-game-modes",
-    templateUrl: "./selected-game-modes.component.html",
+    selector: "app-game-modes-dropdown-filter",
+    templateUrl: "./game-modes-dropdown-filter.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelectedGameModesComponent implements OnInit, OnChanges, OnDestroy {
+export class GameModesDropdownFilterComponent implements OnInit, OnChanges, OnDestroy {
     @Input() public gameModeList: MatchGameMode[] = [];
     @Input() public selectAll?: Subject<void>;
     @Input() public clearAll?: Subject<void>;
@@ -93,9 +93,9 @@ export class SelectedGameModesComponent implements OnInit, OnChanges, OnDestroy 
 
     private setupGameModesList(gameModeList: MatchGameMode[]): void {
         const group: Record<string, FormControl> = {};
-        gameModeList.forEach((matchGameMode) => {
-            if (!matchGameMode.gameModeId) return;
-            group[matchGameMode.gameModeId] = new FormControl(true);
+        gameModeList.forEach((gameMode) => {
+            if (!gameMode.gameModeId) return;
+            group[gameMode.gameModeId] = new FormControl(true);
         });
 
         this.selectedGameModesFormGroup = new FormGroup(group);

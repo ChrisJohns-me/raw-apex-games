@@ -4,9 +4,9 @@ import { MatchMap } from "../match-map";
 
 export const MatchMapListControlMaps = [
     new MatchMap({
-        mapName: MatchMapFriendlyName.KingsCanyon,
-        mapGenericId: MatchMapGenericId.KingsCanyon,
-        mapId: "mp_rr_canyonlands_mu3",
+        mapName: MatchMapFriendlyName.CausticTreatment,
+        mapGenericId: MatchMapGenericId.CausticTreatment,
+        mapId: "mp_rr_canyonlands_mu3_control", // TODO: Check
         isBattleRoyaleMap: false,
         isArenasMap: false,
         isControlMap: true,
@@ -15,6 +15,7 @@ export const MatchMapListControlMaps = [
         activeDates: [
             {
                 from: new Date("Mar 2, 2022"),
+                to: new Date("Apr 12, 2022"),
             },
         ],
     }),

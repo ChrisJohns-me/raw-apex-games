@@ -9,22 +9,22 @@ import { takeUntil } from "rxjs/operators";
  * Utilizes Map's GenericId for determining selection
  */
 @Component({
-    selector: "app-selected-maps",
-    templateUrl: "./selected-maps.component.html",
+    selector: "app-maps-dropdown-filter",
+    templateUrl: "./maps-dropdown-filter.component.html",
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
+export class MapsDropdownFilterComponent implements OnInit, OnChanges, OnDestroy {
     /** Input only Genericized Map List */
-    @Input() public mapGenericList: MatchMap[] = [];
+    @Input() public genericMapList: MatchMap[] = [];
     @Input() public selectAll?: Subject<void>;
     @Input() public clearAll?: Subject<void>;
     @Output("selectedMaps") public selectedMapsOutput = new EventEmitter<MatchMap[]>();
 
     public get battleRoyaleMapList(): MatchMap[] {
-        return this.mapGenericList.filter((m) => m.isBattleRoyaleMap);
+        return this.genericMapList.filter((m) => m.isBattleRoyaleMap);
     }
     public get arenasMapList(): MatchMap[] {
-        return this.mapGenericList.filter((m) => m.isArenasMap);
+        return this.genericMapList.filter((m) => m.isArenasMap);
     }
 
     public selectedMapsFormGroup!: FormGroup;
@@ -46,7 +46,7 @@ export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
         const mapsSelected = Object.entries(this.selectedMapsFormGroup.controls).filter(([, mapFormControl]) => !!mapFormControl.value);
         if (mapsSelected.length === 1) {
             const mapGenericId = mapsSelected[0][0];
-            const foundMap = this.mapGenericList.find((m) => m.mapGenericId === mapGenericId);
+            const foundMap = this.genericMapList.find((m) => m.mapGenericId === mapGenericId);
             return foundMap?.mapName ?? "One Map";
         }
 
@@ -99,7 +99,7 @@ export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
     }
     private get selectedMaps(): MatchMap[] {
         return this.selectedMapGenericIds
-            .map((mapGenericId) => this.mapGenericList.find((m) => m.mapGenericId === mapGenericId))
+            .map((mapGenericId) => this.genericMapList.find((m) => m.mapGenericId === mapGenericId))
             .filter((m) => !!m) as MatchMap[];
     }
 
@@ -109,7 +109,7 @@ export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
     constructor() {}
 
     public ngOnInit(): void {
-        this.setupMapsList(this.mapGenericList);
+        this.setupMapsList(this.genericMapList);
         this.setupSelectedMapsChange();
         this.selectAll?.pipe(takeUntil(this.destroy$)).subscribe(() => {
             Object.entries(this.selectedMapsFormGroup.controls).filter(([, mapFormControl]) => mapFormControl.setValue(true));
@@ -120,7 +120,7 @@ export class SelectedMapsComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     public ngOnChanges(): void {
-        this.setupMapsList(this.mapGenericList);
+        this.setupMapsList(this.genericMapList);
         this.setupSelectedMapsChange();
     }
 

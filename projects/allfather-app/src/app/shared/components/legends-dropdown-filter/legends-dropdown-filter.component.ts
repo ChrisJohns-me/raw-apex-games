@@ -5,12 +5,12 @@ import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 
 @Component({
-    selector: "app-selected-legends",
-    templateUrl: "./selected-legends.component.html",
-    styleUrls: ["./selected-legends.component.scss"],
+    selector: "app-legends-dropdown-filter",
+    templateUrl: "./legends-dropdown-filter.component.html",
+    styleUrls: ["./legends-dropdown-filter.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SelectedLegendsComponent implements OnInit, OnChanges, OnDestroy {
+export class LegendsDropdownFilterComponent implements OnInit, OnChanges, OnDestroy {
     @Input() public legendList: Legend[] = [];
     @Input() public selectAll?: Subject<void>;
     @Input() public clearAll?: Subject<void>;

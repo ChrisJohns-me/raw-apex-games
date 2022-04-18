@@ -43,7 +43,7 @@ import { PlayerService } from "../../core/player.service";
 import { VersionService } from "../../core/version.service";
 import { NavbarComponent } from "../components/navbar.component";
 import { ChartingPageComponent } from "../pages/charting/charting-page.component";
-import { LineGraphComponent } from "../pages/charting/components/line-graph.component";
+import { StatsChartComponent } from "../pages/charting/components/stats-chart.component";
 import { AccountStatsDisplayComponent } from "../pages/dashboard/components/account-stats-display.component";
 import { LegendIconsBoardComponent } from "../pages/dashboard/components/legend-icons-board.component";
 import { MapRotationDisplayComponent } from "../pages/dashboard/components/map-rotation-display.component";
@@ -63,7 +63,7 @@ describe("MainWindowComponent", () => {
             declarations: [
                 GameEventsStatusIndicatorComponent,
                 ChartingPageComponent,
-                LineGraphComponent,
+                StatsChartComponent,
                 DashboardPageComponent,
                 IconComponent,
                 LegendIconsBoardComponent,
