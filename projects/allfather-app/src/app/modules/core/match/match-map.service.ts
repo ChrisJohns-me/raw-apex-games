@@ -24,6 +24,10 @@ export class MatchMapService extends BaseService {
      */
     public readonly map$ = new BehaviorSubject<Optional<MatchMap>>(undefined);
 
+    private get matchMapList(): MatchMap[] {
+        return MatchMapList;
+    }
+
     constructor(
         private readonly match: MatchService,
         private readonly mapRotationService: MapRotationService,
@@ -64,7 +68,9 @@ export class MatchMapService extends BaseService {
     private getMapFromZLocation$(): Observable<Optional<MatchMap>> {
         return this.matchPlayerLocation.myStartingCoordinates$.pipe(
             filter((startingCoordinates) => !!startingCoordinates && !isEmpty(startingCoordinates)),
-            map((startingCoordinates) => MatchMapList.find((map) => map.zStartPos == startingCoordinates?.z))
+            map((startingCoordinates) => {
+                return this.matchMapList.find((map) => map.isActive && map.zStartPos == startingCoordinates?.z);
+            })
         );
     }
 

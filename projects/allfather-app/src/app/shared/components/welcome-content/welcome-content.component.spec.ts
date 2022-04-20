@@ -1,21 +1,19 @@
-import { MockFullHeightDirective } from "@allfather-app/app/modules/core/mocks/directives/mock-full-height.directive";
 import { WelcomeContentComponent } from "@allfather-app/app/shared/components/welcome-content/welcome-content.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { AboutPageComponent } from "./about-page.component";
 
-describe("AboutPageComponent", () => {
-    let component: AboutPageComponent;
-    let fixture: ComponentFixture<AboutPageComponent>;
+describe("WelcomeContentComponent", () => {
+    let component: WelcomeContentComponent;
+    let fixture: ComponentFixture<WelcomeContentComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [AboutPageComponent, MockFullHeightDirective, WelcomeContentComponent],
+            declarations: [WelcomeContentComponent],
             providers: [],
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(AboutPageComponent);
+        fixture = TestBed.createComponent(WelcomeContentComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

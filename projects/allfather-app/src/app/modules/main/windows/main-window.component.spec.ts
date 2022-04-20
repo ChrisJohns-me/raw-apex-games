@@ -1,12 +1,6 @@
-import { FileService } from "@allfather-app/app/modules/core/file.service";
-import { GameProcessService } from "@allfather-app/app/modules/core/game-process.service";
-import { BrowserWindowRef, WINDOW } from "@allfather-app/app/modules/core/global-window.provider";
+import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
-import { MapRotationService } from "@allfather-app/app/modules/core/map-rotation/map-rotation.service";
-import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { MockBackgroundService } from "@allfather-app/app/modules/core/mocks/services/mock-background.service";
-import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats.service";
-import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { GameEventsStatusIndicatorComponent } from "@allfather-app/app/shared/components/game-events-status-indicator/game-events-status-indicator.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -15,8 +9,13 @@ import { IconComponent } from "@shared/components/icon/icon.component";
 import { BackgroundService } from "../../background/background.service";
 import { HotkeyService } from "../../background/hotkey.service";
 import { ConfigurationService } from "../../core/configuration.service";
+import { FileService } from "../../core/file.service";
+import { GameProcessService } from "../../core/game-process.service";
 import { LocalDatabaseService } from "../../core/local-database/local-database.service";
-import { MatchMapService } from "../../core/match/match-map.service";
+import { LocalStorageService } from "../../core/local-storage/local-storage.service";
+import { MapRotationService } from "../../core/map-rotation/map-rotation.service";
+import { MatchRosterService } from "../../core/match/match-roster.service";
+import { MatchService } from "../../core/match/match.service";
 import { MockUIContainerComponent } from "../../core/mocks/components/mock-ui-container.component";
 import { MockFullHeightDirective } from "../../core/mocks/directives/mock-full-height.directive";
 import { MockConfigurationService } from "../../core/mocks/services/mock-configuration.service";
@@ -25,21 +24,26 @@ import { MockGameProcessService } from "../../core/mocks/services/mock-game-proc
 import { MockGoogleAnalyticsService } from "../../core/mocks/services/mock-google-analytics.service";
 import { MockHotkeyService } from "../../core/mocks/services/mock-hotkey.service";
 import { MockLocalDatabaseService } from "../../core/mocks/services/mock-local-database.service";
+import { MockLocalStorageService } from "../../core/mocks/services/mock-local-storage.service";
 import { MockMainWindowService } from "../../core/mocks/services/mock-main-window.service";
 import { MockMapRotationService } from "../../core/mocks/services/mock-map-rotation.service";
-import { MockMatchMapService } from "../../core/mocks/services/mock-match-map.service";
+import { MockMatchRosterService } from "../../core/mocks/services/mock-match-roster.service";
 import { MockMatchService } from "../../core/mocks/services/mock-match.service";
-import { MockOverwolfExtensionsService } from "../../core/mocks/services/mock-overwolf-extensions.service";
 import { MockOverwolfFeatureStatusService } from "../../core/mocks/services/mock-overwolf-feature-status.service";
 import { MockOverwolfProfileService } from "../../core/mocks/services/mock-overwolf-profile.service";
-import { MockPlayerStatsService } from "../../core/mocks/services/mock-player-stats.service";
+import { MockPlayerAccountStatsService } from "../../core/mocks/services/mock-player-account-stats.service";
+import { MockPlayerLocalStatsService } from "../../core/mocks/services/mock-player-local-stats.service";
 import { MockPlayerService } from "../../core/mocks/services/mock-player.service";
+import { MockReportingService } from "../../core/mocks/services/mock-reporting.service";
 import { MockSettingsService } from "../../core/mocks/services/mock-settings.service";
-import { OverwolfExtensionsService } from "../../core/overwolf/overwolf-extensions.service";
+import { MockVersionService } from "../../core/mocks/services/mock-version.service";
 import { OverwolfFeatureStatusService } from "../../core/overwolf/overwolf-feature-status.service";
 import { OverwolfProfileService } from "../../core/overwolf/overwolf-profile.service";
+import { PlayerAccountStatsService } from "../../core/player-account-stats/player-account-stats.service";
 import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { PlayerService } from "../../core/player.service";
+import { ReportingService } from "../../core/reporting/reporting.service";
+import { SettingsService } from "../../core/settings.service";
 import { VersionService } from "../../core/version.service";
 import { NavbarComponent } from "../components/navbar.component";
 import { ChartingPageComponent } from "../pages/charting/charting-page.component";
@@ -61,20 +65,20 @@ describe("MainWindowComponent", () => {
         await TestBed.configureTestingModule({
             imports: [ReactiveFormsModule, NoopAnimationsModule],
             declarations: [
-                GameEventsStatusIndicatorComponent,
+                AccountStatsDisplayComponent,
                 ChartingPageComponent,
-                StatsChartComponent,
                 DashboardPageComponent,
+                GameEventsStatusIndicatorComponent,
                 IconComponent,
                 LegendIconsBoardComponent,
                 MainWindowComponent,
+                MapRotationDisplayComponent,
                 MatchExplorerPageComponent,
+                MockFullHeightDirective,
                 MockUIContainerComponent,
                 NavbarComponent,
                 SettingsPageComponent,
-                MapRotationDisplayComponent,
-                AccountStatsDisplayComponent,
-                MockFullHeightDirective,
+                StatsChartComponent,
             ],
             providers: [
                 { provide: BackgroundService, useClass: MockBackgroundService },
@@ -84,24 +88,25 @@ describe("MainWindowComponent", () => {
                 { provide: GoogleAnalyticsService, useClass: MockGoogleAnalyticsService },
                 { provide: HotkeyService, useClass: MockHotkeyService },
                 { provide: LocalDatabaseService, useClass: MockLocalDatabaseService },
+                { provide: LocalStorageService, useClass: MockLocalStorageService },
                 { provide: MainWindowService, useClass: MockMainWindowService },
                 { provide: MapRotationService, useClass: MockMapRotationService },
-                { provide: MatchMapService, useClass: MockMatchMapService },
+                { provide: MatchRosterService, useClass: MockMatchRosterService },
                 { provide: MatchService, useClass: MockMatchService },
-                { provide: PlayerAccountStatsService, useClass: MockPlayerStatsService },
-                { provide: PlayerLocalStatsService, useClass: MockPlayerStatsService },
-                { provide: PlayerService, useClass: MockPlayerService },
-                { provide: SettingsService, useClass: MockSettingsService },
-                { provide: OverwolfProfileService, useClass: MockOverwolfProfileService },
                 { provide: OverwolfFeatureStatusService, useClass: MockOverwolfFeatureStatusService },
-                { provide: OverwolfExtensionsService, useClass: MockOverwolfExtensionsService },
-                { provide: VersionService },
-                { provide: WINDOW, useClass: BrowserWindowRef },
+                { provide: OverwolfProfileService, useClass: MockOverwolfProfileService },
+                { provide: PlayerAccountStatsService, useClass: MockPlayerAccountStatsService },
+                { provide: PlayerLocalStatsService, useClass: MockPlayerLocalStatsService },
+                { provide: PlayerService, useClass: MockPlayerService },
+                { provide: ReportingService, useClass: MockReportingService },
+                { provide: SettingsService, useClass: MockSettingsService },
+                { provide: VersionService, useClass: MockVersionService },
             ],
         }).compileComponents();
     });
 
     beforeEach(() => {
+        supressConsoleLog();
         fixture = TestBed.createComponent(MainWindowComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();

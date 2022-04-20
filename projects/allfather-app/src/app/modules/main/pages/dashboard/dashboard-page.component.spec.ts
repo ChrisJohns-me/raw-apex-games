@@ -1,9 +1,11 @@
+import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { GameProcessService } from "@allfather-app/app/modules/core/game-process.service";
 import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
 import { MapRotationService } from "@allfather-app/app/modules/core/map-rotation/map-rotation.service";
 import { MatchMapService } from "@allfather-app/app/modules/core/match/match-map.service";
+import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/services/mock-configuration.service";
 import { MockGameProcessService } from "@allfather-app/app/modules/core/mocks/services/mock-game-process.service";
@@ -11,17 +13,19 @@ import { MockGoogleAnalyticsService } from "@allfather-app/app/modules/core/mock
 import { MockLocalDatabaseService } from "@allfather-app/app/modules/core/mocks/services/mock-local-database.service";
 import { MockMapRotationService } from "@allfather-app/app/modules/core/mocks/services/mock-map-rotation.service";
 import { MockMatchMapService } from "@allfather-app/app/modules/core/mocks/services/mock-match-map.service";
+import { MockMatchRosterService } from "@allfather-app/app/modules/core/mocks/services/mock-match-roster.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
 import { MockOverwolfGameDataService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-game-data.service";
 import { MockOverwolfProfileService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-profile.service";
 import { MockPlayerAccountStatsService } from "@allfather-app/app/modules/core/mocks/services/mock-player-account-stats.service";
-import { MockPlayerStatsService } from "@allfather-app/app/modules/core/mocks/services/mock-player-stats.service";
+import { MockPlayerLocalStatsService } from "@allfather-app/app/modules/core/mocks/services/mock-player-local-stats.service";
 import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-player.service";
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { OverwolfProfileService } from "@allfather-app/app/modules/core/overwolf/overwolf-profile.service";
 import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats.service";
 import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-local-stats.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
+import { WelcomeContentComponent } from "@allfather-app/app/shared/components/welcome-content/welcome-content.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AccountStatsDisplayComponent } from "./components/account-stats-display.component";
 import { ComplimentaryLegendsComponent } from "./components/complimentary-legends.component";
@@ -43,6 +47,7 @@ describe("DashboardPageComponent", () => {
                 DashboardPageComponent,
                 LegendIconsBoardComponent,
                 MapRotationDisplayComponent,
+                WelcomeContentComponent,
             ],
             providers: [
                 { provide: ConfigurationService, useClass: MockConfigurationService },
@@ -55,13 +60,15 @@ describe("DashboardPageComponent", () => {
                 { provide: OverwolfGameDataService, useClass: MockOverwolfGameDataService },
                 { provide: OverwolfProfileService, useClass: MockOverwolfProfileService },
                 { provide: PlayerAccountStatsService, useClass: MockPlayerAccountStatsService },
-                { provide: PlayerLocalStatsService, useClass: MockPlayerStatsService },
+                { provide: PlayerLocalStatsService, useClass: MockPlayerLocalStatsService },
                 { provide: PlayerService, useClass: MockPlayerService },
+                { provide: MatchRosterService, useClass: MockMatchRosterService },
             ],
         }).compileComponents();
     });
 
     beforeEach(() => {
+        supressConsoleLog();
         fixture = TestBed.createComponent(DashboardPageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();

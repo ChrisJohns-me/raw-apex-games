@@ -145,7 +145,7 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
     public mdiFilterVariantRemove = mdiFilterVariantRemove;
 
     /** Num rows to add when user reaches the bottom of the scroll */
-    private numAddRowsScroll = 25;
+    private readonly numAddRowsScroll = 25;
     private aggregateLocationHistory: MatchMapCoordinates[] = [];
     private aggregateDeathLocationHistory: MatchMapCoordinates[] = [];
     private aggregateEliminationLocationHistory: MatchMapCoordinates[] = [];
@@ -298,7 +298,7 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
     /** @returns combined map location history for matches of the same map */
     private extractAggregateLocationHistory(matchList: MatchDataStore[], map: MatchMap): MatchMapCoordinates[] {
         return matchList
-            .filter((m) => m.mapId === map.mapId)
+            .filter((storedMatch) => storedMatch.mapId === map.mapId)
             .reduce((prev, curr) => {
                 if (!curr.locationHistory || !Array.isArray(curr.locationHistory)) return prev;
                 const coordinates = curr.locationHistory.filter((l) => l.value.phaseNum === LocationPhaseNum.HasLanded).map((l) => l.value);
@@ -309,7 +309,7 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
     /** @returns combined map death location history for matches of the same map */
     private extractAggregateDeathLocationHistory(matchList: MatchDataStore[], map: MatchMap): MatchMapCoordinates[] {
         return matchList
-            .filter((m) => m.mapId === map.mapId)
+            .filter((storedMatch) => storedMatch.mapId === map.mapId)
             .reduce((prev, curr) => {
                 if (!curr.deathLocationHistory || !Array.isArray(curr.deathLocationHistory)) return prev;
                 const coordinates = curr.deathLocationHistory.map((l) => l.value);
@@ -320,7 +320,7 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
     /** @returns combined map elimination location history for matches of the same map */
     private extractAggregateEliminationLocationHistory(matchList: MatchDataStore[], map: MatchMap): MatchMapCoordinates[] {
         return matchList
-            .filter((m) => m.mapId === map.mapId)
+            .filter((storedMatch) => storedMatch.mapId === map.mapId)
             .reduce((prev, curr) => {
                 if (!curr.eliminationLocationHistory || !Array.isArray(curr.eliminationLocationHistory)) return prev;
                 const coordinates = curr.eliminationLocationHistory.map((l) => l.value);
@@ -331,7 +331,7 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
     /** @returns Combined map landing location history for matches of the same map */
     private extractAggregateLandingLocationHistory(matchList: MatchDataStore[], map: MatchMap): MatchMapCoordinates[] {
         return matchList
-            .filter((m) => m.mapId === map.mapId)
+            .filter((storedMatch) => storedMatch.mapId === map.mapId)
             .reduce((prev, curr) => {
                 if (!curr.locationHistory || !Array.isArray(curr.locationHistory)) return prev;
                 const firstLandingLocationData = curr.locationHistory

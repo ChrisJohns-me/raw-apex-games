@@ -52,6 +52,14 @@
                     <div class="col-6 text-end">{{ (matchMap.map$ | async)?.mapName }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">MapId</div>
+                    <div class="col-6 text-end">{{ (matchMap.map$ | async)?.mapId }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">GameMode</div>
+                    <div class="col-6 text-end">{{ (match.gameMode$ | async)?.gameModeName }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
                     <div class="col-6">GameModeId</div>
                     <div class="col-6 text-end">{{ (match.gameMode$ | async)?.gameModeId }}</div>
                 </div>

@@ -21,7 +21,7 @@ class StaticMatchFilters {
 
     /** @returns The latest (generic) MatchMaps from a given mapList; or if undefined, defaults to non-training and non-firing range maps */
     public static getGenericMapList(mapList?: MatchMap[]): MatchMap[] {
-        if (!mapList) mapList = MatchFilters.getNonTrainingMapList();
+        if (!mapList) mapList = StaticMatchFilters.getNonTrainingMapList();
         const genericMapList = mapList.map((m) => latestGenericMap(m.mapGenericId, mapList!)).filter((m) => !!m) as MatchMap[];
         return unique(genericMapList, (m) => m.mapGenericId);
     }

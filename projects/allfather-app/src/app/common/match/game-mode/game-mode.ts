@@ -33,7 +33,8 @@ export class MatchGameMode {
     public activeDates?: ActiveDates;
 
     public get isActive(): boolean {
-        return !!this.activeDates?.some((date) => date.to == null && date.from <= new Date());
+        const now = new Date();
+        return !!this.activeDates?.some((date) => date.from <= now && (!date.to || now <= date.to));
     }
 
     constructor(ctor: MatchGameModeConstructor) {

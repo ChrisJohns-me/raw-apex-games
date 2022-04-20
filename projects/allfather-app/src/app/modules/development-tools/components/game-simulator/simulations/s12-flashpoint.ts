@@ -1,8 +1,8 @@
 import { v4 as uuid } from "uuid";
 
-export const s12Quick = (): string => `
-[2022-04-19 09:53:20.462 PM] {"info":{"match_info":{"game_mode":"#PL_TRIO"}},"feature":"match_info"}
-[2022-04-19 09:53:25.922 PM] {"info":{"match_info":{"game_mode":"#CAMPFIRE_MODE"}},"feature":"match_info"}
+export const s12Flashpoint = (): string => `
+[2022-04-19 09:53:48.100 PM] {"info":{"match_info":{"game_mode":"#PL_TRIO"}},"feature":"match_info"}
+[2022-04-19 09:53:48.500 PM] {"info":{"match_info":{"game_mode":"#CAMPFIRE_MODE"}},"feature":"match_info"}
 [2022-04-19 09:53:48.669 PM] {"info":{"match_info":{"location":{"x":"-154","y":"-213","z":"-48"}}},"feature":"location"}
 [2022-04-19 09:53:48.673 PM] {"info":{"match_info":{"roster_18":{"name":"All Kool no Aid","isTeammate":false,"team_id":5,"platform_hw":2,"platform_sw":7,"is_local":"0"}}},"feature":"roster"}
 [2022-04-19 09:53:48.718 PM] {"info":{"match_info":{"roster_0":{"name":"Germy Enjoyer","isTeammate":false,"team_id":15,"platform_hw":2,"platform_sw":7,"is_local":"0"}}},"feature":"roster"}

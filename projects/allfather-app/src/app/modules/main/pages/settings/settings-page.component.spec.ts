@@ -6,6 +6,7 @@ import { MockConfigurationService } from "@allfather-app/app/modules/core/mocks/
 import { MockFileService } from "@allfather-app/app/modules/core/mocks/services/mock-file.service";
 import { MockHotkeyService } from "@allfather-app/app/modules/core/mocks/services/mock-hotkey.service";
 import { MockLocalDatabaseService } from "@allfather-app/app/modules/core/mocks/services/mock-local-database.service";
+import { MockMainWindowService } from "@allfather-app/app/modules/core/mocks/services/mock-main-window.service";
 import { MockOverwolfProfileService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-profile.service";
 import { MockSettingsService } from "@allfather-app/app/modules/core/mocks/services/mock-settings.service";
 import { OverwolfProfileService } from "@allfather-app/app/modules/core/overwolf/overwolf-profile.service";
@@ -13,6 +14,7 @@ import { SettingsService } from "@allfather-app/app/modules/core/settings.servic
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";
 import { IconComponent } from "@shared/components/icon/icon.component";
+import { MainWindowService } from "../../windows/main-window.service";
 import { SettingsPageComponent } from "./settings-page.component";
 
 describe("SettingsPageComponent", () => {
@@ -24,6 +26,7 @@ describe("SettingsPageComponent", () => {
             imports: [ReactiveFormsModule],
             declarations: [SettingsPageComponent, IconComponent],
             providers: [
+                { provide: MainWindowService, useClass: MockMainWindowService },
                 { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: FileService, useClass: MockFileService },
                 { provide: HotkeyService, useClass: MockHotkeyService },

@@ -54,7 +54,8 @@ export class MatchMap implements MatchMapConstructor {
     public static unknownPreviewId = "unknown_map_preview";
 
     public get isActive(): boolean {
-        return !!this.activeDates?.some((date) => date.to == null && date.from < new Date());
+        const now = new Date();
+        return !!this.activeDates?.some((date) => date.from <= now && (!date.to || now <= date.to));
     }
 
     constructor(ctor: MatchMapConstructor) {

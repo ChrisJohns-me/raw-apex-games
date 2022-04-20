@@ -79,7 +79,7 @@ export class MatchExplorerPageComponent implements OnInit, OnDestroy {
     public mdiFilterVariantRemove = mdiFilterVariantRemove;
 
     /** Num rows to add when user reaches the bottom of the scroll */
-    private numAddRowsScroll = 25;
+    private readonly numAddRowsScroll = 25;
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -110,11 +110,8 @@ export class MatchExplorerPageComponent implements OnInit, OnDestroy {
 
     //#region Filter Events
     public onResetClick(): void {
-        this.searchForm.reset("", { emitEvent: false });
+        this.searchForm.reset("");
         this.resetFilters.next();
-        this.matchFilters.applyFilters();
-        this.numDisplayMatches = DEFAULT_NUM_ROWS;
-        this.refreshUI();
     }
 
     public onSelectedMapsChange(selectedMaps: MatchMap[]): void {
@@ -180,7 +177,7 @@ export class MatchExplorerPageComponent implements OnInit, OnDestroy {
         const pauseTime = 250;
         this.searchForm.valueChanges.pipe(takeUntil(this.destroy$), debounceTime(pauseTime)).subscribe(() => {
             const searchInput = this.searchForm.value;
-            if (isEmpty(searchInput)) this.numAddRowsScroll = DEFAULT_NUM_ROWS;
+            if (isEmpty(searchInput)) this.numDisplayMatches = DEFAULT_NUM_ROWS;
             this.matchFilters.searchQuery = searchInput;
             this.matchFilters.applyFilters();
             this.refreshUI();

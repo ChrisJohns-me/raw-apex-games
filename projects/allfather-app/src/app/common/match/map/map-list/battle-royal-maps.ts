@@ -3,6 +3,7 @@ import { MatchMapFriendlyName, MatchMapGenericId } from "../map.enum";
 import { MatchMap } from "../match-map";
 
 export const MatchMapListBattleRoyalMaps = [
+    //#region Kings Canyon
     new MatchMap({
         mapName: MatchMapFriendlyName.KingsCanyon,
         mapGenericId: MatchMapGenericId.KingsCanyon,
@@ -30,6 +31,8 @@ export const MatchMapListBattleRoyalMaps = [
             },
         },
     }),
+    //#endregion
+    //#region Worlds Edge
     new MatchMap({
         mapName: MatchMapFriendlyName.WorldsEdge,
         mapGenericId: MatchMapGenericId.WorldsEdge,
@@ -85,6 +88,8 @@ export const MatchMapListBattleRoyalMaps = [
             },
         },
     }),
+    //#endregion
+    //#region Olympus
     new MatchMap({
         mapName: MatchMapFriendlyName.Olympus,
         mapGenericId: MatchMapGenericId.Olympus,
@@ -128,6 +133,7 @@ export const MatchMapListBattleRoyalMaps = [
         activeDates: [
             {
                 from: new Date("May 04, 2021"),
+                to: new Date("Feb 7, 2022"),
             },
         ],
         zStartPos: 119,
@@ -167,6 +173,8 @@ export const MatchMapListBattleRoyalMaps = [
             },
         },
     }),
+    //#endregion
+    //#region Storm Point
     new MatchMap({
         mapName: MatchMapFriendlyName.StormPoint,
         mapGenericId: MatchMapGenericId.StormPoint,
@@ -194,4 +202,5 @@ export const MatchMapListBattleRoyalMaps = [
             },
         },
     }),
+    //#endregion
 ];
