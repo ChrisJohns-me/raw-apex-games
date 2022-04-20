@@ -1,0 +1,46 @@
+@import "window-styles";
+
+.fade-in {
+    animation-name: fade-in;
+    animation-fill-mode: backwards;
+    animation-duration: 3s;
+    animation-timing-function: ease;
+    animation-iteration-count: 1;
+}
+
+.fade-in-delay {
+    animation-name: fade-in;
+    animation-delay: 2.5s;
+    animation-fill-mode: backwards;
+    animation-duration: 3s;
+    animation-timing-function: ease;
+    animation-iteration-count: 1;
+}
+
+.fade-zoom-in {
+    animation-name: fade-zoom-in;
+    animation-duration: 3s;
+    animation-timing-function: ease;
+    animation-iteration-count: 1;
+}
+
+
+@keyframes fade-in {
+    from {
+        opacity: 0%;
+    }
+    to {
+        opacity: 100%;
+    }
+}
+ 
+@keyframes fade-zoom-in {
+    from {
+        opacity: 0%;
+        transform: scale(0.75);
+    }
+    to {
+        opacity: 100%;
+        transform: scale(1);
+    }
+}

@@ -328,7 +328,7 @@
             <!-- #endregion -->
         </div>
         <div class="col-5 col-xl-7">
-            <!-- Preview -->
+            <!-- #region Preview -->
             <ng-container *ngIf="selectedPreviewSetting">
                 <h4 class="mt-5 text-center">Preview</h4>
                 <div class="preview-container">
@@ -442,6 +442,13 @@
                 </ng-container>
                 <!-- #endregion -->
             </ng-container>
+            <!-- #endregion -->
+
+            <!-- #region Other Links -->
+            <div class="other-links-container">
+                <a href (click)="onAboutClick()">About</a>
+            </div>
+            <!-- #endregion -->
         </div>
     </div>
 </div>

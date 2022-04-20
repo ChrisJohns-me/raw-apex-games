@@ -178,6 +178,7 @@ export class StatsChartComponent implements AfterViewInit, OnChanges {
                 label: "Avg KDR",
                 yAxisID: "yKdr",
                 borderColor: getCSSVar(ChartKDRCSSPropertyVar),
+                backgroundColor: getCSSVar(ChartKDRCSSPropertyVar),
             },
             {
                 data: damageData,
@@ -185,6 +186,7 @@ export class StatsChartComponent implements AfterViewInit, OnChanges {
                 label: "Avg Damage",
                 yAxisID: "yDamage",
                 borderColor: getCSSVar(ChartDamageCSSPropertyVar),
+                backgroundColor: getCSSVar(ChartDamageCSSPropertyVar),
             },
             {
                 data: placementData,
@@ -192,6 +194,7 @@ export class StatsChartComponent implements AfterViewInit, OnChanges {
                 label: "Avg Placement",
                 yAxisID: "yPlacement",
                 borderColor: getCSSVar(ChartPlacementCSSPropertyVar),
+                backgroundColor: getCSSVar(ChartPlacementCSSPropertyVar),
             },
         ];
     }

@@ -16,14 +16,16 @@ import { mdiDiscord, mdiYoutube } from "@mdi/js";
 import { fadeInOutAnimation } from "@shared/animations/fade-in-out.animation";
 import { scaleInOutAnimationFactory } from "@shared/animations/scale-in-out-factory.animation";
 import { Modal } from "bootstrap";
-import { isEmpty, wordsToUpperCase } from "common/utilities/";
+import { isEmpty, parseBoolean, wordsToUpperCase } from "common/utilities/";
 import { exhaustiveEnumSwitch } from "common/utilities/switch";
-import { combineLatest, interval, Subject } from "rxjs";
-import { delayWhen, filter, map, take, takeUntil } from "rxjs/operators";
+import { combineLatest, interval, of, Subject } from "rxjs";
+import { delay, delayWhen, filter, map, take, takeUntil } from "rxjs/operators";
 import { Hotkey, HotkeyEnum } from "../../../common/hotkey";
 import { BackgroundService } from "../../background/background.service";
 import { HotkeyService } from "../../background/hotkey.service";
 import { ConfigLoadStatus, ConfigurationService } from "../../core/configuration.service";
+import { LocalStorageKeys } from "../../core/local-storage/local-storage-keys";
+import { LocalStorageService } from "../../core/local-storage/local-storage.service";
 import { OverwolfFeatureStatusService } from "../../core/overwolf/overwolf-feature-status.service";
 import { OverwolfProfileService } from "../../core/overwolf/overwolf-profile.service";
 import { VersionService } from "../../core/version.service";
@@ -52,6 +54,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         this._activePage = value;
     }
     public isLoading = false;
+    public hasSeenFirstRun = true;
     public isAppStarting = false;
     public appVersion?: string;
     public toggleMainHotkey?: Hotkey;
@@ -74,12 +77,21 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         private readonly config: ConfigurationService,
         private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly hotkey: HotkeyService,
+        private readonly localStorage: LocalStorageService,
         private readonly mainWindow: MainWindowService,
         private readonly overwolfFeatureStatus: OverwolfFeatureStatusService,
         private readonly overwolfProfile: OverwolfProfileService,
         private readonly version: VersionService
     ) {
+        const hasSeenFirstRunValue = this.localStorage.get(LocalStorageKeys.HasSeenFirstRun);
+        this.hasSeenFirstRun = parseBoolean(hasSeenFirstRunValue);
+    }
+
+    public ngOnInit(): void {
+        this.setupAppVersion();
+        this.setupOverwolfGameEventStatus();
         this.setupHotkeys();
+        this.setupFirstRunRouting();
         // Setup VIP
         this.overwolfProfile
             .getCurrentUser()
@@ -90,11 +102,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
                 take(1)
             )
             .subscribe((un) => (this.aXNWSVA = aXNWSVA(un!) ? window.atob("VklQ") : ""));
-    }
 
-    public ngOnInit(): void {
-        this.setupAppVersion();
-        this.setupOverwolfGameEventStatus();
         this.mainWindow.isStarting$.pipe(takeUntil(this.destroy$)).subscribe((isStarting) => {
             this.isAppStarting = isStarting;
             this.cdr.detectChanges();
@@ -110,6 +118,12 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     public ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    public onFinishFirstRunClick(): void {
+        this.hasSeenFirstRun = true;
+        this.localStorage.set(LocalStorageKeys.HasSeenFirstRun, `${this.hasSeenFirstRun}`);
+        this.goToPage(MainPage.Dashboard);
     }
 
     public goToPage(page: MainPage): void {
@@ -162,6 +176,16 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.mainWindow.setIsStarting(false);
                 this.cdr.detectChanges();
             });
+    }
+
+    private setupFirstRunRouting(): void {
+        of(MainPage.FirstRun)
+            .pipe(
+                takeUntil(this.destroy$),
+                filter(() => !this.hasSeenFirstRun),
+                delay(STARTING_LOAD_DELAY)
+            )
+            .subscribe((page) => this.goToPage(page));
     }
 
     private setupPageRouting(): void {

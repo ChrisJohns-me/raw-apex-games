@@ -23,6 +23,8 @@ import "dexie-export-import";
 import { importInto, ImportOptions } from "dexie-export-import";
 import { from, merge, of, Subject } from "rxjs";
 import { debounceTime, filter, finalize, map, switchMap, take, takeUntil } from "rxjs/operators";
+import { MainWindowService } from "../../windows/main-window.service";
+import { MainPage } from "../main-page";
 
 const SAVE_SETTINGS_DEBOUNCETIME = 1000;
 
@@ -180,6 +182,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         private readonly formBuilder: FormBuilder,
         private readonly hotkey: HotkeyService,
         private readonly localDatabase: LocalDatabaseService,
+        private readonly mainWindow: MainWindowService,
         private readonly overwolfProfile: OverwolfProfileService,
         private readonly settings: SettingsService
     ) {
@@ -208,6 +211,10 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     public ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    public onAboutClick(): void {
+        this.mainWindow.goToPage(MainPage.About);
     }
 
     public exportLocalDatabase(): void {

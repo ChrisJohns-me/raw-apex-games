@@ -13,7 +13,7 @@ export class NavbarComponent {
     @Input() public currentPage: MainPage = MainPage.Dashboard;
 
     public MainPage = MainPage;
-    public navPages = [
+    public navPages: { title: string; icon?: string; page: MainPage }[] = [
         { title: "Dashboard", icon: mdiViewDashboard, page: MainPage.Dashboard },
         { title: "Match Explorer", icon: mdiFencing, page: MainPage.MatchExplorer },
         { title: "Map Explorer", icon: mdiMap, page: MainPage.MapExplorer },

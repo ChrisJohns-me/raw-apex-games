@@ -103,7 +103,24 @@ export const MatchGameModeList: MatchGameMode[] = [
         isControlGameMode: true,
         activeDates: [
             {
-                from: new Date("Mar 2, 2022"),
+                from: new Date("Mar 29, 2022"),
+                to: new Date("Apr 12, 2022"),
+            },
+        ],
+    }),
+    new MatchGameMode({
+        gameModeId: "#CAMPFIRE_MODE",
+        gameModeGenericId: MatchGameModeGenericId.BattleRoyale_Trios,
+        gameModeName: MatchGameModeFriendlyName.FlashPoint,
+        gameModeIdRegExPattern: "campfire",
+        isReportable: true,
+        isBattleRoyaleGameMode: true,
+        isArenasGameMode: false,
+        isControlGameMode: false,
+        activeDates: [
+            {
+                from: new Date("Apr 19, 2022"),
+                to: new Date("May 3, 2022"),
             },
         ],
     }),

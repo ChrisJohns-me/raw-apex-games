@@ -6,6 +6,7 @@ export enum MatchGameModeFriendlyName {
     BattleRoyale_Duos = "Duos",
     BattleRoyale_Ranked = "Ranked",
     Control = "Control",
+    FlashPoint = "Flash Point",
 }
 
 export enum MatchGameModeGenericId {

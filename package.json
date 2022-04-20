@@ -1,6 +1,6 @@
 {
     "name": "allfather",
-    "version": "0.0.307",
+    "version": "0.0.308",
     "engines": {
         "node": ">= 14.0.0"
     },

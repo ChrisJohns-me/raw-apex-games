@@ -8,6 +8,7 @@ type ActiveDates = Array<{
 
 interface MatchGameModeConstructor {
     gameModeId: string;
+    /** Used as an alternate way to determine the game mode */
     gameModeIdRegExPattern?: string;
     gameModeName: MatchGameModeFriendlyName;
     gameModeGenericId: MatchGameModeGenericId;
@@ -32,7 +33,7 @@ export class MatchGameMode {
     public activeDates?: ActiveDates;
 
     public get isActive(): boolean {
-        return !!this.activeDates?.some((date) => date.to == null && date.from < new Date());
+        return !!this.activeDates?.some((date) => date.to == null && date.from <= new Date());
     }
 
     constructor(ctor: MatchGameModeConstructor) {

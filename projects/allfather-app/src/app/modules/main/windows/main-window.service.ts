@@ -24,6 +24,7 @@ export class MainWindowService implements OnDestroy {
         this.destroy$.complete();
     }
 
+    /** Opens window, then navigates to page */
     public open(page?: MainPage): Observable<void> {
         if (page) this.goToPage(page);
         return this.overwolfWindow.restore();

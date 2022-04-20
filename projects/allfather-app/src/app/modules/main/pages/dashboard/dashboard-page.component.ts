@@ -4,11 +4,13 @@ import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
+import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
+import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats.service";
 import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-local-stats.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { Stopwatch } from "common/utilities";
-import { combineLatest, concat, from, Observable, Subject, Subscription } from "rxjs";
+import { combineLatest, concat, from, Observable, of, Subject, Subscription } from "rxjs";
 import { concatMap, filter, finalize, map, shareReplay, startWith, switchMap, take, takeUntil, tap } from "rxjs/operators";
 
 type LegendIdsRow = string[];
@@ -62,8 +64,10 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
         private readonly configuration: ConfigurationService,
         private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly localDatabase: LocalDatabaseService,
+        private readonly matchRoster: MatchRosterService,
         private readonly player: PlayerService,
-        private readonly playerLocalStats: PlayerLocalStatsService
+        private readonly playerLocalStats: PlayerLocalStatsService,
+        private readonly playerAccountStats: PlayerAccountStatsService
     ) {
         this.legendIdsRows$ = this.configuration.config$.pipe(
             map((config) => config.featureConfigs.legendSelectAssist.legendRows.map((iconRows) => iconRows.legendIds)),
@@ -98,6 +102,38 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
         //         console.log(">>> Received Array of Player Account Stats");
         //         console.log(accountStatsArr);
         //     });
+
+        // const getTrackerPlatform = (pfHW?: PlatformSoftware): "xbl" | "origin" | "psn" => {
+        //     switch (pfHW) {
+        //         case PlatformSoftware.PlayStation:
+        //             return "psn";
+        //         case PlatformSoftware.Xbox:
+        //             return "xbl";
+        //         case PlatformSoftware.Origin:
+        //         default:
+        //             return "origin";
+        //     }
+        // };
+
+        // this.matchRoster.matchRoster$
+        //     .pipe(
+        //         takeUntil(this.destroy$),
+        //         map((matchRoster) => {
+        //             return matchRoster.allPlayers.map((p) => {
+        //                 return {
+        //                     platform: getTrackerPlatform(p.platformSoftware),
+        //                     nickname: p.name,
+        //                 };
+        //             });
+        //         }),
+        //         switchMap((reqBody) => this.getTrackerStats$(reqBody))
+        //     )
+        //     .subscribe();
+    }
+
+    private getTrackerStats$(reqBody: { platform: "xbl" | "origin" | "psn"; nickname: string }[]): Observable<any> {
+        // TODO HERE
+        return of([]);
     }
 
     public getLegendName = (legendId?: string): Optional<string> => Legend.getName(legendId);
@@ -156,7 +192,6 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
         ])
             .pipe(takeUntil(this.destroy$))
             .subscribe(() => this.refreshUI());
-        this.googleAnalytics.sendEvent("Dashboard", "Legend Icon Hover", legendId);
     }
 
     public unhoverLegend(): void {
