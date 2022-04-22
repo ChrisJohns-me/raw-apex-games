@@ -5,15 +5,23 @@ header {
     height: 7vh;
     max-height: 30px;
     width: 100%;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
-    border: 0.5vw solid #ffffffbf;
-    border-top-right-radius: 0.75vw;
-    border-top-left-radius: 0.75vw;
-    background: rgba(0, 0, 0, 0.01);
+    border: 2px solid #ffffffbf;
+    border-top-right-radius: 3vw;
+    border-top-left-radius: 3vw;
+    background: rgb(255 0 0 / 20%);
+    position: relative;
+
+    .header-badge-logo {
+        position: absolute;
+        left: 3vw;
+        max-height: 1rem;
+    }
 
     .header-title {
         font-family: "Quantico", sans-serif;
+        font-weight: bold;
         text-transform: uppercase;
         color: #ffffffbf;
         font-size: 3.5vw;

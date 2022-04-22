@@ -4,7 +4,7 @@
     display: inline-flex;
     color: white;
     height: 100%;
-    width: 100%;
+    width: calc(100% - 10vw);
     padding-left: 4vw;
     justify-content: flex-start;
     box-sizing: border-box;
@@ -15,7 +15,7 @@
     display: flex;
     align-items: center;
     font-family: "Quantico", sans-serif;
-    font-size: 3vw;
+    font-size: 2.75vw;
     width: 60vh;
     height: calc(50vh - 2vh);
     margin: 0.5vh 4vh;
@@ -33,7 +33,7 @@
     .mini-inventory-item-amount {
         position: absolute;
         left: -3.5vw;
-        bottom: 0.75vh;
+        bottom: -0.75vh;
     }
 }
 
@@ -43,4 +43,39 @@
 
 .untilt-content {
     transform: skewX(30deg);
+}
+
+.mini-inventory-header {
+    width: 10vw;
+    max-width: 2rem;
+    height: 100%;
+    position: absolute;
+    bottom: 0;
+    right: 0px;
+    border: 2px solid #ffffffbf;
+    border-top-right-radius: 3vw;
+    border-bottom-right-radius: 3vw;
+    background: rgb(255 0 0 / 20%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+
+    &-badge-logo {
+        transform: rotate(90deg);
+        position: absolute;
+        left: 0;
+        top: 2vw;
+        max-height: 1rem;
+    }
+
+    &-text {
+        writing-mode: vertical-rl;
+        font-family: "Quantico", sans-serif;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #ffffffbf;
+        font-size: 2.5vw;
+        padding-bottom: 1rem;
+    }
 }

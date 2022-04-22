@@ -34,6 +34,12 @@ const HEALINGITEMS: HealingItem[] = [
 export class HealingHelperWindowComponent implements OnInit, OnDestroy {
     public isVisible = false; // based on match state + player state
     public availableHealingItems: HealingItemHealthTime[] = [];
+    public get ringNumber(): Optional<number> {
+        return this.currentRing?.ringNumber;
+    }
+    public get ringDamagePerTick(): Optional<number> {
+        return this.currentRing?.damagePerTick;
+    }
     //#region Config
 
     //#endregion

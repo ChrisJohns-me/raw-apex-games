@@ -2,8 +2,8 @@
     [isDesktopWindow]="false"
     [isContentDraggable]="true"
     primaryTitle="Mini-Inventory"
-    [position]="{ xPercent: -0.02, yPercent: -0.12, xAnchor: 'right', yAnchor: 'bottom' }"
-    [size]="{ widthPercent: 0.25, heightPercent: 0.12 }"
+    [position]="{ xPercent: 0, yPercent: -0.12, xAnchor: 'right', yAnchor: 'bottom' }"
+    [size]="{ widthPercent: 0.27, heightPercent: 0.12 }"
 >
     <div class="mini-inventory-container" *ngIf="isVisible">
         <div class="mini-inventory-item tilt-box" *ngFor="let inventorySlot of myInventorySlotList">
@@ -17,5 +17,9 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="mini-inventory-header">
+        <img class="mini-inventory-header-badge-logo" src="../../../../../assets/images/allfather_badge_logo_sm.webp" alt="" />
+        <span class="mini-inventory-header-text">Inventory</span>
     </div>
 </app-ui-container>
