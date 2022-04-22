@@ -321,7 +321,14 @@
                         </td>
                     </tr>
                     <tr (mouseover)="selectedPreviewSetting = undefined">
-                        <td class="ps-4 ps-lg-5">Import Local Database</td>
+                        <td class="ps-4 ps-lg-5">
+                            Import Local Database
+                            <icon
+                                class="text-danger"
+                                [path]="mdiInformationOutline"
+                                [title]="'WARNING: This will overwrite ALL of your recorded data, including stats!'"
+                            ></icon>
+                        </td>
                         <td class="text-end pe-5">
                             <input type="file" class="hide-file-input" (change)="importLocalDatabase($event)" #fileUpload />
 
