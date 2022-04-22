@@ -1,9 +1,12 @@
+import { InventorySlots } from "@allfather-app/app/common/inventory-slots";
 import { WeaponItem } from "@allfather-app/app/common/items/weapon-item";
 import { MatchInflictionEvent, MatchInflictionEventAccum } from "@allfather-app/app/common/match/infliction-event";
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
+import { MatchRoster } from "@allfather-app/app/common/match/roster";
+import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
 import { PlayerState } from "@allfather-app/app/common/player-state";
-import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
+import { createInfliction } from "@allfather-app/app/common/utilities/infliction-aggregator.spec";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { MatchKillfeedService } from "@allfather-app/app/modules/core/match/match-killfeed.service";
@@ -22,8 +25,6 @@ import { MockMatchPlayerLocationService } from "@allfather-app/app/modules/core/
 import { MockMatchPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-match-player.service";
 import { MockMatchRosterService } from "@allfather-app/app/modules/core/mocks/services/mock-match-roster.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
-import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-player.service";
-import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { Configuration } from "@allfather-app/configs/config.interface";
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick } from "@angular/core/testing";
@@ -37,9 +38,10 @@ describe("InflictionInsightWindowComponent", () => {
     let fixture: ComponentFixture<InflictionInsightWindowComponent>;
     let scheduler: TestScheduler;
     let config: MockConfigurationService;
-    let matchPlayerInflictionService: MatchPlayerInflictionService;
+    let matchPlayerInflictionService: MockMatchPlayerInflictionService;
     let matchPlayerLocationService: MatchPlayerLocationService;
     let matchPlayerService: MatchPlayerService;
+    let matchRosterService: MatchRosterService;
     let matchService: MatchService;
 
     beforeEach(async () => {
@@ -56,13 +58,13 @@ describe("InflictionInsightWindowComponent", () => {
                 { provide: MatchRosterService, useClass: MockMatchRosterService },
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: MatchService, useClass: MockMatchService },
-                { provide: PlayerService, useClass: MockPlayerService },
+                // { provide: PlayerService, useClass: MockPlayerService },
             ],
         }).compileComponents();
     });
 
     beforeEach(async () => {
-        supressConsoleLog();
+        // supressConsoleLog(); // TODO UNDO
         jasmine.clock().uninstall();
         jasmine.clock().install();
         scheduler = new TestScheduler((actual, expected) => {
@@ -71,10 +73,11 @@ describe("InflictionInsightWindowComponent", () => {
         fixture = TestBed.createComponent(InflictionInsightWindowComponent);
         sut = fixture.componentInstance;
         config = TestBed.inject(ConfigurationService) as unknown as MockConfigurationService;
-        matchPlayerInflictionService = TestBed.inject(MatchPlayerInflictionService);
+        matchPlayerInflictionService = TestBed.inject(MatchPlayerInflictionService) as unknown as MockMatchPlayerInflictionService;
         matchPlayerLocationService = TestBed.inject(MatchPlayerLocationService);
         matchPlayerService = TestBed.inject(MatchPlayerService);
         matchService = TestBed.inject(MatchService);
+        matchRosterService = TestBed.inject(MatchRosterService);
         fixture.detectChanges(); // ngOnInit
     });
 
@@ -497,62 +500,266 @@ describe("InflictionInsightWindowComponent", () => {
         discardPeriodicTasks();
     }));
 
-    // it("resets/hides damage aggregate sum to many enemies after a timeout period", fakeAsync(() => {
-    //     // Arrange
-    //     let subscribeCalled = false;
-    //     const victim1 = { name: "ShieldANDHealthDamage1" };
-    //     const victim2 = { name: "ShieldANDHealthDamage2" };
-    //     const victim3 = { name: "ShieldANDHealthDamage3" };
-    //     const startEvent: MatchStateChangedEvent = {
-    //         startDate: new Date("2020-01-01T00:00:00"),
-    //         state: MatchState.Active,
-    //         matchId: "test"
-    //     };
-    //     jasmine.clock().mockDate(startEvent.startDate);
+    it("resets/hides damage aggregate sum to many enemies after a timeout period", fakeAsync(() => {
+        // Arrange
+        const victim1 = { name: "ShieldANDHealthDamage1", isMe: false };
+        const victim2 = { name: "ShieldANDHealthDamage2", isMe: false };
+        const victim3 = { name: "ShieldANDHealthDamage3", isMe: false };
+        const attacker = { name: "Me", isMe: true, teamId: 1 };
+        const mockConfig = {
+            assumptions: {
+                opponentShieldDefault: 26,
+                opponentHealthDefault: 92,
+            },
+            facts: {
+                maxShield: 151,
+                maxHealth: 142,
+            },
+            featureConfigs: {
+                inflictionInsight: {
+                    damageResetTime: 5000,
+                },
+            },
+        };
+        config.mockSetConfig(mockConfig as Configuration);
+        const startEvent: MatchStateChangedEvent = {
+            startDate: new Date("2020-01-01T00:00:00"),
+            state: MatchState.Active,
+            matchId: "test",
+        };
+        jasmine.clock().mockDate(startEvent.startDate);
 
-    //     sut.OpponentBannerList$.pipe(skip(8), take(1)).subscribe((OpponentBannerList) => {
-    //         // Assert
-    //         const expectedShieldDamage = 0;
-    //         const expectedHealthDamage = 0;
-    //         const opponentBanner1 = OpponentBannerList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim1.name));
-    //         expect(opponentBanner1?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
-    //         expect(opponentBanner1?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
+        // Act
+        matchService.startedEvent$.next(startEvent);
+        matchService.state$.next(startEvent);
+        matchPlayerService.myState$.next(PlayerState.Alive);
+        matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
 
-    //         const opponentBanner2 = OpponentBannerList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim2.name));
-    //         expect(opponentBanner2?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
-    //         expect(opponentBanner2?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
+        (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim1, shieldDamage: 12, attacker });
+        tick(1000);
+        (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim2, shieldDamage: 45, attacker });
+        tick(1000);
+        (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim3, shieldDamage: 78, attacker });
+        tick(1000);
+        (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim1, healthDamage: 21, attacker });
+        const damageTimestamp1 = new Date();
+        tick(1000);
+        (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim2, healthDamage: 54, attacker });
+        const damageTimestamp2 = new Date();
+        tick(1000);
+        (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim3, healthDamage: 87, attacker });
+        const damageTimestamp3 = new Date();
+        tick(1000);
+        tick(10000);
 
-    //         const opponentBanner3 = OpponentBannerList.find((d) => isPlayerNameEqual(d.rosterPlayer.name, victim3.name));
-    //         expect(opponentBanner3?.latestDamageAggregate?.shieldDamage).toBe(expectedShieldDamage);
-    //         expect(opponentBanner3?.latestDamageAggregate?.healthDamage).toBe(expectedHealthDamage);
-    //         subscribeCalled = true;
-    //     });
+        const expectedAccum1: MatchInflictionEventAccum = {
+            victim: victim1,
+            hasShield: false,
+            shieldDamageSum: 12,
+            healthDamageSum: 21,
+            isEliminated: false,
+            isKnocked: false,
+            latestAttacker: attacker,
+            latestTimestamp: damageTimestamp1,
+        };
+        const expectedAccum2: MatchInflictionEventAccum = {
+            victim: victim2,
+            hasShield: false,
+            shieldDamageSum: 45,
+            healthDamageSum: 54,
+            isEliminated: false,
+            isKnocked: false,
+            latestAttacker: attacker,
+            latestTimestamp: damageTimestamp2,
+        };
+        const expectedAccum3: MatchInflictionEventAccum = {
+            victim: victim3,
+            hasShield: false,
+            shieldDamageSum: 78,
+            healthDamageSum: 87,
+            isEliminated: false,
+            isKnocked: false,
+            latestAttacker: attacker,
+            latestTimestamp: damageTimestamp3,
+        };
+        const expectedBannerList: OpponentBanner[] = [
+            {
+                isIndirectBanner: false,
+                rosterPlayer: victim3,
+                maybeMaxShield: 78,
+                maybeShieldAmount: 0,
+                maybeHealthAmount: 5,
+                latestInflictionAccum: expectedAccum3,
+            },
+            {
+                isIndirectBanner: false,
+                rosterPlayer: victim2,
+                maybeMaxShield: 45,
+                maybeShieldAmount: 0,
+                maybeHealthAmount: 38,
+                latestInflictionAccum: expectedAccum2,
+            },
+            {
+                isIndirectBanner: false,
+                rosterPlayer: victim1,
+                maybeMaxShield: 12,
+                maybeShieldAmount: 0,
+                maybeHealthAmount: 71,
+                latestInflictionAccum: expectedAccum1,
+            },
+        ];
 
-    //     // Act
-    //     matchService.startedEvent$.next(startEvent);
-    //     matchService.state$.next(startEvent);
-    //     matchPlayerService.myState$.next(PlayerState.Alive);
-    //     matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
-
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim1, shieldDamage: 12 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim2, shieldDamage: 45 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim3, shieldDamage: 78 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim1, healthDamage: 21 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim2, healthDamage: 54 });
-    //     tick(1000);
-    //     (matchPlayerInflictionService as MockMatchPlayerInflictionService).mockDamageEvent({ victim: victim3, healthDamage: 87 });
-    //     tick(1000);
-    //     tick(10000);
-
-    //     discardPeriodicTasks();
-    //     expect(subscribeCalled).toBeTrue();
-    // }));
+        expect(sut.opponentBannerList).toEqual(expectedBannerList);
+        discardPeriodicTasks();
+    }));
 
     // it("shows opponent teammates after a damage event", () => {});
 
     // it("shows the teammates of a damaged opponent", () => {});
+
+    // TODO
+    xdescribe("bugfix attempt", () => {
+        it("infliction insight not disappearing", () => {
+            scheduler.run(({ cold, expectObservable, flush }) => {
+                // Arrange
+                const fakeNow = new Date("2020-01-01T00:00:00.000Z");
+                const mockConfig = {
+                    assumptions: {
+                        opponentShieldDefault: 75,
+                        opponentHealthDefault: 100,
+                        knockdownExpireTime: 10000,
+                        eliminationExpireTime: 300000,
+                    },
+                    facts: {
+                        maxShield: 125,
+                        maxHealth: 100,
+                    },
+                    featureConfigs: {
+                        inflictionInsight: {
+                            damageResetTime: 5000,
+                        },
+                    },
+                    featureFlags: {
+                        inflictionInsight: {
+                            assumeKnockdownExpires: true,
+                            assumeEliminationExpires: true,
+                            showAssumedOpponentTeammateShields: false,
+                            showAssumedOpponentTeammateHealth: false,
+                        },
+                    },
+                };
+                const myName = "Me";
+                const rosterMe: MatchRosterPlayer = {
+                    name: myName,
+                    isMe: true,
+                    teamId: 1,
+                };
+                const rosterMyEnemys: MatchRosterPlayer[] = [
+                    {
+                        name: "Victim1",
+                        isMe: false,
+                        teamId: 2,
+                    },
+                    {
+                        name: "Victim2",
+                        isMe: false,
+                        teamId: 2,
+                    },
+                    {
+                        name: "Victim3",
+                        isMe: false,
+                        teamId: 2,
+                    },
+                    {
+                        name: "Victim4",
+                        isMe: false,
+                        teamId: 3,
+                    },
+                    {
+                        name: "Victim5",
+                        isMe: false,
+                        teamId: 3,
+                    },
+                    {
+                        name: "Victim6",
+                        isMe: false,
+                        teamId: 3,
+                    },
+                ];
+                const matchStartEvent: MatchStateChangedEvent = {
+                    startDate: fakeNow,
+                    matchId: "test",
+                    state: MatchState.Active,
+                };
+                const roster = new MatchRoster();
+                roster.addPlayer(rosterMe);
+                rosterMyEnemys.forEach((rosterMyEnemy) => roster.addPlayer(rosterMyEnemy));
+                const weapon = new WeaponItem({ fromId: "r301" });
+                const weaponSlots: InventorySlots<WeaponItem> = {
+                    0: {
+                        item: weapon,
+                    },
+                };
+
+                // Act
+                jasmine.clock().mockDate(fakeNow);
+                config.mockSetConfig(mockConfig as Configuration);
+                const frame = scheduler.createTime("-|");
+                cold("T|", { T: frame }).subscribe((tickDuration) => jasmine.clock().tick(tickDuration));
+                cold("a----------------------------------", { a: matchStartEvent }).subscribe(matchService.state$);
+                cold("a----------------------------------", { a: matchStartEvent }).subscribe(matchService.startedEvent$);
+                cold("a----------------------------------", { a: roster }).subscribe(matchRosterService.matchRoster$);
+                cold("a----------------------------------", { a: PlayerState.Alive }).subscribe(matchPlayerService.myState$);
+                cold("abc--------------------------------", {
+                    a: MatchLocationPhase.Dropship,
+                    b: MatchLocationPhase.Dropping,
+                    c: MatchLocationPhase.HasLanded,
+                }).subscribe(matchPlayerLocationService.myLocationPhase$);
+                cold("---abcdefghijklmnopqrstuvwxyzABCDEF", {
+                    a: createInfliction(rosterMyEnemys[0].name, myName, 0, 5, 0, true, false, false), // hit shield #1
+                    b: createInfliction(rosterMyEnemys[0].name, myName, 1, 0, 20, false, false, false), // hit health #1
+                    c: createInfliction(rosterMyEnemys[1].name, myName, 2, 5, 0, true, false, false), // hit shield #2
+                    d: createInfliction(rosterMyEnemys[0].name, myName, 3, 0, 5, false, true, false), // knocked #1
+                    e: createInfliction(rosterMyEnemys[1].name, myName, 4, 0, 20, false, false, false), // hit health #2
+                    f: createInfliction(rosterMyEnemys[1].name, myName, 5, 0, 5, false, true, false), // knocked #2
+                    g: createInfliction(rosterMyEnemys[0].name, myName, 6, 0, 20, false, false, false), // thirst #1
+                    h: createInfliction(rosterMyEnemys[0].name, myName, 7, 0, 20, false, false, false), // thirst #1
+                    i: createInfliction(rosterMyEnemys[3].name, myName, 8, 5, 0, true, false, false), // hit shield #4
+                    j: createInfliction(rosterMyEnemys[0].name, myName, 9, 0, 20, false, false, false), // thirst #1
+                    k: createInfliction(rosterMyEnemys[0].name, myName, 10, 0, 20, false, false, false), // thirst #1
+                    l: createInfliction(rosterMyEnemys[0].name, myName, 11, 0, 5, false, false, true), // eliminated #1
+                    m: createInfliction(rosterMyEnemys[1].name, myName, 12, 0, 20, false, false, false), // thirst #2
+                    n: createInfliction(rosterMyEnemys[2].name, myName, 13, 5, 0, true, false, false), // hit shield #3
+                    o: createInfliction(rosterMyEnemys[1].name, myName, 14, 0, 20, false, false, false), // thirst #2
+                    p: createInfliction(rosterMyEnemys[1].name, myName, 15, 0, 20, false, false, false), // thirst #2
+                    q: createInfliction(rosterMyEnemys[2].name, myName, 16, 0, 20, false, false, false), // hit health #3
+                    r: createInfliction(rosterMyEnemys[2].name, myName, 17, 0, 5, false, true, false), // knocked #3
+                    s: createInfliction(rosterMyEnemys[1].name, myName, 18, 0, 20, false, false, false), // thirst #2
+                    t: createInfliction(rosterMyEnemys[1].name, myName, 19, 0, 5, false, false, true), // eliminated #2
+                    u: createInfliction(rosterMyEnemys[2].name, myName, 20, 0, 20, false, false, false), // thirst #3
+                    v: createInfliction(rosterMyEnemys[2].name, myName, 21, 0, 20, false, false, false), // thirst #3
+                    w: createInfliction(rosterMyEnemys[3].name, myName, 22, 0, 20, false, false, false), // hit health #4
+                    x: createInfliction(rosterMyEnemys[3].name, myName, 23, 0, 5, false, true, false), // knocked #4
+                    y: createInfliction(rosterMyEnemys[2].name, myName, 24, 0, 20, false, false, false), // thirst #3
+                    z: createInfliction(rosterMyEnemys[2].name, myName, 25, 0, 20, false, false, false), // thirst #3
+                    A: createInfliction(rosterMyEnemys[3].name, myName, 26, 0, 20, false, false, false), // thirst #4
+                    B: createInfliction(rosterMyEnemys[3].name, myName, 27, 0, 20, false, false, false), // thirst #4
+                    C: createInfliction(rosterMyEnemys[3].name, myName, 28, 0, 20, false, false, false), // thirst #4
+                    D: createInfliction(rosterMyEnemys[2].name, myName, 29, 0, 5, false, false, true), // eliminated #3
+                    E: createInfliction(rosterMyEnemys[3].name, myName, 30, 0, 20, false, false, false), // thirst #4
+                    F: createInfliction(rosterMyEnemys[3].name, myName, 31, 0, 5, false, false, true), // eliminated #4
+                }).subscribe(matchPlayerInflictionService.myDamageEvent$);
+                // cold("---a--", { a: {} }).subscribe(matchPlayerInflictionService.myKillfeedEvent$);
+
+                // Assert
+                // expectObservable().toBe("---a--", {
+
+                // });
+                cold("").subscribe(() => {});
+                flush();
+                console.log(sut.opponentBannerList);
+                expect(sut.opponentBannerList).toBeTruthy();
+            });
+        });
+    });
 });

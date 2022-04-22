@@ -49,6 +49,10 @@ export class OverwolfExtensionsService extends BaseService {
         return this.ioDelegate.writeTextFile(storageSpace, filePath, content);
     }
 
+    public getStoragePath(storageSpace: overwolf.extensions.io.enums.StorageSpace): Observable<string> {
+        return this.ioDelegate.getStoragePath(storageSpace);
+    }
+
     public exist(storageSpace: overwolf.extensions.io.enums.StorageSpace, folderPath: string): Observable<boolean> {
         return this.ioDelegate.exist(storageSpace, folderPath);
     }

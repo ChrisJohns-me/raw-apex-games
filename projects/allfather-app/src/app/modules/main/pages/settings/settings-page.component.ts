@@ -5,16 +5,19 @@ import { aXNWSVA } from "@allfather-app/app/common/vip";
 import { HotkeyService } from "@allfather-app/app/modules/background/hotkey.service";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { FileService } from "@allfather-app/app/modules/core/file.service";
+import { WINDOW } from "@allfather-app/app/modules/core/global-window.provider";
 import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
 import { SettingsDataStore } from "@allfather-app/app/modules/core/local-database/settings-data-store";
 import { OverwolfProfileService } from "@allfather-app/app/modules/core/overwolf/overwolf-profile.service";
+import { SessionStorageKeys } from "@allfather-app/app/modules/core/session-storage/session-storage-keys";
+import { SessionStorageService } from "@allfather-app/app/modules/core/session-storage/session-storage.service";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { InflictionInsightType } from "@allfather-app/app/modules/HUD/infliction-insight/windows/infliction-insight-window.component";
 import { AimingReticle, AimingReticleList } from "@allfather-app/app/modules/HUD/reticle-helper/components/aiming-reticle/aiming-reticles";
 import { UltimateTimerType } from "@allfather-app/app/modules/HUD/ult-timer/windows/ult-timer-window.component";
 import { Configuration } from "@allfather-app/configs/config.interface";
 import { environment } from "@allfather-app/environments/environment";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from "@angular/core";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { mdiAttachment, mdiInformationOutline } from "@mdi/js";
 import { isEmpty } from "common/utilities";
@@ -65,7 +68,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     //#region Forms
     public hotKeyFormGroup = this.formBuilder.group({});
     public settingsForm = this.formBuilder.group({
-        [SettingKey.EnableLocalReporting]: false,
+        [SettingKey.EnableLocalDBReporting]: false,
         [SettingKey.MinimizeToTray]: false,
         [SettingKey.EnableAllInGameHUD]: false,
         inGameHUDFormGroup: this.formBuilder.group({
@@ -101,8 +104,8 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     public get legendSelectHUDFormGroup(): FormGroup {
         return this.settingsForm.get("legendSelectHUDFormGroup") as FormGroup;
     }
-    public get [SettingKey.EnableLocalReporting](): FormControl {
-        return this.settingsForm.get([SettingKey.EnableLocalReporting]) as FormControl;
+    public get [SettingKey.EnableLocalDBReporting](): FormControl {
+        return this.settingsForm.get([SettingKey.EnableLocalDBReporting]) as FormControl;
     }
     //#endregion
     /** Which item to preview */
@@ -170,8 +173,11 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     public mdiInformationOutline = mdiInformationOutline;
     //#endregion
 
-    private dbExportFilename = `${environment.DEV ? "DEV_" : ""}allfather_db_${format(new Date(), "yyyy_MM_dd")}.json`;
+    private dbExportFilename = `${environment.DEV ? "DEV_" : ""}allfatherDB_${format(new Date(), "yyyy-MM-dd")}.json`;
     private dbExportDirectory = "db_export";
+    private get gameLogFilename() {
+        return `gamelog_${format(new Date(), "yyyy-MM-dd_hh-mmaa")}.log`;
+    }
     private _isSaving = false;
     private destroy$ = new Subject<void>();
 
@@ -184,7 +190,9 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         private readonly localDatabase: LocalDatabaseService,
         private readonly mainWindow: MainWindowService,
         private readonly overwolfProfile: OverwolfProfileService,
-        private readonly settings: SettingsService
+        private readonly sessionStorage: SessionStorageService,
+        private readonly settings: SettingsService,
+        @Inject(WINDOW) private window: Window
     ) {
         this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => (this.config = config));
         // Setup VIP
@@ -204,7 +212,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         this.setupMinimizeToTrayForm();
         this.setupInGameHUDForm();
         this.setupLegendSelectHUDForm();
-        this.setupLocalReportingForm();
+        this.setupLocalDBReportingForm();
         this.setupSettingsListener();
     }
 
@@ -215,6 +223,17 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
 
     public onAboutClick(): void {
         this.mainWindow.goToPage(MainPage.About);
+    }
+
+    public exportGameLog(): void {
+        const filePath = this.gameLogFilename;
+        const lastGameLog = this.sessionStorage.get(SessionStorageKeys.LastGameLog);
+        if (isEmpty(lastGameLog)) return this.window.alert(`No game log found.\nGame logs are cleared when Allfather closes.`);
+
+        this.fileService
+            .saveFile$(filePath, lastGameLog!)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((fullFilePath) => this.window.alert(`Last game log was saved to:\n "${fullFilePath}"`));
     }
 
     public exportLocalDatabase(): void {
@@ -229,8 +248,8 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
                 switchMap((jsonContent) => this.fileService.saveFile$(filePath, jsonContent)),
                 finalize(() => (this.isExportingLocalDatabase = false))
             )
-            .subscribe(() => {
-                console.debug(`>>> Finished Export to "${filePath}"`);
+            .subscribe((fullFilePath) => {
+                this.window.alert(`Local database was exported to:\n "${fullFilePath}"`);
             });
     }
 
@@ -253,7 +272,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             .then(console.log)
             .catch(console.error)
             .finally(() => {
-                console.debug(`>>> Finished Import.`);
+                this.window.alert(`Local database was imported.`);
                 this.isImportingLocalDatabase = false;
             });
     }
@@ -266,8 +285,8 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         const applyAllSettingsFn = (settings: AllSettings): void => {
             this.settingsForm.get([SettingKey.MinimizeToTray])?.patchValue(settings[SettingKey.MinimizeToTray], { emitEvent: false });
             this.settingsForm
-                .get([SettingKey.EnableLocalReporting])
-                ?.patchValue(settings[SettingKey.EnableLocalReporting], { emitEvent: false });
+                .get([SettingKey.EnableLocalDBReporting])
+                ?.patchValue(settings[SettingKey.EnableLocalDBReporting], { emitEvent: false });
             this.settingsForm
                 .get([SettingKey.EnableAllInGameHUD])
                 ?.patchValue(settings[SettingKey.EnableAllInGameHUD], { emitEvent: false });
@@ -420,11 +439,11 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     //#endregion
 
     //#region Local Reporting
-    private setupLocalReportingForm(): void {
-        this.enableLocalReporting.valueChanges
+    private setupLocalDBReportingForm(): void {
+        this.enableLocalDBReporting.valueChanges
             .pipe(
                 takeUntil(this.destroy$),
-                map((value) => ({ [SettingKey.EnableLocalReporting]: value })),
+                map((value) => ({ [SettingKey.EnableLocalDBReporting]: value })),
                 debounceTime(SAVE_SETTINGS_DEBOUNCETIME)
             )
             .subscribe(this.saveSettingsChanges.bind(this));

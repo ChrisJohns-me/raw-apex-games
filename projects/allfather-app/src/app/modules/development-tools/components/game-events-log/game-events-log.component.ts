@@ -32,7 +32,6 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
     }
     public autoScroll = true;
 
-    private gameLogStartTime?: Date;
     private _enableLogging = false;
     private destroy$ = new Subject<void>();
 
@@ -49,7 +48,6 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
     }
 
     public clearLog(): void {
-        this.gameLogStartTime = undefined;
         this.gameLogArr = [];
     }
 
@@ -78,8 +76,6 @@ export class GameEventsLogComponent implements OnInit, OnDestroy {
     }
 
     private addLogItem(input: any): void {
-        if (!this.gameLogStartTime) this.gameLogStartTime = new Date();
-
         const eventStr = JSON.stringify(input)?.trim();
         if (eventStr) this.gameLogArr.push({ data: eventStr, timestamp: new Date() });
 

@@ -115,7 +115,8 @@
                         "stylePreprocessorOptions": {
                             "includePaths": ["projects/allfather-app/src/assets/styles/"]
                         },
-                        "scripts": []
+                        "scripts": [],
+                        "codeCoverage": true
                     }
                 },
                 "lint": {

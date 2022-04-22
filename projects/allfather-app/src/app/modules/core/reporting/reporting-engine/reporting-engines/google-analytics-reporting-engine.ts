@@ -14,7 +14,7 @@ import { RunCondition } from "../run-condition";
  * @classdesc Saves match meta data Google Analytics
  */
 export class GoogleAnalyticsReportingEngine implements ReportingEngine {
-    public engineId = ReportingEngineId.Local;
+    public engineId = ReportingEngineId.GoogleAnalytics;
     public reportingStatus$ = new BehaviorSubject<ReportingStatus>(ReportingStatus.WAITING);
     public runConditions: RunCondition[] = [];
 
@@ -48,7 +48,7 @@ export class GoogleAnalyticsReportingEngine implements ReportingEngine {
     public runOpportunity(): void {
         this.reportingStatus$.next(ReportingStatus.IN_PROGRESS);
 
-        const shouldRun = !this.runConditions?.length || this.runConditions.every((rc) => rc.conditionMet());
+        const shouldRun = !this.runConditions.length || this.runConditions.every((rc) => rc.conditionMet());
 
         if (shouldRun) {
             try {

@@ -37,35 +37,8 @@ export enum InflictionInsightType {
 export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
     public isVisible = false;
 
-    /**
-     * Sorts by:
-     *  - team with the latest inflication timestamp
-     *  - roster ID
-     */
     public get sortedOpponentBannerList(): OpponentBanner[] {
-        return [...this.opponentBannerList].slice().sort((ob1, ob2) => {
-            if (ob1.rosterPlayer.teamId !== ob2.rosterPlayer.teamId) {
-                const ob1LatestInfl = [...this.opponentBannerList.filter((o) => o.rosterPlayer.teamId === ob1.rosterPlayer.teamId)]
-                    .slice()
-                    .sort(
-                        (a, b) =>
-                            (b.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
-                            (a.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
-                    )[0];
-                const ob2LatestInfl = [...this.opponentBannerList.filter((o) => o.rosterPlayer.teamId === ob2.rosterPlayer.teamId)]
-                    .slice()
-                    .sort(
-                        (a, b) =>
-                            (b.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
-                            (a.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
-                    )[0];
-                return (
-                    (ob2LatestInfl.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
-                    (ob1LatestInfl.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
-                );
-            }
-            return (ob1.rosterPlayer.rosterId ?? 0) - (ob2.rosterPlayer.rosterId ?? 0);
-        });
+        return this.sortOpponentBannerList(this.opponentBannerList);
     }
     public opponentBannerList: OpponentBanner[] = [];
     public rgbTeamColors: string[] = generateTeamColorList(65);
@@ -398,5 +371,36 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
             !timestamp ||
             addMilliseconds(timestamp ?? 0, this.config.featureConfigs.inflictionInsight.damageResetTime).getTime() <= Date.now()
         );
+    }
+
+    /**
+     * Sorts by:
+     *  - team with the latest inflication timestamp
+     *  - roster ID
+     */
+    private sortOpponentBannerList(opponentBannerList: OpponentBanner[]): OpponentBanner[] {
+        return opponentBannerList.slice().sort((ob1, ob2) => {
+            if (ob1.rosterPlayer.teamId !== ob2.rosterPlayer.teamId) {
+                const ob1LatestInfl = [...opponentBannerList.filter((o) => o.rosterPlayer.teamId === ob1.rosterPlayer.teamId)]
+                    .slice()
+                    .sort(
+                        (a, b) =>
+                            (b.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
+                            (a.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
+                    )[0];
+                const ob2LatestInfl = [...opponentBannerList.filter((o) => o.rosterPlayer.teamId === ob2.rosterPlayer.teamId)]
+                    .slice()
+                    .sort(
+                        (a, b) =>
+                            (b.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
+                            (a.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
+                    )[0];
+                return (
+                    (ob2LatestInfl.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0) -
+                    (ob1LatestInfl.latestInflictionAccum?.latestTimestamp?.getTime() ?? 0)
+                );
+            }
+            return (ob1.rosterPlayer.rosterId ?? 0) - (ob2.rosterPlayer.rosterId ?? 0);
+        });
     }
 }

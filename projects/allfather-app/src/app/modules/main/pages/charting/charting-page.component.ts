@@ -117,8 +117,8 @@ export class ChartingPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.reporting.reportingEvent$
             .pipe(
                 takeUntil(this.destroy$),
-                filter((reportingEvent) => reportingEvent.engine.engineId === ReportingEngineId.Local),
-                filter((localReportingStatus) => localReportingStatus.status === ReportingStatus.SUCCESS),
+                filter((reportingEvent) => reportingEvent.engine.engineId === ReportingEngineId.LocalDB),
+                filter((localDBReportingStatus) => localDBReportingStatus.status === ReportingStatus.SUCCESS),
                 switchMap(() => this.getMatchList$())
             )
             .subscribe((matchList) => {

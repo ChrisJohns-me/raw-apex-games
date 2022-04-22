@@ -35,6 +35,7 @@ import { PlayerLocalStatsService } from "../core/player-local-stats.service";
 import { PlayerService } from "../core/player.service";
 import { ReportableDataManagerService } from "../core/reporting/reporting-engine/reportable-data-manager";
 import { ReportingService } from "../core/reporting/reporting.service";
+import { SessionStorageService } from "../core/session-storage/session-storage.service";
 import { VersionService } from "../core/version.service";
 import { VideoRecordingService } from "../core/video-recording/video-recording.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
@@ -97,6 +98,7 @@ import { SystemTrayService } from "./system-tray.service";
         PlayerService,
         ReportableDataManagerService,
         ReportingService,
+        SessionStorageService,
         SettingsService,
         SystemTrayService,
         UltTimerWindowService,
@@ -150,6 +152,7 @@ export class SingletonServiceContainerService {
         public readonly PlayerService: PlayerService,
         public readonly ReportableDataManagerService: ReportableDataManagerService,
         public readonly ReportingService: ReportingService,
+        public readonly SessionStorageService: SessionStorageService,
         public readonly SettingsService: SettingsService,
         public readonly SystemTrayService: SystemTrayService,
         public readonly UltTimerWindowService: UltTimerWindowService,

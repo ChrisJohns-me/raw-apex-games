@@ -7,11 +7,14 @@ import { isEmpty } from "common/utilities/";
 import { combineLatest, of, Subject } from "rxjs";
 import { catchError, filter, switchMap, takeUntil } from "rxjs/operators";
 import { MatchService } from "../match/match.service";
+import { OverwolfGameDataService } from "../overwolf";
+import { SessionStorageService } from "../session-storage/session-storage.service";
 import { SettingsService } from "../settings.service";
 import { ReportableDataManagerService } from "./reporting-engine/reportable-data-manager";
 import { ReportingEngine, ReportingEngineId, ReportingStatus } from "./reporting-engine/reporting-engine";
+import { GameLogReportingEngine } from "./reporting-engine/reporting-engines/game-log-reporting-engine";
 import { GoogleAnalyticsReportingEngine } from "./reporting-engine/reporting-engines/google-analytics-reporting-engine";
-import { LocalReportingEngine } from "./reporting-engine/reporting-engines/local-reporting-engine";
+import { LocalDBReportingEngine } from "./reporting-engine/reporting-engines/localdb-reporting-engine";
 import { RunCondition } from "./reporting-engine/run-condition";
 
 interface ReportingEvent {
@@ -24,19 +27,28 @@ interface ReportingEvent {
  */
 @Injectable({
     providedIn: "root",
-    deps: [GoogleAnalyticsService, MatchService, ReportableDataManagerService, SettingsService],
+    deps: [
+        GoogleAnalyticsService,
+        MatchService,
+        OverwolfGameDataService,
+        ReportableDataManagerService,
+        SessionStorageService,
+        SettingsService,
+    ],
     useFactory: (...deps: any[]) => SingletonServiceProviderFactory("ReportingService", ReportingService, deps),
 })
 export class ReportingService extends BaseService implements OnDestroy {
     public reportingEvent$ = new Subject<ReportingEvent>();
     public runningReportingEngines: ReportingEngine[] = [];
 
-    private localReportingEnabled = false;
+    private localDBReportingEnabled = false;
 
     constructor(
         private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly match: MatchService,
+        private readonly overwolfGameData: OverwolfGameDataService,
         private readonly reportableDataManager: ReportableDataManagerService,
+        private readonly sessionStorage: SessionStorageService,
         private readonly settings: SettingsService
     ) {
         super();
@@ -79,7 +91,8 @@ export class ReportingService extends BaseService implements OnDestroy {
     public restartEngine(engineId: ReportingEngineId): void {
         this.stopEngine(engineId);
         console.debug(`[ReportingService] Starting Report Engine "${engineId}"`);
-        if (engineId === ReportingEngineId.Local) this.runningReportingEngines.push(this.buildLocalReportingEngine());
+        if (engineId === ReportingEngineId.LocalDB) this.runningReportingEngines.push(this.buildLocalDBReportingEngine());
+        if (engineId === ReportingEngineId.GameLog) this.runningReportingEngines.push(this.buildGameLogReportingEngine());
         if (engineId === ReportingEngineId.GoogleAnalytics) this.runningReportingEngines.push(this.buildGoogleAnalyticsReportingEngine());
     }
 
@@ -94,10 +107,10 @@ export class ReportingService extends BaseService implements OnDestroy {
 
     private setupSettingsListener(): void {
         this.settings
-            .streamSetting$<boolean>(SettingKey.EnableLocalReporting)
+            .streamSetting$<boolean>(SettingKey.EnableLocalDBReporting)
             .pipe(takeUntil(this.destroy$))
             .subscribe((setting) => {
-                if (!isEmpty(setting?.value)) this.localReportingEnabled = !!setting!.value;
+                if (!isEmpty(setting?.value)) this.localDBReportingEnabled = !!setting!.value;
             });
     }
 
@@ -147,25 +160,36 @@ export class ReportingService extends BaseService implements OnDestroy {
             });
     }
 
-    private buildLocalReportingEngine(): LocalReportingEngine {
+    private buildLocalDBReportingEngine(): LocalDBReportingEngine {
         const dataItems = this.reportableDataManager.instantiatedDataItems;
-        if (isEmpty(dataItems)) throw Error(`Data items list was empty when building local reporting engine`);
+        if (isEmpty(dataItems)) throw Error(`Data items list was empty when building localDB reporting engine`);
         const setup = {
             reportableDataList: this.reportableDataManager.instantiatedDataItems,
             runConditions: [
                 new RunCondition({
-                    id: "LocalReportingEngine GameMode",
+                    id: "LocalDBReportingEngine GameMode",
                     condition: () => !!this.match.gameMode$.value?.isReportable,
                 }),
                 new RunCondition({
-                    id: "LocalReportingEngine Setting Enabled",
-                    condition: () => !!this.localReportingEnabled,
+                    id: "LocalDBReportingEngine Setting Enabled",
+                    condition: () => !!this.localDBReportingEnabled,
                 }),
             ],
         };
-        const localReportingEngine = new LocalReportingEngine(this.match);
-        localReportingEngine.setup(setup);
-        return localReportingEngine;
+        const localDBReportingEngine = new LocalDBReportingEngine(this.match);
+        localDBReportingEngine.setup(setup);
+        return localDBReportingEngine;
+    }
+
+    private buildGameLogReportingEngine(): GameLogReportingEngine {
+        const setup = {
+            infoUpdatesObs: this.overwolfGameData.infoUpdates$,
+            newGameEventObs: this.overwolfGameData.newGameEvent$,
+            runConditions: [],
+        };
+        const gameLogReportingEngine = new GameLogReportingEngine(this.sessionStorage);
+        gameLogReportingEngine.setup(setup);
+        return gameLogReportingEngine;
     }
 
     private buildGoogleAnalyticsReportingEngine(): GoogleAnalyticsReportingEngine {

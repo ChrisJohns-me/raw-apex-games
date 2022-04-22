@@ -302,18 +302,26 @@
                         <td class="ps-4 ps-lg-5">Stats Tracking</td>
                         <td class="text-end pe-5">
                             <div class="form-check form-switch d-inline-flex">
-                                <input class="form-check-input" type="checkbox" [formControl]="enableLocalReporting" />
+                                <input class="form-check-input" type="checkbox" [formControl]="enableLocalDBReporting" />
                             </div>
                         </td>
                     </tr>
                     <tr (mouseover)="selectedPreviewSetting = undefined">
-                        <td class="ps-4 ps-lg-5">Export Local Data</td>
+                        <td class="ps-4 ps-lg-5">Export Last Match Log</td>
+                        <td class="text-end pe-5">
+                            <div class="form-check form-switch d-inline-flex">
+                                <button class="btn btn-sm btn-primary" type="button" (click)="exportGameLog()">Export</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr (mouseover)="selectedPreviewSetting = undefined">
+                        <td class="ps-4 ps-lg-5">Export Local Database</td>
                         <td class="text-end pe-5">
                             <button class="btn btn-sm btn-primary" type="button" (click)="exportLocalDatabase()">Export</button>
                         </td>
                     </tr>
                     <tr (mouseover)="selectedPreviewSetting = undefined">
-                        <td class="ps-4 ps-lg-5">Import Local Data</td>
+                        <td class="ps-4 ps-lg-5">Import Local Database</td>
                         <td class="text-end pe-5">
                             <input type="file" class="hide-file-input" (change)="importLocalDatabase($event)" #fileUpload />
 

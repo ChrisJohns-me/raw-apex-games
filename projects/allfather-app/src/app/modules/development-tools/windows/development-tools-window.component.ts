@@ -22,11 +22,11 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
 
     constructor(
-        private readonly exposedOverwolfData: ExposedOverwolfGameDataService,
+        private readonly exposedOverwolfGameData: ExposedOverwolfGameDataService,
         private readonly overwolfExtensions: OverwolfExtensionsService
     ) {
-        this.infoUpdates$ = this.exposedOverwolfData.rawInfoUpdates$;
-        this.newGameEvent$ = this.exposedOverwolfData.rawNewGameEvent$;
+        this.infoUpdates$ = this.exposedOverwolfGameData.rawInfoUpdates$;
+        this.newGameEvent$ = this.exposedOverwolfGameData.rawNewGameEvent$;
     }
 
     public ngOnInit(): void {}

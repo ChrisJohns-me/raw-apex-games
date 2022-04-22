@@ -21,6 +21,22 @@ export class IODelegate {
     }
 
     /**
+     * Returns the full path of given extension storage space.
+     * @param storageSpace The selected Overwolf storage space.
+     * @returns {string} Full path of the requested extension storage space
+     */
+    public getStoragePath(storageSpace: overwolf.extensions.io.enums.StorageSpace): Observable<string> {
+        const getStoragePathObs = bindCallback(overwolf.extensions.io.getStoragePath);
+
+        return getStoragePathObs(storageSpace).pipe(
+            map((result) => {
+                if (result?.success) return result.path;
+                else throw new Error(result?.error || (result as any)?.reason);
+            })
+        );
+    }
+
+    /**
      * Checks for the existance of a folder.
      * @param storageSpace Which directory to check for.
      * @returns {true} if exists

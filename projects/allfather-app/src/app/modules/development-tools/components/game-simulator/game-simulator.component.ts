@@ -1,9 +1,10 @@
 import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
+import { WINDOW } from "@allfather-app/app/modules/core/global-window.provider";
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { OWGameEvent } from "@allfather-app/app/modules/core/overwolf";
 import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from "@angular/core";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
 import { JSONTryParse } from "common/utilities/";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
@@ -58,7 +59,8 @@ export class GameSimulatorComponent implements OnDestroy {
         private cdr: ChangeDetectorRef,
         private readonly exposedOverwolfData: ExposedOverwolfGameDataService,
         private readonly player: PlayerService,
-        public readonly matchRoster: MatchRosterService
+        public readonly matchRoster: MatchRosterService,
+        @Inject(WINDOW) private readonly window: Window
     ) {}
 
     public ngOnDestroy(): void {
@@ -268,8 +270,8 @@ export class GameSimulatorComponent implements OnDestroy {
 
     public onCustomInjectClick(): void {
         let speed = 1;
-        const injectInput = prompt(`Inject Log`, "");
-        const speedInput = prompt("Replay Speed (1=realtime, empty=full speed)", "1");
+        const injectInput = this.window.prompt(`Inject Log`, "");
+        const speedInput = this.window.prompt("Replay Speed (1=realtime, empty=full speed)", "1");
         speed = parseFloat(speedInput ?? String(speed));
 
         const commands = this.logToCommands(injectInput ?? "");
@@ -278,7 +280,7 @@ export class GameSimulatorComponent implements OnDestroy {
         const warnInMins = 30;
         if (timestampDiff > warnInMins * 60 * 1000) {
             // Alert if there's a large gap
-            if (!confirm(`Data has a time gap of ${format(timestampDiff, "dd 'days' hh 'hours' mm 'mins")} Continue?`)) {
+            if (!this.window.confirm(`Data has a time gap of ${format(timestampDiff, "dd 'days' hh 'hours' mm 'mins")} Continue?`)) {
                 return;
             }
         }

@@ -17,7 +17,13 @@ export class MockOverwolfExtensionsService implements MockedClass<OverwolfExtens
     public writeTextFile(
         ...args: Parameters<OverwolfExtensionsService["writeTextFile"]>
     ): ReturnType<OverwolfExtensionsService["writeTextFile"]> {
-        return of();
+        return of(true);
+    }
+
+    public getStoragePath(
+        ...args: Parameters<OverwolfExtensionsService["getStoragePath"]>
+    ): ReturnType<OverwolfExtensionsService["getStoragePath"]> {
+        return of("");
     }
 
     public exist(...args: Parameters<OverwolfExtensionsService["exist"]>): ReturnType<OverwolfExtensionsService["writeTextFile"]> {

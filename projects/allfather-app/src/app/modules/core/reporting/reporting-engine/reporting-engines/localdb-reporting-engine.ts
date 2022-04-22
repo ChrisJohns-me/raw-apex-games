@@ -12,11 +12,11 @@ const RETRY_COUNT = 5;
 const RETRY_DELAY_MULTIPLIER = 12 * 1000;
 
 /**
- * @class LocalReportingEngine
- * @classdesc Saves match data to local database.
+ * @class LocalDBReportingEngine
+ * @classdesc Saves match data to LocalDb database.
  */
-export class LocalReportingEngine implements ReportingEngine {
-    public engineId = ReportingEngineId.Local;
+export class LocalDBReportingEngine implements ReportingEngine {
+    public engineId = ReportingEngineId.LocalDB;
     public reportingStatus$ = new BehaviorSubject<ReportingStatus>(ReportingStatus.WAITING);
     public runConditions: RunCondition[] = [];
 
@@ -50,7 +50,7 @@ export class LocalReportingEngine implements ReportingEngine {
     public runOpportunity(): void {
         this.reportingStatus$.next(ReportingStatus.IN_PROGRESS);
 
-        const shouldRun = !this.runConditions?.length || this.runConditions.every((rc) => rc.conditionMet());
+        const shouldRun = !this.runConditions.length || this.runConditions.every((rc) => rc.conditionMet());
 
         if (shouldRun) {
             const matchData = this.getMatchData();
@@ -58,11 +58,11 @@ export class LocalReportingEngine implements ReportingEngine {
                 .pipe(takeUntil(this.destroy$))
                 .subscribe((success) => {
                     this.reportingStatus$.next(success ? ReportingStatus.SUCCESS : ReportingStatus.FAIL);
-                    console.log(`[${this.constructor.name}] Local Reporting ${success ? "Succeeded" : "Failed"}`);
+                    console.log(`[${this.constructor.name}] LocalDB Reporting ${success ? "Succeeded" : "Failed"}`);
                 });
         } else {
             this.reportingStatus$.next(ReportingStatus.CRITERIA_NOT_MET);
-            console.debug(`[${this.constructor.name}] Criteria not met; not running local reporting engine.`);
+            console.debug(`[${this.constructor.name}] Criteria not met; not running LocalDB reporting engine.`);
         }
     }
 
@@ -78,7 +78,7 @@ export class LocalReportingEngine implements ReportingEngine {
                         if (retryAttempt >= RETRY_COUNT) return of(false);
 
                         console.error(
-                            `[${this.constructor.name}] Saving match data (to local) failed. Retrying...(#${retryAttempt})\n` +
+                            `[${this.constructor.name}] Saving match data (to LocalDB) failed. Retrying...(#${retryAttempt})\n` +
                                 `Error: ${error?.message ?? JSON.stringify(error)}`
                         );
                         const delayMs = retryAttempt * RETRY_DELAY_MULTIPLIER;
@@ -164,8 +164,8 @@ type MapLocationPhaseType<T> = T extends "in" ? number : T extends "out" ? Match
 /**
  * @returns mapped location phase, converted from either number or MatchLocationPhase
  * @param direction
- *  - "in" = into the local database (stored as number)
- *  - "out" = out of local database (stored as typeof MatchLocationPhase)
+ *  - "in" = into the LocalDB (stored as number)
+ *  - "out" = out of LocalDB (stored as typeof MatchLocationPhase)
  */
 function mapLocationPhase<T extends MapLocationPhaseDirection>(
     inputPhase: number | MatchLocationPhase,

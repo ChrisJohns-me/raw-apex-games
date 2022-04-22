@@ -2,9 +2,10 @@ import { BehaviorSubject } from "rxjs";
 import { RunCondition } from "./run-condition";
 
 export enum ReportingEngineId {
-    Local = "local",
-    GoogleSheets = "googlesheets",
+    GameLog = "gamelog",
     GoogleAnalytics = "googleanalytics",
+    GoogleSheets = "googlesheets",
+    LocalDB = "localdb",
     Twitter = "twitter",
 }
 
@@ -23,8 +24,6 @@ export interface ReportingEngine {
 
     teardown(): void;
     reset(): void;
-    /**
-     * Give the engine an opportunity to run; depending on the runConditions.
-     */
+    /** Give the engine an opportunity to run; depending on the runConditions. */
     runOpportunity(): void;
 }
