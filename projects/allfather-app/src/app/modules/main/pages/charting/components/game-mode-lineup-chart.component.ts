@@ -15,7 +15,7 @@ import {
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { isEmpty } from "common/utilities/";
-import { ChartDamageCSSPropertyVar, ChartKDRCSSPropertyVar, ChartPlacementCSSPropertyVar } from "./chart";
+import { ChartDamageCSSPropertyVar, ChartKillsCSSPropertyVar, ChartPlacementCSSPropertyVar } from "./chart";
 
 @Component({
     selector: "app-game-mode-lineup-chart",
@@ -56,7 +56,7 @@ export class GameModeLineupChartComponent implements AfterViewInit, OnChanges {
                 x: {
                     axis: "x",
                 },
-                yKdr: {
+                yKills: {
                     axis: "y",
                     type: "linear",
                     display: false,
@@ -130,7 +130,7 @@ export class GameModeLineupChartComponent implements AfterViewInit, OnChanges {
 
             this.dataLabels.push(gameModeName.gameModeName.toUpperCase());
 
-            killDeathRatioData.push(Number((avgMatchList.avgDeaths / avgMatchList.avgEliminations).toFixed(2)));
+            killDeathRatioData.push(Number((avgMatchList.avgEliminations ?? 0).toFixed(2)));
             placementData.push(Number((avgMatchList.avgPlacement ?? 0).toFixed(0)));
             damageData.push(Number((avgMatchList?.avgDamage ?? 0).toFixed(0)));
         }
@@ -139,9 +139,9 @@ export class GameModeLineupChartComponent implements AfterViewInit, OnChanges {
             {
                 data: killDeathRatioData,
                 hidden: false,
-                label: "Avg KDR",
-                yAxisID: "yKdr",
-                backgroundColor: getCSSVar(ChartKDRCSSPropertyVar),
+                label: "Avg Kills",
+                yAxisID: "yKills",
+                backgroundColor: getCSSVar(ChartKillsCSSPropertyVar),
             },
             {
                 data: damageData,

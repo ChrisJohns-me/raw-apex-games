@@ -16,7 +16,7 @@ import {
 import "chartjs-adapter-date-fns";
 import { isEmpty } from "common/utilities/";
 import { format, getDaysInYear, subDays } from "date-fns";
-import { ChartDamageCSSPropertyVar, ChartKDRCSSPropertyVar, ChartPlacementCSSPropertyVar } from "./chart";
+import { ChartDamageCSSPropertyVar, ChartKillsCSSPropertyVar, ChartPlacementCSSPropertyVar } from "./chart";
 
 @Component({
     selector: "app-stats-chart",
@@ -79,7 +79,7 @@ export class StatsChartComponent implements AfterViewInit, OnChanges {
                         },
                     },
                 },
-                yKdr: {
+                yKills: {
                     axis: "y",
                     type: "linear",
                     display: false,
@@ -166,7 +166,7 @@ export class StatsChartComponent implements AfterViewInit, OnChanges {
 
         for (const avgMatchList of groupedAvgMatchList) {
             this.dataLabels.push(avgMatchList.key);
-            killDeathRatioData.push(Number((avgMatchList.avgDeaths / avgMatchList.avgEliminations).toFixed(2)));
+            killDeathRatioData.push(Number((avgMatchList.avgEliminations ?? 0).toFixed(2)));
             placementData.push(Number((avgMatchList.avgPlacement ?? 0).toFixed(0)));
             damageData.push(Number((avgMatchList?.avgDamage ?? 0).toFixed(0)));
         }
@@ -175,10 +175,10 @@ export class StatsChartComponent implements AfterViewInit, OnChanges {
             {
                 data: killDeathRatioData,
                 hidden: false,
-                label: "Avg KDR",
-                yAxisID: "yKdr",
-                borderColor: getCSSVar(ChartKDRCSSPropertyVar),
-                backgroundColor: getCSSVar(ChartKDRCSSPropertyVar),
+                label: "Avg Kills",
+                yAxisID: "yKills",
+                borderColor: getCSSVar(ChartKillsCSSPropertyVar),
+                backgroundColor: getCSSVar(ChartKillsCSSPropertyVar),
             },
             {
                 data: damageData,
