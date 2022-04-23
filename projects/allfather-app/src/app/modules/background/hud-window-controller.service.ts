@@ -23,11 +23,12 @@ import { ReticleHelperWindowService } from "../HUD/reticle-helper/windows/reticl
 import { UltimateTimerType } from "../HUD/ult-timer/windows/ult-timer-window.component";
 import { UltTimerWindowService } from "../HUD/ult-timer/windows/ult-timer-window.service";
 import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
+import { LobbyStatusWindowService } from "../lobby-status/windows/lobby-status-window.service";
 
 type HUDTriggers = {
     windowService: { open: () => Observable<void>; close: () => Observable<void> };
     requiredGamePhases: GamePhase[];
-    requiredConfigurations: [(configuration: Configuration) => boolean];
+    requiredConfigurations: ((configuration: Configuration) => boolean)[];
     requiredSettings: { key: SettingKey; predicate?: (value: SettingValue) => boolean }[];
     requiredGameModes: MatchGameModeGenericId[];
 };
@@ -40,6 +41,7 @@ type HUDTriggers = {
         HealingHelperWindowService,
         InflictionInsightWindowService,
         LegendSelectAssistWindowService,
+        LobbyStatusWindowService,
         MatchService,
         MatchTimerWindowService,
         MiniInventoryWindowService,
@@ -52,6 +54,13 @@ type HUDTriggers = {
 })
 export class HUDWindowControllerService extends BaseService {
     private HUDWindows: HUDTriggers[] = [
+        {
+            windowService: this.lobbyStatusWindow,
+            requiredGamePhases: [GamePhase.Lobby],
+            requiredConfigurations: [],
+            requiredSettings: [],
+            requiredGameModes: [],
+        },
         {
             windowService: this.inflictionInsightWindow,
             requiredGamePhases: [GamePhase.InGame],
@@ -161,6 +170,7 @@ export class HUDWindowControllerService extends BaseService {
         private readonly healingHelperWindow: HealingHelperWindowService,
         private readonly inflictionInsightWindow: InflictionInsightWindowService,
         private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
+        private readonly lobbyStatusWindow: LobbyStatusWindowService,
         private readonly match: MatchService,
         private readonly matchTimerWindow: MatchTimerWindowService,
         private readonly miniInventoryWindow: MiniInventoryWindowService,
@@ -214,8 +224,8 @@ export class HUDWindowControllerService extends BaseService {
         genericGameModeId: MatchGameModeGenericId
     ): Observable<void>[] {
         return this.HUDWindows.map((hud) => {
-            const meetsGameMode = hud.requiredGameModes.includes(genericGameModeId);
-            const meetsGamePhase = Object.values(hud.requiredGamePhases).includes(gamePhase);
+            const meetsGameMode = isEmpty(hud.requiredGameModes) || hud.requiredGameModes.includes(genericGameModeId);
+            const meetsGamePhase = isEmpty(hud.requiredGamePhases) || hud.requiredGamePhases.includes(gamePhase);
             const meetsConfigurations = this.aXNWSVA || hud.requiredConfigurations.every((reqConfigFn) => reqConfigFn(configuration));
             const meetsSettings = hud.requiredSettings.every((reqSetting) => {
                 const keyExists = reqSetting.key in settings;

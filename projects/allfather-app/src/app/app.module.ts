@@ -15,6 +15,7 @@ import { MiniInventoryWindowModule } from "./modules/HUD/mini-inventory/mini-inv
 import { ReticleHelperWindowModule } from "./modules/HUD/reticle-helper/reticle-helper.module";
 import { UltTimerWindowModule } from "./modules/HUD/ult-timer/ult-timer.module";
 import { LegendSelectAssistWindowModule } from "./modules/legend-select-assist/legend-select-assist.module";
+import { LobbyStatusWindowModule } from "./modules/lobby-status/lobby-status.module";
 import { MainModule } from "./modules/main/main.module";
 
 @NgModule({
@@ -28,6 +29,7 @@ import { MainModule } from "./modules/main/main.module";
         HttpClientModule,
         InflictionInsightWindowModule,
         LegendSelectAssistWindowModule,
+        LobbyStatusWindowModule,
         MatchTimerWindowModule,
         MiniInventoryWindowModule,
         OverwolfModule,

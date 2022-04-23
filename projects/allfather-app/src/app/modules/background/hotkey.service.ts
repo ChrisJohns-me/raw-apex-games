@@ -2,7 +2,7 @@ import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-se
 import { Inject, Injectable } from "@angular/core";
 import { Observable, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
-import { Hotkey } from "../../common/hotkey";
+import { Hotkey, HotkeyEnum } from "../../common/hotkey";
 import { BaseService } from "../core/base-service.abstract";
 import { OWConfig, OW_CONFIG } from "../core/overwolf/overwolf-config";
 import { OverwolfHotKeyService } from "../core/overwolf/overwolf-hotkey.service";
@@ -34,7 +34,7 @@ export class HotkeyService extends BaseService {
         );
     }
 
-    public getGameHotkeyByName(name: string): Observable<Optional<Hotkey>> {
+    public getGameHotkeyByName(name: HotkeyEnum | string): Observable<Optional<Hotkey>> {
         return this.getGameHotkeys().pipe(map((hotkeys) => hotkeys.find((hotkey) => hotkey.hotkeyName === name)));
     }
 

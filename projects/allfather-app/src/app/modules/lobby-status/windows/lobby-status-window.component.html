@@ -1,0 +1,17 @@
+<app-ui-container
+    [isDesktopWindow]="false"
+    [isContentDraggable]="false"
+    primaryTitle="Lobby Status"
+    [position]="{ xPercent: 0, yPercent: 0, xAnchor: 'left', yAnchor: 'bottom' }"
+    [size]="{ widthPercent: 0.216, heightPercent: 0.338 }"
+>
+    <div class="lobby-status-container">
+        <div class="lobby-status-header" *ngIf="gameMode?.gameModeName && isGameModeSupported && isMapSupported">
+            <div class="lobby-status-text">
+                <div>{{ gameMode?.gameModeName }}{{ matchMap?.mapName ? " &nbsp; | &nbsp; " + matchMap?.mapName : "" }}</div>
+                <div *ngIf="mainHotkey?.friendlyBinding">{{ mainHotkey?.friendlyBinding }}</div>
+            </div>
+            <img class="lobby-status-badge-logo" src="../../../../assets/images/allfather_badge_logo_sm.webp" alt="" />
+        </div>
+    </div>
+</app-ui-container>

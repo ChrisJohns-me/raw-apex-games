@@ -29,6 +29,7 @@ export enum OverwolfWindowName {
     HUDReticleHelper = "hud-reticle-helper",
     HUDUltTimer = "hud-ult-timer",
     LegendSelectAssist = "legend-select-assist",
+    LobbyStatus = "lobby-status",
     Main = "main",
 }
 

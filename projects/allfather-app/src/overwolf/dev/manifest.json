@@ -5,7 +5,7 @@
     "meta": {
         "name": "Allfather [DEV]",
         "author": "MasterKriff",
-        "version": "0.0.310",
+        "version": "0.0.311",
         "minimum-overwolf-version": "0.165.0",
         "minimum-gep-version": "0.165.0",
         "description": "(Development) Allfather, give me sight!",
@@ -78,6 +78,22 @@
                 "max_size": {
                     "width": 1000,
                     "height": 750
+                }
+            },
+            "lobby-status": {
+                "file": "index.html",
+                "in_game_only": false,
+                "resizable": false,
+                "transparent": true,
+                "disable_blur": true,
+                "show_in_taskbar": true,
+                "clickthrough": true,
+                "mute": true,
+                "popup_blocker": true,
+                "allow_local_file_access": true,
+                "size": {
+                    "width": 1,
+                    "height": 1
                 }
             },
             "hud-match-timer": {
