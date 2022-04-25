@@ -20,12 +20,14 @@ export function getPlayerNameClubParts(playerName: string): { clubTag: string; p
  */
 export function isPlayerNameEqual(playerNameLeft?: string, playerNameRight?: string): boolean {
     if (isEmpty(playerNameLeft) || isEmpty(playerNameRight)) return false;
+    const sanitizeFn = (input: string): string => input.replace("`1", ""); // Overwolf quirk
     const simplifyFn = (input: string): string => input.toLowerCase().trim();
     const extremeSimplifyFn = (input: string): string => {
-        return simplifyFn(input)
-            .replace("`1", "") // Overwolf quirk
-            .replace(/[_\W+]/gi, "");
+        return simplifyFn(input).replace(/[_\W+]/gi, "");
     };
+
+    playerNameLeft = sanitizeFn(playerNameLeft!);
+    playerNameRight = sanitizeFn(playerNameRight!);
 
     const clubPlayerNameLeft = getPlayerNameClubParts(playerNameLeft!).playerName;
     const clubPlayerNameRight = getPlayerNameClubParts(playerNameRight!).playerName;

@@ -1,5 +1,4 @@
 import { MatchGameModeGenericId } from "../game-mode/game-mode.enum";
-import { latestGenericMap } from "./map-list";
 import { MatchMapFriendlyName, MatchMapGenericId } from "./map.enum";
 import { MatchMap } from "./match-map";
 
@@ -34,7 +33,7 @@ describe("Map List", () => {
         ];
 
         // Act
-        const actual = latestGenericMap(MatchMapGenericId.FiringRange, mapList);
+        const actual = MatchMap.latestGenericMap(MatchMapGenericId.FiringRange, mapList);
 
         // Assert
         expect(actual?.mapId).toBe("map1_latest");
@@ -45,7 +44,7 @@ describe("Map List", () => {
         const mapList: MatchMap[] = [createMap("inactive", [{ from: new Date("Jan 1, 2020"), to: new Date("Jan 1, 2021") }])];
 
         // Act
-        const actual = latestGenericMap(MatchMapGenericId.FiringRange, mapList);
+        const actual = MatchMap.latestGenericMap(MatchMapGenericId.FiringRange, mapList);
 
         // Assert
         expect(actual?.mapId).toBe("inactive");
@@ -56,7 +55,7 @@ describe("Map List", () => {
         const mapList: MatchMap[] = [createMap("active", [{ from: new Date("Jan 1, 2020") }])];
 
         // Act
-        const actual = latestGenericMap(MatchMapGenericId.FiringRange, mapList);
+        const actual = MatchMap.latestGenericMap(MatchMapGenericId.FiringRange, mapList);
 
         // Assert
         expect(actual?.mapId).toBe("active");
@@ -72,7 +71,7 @@ describe("Map List", () => {
         ];
 
         // Act
-        const actual = latestGenericMap(MatchMapGenericId.FiringRange, mapList);
+        const actual = MatchMap.latestGenericMap(MatchMapGenericId.FiringRange, mapList);
 
         // Assert
         expect(actual?.mapId).toBe("active");
@@ -86,7 +85,7 @@ describe("Map List", () => {
         ];
 
         // Act
-        const actual = latestGenericMap(MatchMapGenericId.FiringRange, mapList);
+        const actual = MatchMap.latestGenericMap(MatchMapGenericId.FiringRange, mapList);
 
         // Assert
         expect(actual?.mapId).toBe("inactive");
@@ -101,7 +100,7 @@ describe("Map List", () => {
         ];
 
         // Act
-        const actual = latestGenericMap(MatchMapGenericId.FiringRange, mapList);
+        const actual = MatchMap.latestGenericMap(MatchMapGenericId.FiringRange, mapList);
 
         // Assert
         expect(actual?.mapId).toBe("active");
@@ -116,7 +115,7 @@ describe("Map List", () => {
         ];
 
         // Act
-        const actual = latestGenericMap(MatchMapGenericId.FiringRange, mapList);
+        const actual = MatchMap.latestGenericMap(MatchMapGenericId.FiringRange, mapList);
 
         // Assert
         expect(actual?.mapId).toBe("active");
@@ -143,7 +142,7 @@ describe("Map List", () => {
         ];
 
         // Act
-        const actual = latestGenericMap(MatchMapGenericId.FiringRange, mapList);
+        const actual = MatchMap.latestGenericMap(MatchMapGenericId.FiringRange, mapList);
 
         // Assert
         expect(actual?.mapId).toBe("active");

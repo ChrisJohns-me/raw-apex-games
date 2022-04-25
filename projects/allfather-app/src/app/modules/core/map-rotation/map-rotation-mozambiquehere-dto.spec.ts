@@ -1,5 +1,6 @@
 import { MatchMapList } from "@allfather-app/app/common/match/map/map-list";
 import { MatchMapGenericId } from "@allfather-app/app/common/match/map/map.enum";
+import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { supressConsoleLog } from "@allfather-app/app/common/testing-helpers";
 import { fakeAsync } from "@angular/core/testing";
 import { MapRotationMozambiquehereDTO } from "./map-rotation-mozambiquehere-dto";
@@ -59,6 +60,10 @@ describe("MapRotationMozambiquehereDTO", () => {
     it("can convert to MapRotation", fakeAsync(() => {
         // Arrange
         const dto = new MapRotationMozambiquehereDTO(normalJSONResponse);
+        const olympusMap = MatchMap.latestGenericMap(MatchMapGenericId.Olympus, MatchMapList);
+        const worldsEdgeMap = MatchMap.latestGenericMap(MatchMapGenericId.WorldsEdge, MatchMapList);
+        const thermalStationMap = MatchMap.latestGenericMap(MatchMapGenericId.ThermalStation, MatchMapList);
+        const phaseRunnerMap = MatchMap.latestGenericMap(MatchMapGenericId.PhaseRunner, MatchMapList);
 
         // Act
         const actual = dto.toMapRotation();
@@ -67,25 +72,25 @@ describe("MapRotationMozambiquehereDTO", () => {
         expect(actual.battleRoyalePubs?.current?.startDate).toEqual(new Date(1621951200000));
         expect(actual.battleRoyalePubs?.current?.endDate).toEqual(new Date(1621956600000));
         expect(actual.battleRoyalePubs?.current?.friendlyName).toBe("Olympus");
-        expect(actual.battleRoyalePubs?.current?.matchMap).toEqual(MatchMapList.find((m) => m.mapGenericId === MatchMapGenericId.Olympus));
+        expect(actual.battleRoyalePubs?.current?.matchMap).toEqual(olympusMap);
 
         expect(actual.battleRoyalePubs?.next?.startDate).toEqual(new Date(1621956600000));
         expect(actual.battleRoyalePubs?.next?.endDate).toEqual(new Date(1621962000000));
         expect(actual.battleRoyalePubs?.next?.friendlyName).toBe("World's Edge");
-        expect(actual.battleRoyalePubs?.next?.matchMap).toEqual(MatchMapList.find((m) => m.mapGenericId === MatchMapGenericId.WorldsEdge));
+        expect(actual.battleRoyalePubs?.next?.matchMap).toEqual(worldsEdgeMap);
 
         expect(actual.arenasPubs?.current?.startDate).toEqual(new Date(1621955700000));
         expect(actual.arenasPubs?.current?.endDate).toEqual(new Date(1621956600000));
         expect(actual.arenasPubs?.current?.friendlyName).toBe("Thermal station");
-        expect(actual.arenasPubs?.current?.matchMap).toEqual(MatchMapList.find((m) => m.mapGenericId === MatchMapGenericId.ThermalStation));
+        expect(actual.arenasPubs?.current?.matchMap).toEqual(thermalStationMap);
 
         expect(actual.arenasPubs?.next?.startDate).toEqual(new Date(1621956600000));
         expect(actual.arenasPubs?.next?.endDate).toEqual(new Date(1621957500000));
         expect(actual.arenasPubs?.next?.friendlyName).toBe("Phase runner");
-        expect(actual.arenasPubs?.next?.matchMap).toEqual(MatchMapList.find((m) => m.mapGenericId === MatchMapGenericId.PhaseRunner));
+        expect(actual.arenasPubs?.next?.matchMap).toEqual(phaseRunnerMap);
 
-        expect(actual.battleRoyaleRanked?.current?.friendlyName).toBe("World's Edge");
-        expect(actual.battleRoyaleRanked?.next?.matchMap).toEqual(MatchMapList.find((m) => m.mapGenericId === MatchMapGenericId.Olympus));
+        expect(actual.battleRoyaleRanked?.current?.matchMap).toBe(worldsEdgeMap);
+        expect(actual.battleRoyaleRanked?.next?.matchMap).toEqual(olympusMap);
     }));
 });
 

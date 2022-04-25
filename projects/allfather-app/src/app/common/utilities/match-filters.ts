@@ -6,7 +6,7 @@ import { LegendList, sortLegendList } from "../legend/legend-list";
 import { MatchGameMode } from "../match/game-mode/game-mode";
 import { MatchGameModeList, sortMatchGameModeList } from "../match/game-mode/game-mode-list";
 import { MatchGameModeGenericId } from "../match/game-mode/game-mode.enum";
-import { latestGenericMap, MatchMapList, sortMatchMapList } from "../match/map/map-list";
+import { MatchMapList, sortMatchMapList } from "../match/map/map-list";
 import { MatchMap } from "../match/map/match-map";
 
 /**
@@ -22,7 +22,7 @@ class StaticMatchFilters {
     /** @returns The latest (generic) MatchMaps from a given mapList; or if undefined, defaults to non-training and non-firing range maps */
     public static getGenericMapList(mapList?: MatchMap[]): MatchMap[] {
         if (!mapList) mapList = StaticMatchFilters.getNonTrainingMapList();
-        const genericMapList = mapList.map((m) => latestGenericMap(m.mapGenericId, mapList!)).filter((m) => !!m) as MatchMap[];
+        const genericMapList = mapList.map((m) => MatchMap.latestGenericMap(m.mapGenericId, mapList!)).filter((m) => !!m) as MatchMap[];
         return unique(genericMapList, (m) => m.mapGenericId);
     }
 

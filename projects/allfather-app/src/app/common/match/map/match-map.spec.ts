@@ -117,4 +117,59 @@ describe("MatchMap", () => {
             expect(sut.isActive).toBe(false);
         });
     });
+
+    describe("getFromFriendlyName", () => {
+        it("should return the latest map", () => {
+            // Arrange
+            const matchMapList: MatchMap[] = [
+                new MatchMap({
+                    mapName: MatchMapFriendlyName.FiringRange,
+                    mapGenericId: MatchMapGenericId.FiringRange,
+                    mapId: "map_original_firing_range",
+                    isBattleRoyaleMap: false,
+                    isArenasMap: false,
+                    isControlMap: false,
+                    activeDates: [
+                        {
+                            from: new Date("2020-01-01T00:00:00"),
+                            to: new Date("2020-01-02T00:00:00"),
+                        },
+                    ],
+                }),
+                new MatchMap({
+                    mapName: MatchMapFriendlyName.FiringRange,
+                    mapGenericId: MatchMapGenericId.FiringRange,
+                    mapId: "map_firing_range_update2",
+                    isBattleRoyaleMap: false,
+                    isArenasMap: false,
+                    isControlMap: false,
+                    activeDates: [
+                        {
+                            from: new Date("2020-01-02T00:00:00"),
+                        },
+                    ],
+                }),
+                new MatchMap({
+                    mapName: MatchMapFriendlyName.FiringRange,
+                    mapGenericId: MatchMapGenericId.FiringRange,
+                    mapId: "map_firing_range_update1",
+                    isBattleRoyaleMap: false,
+                    isArenasMap: false,
+                    isControlMap: false,
+                    activeDates: [
+                        {
+                            from: new Date("2020-01-02T00:00:00"),
+                            to: new Date("2020-01-03T00:00:00"),
+                        },
+                    ],
+                }),
+            ];
+
+            // Act
+            const result = MatchMap.getFromFriendlyName("firing range", matchMapList);
+
+            // Assert
+            expect(result?.mapId).toBe("map_firing_range_update2");
+        });
+    });
 });

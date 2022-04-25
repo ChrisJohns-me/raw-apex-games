@@ -90,17 +90,13 @@ export class MatchPlayerInflictionService extends BaseService {
 
                 if (!rosterVictim) {
                     console.warn(
-                        `Damage inflicted on "${rawDamageEvent.targetName}" was not found on the match roster. ...Creating new instance of roster player as substitute.`,
-                        rawDamageEvent,
-                        matchRoster
+                        `Damage inflicted on "${rawDamageEvent.targetName}" was not found on the match roster. ...Creating new instance of roster player as substitute.`
                     );
                     rosterVictim = { name: rawDamageEvent.targetName, isMe: false } as MatchRosterPlayer;
                 }
                 if (!rosterMe) {
                     console.error(
-                        `Could not add damage event; local player ("${this.player.myName$.value}") couldn't be found on match roster.`,
-                        this.player.myName$.value,
-                        matchRoster
+                        `Could not add damage event; local player ("${this.player.myName$.value}") couldn't be found on match roster.`
                     );
                 }
                 const primaryWeapon = this.matchPlayerInventory.myWeaponSlots$.value[0]?.item;
@@ -136,12 +132,17 @@ export class MatchPlayerInflictionService extends BaseService {
                 if (!this.player.myName$.value) return;
                 const actionData = gameEvent.data as KillOrKnockdownData;
                 const allRosterPlayers = this.matchRoster.matchRoster$.value.allPlayers;
-                const victim = allRosterPlayers.find((p) => isPlayerNameEqual(p.name, actionData.victimName));
+                let victim = allRosterPlayers.find((p) => isPlayerNameEqual(p.name, actionData.victimName));
                 const attacker = allRosterPlayers.find((p) => p.isMe);
                 const weapon = new WeaponItem({});
                 const isVictimKnocked = gameEvent.name === "knockdown";
                 const isVictimEliminated = gameEvent.name === "kill";
-                if (!victim) return;
+                if (!victim) {
+                    console.warn(
+                        `[${this.constructor.name}] Could not find victim "${actionData.victimName}" on the match roster. ...substituting a new instance of victim`
+                    );
+                    victim = { name: actionData.victimName, isMe: false } as MatchRosterPlayer;
+                }
 
                 const newMatchInflictionEvent: MatchInflictionEvent = {
                     timestamp: new Date(),
