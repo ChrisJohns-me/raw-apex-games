@@ -10,7 +10,7 @@ import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { Stopwatch } from "common/utilities";
-import { combineLatest, concat, from, Observable, of, Subject, Subscription } from "rxjs";
+import { combineLatest, concat, from, Observable, of, OperatorFunction, Subject, Subscription } from "rxjs";
 import { concatMap, filter, finalize, map, shareReplay, startWith, switchMap, take, takeUntil, tap } from "rxjs/operators";
 
 type LegendIdsRow = string[];
@@ -207,8 +207,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     //#region Intermediate Methods
     private loadPlayerName$(): Observable<string> {
         return this.player.myName$.pipe(
-            filter((playerName) => !!playerName),
-            map((playerName) => playerName as string),
+            filter((playerName) => !!playerName) as OperatorFunction<Optional<string>, string>,
             tap((playerName) => {
                 this.playerName = playerName;
                 this.refreshUI();

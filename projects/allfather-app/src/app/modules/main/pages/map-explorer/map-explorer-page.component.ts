@@ -260,6 +260,7 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
                 // Select the last played match and map
                 this.setViewingMapToLastPlayed();
                 this.setViewingMatchToLastPlayed();
+                this.applyMatchFilters();
                 this.refreshUI();
             });
     }

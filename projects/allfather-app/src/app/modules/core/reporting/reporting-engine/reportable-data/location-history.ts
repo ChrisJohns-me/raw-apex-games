@@ -1,4 +1,5 @@
 import { ExtractSubjectType } from "common/types/rxjs-utilities";
+import { OperatorFunction } from "rxjs";
 import { filter, map, throttleTime, withLatestFrom } from "rxjs/operators";
 import { MatchPlayerLocationService } from "../../../match/match-player-location.service";
 import { ReportableDataTimestampedStream } from "../reportable-data";
@@ -14,16 +15,17 @@ export function LocationHistoryDataFactory(
     locationPhaseObs: MatchPlayerLocationService["myLocationPhase$"]
 ): ReportableDataTimestampedStream<LocationHistoryDataOutput> {
     const _locationPhaseObs = locationPhaseObs.pipe(
-        filter((locationPhase) => !!locationPhase),
-        map((locationPhase) => locationPhase as LocationHistoryDataPhase)
+        filter((locationPhase) => !!locationPhase) as OperatorFunction<Optional<LocationHistoryDataPhase>, LocationHistoryDataPhase>
     );
 
     return new ReportableDataTimestampedStream({
         dataId: "locationHistory",
         source$: coordinatesObs.pipe(
             throttleTime(LOCATION_DATA_THROTTLE),
-            filter((coordinates) => !!coordinates),
-            map((coordinates) => coordinates as LocationHistoryDataCoordinates),
+            filter((coordinates) => !!coordinates) as OperatorFunction<
+                Optional<LocationHistoryDataCoordinates>,
+                LocationHistoryDataCoordinates
+            >,
             withLatestFrom(_locationPhaseObs),
             map(([coordinates, locationPhase]) => {
                 return { ...coordinates, phase: locationPhase };

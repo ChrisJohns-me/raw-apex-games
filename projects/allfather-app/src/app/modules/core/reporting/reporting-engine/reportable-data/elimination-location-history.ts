@@ -1,5 +1,5 @@
 import { ExtractSubjectType } from "common/types/rxjs-utilities";
-import { filter, map } from "rxjs";
+import { filter, OperatorFunction } from "rxjs";
 import { MatchPlayerLocationService } from "../../../match/match-player-location.service";
 import { ReportableDataTimestampedStream } from "../reportable-data";
 
@@ -8,8 +8,10 @@ export function EliminationLocationHistoryDataFactory(
     eliminationLocationHistoryObs: MatchPlayerLocationService["myEliminationCoordinates$"]
 ): ReportableDataTimestampedStream<EliminationLocationHistoryDataCoordinates> {
     const _eliminationLocationHistoryObs = eliminationLocationHistoryObs.pipe(
-        filter((eliminationCoordinate) => !!eliminationCoordinate),
-        map((eliminationCoordinate) => eliminationCoordinate as EliminationLocationHistoryDataCoordinates)
+        filter((eliminationCoordinate) => !!eliminationCoordinate) as OperatorFunction<
+            Optional<EliminationLocationHistoryDataCoordinates>,
+            EliminationLocationHistoryDataCoordinates
+        >
     );
 
     return new ReportableDataTimestampedStream({

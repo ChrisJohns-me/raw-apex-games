@@ -7,17 +7,25 @@ import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-se
 import { Injectable } from "@angular/core";
 import { cleanInt } from "common/utilities/";
 import { BehaviorSubject } from "rxjs";
-import { filter, map, takeUntil } from "rxjs/operators";
+import { bufferCount, filter, map, takeUntil } from "rxjs/operators";
 import { BaseService } from "../base-service.abstract";
 import { OverwolfGameDataService, OWInfoUpdates2Event } from "../overwolf";
 import { MatchPlayerInflictionService } from "./match-player-infliction.service";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
+import { MatchPlayerLegendService } from "./match-player-legend.service";
 import { MatchPlayerService } from "./match-player.service";
 import { MatchService } from "./match.service";
 
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, MatchPlayerService, MatchPlayerInflictionService, OverwolfGameDataService, MatchPlayerInventoryService],
+    deps: [
+        MatchService,
+        MatchPlayerService,
+        MatchPlayerInflictionService,
+        MatchPlayerLegendService,
+        OverwolfGameDataService,
+        MatchPlayerInventoryService,
+    ],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerLocationService", MatchPlayerLocationService, deps),
 })
 export class MatchPlayerLocationService extends BaseService {
@@ -42,6 +50,7 @@ export class MatchPlayerLocationService extends BaseService {
         private readonly match: MatchService,
         private readonly matchPlayer: MatchPlayerService,
         private readonly matchPlayerInfliction: MatchPlayerInflictionService,
+        private readonly matchPlayerLegend: MatchPlayerLegendService,
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly playerInventory: MatchPlayerInventoryService
     ) {
@@ -100,9 +109,6 @@ export class MatchPlayerLocationService extends BaseService {
         });
     }
 
-    /**
-     * Throttled by configuration value
-     */
     private setupMyCoordinates(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
@@ -133,17 +139,11 @@ export class MatchPlayerLocationService extends BaseService {
             .subscribe((coord) => this.myStartingCoordinates$.next(coord));
     }
 
+    /** Detects when local player has landed by a stagnant location. */
     private setupMyLandingCoordinates(): void {
-        this.playerInventory.myInUseItem$
-            .pipe(
-                takeUntil(this.destroy$),
-                filter((inUse) => !!inUse),
-                map(() => this.myCoordinates$.value),
-                filter(() => !this.myLandingCoordinates$.value),
-                filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z)),
-                filter(() => this.isMatchStarted)
-            )
-            .subscribe((coord) => this.myLandingCoordinates$.next(coord));
+        this._setupMyLandingCoordinatesByUltimateCooldown();
+        // this._setupMyLandingCoordinatesByFirstInventory();
+        // this._setupMyLandingCoordinatesByLocationStagnation();
     }
 
     private setupMyDeathCoordinates(): void {
@@ -177,4 +177,54 @@ export class MatchPlayerLocationService extends BaseService {
             )
             .subscribe((coord) => this.myEndingCoordinates$.next(coord));
     }
+
+    //#region Different Landing Detection Methods
+    private _setupMyLandingCoordinatesByUltimateCooldown(): void {
+        const ULTIMATE_COOLDOWN_TRIGGER = 0;
+        this.matchPlayerLegend.myUltimateCooldown$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter(() => this.myLocationPhase$.value === MatchLocationPhase.Dropping),
+                filter((ultimateCooldown) => ultimateCooldown <= ULTIMATE_COOLDOWN_TRIGGER),
+                map(() => this.myCoordinates$.value),
+                filter(() => !this.myLandingCoordinates$.value),
+                filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z))
+            )
+            .subscribe((coord) => {
+                this.myLandingCoordinates$.next(coord);
+            });
+    }
+
+    private _setupMyLandingCoordinatesByFirstInventory(): void {
+        this.playerInventory.myInUseItem$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((inUse) => !!inUse),
+                map(() => this.myCoordinates$.value),
+                filter(() => !this.myLandingCoordinates$.value),
+                filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z)),
+                filter(() => this.isMatchStarted)
+            )
+            .subscribe((coord) => this.myLandingCoordinates$.next(coord));
+    }
+
+    private _setupMyLandingCoordinatesByLocationStagnation(): void {
+        const LANDING_Z_TRIGGER = 5;
+        this.myCoordinates$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter(() => this.myLocationPhase$.value === MatchLocationPhase.Dropping),
+                filter(() => !this.myLandingCoordinates$.value),
+                filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z)),
+                bufferCount(2, 5) // bufferSize = 2, startBufferEvery = 5 (coordinate updates)
+            )
+            .subscribe(([previousCoords, latestCoords]) => {
+                if (!previousCoords || !latestCoords) return;
+                const zDiff = Math.abs(latestCoords.z - previousCoords.z);
+                if (zDiff <= LANDING_Z_TRIGGER) {
+                    this.myLandingCoordinates$.next(latestCoords);
+                }
+            });
+    }
+    //#endregion
 }

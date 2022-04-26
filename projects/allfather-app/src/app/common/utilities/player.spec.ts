@@ -94,6 +94,7 @@ describe("Player Utilities", () => {
     it("should player names and ignore Overwolf's mistakes", () => {
         expect(isPlayerNameEqual("`1[ABCD] Player1", "[ABCD] Player1")).withContext("`1[ABCD] Player1").toBeTrue();
         expect(isPlayerNameEqual("`1[ABCD] Player1", "Player1")).withContext("`1[ABCD] Player1").toBeTrue();
+        expect(isPlayerNameEqual("`1[ABCD] Player1", " Player1 ")).withContext("`1[ABCD] Player1").toBeTrue();
     });
     //#endregion
 });

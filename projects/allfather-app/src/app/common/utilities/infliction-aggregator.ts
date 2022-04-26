@@ -1,6 +1,6 @@
 import { cleanInt, isEmpty } from "common/utilities/";
 import { addMilliseconds } from "date-fns";
-import { merge, Observable, ObservableInput, Subject } from "rxjs";
+import { merge, Observable, ObservableInput } from "rxjs";
 import { debounceTime, filter, groupBy, map, mergeMap, share, tap } from "rxjs/operators";
 import { MatchInflictionEvent, MatchInflictionEventAccum } from "../match/infliction-event";
 import { isPlayerNameEqual } from "./player";
@@ -15,7 +15,6 @@ export class InflictionAggregator {
 
     private accumulations: MatchInflictionEventAccum[] = [];
 
-    private distinctFlush$ = new Subject<void>();
     private _expireAggregateMs: number;
     private _emitOnExpire: boolean;
 
@@ -42,7 +41,6 @@ export class InflictionAggregator {
 
     public clearAccumulations(): void {
         this.accumulations = [];
-        this.distinctFlush$.next();
     }
 
     private createAggregateEventObs$(inflictionEventObs: Observable<MatchInflictionEventAccum>): Observable<MatchInflictionEventAccum> {

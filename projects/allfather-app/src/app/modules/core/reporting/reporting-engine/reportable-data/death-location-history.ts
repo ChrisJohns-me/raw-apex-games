@@ -1,5 +1,5 @@
 import { ExtractSubjectType } from "common/types/rxjs-utilities";
-import { filter, map } from "rxjs";
+import { filter, OperatorFunction } from "rxjs";
 import { MatchPlayerLocationService } from "../../../match/match-player-location.service";
 import { ReportableDataTimestampedStream } from "../reportable-data";
 
@@ -8,8 +8,10 @@ export function DeathLocationHistoryDataFactory(
     deathLocationHistoryObs: MatchPlayerLocationService["myDeathCoordinates$"]
 ): ReportableDataTimestampedStream<DeathLocationHistoryDataCoordinates> {
     const _deathLocationHistoryObs = deathLocationHistoryObs.pipe(
-        filter((deathCoordinate) => !!deathCoordinate),
-        map((deathCoordinate) => deathCoordinate as DeathLocationHistoryDataCoordinates)
+        filter((deathCoordinate) => !!deathCoordinate) as OperatorFunction<
+            Optional<DeathLocationHistoryDataCoordinates>,
+            DeathLocationHistoryDataCoordinates
+        >
     );
 
     return new ReportableDataTimestampedStream({

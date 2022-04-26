@@ -4,7 +4,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { unique } from "common/utilities/primitives/array";
 import { addMilliseconds } from "date-fns";
-import { merge, Observable, of, throwError } from "rxjs";
+import { merge, Observable, of, OperatorFunction, throwError } from "rxjs";
 import { bufferCount, delay, filter, map, mergeMap, retryWhen, tap } from "rxjs/operators";
 import { BaseService } from "../base-service.abstract";
 import { MozambiqueherePlatform, PlayerAccountStatsMozambiquehereDTO } from "./player-account-stats-mozambiquehere-dto";
@@ -104,8 +104,7 @@ export class PlayerAccountStatsService extends BaseService {
             .get(API_URL, { params: { version: API_VER, auth: API_KEY, platform, player: playerName }, responseType: "json" })
             .pipe(
                 map((response) => this.createPlayerAccountStatsFromJSON(playerName, platform, response)),
-                filter((playerAccountStats) => !!playerAccountStats),
-                map((playerAccountStats) => playerAccountStats as PlayerAccountStats),
+                filter((playerAccountStats) => !!playerAccountStats) as OperatorFunction<Optional<PlayerAccountStats>, PlayerAccountStats>,
                 tap((playerAccountStats) => {
                     console.debug(
                         `[${this.constructor.name}] getPlayerAccountStats converted DTO class to Custom Player Account Stats class`,

@@ -18,8 +18,8 @@ import { Configuration } from "@allfather-app/configs/config.interface";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { isEmpty, mathClamp } from "common/utilities/";
 import { addMilliseconds } from "date-fns";
-import { combineLatest, interval, merge, Observable, Subject } from "rxjs";
-import { delay, delayWhen, distinctUntilChanged, filter, map, pairwise, share, takeUntil, tap } from "rxjs/operators";
+import { combineLatest, merge, Observable, Subject } from "rxjs";
+import { delay, distinctUntilChanged, filter, pairwise, takeUntil, tap } from "rxjs/operators";
 import { OpponentBanner } from "../components/opponent-banner/opponent-banner.component";
 
 export enum InflictionInsightType {
@@ -126,8 +126,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
     }
 
     private setupInflictionEventList(): void {
-        // merge(this.createMyDamageInflictionEvents$(), this.createIndirectInflictionEvents$())
-        merge(this.createMyDamageInflictionEvents$())
+        merge(this.createMyInflictionEvents$(), this.createIndirectInflictionEvents$())
             .pipe(takeUntil(this.destroy$))
             .subscribe((inflAccum) => {
                 if (isEmpty(inflAccum.victim?.name)) return;
@@ -163,7 +162,12 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
             });
     }
 
-    private createMyDamageInflictionEvents$(): Observable<MatchInflictionEventAccum> {
+    /**
+     * Keeps track of the local player's damage inflicted onto other players
+     * and converts them to accumulated events for banners to consume.
+     * Sends out reset events.
+     */
+    private createMyInflictionEvents$(): Observable<MatchInflictionEventAccum> {
         return this.inflictionAggregator.getInflictionAggregate$([
             this.matchPlayerInfliction.myDamageEvent$,
             this.matchPlayerInfliction.myKillfeedEvent$,
@@ -172,71 +176,16 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
 
     /**
      * Keep track of opponents' status using the killfeed
-     * and convert them to accumulated events for banners to consume.
+     * and converts them to accumulated events for banners to consume.
      * Sends out reset events.
      */
     private createIndirectInflictionEvents$(): Observable<MatchInflictionEventAccum> {
-        const indirectAccum$ = this.matchPlayerInfliction.notMyKillfeedEvent$.pipe(
+        const relevantKillfeedEvent$ = this.matchPlayerInfliction.notMyKillfeedEvent$.pipe(
             filter((killfeedEvent) =>
                 this.opponentBannerList.some((b) => isPlayerNameEqual(b.rosterPlayer?.name, killfeedEvent?.victim?.name))
-            ),
-            map((killfeedEvent) => {
-                const foundOpponentBanner = this.opponentBannerList.find((b) =>
-                    isPlayerNameEqual(b.rosterPlayer?.name, killfeedEvent?.victim?.name)
-                ) as OpponentBanner;
-                return {
-                    latestAttacker: killfeedEvent.attacker,
-                    victim: killfeedEvent.victim,
-                    hasShield: false,
-                    isEliminated: !isEmpty(killfeedEvent.isElimination) ? killfeedEvent.isElimination! : false,
-                    isKnocked: !isEmpty(killfeedEvent.isKnockdown) ? killfeedEvent.isKnockdown! : false,
-                    healthDamageSum: foundOpponentBanner.latestInflictionAccum?.healthDamageSum ?? 0,
-                    shieldDamageSum: foundOpponentBanner.latestInflictionAccum?.shieldDamageSum ?? 0,
-                    latestTimestamp: killfeedEvent.timestamp,
-                } as MatchInflictionEventAccum;
-            }),
-            share()
+            )
         );
-
-        const indirectKnockdownReset$ = indirectAccum$.pipe(
-            filter((inflAccum) => inflAccum.isKnocked && this.config.featureFlags.inflictionInsight.assumeKnockdownExpires),
-            tap(() => console.log(`createUntrackedInflictionEvents: indirectKnockdownReset$ -> filtered isKnocked`)),
-            delayWhen(() => interval(this.config.assumptions.knockdownExpireTime)),
-            map((inflAccum) => {
-                return {
-                    victim: inflAccum.victim,
-                    shieldDamageSum: 0,
-                    healthDamageSum: 0,
-                    hasShield: true,
-                    isKnocked: false,
-                    isEliminated: false,
-                    latestAttacker: undefined,
-                    latestTimestamp: undefined,
-                } as MatchInflictionEventAccum;
-            }),
-            tap((inflAccum) => console.log(`createUntrackedInflictionEvents: indirectKnockdownReset$ -> after delayWhen()`, inflAccum))
-        );
-
-        const indirectEliminationReset$ = indirectAccum$.pipe(
-            filter((inflAccum) => inflAccum.isEliminated && this.config.featureFlags.inflictionInsight.assumeEliminationExpires),
-            tap(() => console.log(`createUntrackedInflictionEvents: indirectEliminationReset$ -> filtered isEliminated`)),
-            delayWhen(() => interval(this.config.assumptions.eliminationExpireTime)),
-            map((inflAccum) => {
-                return {
-                    victim: inflAccum.victim,
-                    shieldDamageSum: 0,
-                    healthDamageSum: 0,
-                    hasShield: true,
-                    isKnocked: false,
-                    isEliminated: false,
-                    latestAttacker: undefined,
-                    latestTimestamp: undefined,
-                } as MatchInflictionEventAccum;
-            }),
-            tap((inflAccum) => console.log(`createUntrackedInflictionEvents: indirectKnockdownReset$ -> after delayWhen()`, inflAccum))
-        );
-
-        return merge(indirectAccum$, indirectKnockdownReset$, indirectEliminationReset$);
+        return this.inflictionAggregator.getInflictionAggregate$([relevantKillfeedEvent$]);
     }
 
     private createOpponentBanner(inflictionEvent: MatchInflictionEventAccum): Optional<OpponentBanner> {

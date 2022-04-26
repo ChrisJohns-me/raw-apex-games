@@ -34,18 +34,17 @@ export class CaptureControllerService extends BaseService {
     }
 
     public startWatchEvents(): void {
-        //     const genericGameModeId$ = this.match.gameMode$.pipe(
-        //         filter((gameMode) => !!gameMode?.gameModeGenericId && !!gameMode.isAFSupported),
-        //         map((gameMode) => gameMode!.gameModeGenericId as MatchGameModeGenericId)
-        //     );
-        //     combineLatest([this.settings.streamAllSettings$(), this.game.phase$, genericGameModeId$])
-        //         .pipe(
-        //             takeUntil(this.destroy$),
-        //             switchMap(([settings, gamePhase, genericGameModeId]) =>
-        //                 merge(...this.fireHUDRequirements(settings, gamePhase, genericGameModeId))
-        //             )
+        // const genericGameModeId$ = this.match.gameMode$.pipe(
+        //     filter((gameMode) => !!gameMode?.gameModeGenericId && !!gameMode.isAFSupported) as OperatorFunction<Optional<MatchGameModeGenericId>, MatchGameModeGenericId>,
+        // );
+        // combineLatest([this.settings.streamAllSettings$(), this.game.phase$, genericGameModeId$])
+        //     .pipe(
+        //         takeUntil(this.destroy$),
+        //         switchMap(([settings, gamePhase, genericGameModeId]) =>
+        //             merge(...this.fireHUDRequirements(settings, gamePhase, genericGameModeId))
         //         )
-        //         .subscribe();
+        //     )
+        //     .subscribe();
     }
 
     // public stop(): void {

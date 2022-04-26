@@ -1,5 +1,4 @@
 import { Legend } from "@allfather-app/app/common/legend/legend";
-import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { isPlayerNameEqual } from "@allfather-app/app/common/utilities/player";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
@@ -11,18 +10,17 @@ import { distinctUntilChanged, filter, map, pairwise, switchMap, takeUntil, tap 
 import { BaseService } from "../base-service.abstract";
 import { OverwolfGameDataService } from "../overwolf";
 import { MatchLegendSelectService } from "./match-legend-select.service";
-import { MatchPlayerLocationService } from "./match-player-location.service";
 
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, MatchLegendSelectService, MatchPlayerLocationService, OverwolfGameDataService, PlayerService],
+    deps: [MatchService, MatchLegendSelectService, OverwolfGameDataService, PlayerService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerLegendService", MatchPlayerLegendService, deps),
 })
 export class MatchPlayerLegendService extends BaseService {
     public readonly myLegend$ = new BehaviorSubject<Optional<Legend>>(undefined);
-    /** Percent of current Ultimate Cooldown; after player has landed. */
+    /** Percent of current Ultimate Cooldown. */
     public readonly myUltimateCooldown$ = new Subject<number>();
-    /** Dates when an Ultimate is used; after player has landed. */
+    /** Dates when an Ultimate is used; best if also filtered with HASLANDED. */
     public readonly myUltimateUsage$ = new Subject<Date>();
 
     private stagingLegends: {
@@ -33,7 +31,6 @@ export class MatchPlayerLegendService extends BaseService {
     constructor(
         private readonly match: MatchService,
         private readonly matchLegendSelect: MatchLegendSelectService,
-        private readonly matchPlayerLocation: MatchPlayerLocationService,
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly player: PlayerService
     ) {
@@ -74,7 +71,6 @@ export class MatchPlayerLegendService extends BaseService {
         this.overwolfGameData.infoUpdates$
             .pipe(
                 takeUntil(this.destroy$),
-                filter(() => this.matchPlayerLocation.myLocationPhase$.value === MatchLocationPhase.HasLanded),
                 filter((infoUpdate) => infoUpdate.feature === "me" && !!infoUpdate.info.me?.ultimate_cooldown),
                 map((infoUpdate) => String(infoUpdate.info.me?.ultimate_cooldown?.ultimate_cooldown ?? "")),
                 map((ultimateCooldown) => parseFloat(String(ultimateCooldown))),
@@ -87,14 +83,8 @@ export class MatchPlayerLegendService extends BaseService {
     }
 
     private setupMyUltimateUsage(): void {
-        this.myUltimateCooldown$
-            .pipe(
-                takeUntil(this.destroy$),
-                filter(() => this.matchPlayerLocation.myLocationPhase$.value === MatchLocationPhase.HasLanded),
-                pairwise()
-            )
-            .subscribe(([prevCooldown, currCooldown]) => {
-                if (currCooldown <= 0.05 && prevCooldown >= 0.9) this.myUltimateUsage$.next(new Date());
-            });
+        this.myUltimateCooldown$.pipe(takeUntil(this.destroy$), pairwise()).subscribe(([prevCooldown, currCooldown]) => {
+            if (currCooldown <= 0.05 && prevCooldown >= 0.9) this.myUltimateUsage$.next(new Date());
+        });
     }
 }

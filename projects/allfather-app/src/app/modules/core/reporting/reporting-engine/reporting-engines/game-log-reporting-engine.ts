@@ -1,7 +1,7 @@
 import { isEmpty } from "common/utilities";
 import { format } from "date-fns";
-import { BehaviorSubject, merge, Observable, Subject } from "rxjs";
-import { filter, takeUntil } from "rxjs/operators";
+import { BehaviorSubject, merge, Observable, of, Subject } from "rxjs";
+import { delay, filter, takeUntil, tap } from "rxjs/operators";
 import { OWGameEvent, OWInfoUpdates2Event } from "../../../overwolf";
 import { SessionStorageKeys } from "../../../session-storage/session-storage-keys";
 import { SessionStorageService } from "../../../session-storage/session-storage.service";
@@ -12,6 +12,8 @@ interface GameLog {
     timestamp: Date;
     data: string;
 }
+
+const SAVE_DELAY = 5000; // save game log with a delay after match ends
 
 /**
  * @class GameLogReportingEngine
@@ -62,17 +64,26 @@ export class GameLogReportingEngine implements ReportingEngine {
 
         const shouldRun = !this.runConditions.length || this.runConditions.every((rc) => rc.conditionMet());
 
-        if (shouldRun) {
-            const logStr = this.formatGameLog(this.gameLogArr);
-            const result = this.saveGameLog(logStr);
+        of(shouldRun)
+            .pipe(
+                takeUntil(this.destroy$),
+                tap(() => console.log(`[${this.constructor.name}] Setting delay to ${SAVE_DELAY}ms`)),
+                delay(SAVE_DELAY)
+            )
+            .subscribe((shouldRun) => {
+                console.log(`[${this.constructor.name}] RUNNING: ${shouldRun}`);
+                if (shouldRun) {
+                    const logStr = this.formatGameLog(this.gameLogArr);
+                    const result = this.saveGameLog(logStr);
 
-            this.reportingStatus$.next(result ? ReportingStatus.SUCCESS : ReportingStatus.FAIL);
-            console.log(`[${this.constructor.name}] GameLog Reporting ${result ? "Succeeded" : "Failed"}`);
-        } else {
-            this.reportingStatus$.next(ReportingStatus.CRITERIA_NOT_MET);
-            console.debug(`[${this.constructor.name}] Criteria not met; not running Game Log reporting engine.`);
-        }
-        this.gameLogArr = [];
+                    this.reportingStatus$.next(result ? ReportingStatus.SUCCESS : ReportingStatus.FAIL);
+                    console.log(`[${this.constructor.name}] GameLog Reporting ${result ? "Succeeded" : "Failed"}`);
+                } else {
+                    this.reportingStatus$.next(ReportingStatus.CRITERIA_NOT_MET);
+                    console.debug(`[${this.constructor.name}] Criteria not met; not running Game Log reporting engine.`);
+                }
+                this.gameLogArr = [];
+            });
     }
 
     private setupLogSubscription(): void {
@@ -82,7 +93,11 @@ export class GameLogReportingEngine implements ReportingEngine {
         merge(this.infoUpdates$, this.newGameEvent$)
             .pipe(
                 takeUntil(this.destroy$),
-                filter(() => this.reportingStatus$.value === ReportingStatus.WAITING)
+                filter(
+                    () =>
+                        this.reportingStatus$.value === ReportingStatus.WAITING ||
+                        this.reportingStatus$.value === ReportingStatus.IN_PROGRESS
+                )
             )
             .subscribe((event) => this.addLogItem(event));
     }
