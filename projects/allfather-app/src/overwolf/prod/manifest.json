@@ -5,7 +5,7 @@
     "meta": {
         "name": "Allfather",
         "author": "MasterKriff",
-        "version": "0.0.311",
+        "version": "0.0.312",
         "minimum-overwolf-version": "0.165.0",
         "minimum-gep-version": "0.165.0",
         "description": "Allfather, give me sight!",
@@ -186,7 +186,7 @@
             },
             "legend-select-assist": {
                 "file": "index.html",
-                "in_game_only": false,
+                "in_game_only": true,
                 "resizable": false,
                 "transparent": true,
                 "show_in_taskbar": false,
