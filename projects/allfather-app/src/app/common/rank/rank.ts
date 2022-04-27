@@ -76,7 +76,7 @@ export class Rank {
         return Math.max(0, this.score - this.tierDivisionMinScore);
     }
 
-    /** Division based on score OR givenTierName OR defaults to default tier name*/
+    /** Division based on score OR givenTierName OR defaults to default tier name */
     public get tierName(): RankTierName {
         if (this._givenScore) {
             return Rank.getTierNameFromScore(this._givenScore);
@@ -86,7 +86,7 @@ export class Rank {
         return RankTierName.Bronze;
     }
 
-    /** Division based on score OR givenTierDivision OR defaults to default division*/
+    /** Division based on score OR givenTierDivision OR defaults to default division */
     public get tierDivision(): RankTierDivision {
         if (this._givenScore) {
             return Rank.getTierDivisionFromScore(this._givenScore);

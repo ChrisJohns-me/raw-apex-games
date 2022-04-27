@@ -40,9 +40,38 @@
     width: 100px;
 }
 
-.col-stats {
-    // width: 60px;
-    // flex: 0 0 60px;
+.rank-container {
+    display: flex;
+
+    .rank-group {
+        text-align: center;
+
+        .rank-score {
+            margin: 0.25rem 0 0;
+        }
+
+        .rank-icon {
+            height: 50px;
+            width: 50px;
+            display: inline-block;
+        }
+    }
+
+    .rank-diff {
+        align-self: center;
+        margin-left: 1rem;
+
+        &-amount {
+            font-weight: bold;
+            &.positive {
+                color: $green;
+            }
+    
+            &.negative {
+                color: $red;
+            }
+        }
+    }
 }
 
 .placement-sign {

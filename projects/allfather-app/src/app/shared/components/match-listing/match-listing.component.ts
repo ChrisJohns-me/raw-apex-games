@@ -17,7 +17,6 @@ import {
     Output,
     TrackByFunction,
 } from "@angular/core";
-import { Tooltip } from "bootstrap";
 import { isEmpty } from "common/utilities/";
 import { unique } from "common/utilities/primitives/array";
 import { differenceInMilliseconds, intervalToDuration } from "date-fns";
@@ -70,7 +69,6 @@ export class MatchListingComponent implements OnInit, OnDestroy {
     public relativeTime = 6 * 60 * 60 * 1000;
 
     private maxSquadSize = 3;
-    private tooltipList: Tooltip[] = [];
     private _matches: MatchDataStore[] = [];
     private destroy$ = new Subject<void>();
 
@@ -105,7 +103,7 @@ export class MatchListingComponent implements OnInit, OnDestroy {
      * Makes each legend unique.
      * Sorts and places "me" first.
      * Limits squad size to factual max squad size.
-     * @returns Curated list of Match's teammates, without "me".
+     * @returns {TeamRosterPlayer[]} Curated list of Match's teammates, without "me".
      */
     public buildTeamRoster(match: MatchDataStore): MatchDataStore["teamRoster"] {
         if (isEmpty(match?.teamRoster)) return [];
@@ -122,6 +120,16 @@ export class MatchListingComponent implements OnInit, OnDestroy {
     public onTeamRosterClick(teamRoster: TeamRosterPlayer): void {
         if (!this.isTeamRosterPlayerClickable) return;
         this.teamRosterClick.emit(teamRoster);
+    }
+
+    /** Attempts to get the rankScore difference from the given match index. */
+    public getRankDiffFromMatchIndex(matchIndex: number): Optional<number> {
+        const match = this.matches[matchIndex];
+        if (!match?.rankScore) return;
+        const olderMatches = this.matches.slice(matchIndex + 1);
+        const prevMatch = olderMatches.find((m) => m.rankScore !== undefined);
+        if (!prevMatch?.rankScore) return;
+        return match.rankScore - prevMatch.rankScore;
     }
 
     private refreshUI(): void {

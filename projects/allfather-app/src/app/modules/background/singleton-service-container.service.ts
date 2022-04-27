@@ -30,6 +30,7 @@ import { OverwolfInputTrackingService } from "../core/overwolf/overwolf-input-tr
 import { OverwolfProfileService } from "../core/overwolf/overwolf-profile.service";
 import { OverwolfStreamingService } from "../core/overwolf/overwolf-streaming.service";
 import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service";
+import { MyPlayerAccountStatsService } from "../core/player-account-stats/my-player-account-stats.service";
 import { PlayerAccountStatsService } from "../core/player-account-stats/player-account-stats.service";
 import { PlayerLocalStatsService } from "../core/player-local-stats.service";
 import { PlayerService } from "../core/player.service";
@@ -47,6 +48,7 @@ import { MainWindowService } from "../main/windows/main-window.service";
 import { CaptureControllerService } from "./capture-controller.service";
 import { HotkeyService } from "./hotkey.service";
 import { HUDWindowControllerService } from "./hud-window-controller.service";
+import { MatchRankSyncService } from "./match-rank-sync.service";
 import { SystemTrayService } from "./system-tray.service";
 
 /**
@@ -81,10 +83,12 @@ import { SystemTrayService } from "./system-tray.service";
         MatchPlayerLocationService,
         MatchPlayerService,
         MatchPlayerStatsService,
+        MatchRankSyncService,
         MatchRingService,
         MatchRosterService,
         MatchService,
         MatchTimerWindowService,
+        MyPlayerAccountStatsService,
         OverwolfExtensionsService,
         OverwolfFeatureStatusService,
         OverwolfGameDataService,
@@ -135,10 +139,12 @@ export class SingletonServiceContainerService {
         public readonly MatchPlayerLocationService: MatchPlayerLocationService,
         public readonly MatchPlayerService: MatchPlayerService,
         public readonly MatchPlayerStatsService: MatchPlayerStatsService,
+        public readonly MatchRankSyncService: MatchRankSyncService,
         public readonly MatchRingService: MatchRingService,
         public readonly MatchRosterService: MatchRosterService,
         public readonly MatchService: MatchService,
         public readonly MatchTimerWindowService: MatchTimerWindowService,
+        public readonly MyPlayerAccountStatsService: MyPlayerAccountStatsService,
         public readonly OverwolfExtensionsService: OverwolfExtensionsService,
         public readonly OverwolfFeatureStatusService: OverwolfFeatureStatusService,
         public readonly OverwolfGameDataService: OverwolfGameDataService,

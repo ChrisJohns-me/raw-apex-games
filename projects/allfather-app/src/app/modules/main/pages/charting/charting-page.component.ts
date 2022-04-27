@@ -4,12 +4,11 @@ import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { MatchFilters } from "@allfather-app/app/common/utilities/match-filters";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { ReportingEngineId, ReportingStatus } from "@allfather-app/app/modules/core/reporting/reporting-engine/reporting-engine";
 import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { mdiFilterVariantRemove } from "@mdi/js";
 import { Observable, Subject } from "rxjs";
-import { filter, finalize, switchMap, takeUntil, tap } from "rxjs/operators";
+import { finalize, switchMap, takeUntil, tap } from "rxjs/operators";
 
 const MONTHLYAVG_REQUIRED_DAYS = 60;
 
@@ -113,12 +112,9 @@ export class ChartingPageComponent implements OnInit, AfterViewInit, OnDestroy {
     //#endregion
 
     private setupLiveMatchListeners(): void {
-        // New match was reported to local database
-        this.reporting.reportingEvent$
+        this.match.onMatchDataStoreChanged$ // Match was updated or added to local database
             .pipe(
                 takeUntil(this.destroy$),
-                filter((reportingEvent) => reportingEvent.engine.engineId === ReportingEngineId.LocalDB),
-                filter((localDBReportingStatus) => localDBReportingStatus.status === ReportingStatus.SUCCESS),
                 switchMap(() => this.getMatchList$())
             )
             .subscribe((matchList) => {

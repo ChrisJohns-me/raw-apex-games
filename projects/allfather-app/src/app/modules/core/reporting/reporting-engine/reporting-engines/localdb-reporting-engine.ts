@@ -136,6 +136,7 @@ export class LocalDBReportingEngine implements ReportingEngine {
             killfeedHistory: getDataById("killfeedHistory")?.value ?? [],
             deathLocationHistory: getDataById("deathLocationHistory")?.value ?? [],
             locationHistory: getDataById("locationHistory")?.value.map((loc) => composeLocationCoordinate(loc)) ?? [],
+            rankScore: undefined, // retrieved from external API
         };
 
         if (!matchData.matchRoster?.length || isEmpty(matchData.matchId)) throw Error(`Match data is missing or corrupt`);

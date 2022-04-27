@@ -15,16 +15,20 @@ import { MockMapRotationService } from "@allfather-app/app/modules/core/mocks/se
 import { MockMatchMapService } from "@allfather-app/app/modules/core/mocks/services/mock-match-map.service";
 import { MockMatchRosterService } from "@allfather-app/app/modules/core/mocks/services/mock-match-roster.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
+import { MockMyPlayerAccountStatsService } from "@allfather-app/app/modules/core/mocks/services/mock-my-player-account-stats.service";
 import { MockOverwolfGameDataService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-game-data.service";
 import { MockOverwolfProfileService } from "@allfather-app/app/modules/core/mocks/services/mock-overwolf-profile.service";
 import { MockPlayerAccountStatsService } from "@allfather-app/app/modules/core/mocks/services/mock-player-account-stats.service";
 import { MockPlayerLocalStatsService } from "@allfather-app/app/modules/core/mocks/services/mock-player-local-stats.service";
 import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-player.service";
+import { MockReportingService } from "@allfather-app/app/modules/core/mocks/services/mock-reporting.service";
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { OverwolfProfileService } from "@allfather-app/app/modules/core/overwolf/overwolf-profile.service";
+import { MyPlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/my-player-account-stats.service";
 import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats.service";
 import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-local-stats.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
+import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { WelcomeContentComponent } from "@allfather-app/app/shared/components/welcome-content/welcome-content.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AccountStatsDisplayComponent } from "./components/account-stats-display.component";
@@ -56,13 +60,15 @@ describe("DashboardPageComponent", () => {
                 { provide: LocalDatabaseService, useClass: MockLocalDatabaseService },
                 { provide: MapRotationService, useClass: MockMapRotationService },
                 { provide: MatchMapService, useClass: MockMatchMapService },
+                { provide: MatchRosterService, useClass: MockMatchRosterService },
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: OverwolfGameDataService, useClass: MockOverwolfGameDataService },
                 { provide: OverwolfProfileService, useClass: MockOverwolfProfileService },
                 { provide: PlayerAccountStatsService, useClass: MockPlayerAccountStatsService },
                 { provide: PlayerLocalStatsService, useClass: MockPlayerLocalStatsService },
                 { provide: PlayerService, useClass: MockPlayerService },
-                { provide: MatchRosterService, useClass: MockMatchRosterService },
+                { provide: ReportingService, useClass: MockReportingService },
+                { provide: MyPlayerAccountStatsService, useClass: MockMyPlayerAccountStatsService },
             ],
         }).compileComponents();
     });

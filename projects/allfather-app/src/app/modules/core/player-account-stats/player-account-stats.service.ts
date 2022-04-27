@@ -18,6 +18,8 @@ const MAX_RETRY_COUNT = 3;
 const RETRY_MULTIPLIER = 5000;
 const CACHE_EXPIRE = 30 * 1000;
 
+type PlayerName = string;
+
 /**
  * @class PlayerAccountStatsService
  * @classdesc Player's match statistics from external sources
@@ -28,16 +30,17 @@ const CACHE_EXPIRE = 30 * 1000;
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("PlayerAccountStatsService", PlayerAccountStatsService, deps),
 })
 export class PlayerAccountStatsService extends BaseService {
-    private cachePlayerAccountStatsExpire?: Date;
-    private cachePlayerAccountStats?: PlayerAccountStats;
+    private cachedPlayerAccountStats!: Map<PlayerName, PlayerAccountStats>;
+    private cachedPlayerAccountStatsExpire!: Map<PlayerName, Date>;
 
     constructor(private readonly http: HttpClient) {
         super();
+        this.clearCache();
     }
 
     public clearCache(): void {
-        this.cachePlayerAccountStatsExpire = undefined;
-        this.cachePlayerAccountStats = undefined;
+        this.cachedPlayerAccountStats = new Map<PlayerName, PlayerAccountStats>();
+        this.cachedPlayerAccountStatsExpire = new Map<PlayerName, Date>();
     }
 
     /**
@@ -94,10 +97,13 @@ export class PlayerAccountStatsService extends BaseService {
         platform: MozambiqueherePlatform,
         breakCache = false
     ): Observable<PlayerAccountStats> {
-        const isExpired = new Date() > (this.cachePlayerAccountStatsExpire ?? 0);
-        if (!breakCache && !isExpired && this.cachePlayerAccountStats) {
+        const cachedResult = this.cachedPlayerAccountStats.get(playerName);
+        const cachedExpire = this.cachedPlayerAccountStatsExpire.get(playerName);
+
+        const isExpired = new Date() > (cachedExpire ?? 0);
+        if (!breakCache && !isExpired && cachedResult) {
             console.debug(`[${this.constructor.name}] Using cache for Player Account Stats`);
-            return of(this.cachePlayerAccountStats);
+            return of(cachedResult);
         }
 
         return this.http
@@ -110,8 +116,8 @@ export class PlayerAccountStatsService extends BaseService {
                         `[${this.constructor.name}] getPlayerAccountStats converted DTO class to Custom Player Account Stats class`,
                         playerAccountStats
                     );
-                    this.cachePlayerAccountStats = playerAccountStats;
-                    this.cachePlayerAccountStatsExpire = addMilliseconds(new Date(), CACHE_EXPIRE);
+                    this.cachedPlayerAccountStats.set(playerName, playerAccountStats);
+                    this.cachedPlayerAccountStatsExpire.set(playerName, addMilliseconds(new Date(), CACHE_EXPIRE));
                 }),
                 retryWhen((errors) => this.getPlayerAccountStatsRetry$(errors))
             );

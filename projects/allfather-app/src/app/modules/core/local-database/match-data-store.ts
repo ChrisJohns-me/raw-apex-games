@@ -31,6 +31,7 @@ export interface MatchDataStore {
     locationHistory?: TimestampedStream<LocationHistory>;
     matchRoster?: Stream<MatchRosterPlayer>;
     teamRoster?: TeamRosterPlayer[];
+    rankScore?: number; // undefined = unchanged / not retrieved
 }
 
 type Stream<T> = T[];

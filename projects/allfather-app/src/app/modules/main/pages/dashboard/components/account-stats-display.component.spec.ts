@@ -2,8 +2,10 @@ import { GameProcessService } from "@allfather-app/app/modules/core/game-process
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { MockGameProcessService } from "@allfather-app/app/modules/core/mocks/services/mock-game-process.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
+import { MockMyPlayerAccountStatsService } from "@allfather-app/app/modules/core/mocks/services/mock-my-player-account-stats.service";
 import { MockPlayerStatsService } from "@allfather-app/app/modules/core/mocks/services/mock-player-stats.service";
 import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-player.service";
+import { MyPlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/my-player-account-stats.service";
 import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ChangeDetectorRef } from "@angular/core";
@@ -23,6 +25,7 @@ describe("AccountStatsDisplayComponent", () => {
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: PlayerService, useClass: MockPlayerService },
                 { provide: PlayerAccountStatsService, useClass: MockPlayerStatsService },
+                { provide: MyPlayerAccountStatsService, useClass: MockMyPlayerAccountStatsService },
             ],
         }).compileComponents();
     });

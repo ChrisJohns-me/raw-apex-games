@@ -2,10 +2,7 @@ import { Legend } from "@allfather-app/app/common/legend/legend";
 import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
 import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
-import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
-import { LocalDatabaseService } from "@allfather-app/app/modules/core/local-database/local-database.service";
-import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
-import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats.service";
+import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-local-stats.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
@@ -62,12 +59,9 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly configuration: ConfigurationService,
-        private readonly googleAnalytics: GoogleAnalyticsService,
-        private readonly localDatabase: LocalDatabaseService,
-        private readonly matchRoster: MatchRosterService,
+        private readonly match: MatchService,
         private readonly player: PlayerService,
-        private readonly playerLocalStats: PlayerLocalStatsService,
-        private readonly playerAccountStats: PlayerAccountStatsService
+        private readonly playerLocalStats: PlayerLocalStatsService
     ) {
         this.legendIdsRows$ = this.configuration.config$.pipe(
             map((config) => config.featureConfigs.legendSelectAssist.legendRows.map((iconRows) => iconRows.legendIds)),
@@ -264,13 +258,9 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     }
 
     private watchLocalDatabaseMatchChanges(): void {
-        this.localDatabase.onChanges$
+        this.match.onMatchDataStoreChanged$
             .pipe(
-                tap(() => console.info(`>>> Local Database Match Changed`)),
                 takeUntil(this.destroy$),
-                map((changes) => changes.find((c) => c.table === this.localDatabase.matches.name)),
-                map((change) => (change as any)?.obj),
-                filter((value) => value != null),
                 switchMap(() => this.loadPlayerBattleRoyaleStats$()),
                 switchMap(() => this.loadPlayerComplimentaryLegends$()),
                 switchMap(() => this.loadPlayerComplimentaryWeapons$()),

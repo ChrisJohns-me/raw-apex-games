@@ -16,6 +16,7 @@ import { version3 } from "./versions/version3";
 import { version4 } from "./versions/version4";
 import { version5 } from "./versions/version5";
 import { version6 } from "./versions/version6";
+import { version7 } from "./versions/version7";
 
 const DATABASE_NAME = "AllfatherApp";
 
@@ -57,6 +58,7 @@ export class LocalDatabaseService extends Dexie {
         version4(this);
         version5(this);
         version6(this);
+        version7(this);
     }
 
     /** Only populates data on first run. */

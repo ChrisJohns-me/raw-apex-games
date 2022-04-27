@@ -18,6 +18,9 @@ export class MockMatchService implements MockedClass<MatchService> {
     public get isActive(): MatchService["isActive"] {
         return this.state$.value.state === MatchState.Active;
     }
+    public onMatchDataStoreChanged$: MatchService["onMatchDataStoreChanged$"] = new BehaviorSubject<
+        ExtractSubjectType<MatchService["onMatchDataStoreChanged$"]>
+    >("");
 
     public storeMatchData$(matchData: MatchDataStore): Observable<IndexableType> {
         return of();
@@ -32,6 +35,10 @@ export class MockMatchService implements MockedClass<MatchService> {
     }
 
     public getAllMatchData$(limit?: number): Observable<MatchDataStore[]> {
+        return of();
+    }
+
+    public getLatestMatchDataByPlayerName$(playerName: string): Observable<Optional<MatchDataStore>> {
         return of();
     }
 

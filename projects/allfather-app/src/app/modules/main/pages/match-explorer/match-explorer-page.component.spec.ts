@@ -17,9 +17,7 @@ import { MockMatchPlayerStatsService } from "@allfather-app/app/modules/core/moc
 import { MockMatchRosterService } from "@allfather-app/app/modules/core/mocks/services/mock-match-roster.service";
 import { MockMatchService } from "@allfather-app/app/modules/core/mocks/services/mock-match.service";
 import { MockPlayerService } from "@allfather-app/app/modules/core/mocks/services/mock-player.service";
-import { MockReportingService } from "@allfather-app/app/modules/core/mocks/services/mock-reporting.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
-import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { GameModesDropdownFilterComponent } from "@allfather-app/app/shared/components/game-modes-dropdown-filter/game-modes-dropdown-filter.component";
 import { LegendsDropdownFilterComponent } from "@allfather-app/app/shared/components/legends-dropdown-filter/legends-dropdown-filter.component";
 import { MapsDropdownFilterComponent } from "@allfather-app/app/shared/components/maps-dropdown-filter/maps-dropdown-filter.component";
@@ -53,7 +51,6 @@ describe("MatchExplorerPageComponent", () => {
                 { provide: MatchRosterService, useClass: MockMatchRosterService },
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: PlayerService, useClass: MockPlayerService },
-                { provide: ReportingService, useClass: MockReportingService },
                 { provide: WINDOW, useClass: BrowserWindowRef },
             ],
         }).compileComponents();

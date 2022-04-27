@@ -5,14 +5,13 @@ import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
 import { MatchFilters } from "@allfather-app/app/common/utilities/match-filters";
 import { LocationPhaseNum, MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { ReportingEngineId, ReportingStatus } from "@allfather-app/app/modules/core/reporting/reporting-engine/reporting-engine";
 import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { DataItem } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { mdiFilterVariantRemove } from "@mdi/js";
 import { isEmpty } from "common/utilities";
 import { Observable, Subject } from "rxjs";
-import { filter, finalize, map, switchMap, takeUntil } from "rxjs/operators";
+import { finalize, map, switchMap, takeUntil } from "rxjs/operators";
 
 const DEFAULT_NUM_ROWS = 25;
 
@@ -246,12 +245,9 @@ export class MapExplorerPageComponent implements OnInit, OnDestroy {
     }
 
     private setupLiveMatchListeners(): void {
-        // New match was reported to local database
-        this.reporting.reportingEvent$
+        this.match.onMatchDataStoreChanged$ // Match was updated or added to local database
             .pipe(
                 takeUntil(this.destroy$),
-                filter((reportingEvent) => reportingEvent.engine.engineId === ReportingEngineId.LocalDB),
-                filter((localDBReportingStatus) => localDBReportingStatus.status === ReportingStatus.SUCCESS),
                 switchMap(() => this.getMatchList$())
             )
             .subscribe((matchList) => {

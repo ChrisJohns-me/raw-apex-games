@@ -6,15 +6,13 @@ import { AvgMatchStats, avgStats, SumMatchStats, sumStats } from "@allfather-app
 import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { MatchDataStore } from "@allfather-app/app/modules/core/local-database/match-data-store";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
-import { ReportingEngineId, ReportingStatus } from "@allfather-app/app/modules/core/reporting/reporting-engine/reporting-engine";
-import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { DataItem } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { mdiFilterVariantRemove } from "@mdi/js";
 import { isEmpty } from "common/utilities/";
 import { Observable, Subject } from "rxjs";
-import { debounceTime, filter, finalize, switchMap, takeUntil } from "rxjs/operators";
+import { debounceTime, finalize, switchMap, takeUntil } from "rxjs/operators";
 
 type TeamRosterPlayer = NonNullable<MatchDataStore["teamRoster"]>[0];
 const DEFAULT_NUM_ROWS = 25;
@@ -85,8 +83,7 @@ export class MatchExplorerPageComponent implements OnInit, OnDestroy {
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly googleAnalytics: GoogleAnalyticsService,
-        private readonly match: MatchService,
-        private readonly reporting: ReportingService
+        private readonly match: MatchService
     ) {}
 
     //#region Lifecycle Methods
@@ -158,12 +155,9 @@ export class MatchExplorerPageComponent implements OnInit, OnDestroy {
 
     //#region Setup
     private setupLiveMatchListeners(): void {
-        // New match was reported to local database
-        this.reporting.reportingEvent$
+        this.match.onMatchDataStoreChanged$ // Match was updated or added to local database
             .pipe(
                 takeUntil(this.destroy$),
-                filter((reportingEvent) => reportingEvent.engine.engineId === ReportingEngineId.LocalDB),
-                filter((localDBReportingStatus) => localDBReportingStatus.status === ReportingStatus.SUCCESS),
                 switchMap(() => this.getMatchList$())
             )
             .subscribe((matchList) => {

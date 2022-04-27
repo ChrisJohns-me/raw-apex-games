@@ -17,7 +17,7 @@ import { GoogleAnalyticsReportingEngine } from "./reporting-engine/reporting-eng
 import { LocalDBReportingEngine } from "./reporting-engine/reporting-engines/localdb-reporting-engine";
 import { RunCondition } from "./reporting-engine/run-condition";
 
-interface ReportingEvent {
+export interface ReportingEvent {
     engine: ReportingEngine;
     status: ReportingStatus;
 }

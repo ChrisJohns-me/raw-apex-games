@@ -7,7 +7,8 @@ import { Injectable } from "@angular/core";
 import { isEmpty } from "common/utilities";
 import { differenceInMilliseconds, isDate } from "date-fns";
 import { IndexableType } from "dexie";
-import { BehaviorSubject, defer, from, merge, Observable, of, Subject, throwError } from "rxjs";
+import { ICreateChange, IUpdateChange } from "dexie-observable/api";
+import { BehaviorSubject, defer, from, merge, Observable, of, OperatorFunction, Subject, throwError } from "rxjs";
 import { filter, map, take, takeUntil, tap, timeoutWith } from "rxjs/operators";
 import { v4 as uuid, validate as uuidValidate } from "uuid";
 import { BaseService } from "../base-service.abstract";
@@ -41,6 +42,7 @@ export class MatchService extends BaseService {
     public get isActive(): boolean {
         return this.state$.value.state === MatchState.Active;
     }
+    public readonly onMatchDataStoreChanged$ = new Subject<string>(); // MatchId
 
     private currentStartDate?: Date;
     private matchIdDate?: Date;
@@ -51,6 +53,7 @@ export class MatchService extends BaseService {
         this.setupStartEndEvents();
         this.setupStateEvents();
         this.setupGameMode();
+        this.setupMatchDataStoreChanged();
     }
 
     /**
@@ -75,7 +78,8 @@ export class MatchService extends BaseService {
     }
 
     /**
-     * @returns All matches by legend stored in the local database, descending order.
+     * All matches by legend stored in the local database, descending order.
+     * @returns {MatchDataStore[]}
      */
     public getMatchDataByLegendId$(legendId: string, limit?: number): Observable<MatchDataStore[]> {
         const matchCollection = this.localDatabase.matches.where({ legendId: legendId });
@@ -84,12 +88,21 @@ export class MatchService extends BaseService {
     }
 
     /**
-     * @returns All matches stored in the local database, descending order.
+     * All matches stored in the local database, descending order.
+     * @returns {MatchDataStore[]}
      */
     public getAllMatchData$(limit?: number): Observable<MatchDataStore[]> {
         const matchCollection = this.localDatabase.matches.orderBy(":id").reverse();
         const matchLimitCollection = limit && limit > 0 ? matchCollection.limit(limit) : matchCollection;
         return defer(() => from(matchLimitCollection.toArray()));
+    }
+
+    /**
+     * The latest match stored in the local database (by player name).
+     * @returns {MatchDataStore}
+     */
+    public getLatestMatchDataByPlayerName$(playerName: string): Observable<Optional<MatchDataStore>> {
+        return defer(() => from(this.localDatabase.matches.where({ myName: playerName }).last()));
     }
 
     private setupMatchId(): void {
@@ -180,6 +193,19 @@ export class MatchService extends BaseService {
 
                 const newGameMode = MatchGameMode.getFromId(MatchGameModeList, gameModeId);
                 this.gameMode$.next(newGameMode);
+            });
+    }
+
+    private setupMatchDataStoreChanged(): void {
+        this.localDatabase.onChanges$
+            .pipe(
+                takeUntil(this.destroy$),
+                map((changes) => changes.find((c) => c.table === this.localDatabase.matches.name)),
+                map((change) => (change as ICreateChange | IUpdateChange)?.obj as Optional<MatchDataStore>),
+                filter((match) => !!match) as OperatorFunction<Optional<MatchDataStore>, MatchDataStore>
+            )
+            .subscribe((match) => {
+                if (!isEmpty(match.matchId)) this.onMatchDataStoreChanged$.next(match.matchId!);
             });
     }
 
