@@ -79,7 +79,7 @@
         "@typescript-eslint/parser": "^5.18.0",
         "codelyzer": "^6.0.2",
         "concurrently": "^7.1.0",
-        "eslint": "^8.12.0",
+        "eslint": "^8.14.0",
         "eslint-config-prettier": "^8.5.0",
         "exports-loader": "^3.1.0",
         "firebase-tools": "^10.6.0",
