@@ -17,6 +17,16 @@ export const RankTierDivisionMap: { [num: number]: RankTierDivision } = {
     3: "III",
     4: "IV",
 };
+/** HEX Colors also found in SCSS */
+export const RankTierHEXColor: { [tierName in RankTierName]: string } = {
+    Bronze: "#8e6f63",
+    Silver: "#afafb9",
+    Gold: "#d0b583",
+    Platinum: "#5ad2ff",
+    Diamond: "#1d8ff2",
+    Master: "#7e4ad7",
+    "Apex Predator": "#ff4139",
+};
 
 export interface RankTierLevel {
     minScore: number;
@@ -158,6 +168,10 @@ export class Rank {
             return rankScore >= tierLevel.minScore && rankScore < nextMinScore;
         });
         return foundRankTierLevel ?? RankTierLevels[0];
+    }
+
+    public static getHEXColorFromRankTierName(tierName: RankTierName): string {
+        return RankTierHEXColor[tierName];
     }
 
     /**

@@ -114,8 +114,8 @@
                 "winWeight": 0.1,
                 "placementWeight": 0.15,
                 "damageWeight": 0.2,
-                "eliminationWeight": 0.35,
-                "deathWeight": 0.1,
+                "eliminationWeight": 0.4,
+                "deathWeight": 0.05,
                 "assistWeight": 0.05,
                 "knockdownWeight": 0.05,
                 "durationWeight": 0

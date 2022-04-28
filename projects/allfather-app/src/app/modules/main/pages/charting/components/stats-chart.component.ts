@@ -55,18 +55,17 @@ export class StatsChartComponent implements AfterViewInit, OnChanges {
         return {
             responsive: true,
             elements: {
-                bar: {},
                 line: {
                     tension: 0.33,
                 },
             },
             interaction: {
-                intersect: false,
+                intersect: true,
             },
             plugins: {
                 tooltip: {
                     xAlign: "center",
-                    yAlign: "center",
+                    yAlign: "top",
                 },
             },
             scales: {
@@ -179,6 +178,7 @@ export class StatsChartComponent implements AfterViewInit, OnChanges {
                 yAxisID: "yKills",
                 borderColor: getCSSVar(ChartKillsCSSPropertyVar),
                 backgroundColor: getCSSVar(ChartKillsCSSPropertyVar),
+                cubicInterpolationMode: "monotone",
             },
             {
                 data: damageData,
@@ -187,6 +187,7 @@ export class StatsChartComponent implements AfterViewInit, OnChanges {
                 yAxisID: "yDamage",
                 borderColor: getCSSVar(ChartDamageCSSPropertyVar),
                 backgroundColor: getCSSVar(ChartDamageCSSPropertyVar),
+                cubicInterpolationMode: "monotone",
             },
             {
                 data: placementData,
@@ -195,6 +196,7 @@ export class StatsChartComponent implements AfterViewInit, OnChanges {
                 yAxisID: "yPlacement",
                 borderColor: getCSSVar(ChartPlacementCSSPropertyVar),
                 backgroundColor: getCSSVar(ChartPlacementCSSPropertyVar),
+                cubicInterpolationMode: "monotone",
             },
         ];
     }

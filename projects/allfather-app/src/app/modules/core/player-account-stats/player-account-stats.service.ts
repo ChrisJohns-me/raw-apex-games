@@ -1,4 +1,5 @@
 import { PlayerAccountStats } from "@allfather-app/app/common/player-account-stats";
+import { getPlayerNameClubParts } from "@allfather-app/app/common/utilities/player";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
@@ -47,13 +48,16 @@ export class PlayerAccountStatsService extends BaseService {
      * @todo Still needs testing
      * @todo Last WIP in dashboardPage
      * Creates different API calls for each platform in use found in the provided players list.
+     * @param players {PlayerName[]} List of players to get account stats for (with clubname)
      * @returns PlayerAccountStats[] after all API calls have resolved.
      */
     public getBulkPlayerAccountStats$(
-        players: Array<{ playerName: string; platform: MozambiqueherePlatform }>
+        players: Array<{ fullPlayerName: string; platform: MozambiqueherePlatform }>
     ): Observable<PlayerAccountStats[]> {
         const platforms = unique(players, (p) => p.platform).map((p) => p.platform);
         const getPlayerAccountStatsAPICallFn$ = (platform: MozambiqueherePlatform, players: string[]): Observable<PlayerAccountStats[]> => {
+            // Strip clubname from player names
+            players = players.map((p) => getPlayerNameClubParts(p).playerName);
             const params = { version: API_VER, auth: API_KEY, platform: platform, player: players.join() };
             return this.http.get(API_URL, { params, responseType: "json" }).pipe(
                 map((playerAccountStatsListJSON): PlayerAccountStats[] => {
@@ -74,9 +78,9 @@ export class PlayerAccountStatsService extends BaseService {
         };
 
         const getPlatformPlayersFn = (
-            players: { playerName: string; platform: MozambiqueherePlatform }[],
+            players: { fullPlayerName: string; platform: MozambiqueherePlatform }[],
             platform: MozambiqueherePlatform
-        ): string[] => players.filter((p) => p.platform === platform).map((p) => p.playerName);
+        ): string[] => players.filter((p) => p.platform === platform).map((p) => p.fullPlayerName);
 
         return merge(
             ...platforms.map((platform) => getPlayerAccountStatsAPICallFn$(platform, getPlatformPlayersFn(players, platform)))
@@ -90,13 +94,16 @@ export class PlayerAccountStatsService extends BaseService {
     }
 
     /**
-     * Retrieves external player stats from API.
+     * Removes the clubname from the playerName and requests the player's account stat from an external API
+     * @param fullPlayerName {string} Player name with clubname
      */
     public getPlayerAccountStats$(
-        playerName: string,
+        fullPlayerName: string,
         platform: MozambiqueherePlatform,
         breakCache = false
     ): Observable<PlayerAccountStats> {
+        const { playerName } = getPlayerNameClubParts(fullPlayerName);
+
         const cachedResult = this.cachedPlayerAccountStats.get(playerName);
         const cachedExpire = this.cachedPlayerAccountStatsExpire.get(playerName);
 

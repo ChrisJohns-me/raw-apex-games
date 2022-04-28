@@ -1,5 +1,4 @@
 import { OverwolfFeatureDep } from "@allfather-app/app/common/feature-status";
-import { MozambiqueherePlatform } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats-mozambiquehere-dto";
 import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/player-account-stats/player-account-stats.service";
 import { of } from "rxjs";
 
@@ -7,15 +6,13 @@ export class MockPlayerAccountStatsService implements MockedClass<PlayerAccountS
     public clearCache(): void {}
 
     public getBulkPlayerAccountStats$(
-        players: { playerName: string; platform: MozambiqueherePlatform }[]
+        ...args: Parameters<PlayerAccountStatsService["getBulkPlayerAccountStats$"]>
     ): ReturnType<PlayerAccountStatsService["getBulkPlayerAccountStats$"]> {
         return of();
     }
 
     public getPlayerAccountStats$(
-        playerName: string,
-        platform: MozambiqueherePlatform,
-        breakCache?: boolean
+        ...args: Parameters<PlayerAccountStatsService["getPlayerAccountStats$"]>
     ): ReturnType<PlayerAccountStatsService["getPlayerAccountStats$"]> {
         return of();
     }

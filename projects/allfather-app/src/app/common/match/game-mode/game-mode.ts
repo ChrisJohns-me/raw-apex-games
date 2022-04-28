@@ -18,6 +18,7 @@ interface MatchGameModeConstructor {
     isBattleRoyaleGameMode: boolean;
     isArenasGameMode: boolean;
     isControlGameMode: boolean;
+    isRanked?: boolean;
     activeDates?: ActiveDates;
 }
 export class MatchGameMode {
@@ -25,11 +26,12 @@ export class MatchGameMode {
     public gameModeIdRegExPattern?: string;
     public gameModeName: MatchGameModeFriendlyName;
     public gameModeGenericId: MatchGameModeGenericId;
-    public isAFSupported?: boolean;
-    public isReportable?: boolean;
+    public isAFSupported: boolean;
+    public isReportable: boolean;
     public isBattleRoyaleGameMode: boolean;
     public isArenasGameMode: boolean;
     public isControlGameMode: boolean;
+    public isRanked?: boolean;
     public activeDates?: ActiveDates;
 
     public get isActive(): boolean {
@@ -47,6 +49,7 @@ export class MatchGameMode {
         this.isBattleRoyaleGameMode = ctor.isBattleRoyaleGameMode;
         this.isArenasGameMode = ctor.isArenasGameMode;
         this.isControlGameMode = ctor.isControlGameMode;
+        this.isRanked = ctor.isRanked ?? false;
         this.activeDates = ctor.activeDates;
     }
 

@@ -45,6 +45,13 @@
             </div>
 
             <div class="row my-5">
+                <div class="col">
+                    <h4>Ranked Battle Royale</h4>
+                    <app-ranked-chart [matchList]="matchList"></app-ranked-chart>
+                </div>
+            </div>
+
+            <div class="row my-5">
                 <div class="col-8">
                     <h4>Per Legend Average Stats</h4>
                     <app-legend-lineup-chart [matchList]="filteredMatchList" [legendList]="legendList"></app-legend-lineup-chart>

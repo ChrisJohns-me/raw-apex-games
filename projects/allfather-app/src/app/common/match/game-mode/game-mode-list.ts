@@ -71,6 +71,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         isBattleRoyaleGameMode: true,
         isArenasGameMode: false,
         isControlGameMode: false,
+        isRanked: true,
         activeDates: [
             {
                 from: new Date(0),
