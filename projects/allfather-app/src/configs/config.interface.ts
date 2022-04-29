@@ -106,7 +106,7 @@ export interface FeatureConfigs {
         /** How many matches are required to show complimentary legends */
         minShowComplimentaryLegendsMatches: number;
         /** Number of matches to use to calculate legend stats */
-        limitLegendStatsMatches: number;
+        limitLegendStatsMatches?: number;
         /** Number of matches to use to calculate complimentary legends */
         limitComplimentaryLegendsMatches: number;
         /** Weight distrubution used to calculate complimentary legends */

@@ -202,7 +202,6 @@
                 "enableUltTimerWindow",
                 "enableInflictionInsightWindow",
                 "enableReticleHelperWindow",
-                "capture",
                 "inflictionInsight",
                 "legendSelectAssist",
                 "reticleHelper"
@@ -230,7 +229,7 @@
                             "type": "number"
                         },
                         "limitLegendStatsMatches": {
-                            "type": "number"
+                            "type": ["null", "number"]
                         },
                         "limitComplimentaryLegendsMatches": {
                             "type": "number"

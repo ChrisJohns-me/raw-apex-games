@@ -8,6 +8,7 @@ import { SettingsService } from "@allfather-app/app/modules/core/settings.servic
 import { Configuration } from "@allfather-app/configs/config.interface";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { Stopwatch } from "common/utilities";
+import { unique } from "common/utilities/primitives/array";
 import { combineLatest, from, Observable, Subject, Subscription } from "rxjs";
 import { concatMap, filter, finalize, map, startWith, switchMap, take, takeUntil, tap } from "rxjs/operators";
 import { MatchService } from "../../core/match/match.service";
@@ -53,9 +54,9 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
 
     private hoverLegendSubscription?: Subscription;
     private config?: Configuration;
-    private brGameModeIds = MatchGameModeList.filter((gm) => gm.isBattleRoyaleGameMode).map((gm) => gm.gameModeGenericId);
-    private arenasGameModeIds = MatchGameModeList.filter((gm) => gm.isArenasGameMode).map((gm) => gm.gameModeGenericId);
-    private controlGameModeIds = MatchGameModeList.filter((gm) => gm.isControlGameMode).map((gm) => gm.gameModeGenericId);
+    private readonly brGameModeIds = unique(MatchGameModeList.filter((gm) => gm.isBattleRoyaleGameMode).map((gm) => gm.gameModeGenericId));
+    private readonly arenasGameModeIds = unique(MatchGameModeList.filter((gm) => gm.isArenasGameMode).map((gm) => gm.gameModeGenericId));
+    private readonly controlGameModeIds = unique(MatchGameModeList.filter((gm) => gm.isControlGameMode).map((gm) => gm.gameModeGenericId));
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -155,7 +156,7 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
             .subscribe();
     }
 
-    //#region Legend Stats Observabless
+    //#region Legend Stats Observables
     private getLegendStats$(legendId: string, breakCache = false): Observable<AvgMatchStats> {
         return this.playerStats.getLegendStats$(legendId, this.limitLegendStatsMatches, breakCache);
     }

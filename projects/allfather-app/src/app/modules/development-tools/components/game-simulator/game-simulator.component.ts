@@ -16,6 +16,7 @@ import { fullGame1Eventful } from "./simulations/full-game1-eventful";
 import { fullGame1Quick } from "./simulations/full-game1-quick";
 import { fullGame2_2k } from "./simulations/full-game2-2k";
 import { inflictionInsightBroke } from "./simulations/infliction-insight-break";
+import { legendSelectEvents } from "./simulations/legend-select-events";
 import { resetToInGame } from "./simulations/reset-to-in-game";
 import { resetToLobby } from "./simulations/reset-to-lobby";
 import { s12Control } from "./simulations/s12-control";
@@ -131,6 +132,11 @@ export class GameSimulatorComponent implements OnDestroy {
 
     public onPerformInflictionInsightBreakGameClick(speedAdjust?: number): void {
         const commands = this.logToCommands(inflictionInsightBroke());
+        this.runCommands(commands, speedAdjust);
+    }
+
+    public onPerformLegendSelectGameClick(speedAdjust?: number): void {
+        const commands = this.logToCommands(legendSelectEvents());
         this.runCommands(commands, speedAdjust);
     }
 
