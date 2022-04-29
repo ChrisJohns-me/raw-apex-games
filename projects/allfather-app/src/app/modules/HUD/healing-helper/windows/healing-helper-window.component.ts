@@ -114,16 +114,16 @@ export class HealingHelperWindowComponent implements OnInit, OnDestroy {
     private getHealingItemHealthTimes(healingItems: HealingItem[]): HealingItemHealthTime[] {
         if (!this.currentRing) return [];
         return healingItems.map((item) => {
-            const damagePerSecond = this.currentRing!.damagePerTick / this.ringDamageTickRateMs;
-            const neededHealthTime = damagePerSecond * item.duration;
+            const neededHealthTime = (this.currentRing!.damagePerTick / this.ringDamageTickRateMs) * item.duration;
+            const extraBuffer = neededHealthTime / 5;
             console.info(
                 `[HealingHelperWindow] neededHealthTime ${neededHealthTime}hp` +
-                    ` for "${item.id}", for ring ${this.currentRing!.ringNumber}` +
-                    ` (damagePerSecond: ${damagePerSecond})`
+                    ` for "${item.id}", for ring #${this.currentRing!.ringNumber}` +
+                    ` (${extraBuffer}hp extra buffer)`
             );
             return {
                 id: item.id,
-                neededHealthTime: neededHealthTime + damagePerSecond, // add one second buffer
+                neededHealthTime: neededHealthTime + extraBuffer,
             };
         });
     }

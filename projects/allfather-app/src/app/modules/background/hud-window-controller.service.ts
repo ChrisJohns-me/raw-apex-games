@@ -106,7 +106,7 @@ export class HUDWindowControllerService extends BaseService {
             windowService: this.miniInventoryWindow,
             requiredGamePhases: [GamePhase.InGame],
             requiredConfigurations: [(config) => config.featureFlags.enableMiniInventoryWindow],
-            requiredSettings: [{ key: SettingKey.EnableAllInGameHUD }, { key: SettingKey.EnableInGameMatchTimerHUD }],
+            requiredSettings: [{ key: SettingKey.EnableAllInGameHUD }, { key: SettingKey.EnableInGameMiniInventoryHUD }],
             requiredGameModes: [
                 MatchGameModeGenericId.Training,
                 MatchGameModeGenericId.FiringRange,

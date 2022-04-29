@@ -32,15 +32,23 @@
         <div class="col" appFullHeight [marginBottom]="25">
             <div class="row mb-5">
                 <div class="col">
-                    <h4>Daily Average Stats</h4>
-                    <app-stats-chart [matchList]="filteredMatchList" unit="day"></app-stats-chart>
-                </div>
-            </div>
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item" *ngFor="let statsType of statsTypeList">
+                            <button
+                                type="button"
+                                class="nav-link"
+                                [ngClass]="{ active: statsType === viewingStatsType }"
+                                (click)="viewingStatsType = statsType"
+                            >
+                                {{ statsType }}
+                            </button>
+                        </li>
+                    </ul>
 
-            <div *ngIf="showMonthlyAvgGraph" class="row my-5">
-                <div class="col">
-                    <h4>Monthly Average Stats</h4>
-                    <app-stats-chart [matchList]="filteredMatchList" unit="month"></app-stats-chart>
+                    <div class="stats-panel ps-2 pt-2">
+                        <h4>{{ viewingStatsType }} Average Stats</h4>
+                        <app-stats-chart [matchList]="filteredMatchList" [unit]="viewingStatsUnit"></app-stats-chart>
+                    </div>
                 </div>
             </div>
 

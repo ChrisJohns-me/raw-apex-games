@@ -36,14 +36,16 @@ import { ChartDamageCSSPropertyVar, ChartKillsCSSPropertyVar, ChartPlacementCSSP
 })
 export class StatsChartComponent implements AfterViewInit, OnChanges {
     @Input() public matchList: MatchDataStore[] = [];
-    @Input() public unit: "hour" | "day" | "month" | "year" = "day";
+    @Input() public unit: "hour" | "day" | "month" | "quarter" | "year" = "day";
 
     private get dateKeyFormat(): string {
         switch (this.unit) {
             case "hour":
-                return "HH:mm";
+                return "h:mm a";
             case "month":
                 return "MMMM";
+            case "quarter":
+                return "QQQQ";
             case "year":
                 return "yyyy";
             case "day":
@@ -110,6 +112,8 @@ export class StatsChartComponent implements AfterViewInit, OnChanges {
                 return 1;
             case "month":
                 return getDaysInYear(new Date());
+            case "quarter":
+                return getDaysInYear(new Date()) / 4;
             case "year":
                 return getDaysInYear(new Date()) * 5;
             case "day":

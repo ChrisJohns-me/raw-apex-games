@@ -15,6 +15,7 @@ import { basicInventoryQuick } from "./simulations/basic-inventory";
 import { fullGame1Eventful } from "./simulations/full-game1-eventful";
 import { fullGame1Quick } from "./simulations/full-game1-quick";
 import { fullGame2_2k } from "./simulations/full-game2-2k";
+import { inflictionInsightBroke } from "./simulations/infliction-insight-break";
 import { resetToInGame } from "./simulations/reset-to-in-game";
 import { resetToLobby } from "./simulations/reset-to-lobby";
 import { s12Control } from "./simulations/s12-control";
@@ -125,6 +126,11 @@ export class GameSimulatorComponent implements OnDestroy {
 
     public onPerformBasicInventoryGameClick(speedAdjust?: number): void {
         const commands = this.logToCommands(basicInventoryQuick());
+        this.runCommands(commands, speedAdjust);
+    }
+
+    public onPerformInflictionInsightBreakGameClick(speedAdjust?: number): void {
+        const commands = this.logToCommands(inflictionInsightBroke());
         this.runCommands(commands, speedAdjust);
     }
 

@@ -1,1 +1,6 @@
 @import "window-styles";
+
+.stats-panel {
+    border: 1px solid $nav-tabs-border-color;
+    border-top: none;
+}

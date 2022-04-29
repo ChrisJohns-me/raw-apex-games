@@ -8,9 +8,15 @@ import { ReportingService } from "@allfather-app/app/modules/core/reporting/repo
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { mdiFilterVariantRemove } from "@mdi/js";
 import { Observable, Subject } from "rxjs";
-import { finalize, switchMap, takeUntil, tap } from "rxjs/operators";
+import { finalize, switchMap, takeUntil } from "rxjs/operators";
 
-const MONTHLYAVG_REQUIRED_DAYS = 60;
+enum StatsType {
+    Hourly = "Hourly",
+    Daily = "Daily",
+    Monthly = "Monthly",
+    Quarterly = "Quarterly",
+    Yearly = "Yearly",
+}
 
 @Component({
     selector: "app-charting-page",
@@ -48,11 +54,20 @@ export class ChartingPageComponent implements OnInit, AfterViewInit, OnDestroy {
     private matchFilters = new MatchFilters(undefined, undefined, this._supportedGameModeList, undefined);
     //#endregion
 
-    public showMonthlyAvgGraph = false;
+    public viewingStatsType = StatsType.Daily;
+    public get viewingStatsUnit(): "hour" | "day" | "month" | "quarter" | "year" {
+        if (this.viewingStatsType === StatsType.Yearly) return "year";
+        else if (this.viewingStatsType === StatsType.Quarterly) return "quarter";
+        else if (this.viewingStatsType === StatsType.Monthly) return "month";
+        else if (this.viewingStatsType === StatsType.Daily) return "day";
+        else return "hour";
+    }
     public isLoadingMatchList = false;
 
     // Pass-through variables
     public mdiFilterVariantRemove = mdiFilterVariantRemove;
+    public StatsType = StatsType;
+    public statsTypeList = Object.values(StatsType);
 
     private destroy$ = new Subject<void>();
 
@@ -127,22 +142,7 @@ export class ChartingPageComponent implements OnInit, AfterViewInit, OnDestroy {
     /** @returns Match List */
     private getMatchList$(): Observable<MatchDataStore[]> {
         this.isLoadingMatchList = true;
-        return this.match.getAllMatchData$().pipe(
-            finalize(() => (this.isLoadingMatchList = false)),
-            tap((matchList) => (this.showMonthlyAvgGraph = this.shouldShowMonthlyAvgGraph(matchList)))
-        );
-    }
-
-    private shouldShowMonthlyAvgGraph(matchList: MatchDataStore[]): boolean {
-        const now = new Date();
-        const oldestMatchDate = matchList
-            .slice()
-            .sort((a, b) => (b.startDate?.getDate() ?? Infinity) - (a.startDate?.getDate() ?? Infinity))
-            .find((match) => match.startDate?.getTime() ?? 0 > 0)?.startDate;
-
-        if (!oldestMatchDate) return false;
-        const lifespan = now.getTime() - oldestMatchDate.getTime();
-        return lifespan > 1000 * 60 * 60 * 24 * MONTHLYAVG_REQUIRED_DAYS;
+        return this.match.getAllMatchData$().pipe(finalize(() => (this.isLoadingMatchList = false)));
     }
 
     private refreshUI(): void {

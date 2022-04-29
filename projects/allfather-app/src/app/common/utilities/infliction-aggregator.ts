@@ -47,7 +47,8 @@ export class InflictionAggregator {
         return inflictionEventObs.pipe(
             map((inflEvent) => {
                 const foundVictim = this.findVictimAccumulation(inflEvent.victim?.name);
-                const victimTimedOut = new Date() >= addMilliseconds(foundVictim?.latestTimestamp ?? 0, this._expireAggregateMs);
+                const timestamp = foundVictim?.latestTimestamp ?? 0;
+                const victimTimedOut = new Date() >= addMilliseconds(timestamp, this._expireAggregateMs);
                 const accumInflEvent =
                     !foundVictim || victimTimedOut ? this.handleNewVictimInfl(inflEvent) : this.handleExistingVictimInfl(inflEvent);
                 return accumInflEvent;
@@ -74,14 +75,14 @@ export class InflictionAggregator {
                             victim: event.victim,
                             shieldDamageSum: 0,
                             healthDamageSum: 0,
-                            hasShield: true,
-                            isKnocked: false,
-                            isEliminated: false,
+                            hasShield: event.hasShield,
+                            isKnocked: event.isKnocked,
+                            isEliminated: event.isEliminated,
                             latestAttacker: undefined,
                             latestTimestamp: undefined,
                         } as MatchInflictionEventAccum;
                     }),
-                    filter((event) => isExpired(event)), // Check that an event has been received within the debounce window
+                    filter((event) => isExpired(event)), // Only send reset events for an event has been received within the debounce window
                     tap((event) => (this.accumulations = this.victimFilteredAccumulations(event.victim?.name)))
                 )
             )

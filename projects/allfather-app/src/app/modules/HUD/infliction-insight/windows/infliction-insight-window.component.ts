@@ -15,6 +15,7 @@ import { MatchPlayerService } from "@allfather-app/app/modules/core/match/match-
 import { MatchRosterService } from "@allfather-app/app/modules/core/match/match-roster.service";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { Configuration } from "@allfather-app/configs/config.interface";
+import { environment } from "@allfather-app/environments/environment";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { isEmpty, mathClamp } from "common/utilities/";
 import { addMilliseconds } from "date-fns";
@@ -35,6 +36,7 @@ export enum InflictionInsightType {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
+    private TRACELOG = environment.DEV && false;
     public isVisible = false;
 
     public get sortedOpponentBannerList(): OpponentBanner[] {
@@ -94,6 +96,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
                 distinctUntilChanged()
             )
             .subscribe(() => {
+                this.traceLog("Match State Active, My State Alive, Location Phase HasLanded");
                 this.acceptingResetEvents = true;
                 this.isVisible = true;
                 this.cdr.detectChanges();
@@ -118,6 +121,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
                 delay(this.config.common.matchEndHUDTimeout)
             )
             .subscribe(() => {
+                this.traceLog("Match Ended or Player Died or Player Disconnected - Resetting Accumulations");
                 this.isVisible = false;
                 this.inflictionAggregator.clearAccumulations();
                 this.opponentBannerList = [];
@@ -129,13 +133,16 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         merge(this.createMyInflictionEvents$(), this.createIndirectInflictionEvents$())
             .pipe(takeUntil(this.destroy$))
             .subscribe((inflAccum) => {
+                this.traceLog("setupInflictionEventList() subscription:", inflAccum);
                 if (isEmpty(inflAccum.victim?.name)) return;
                 const foundOpponentBanner = this.opponentBannerList.find((b) =>
                     isPlayerNameEqual(b.rosterPlayer?.name, inflAccum.victim?.name)
                 );
+                this.traceLog("setupInflictionEventList() foundOpponentBanner:", foundOpponentBanner);
 
                 if (foundOpponentBanner) {
                     const updatedOpponentBanner = this.addInflictionToBanner(foundOpponentBanner, inflAccum);
+                    this.traceLog("setupInflictionEventList() updatedOpponentBanner:", updatedOpponentBanner);
 
                     if (updatedOpponentBanner) {
                         this.opponentBannerList = [
@@ -146,6 +153,11 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
                         ];
                     }
 
+                    this.traceLog(
+                        "setupInflictionEventList() isTimestampExpired(inflAccum.latestTimestamp):",
+                        this.isTimestampExpired(inflAccum.latestTimestamp),
+                        inflAccum.latestTimestamp
+                    );
                     if (this.isTimestampExpired(inflAccum.latestTimestamp)) {
                         if (this.acceptingResetEvents) this.resetBanner(foundOpponentBanner);
                     } else {
@@ -153,11 +165,15 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
                     }
                 } else {
                     const newOpponentBanner = this.createOpponentBanner(inflAccum);
+                    this.traceLog("setupInflictionEventList() newOpponentBanner:", newOpponentBanner);
+
                     if (newOpponentBanner) {
                         this.opponentBannerList.push(newOpponentBanner);
                         this.setIndirectBanners(newOpponentBanner);
+                        if (this.acceptingResetEvents) this.resetBanner(newOpponentBanner);
                     }
                 }
+
                 this.cdr.detectChanges();
             });
     }
@@ -168,10 +184,20 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
      * Sends out reset events.
      */
     private createMyInflictionEvents$(): Observable<MatchInflictionEventAccum> {
-        return this.inflictionAggregator.getInflictionAggregate$([
-            this.matchPlayerInfliction.myDamageEvent$,
-            this.matchPlayerInfliction.myKillfeedEvent$,
-        ]);
+        return this.inflictionAggregator
+            .getInflictionAggregate$([
+                this.matchPlayerInfliction.myUniqueDamageEvent$.pipe(
+                    tap((data) => this.traceLog("createMyInflictionEvents$() matchPlayerInfliction.myUniqueDamageEvent$ Emitted", data))
+                ),
+            ])
+            .pipe(
+                tap((data) =>
+                    this.traceLog(
+                        "createMyInflictionEvents$() inflictionAggregator.getInflictionAggregate$([myUniqueDamageEvent$]) Emitted",
+                        data
+                    )
+                )
+            );
     }
 
     /**
@@ -183,12 +209,23 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
         const relevantKillfeedEvent$ = this.matchPlayerInfliction.notMyKillfeedEvent$.pipe(
             filter((killfeedEvent) =>
                 this.opponentBannerList.some((b) => isPlayerNameEqual(b.rosterPlayer?.name, killfeedEvent?.victim?.name))
-            )
+            ),
+            tap((data) => this.traceLog("createIndirectInflictionEvents$() matchPlayerInfliction.notMyKillfeedEvent$ Emitted", data))
         );
-        return this.inflictionAggregator.getInflictionAggregate$([relevantKillfeedEvent$]);
+        return this.inflictionAggregator
+            .getInflictionAggregate$([relevantKillfeedEvent$])
+            .pipe(
+                tap((data) =>
+                    this.traceLog(
+                        "createIndirectInflictionEvents$() inflictionAggregator.getInflictionAggregate$([relevantKillfeedEvent$]) Emitted",
+                        data
+                    )
+                )
+            );
     }
 
     private createOpponentBanner(inflictionEvent: MatchInflictionEventAccum): Optional<OpponentBanner> {
+        this.traceLog("createOpponentBanner()", inflictionEvent);
         if (isEmpty(inflictionEvent.victim?.name)) return;
         const opponentBanner: OpponentBanner = {
             isIndirectBanner: false,
@@ -198,10 +235,12 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
             maybeShieldAmount: this.config.assumptions.opponentShieldDefault - inflictionEvent.shieldDamageSum,
             maybeHealthAmount: this.config.assumptions.opponentHealthDefault - inflictionEvent.healthDamageSum,
         };
+        this.traceLog("createOpponentBanner() returning", opponentBanner);
         return opponentBanner;
     }
 
     private createOpponentIndirectBanner(player: MatchRosterPlayer): Optional<OpponentBanner> {
+        this.traceLog("createOpponentIndirectBanner()", player);
         if (isEmpty(player.name)) return;
         const now = new Date();
         const lastKnownState = this.matchKillfeed.playerLastKnownState(player);
@@ -240,6 +279,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
                 ? this.config.assumptions.opponentHealthDefault
                 : 0,
         };
+        this.traceLog("createOpponentIndirectBanner() returning", opponentBanner);
         return opponentBanner;
     }
 
@@ -247,9 +287,11 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
      * Add accumulated infliction onto an existing banner or indirect-banner
      */
     private addInflictionToBanner(currBanner: OpponentBanner, inflEvent: MatchInflictionEventAccum): Optional<OpponentBanner> {
+        this.traceLog("addInflictionToBanner()", currBanner, inflEvent);
         if (!currBanner) return;
         if (!inflEvent?.latestTimestamp) return;
         if (inflEvent.hasShield) {
+            this.traceLog("addInflictionToBanner() infliction event, opponent has shield");
             currBanner.maybeMaxShield = mathClamp(
                 inflEvent.shieldDamageSum > this.config.assumptions.opponentShieldDefault
                     ? inflEvent.shieldDamageSum
@@ -263,6 +305,7 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
                 this.config.facts.maxShield
             );
         } else {
+            this.traceLog("addInflictionToBanner() infliction event, opponent does not have shield");
             currBanner.maybeMaxShield = mathClamp(inflEvent.shieldDamageSum, 0, this.config.facts.maxShield);
             currBanner.maybeShieldAmount = 0;
         }
@@ -276,15 +319,18 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
             (!inflEvent.shieldDamageSum || inflEvent.shieldDamageSum === 0) &&
             (!inflEvent.healthDamageSum || inflEvent.healthDamageSum === 0) &&
             !inflEvent.latestAttacker?.isMe;
+        this.traceLog("addInflictionToBanner() returning", currBanner);
         return currBanner;
     }
 
     private setIndirectBanners(opponentBanner: OpponentBanner): void {
+        this.traceLog("setIndirectBanners()", opponentBanner);
         const matchRoster = this.matchRoster.matchRoster$.value;
         const victimRosterTeam: Optional<MatchRosterTeam> = matchRoster.teams.find((t) => t.teamId === opponentBanner.rosterPlayer?.teamId);
         const victimRosterTeammates: MatchRosterPlayer[] = victimRosterTeam?.members ?? [];
         if (isEmpty(victimRosterTeammates)) return;
 
+        this.traceLog("setIndirectBanners() creating indirect banners from opponentBanner", opponentBanner);
         victimRosterTeammates
             .filter((rosterTeammate) => !isPlayerNameEqual(rosterTeammate.name, opponentBanner.rosterPlayer.name))
             .filter((rosterTeammate) => !this.opponentBannerList.some((b) => isPlayerNameEqual(b.rosterPlayer.name, rosterTeammate.name)))
@@ -299,14 +345,18 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
      * - Sets the banner to an "opponent teammate" banner, if their teammates do still have infliction events.
      */
     private resetBanner(banner: OpponentBanner): void {
+        this.traceLog("resetBanner()", banner);
+
         const opponentTeamHasEvents = this.opponentBannerList
             .filter((e) => e.rosterPlayer.teamId === banner.rosterPlayer.teamId)
             .some((team) => !this.isTimestampExpired(team.latestInflictionAccum?.latestTimestamp));
 
         // Set this current banner to an "opponent teammate" or "indirect" banner, if their teammates have latest infliction events
         if (opponentTeamHasEvents) {
+            this.traceLog("resetBanner() opponent's team has infliction events; setting to indirect banner");
             banner.isIndirectBanner = true;
         } else {
+            this.traceLog("resetBanner() Removing banner and all teammates if there are no more latest infliction events");
             // Remove banner and all teammates if there are no more latest infliction events
             this.opponentBannerList = this.opponentBannerList.filter((b) => b.rosterPlayer.teamId !== banner.rosterPlayer.teamId);
         }
@@ -351,5 +401,9 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
             }
             return (ob1.rosterPlayer.rosterId ?? 0) - (ob2.rosterPlayer.rosterId ?? 0);
         });
+    }
+
+    private traceLog(...args: any[]): void {
+        if (this.TRACELOG) console.trace(`[InflictionInsightWindow]`, ...args);
     }
 }

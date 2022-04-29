@@ -6,8 +6,12 @@
     [size]="{ widthPercent: 0.135, heightPercent: 0.07 }"
 >
     <ng-container *ngIf="isVisible">
-        <div class="healing-item-icon-container" *ngFor="let healingItem of availableHealingItems">
-            <div class="healing-item-icon" [ngStyle]="{ 'left.%': healingItem.neededHealthTime }">
+        <div class="healing-item-icon-container">
+            <div
+                class="healing-item-icon"
+                [ngStyle]="{ 'left.%': healingItem.neededHealthTime }"
+                *ngFor="let healingItem of availableHealingItems"
+            >
                 <span class="healing-item-icon-tick">|</span>
                 <img class="healing-item-icon-image" [src]="'../../../../../assets/images/item-icons/' + healingItem.id + '.webp'" />
             </div>

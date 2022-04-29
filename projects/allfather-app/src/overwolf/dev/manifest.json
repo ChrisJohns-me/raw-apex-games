@@ -5,7 +5,7 @@
     "meta": {
         "name": "Allfather [DEV]",
         "author": "MasterKriff",
-        "version": "0.0.313",
+        "version": "0.0.314",
         "minimum-overwolf-version": "0.165.0",
         "minimum-gep-version": "0.165.0",
         "description": "(Development) Allfather, give me sight!",
@@ -229,7 +229,7 @@
                 "title": "Show/Hide In-Game Window",
                 "action-type": "custom",
                 "default": "Alt+F",
-                "passthrough": true
+                "passthrough": false
             }
         },
         "protocol_override_domains": {

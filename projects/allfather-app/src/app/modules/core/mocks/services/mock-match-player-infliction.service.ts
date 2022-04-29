@@ -6,6 +6,7 @@ import { MatchPlayerInflictionService } from "@allfather-app/app/modules/core/ma
 import { Subject } from "rxjs";
 
 export class MockMatchPlayerInflictionService implements MockedClass<MatchPlayerInflictionService> {
+    public myUniqueDamageEvent$: MatchPlayerInflictionService["myUniqueDamageEvent$"] = new Subject();
     public myKillfeedEvent$: MatchPlayerInflictionService["myKillfeedEvent$"];
     public notMyKillfeedEvent$: MatchPlayerInflictionService["notMyKillfeedEvent$"];
     public myDamageEvent$: MatchPlayerInflictionService["myDamageEvent$"] = new Subject();

@@ -9,8 +9,8 @@ import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
 import { Injectable } from "@angular/core";
 import { cleanInt, isEmpty, parseBoolean } from "common/utilities/";
-import { Observable, partition, Subject } from "rxjs";
-import { filter, map, takeUntil } from "rxjs/operators";
+import { merge, Observable, partition, Subject } from "rxjs";
+import { delay, filter, map, takeUntil, tap } from "rxjs/operators";
 import { BaseService } from "../base-service.abstract";
 import { OverwolfGameDataService } from "../overwolf";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
@@ -33,6 +33,11 @@ import { MatchPlayerService } from "./match-player.service";
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerInflictionService", MatchPlayerInflictionService, deps),
 })
 export class MatchPlayerInflictionService extends BaseService {
+    /**
+     * Local user's Killfeed & damage event stream combined. Similar to RxJS's race operator.
+     * Emits whichever event fires first, prevents duplicate events from firing within a certain window.
+     */
+    public readonly myUniqueDamageEvent$ = new Subject<MatchInflictionEvent>();
     /** Local user's Killfeed event stream */
     public readonly myKillfeedEvent$: Observable<MatchInflictionEvent>;
     /** Eliminations/knockdown event stream for all players except the local user */
@@ -65,6 +70,7 @@ export class MatchPlayerInflictionService extends BaseService {
         );
         this.setupMyDamageEvents();
         this.setupKillsAndKnockdowns();
+        this.setupUniqueDamageEvents();
     }
 
     /**
@@ -159,5 +165,33 @@ export class MatchPlayerInflictionService extends BaseService {
                     this.myKnockdownEvent$.next(newMatchInflictionEvent);
                 }
             });
+    }
+
+    private setupUniqueDamageEvents(): void {
+        const UNIQUE_WINDOW = 5000;
+        let tempMyUniqueDamageEvents: MatchInflictionEvent[] = [];
+        const addTempMyUniqueDamageEventFn = (dmgEvt: MatchInflictionEvent) => tempMyUniqueDamageEvents.push(dmgEvt);
+        const findTempMyUniqueDamageEventFn = (dmgEvt: MatchInflictionEvent) =>
+            tempMyUniqueDamageEvents.find(
+                (u) =>
+                    dmgEvt.victim?.name == u.victim?.name && dmgEvt.isKnockdown == u.isKnockdown && dmgEvt.isElimination == u.isElimination
+            );
+        const removeTempMyUniqueDamageEventFn = (dmgEvt: MatchInflictionEvent) => {
+            tempMyUniqueDamageEvents = tempMyUniqueDamageEvents.filter(
+                (u) =>
+                    dmgEvt.victim?.name != u.victim?.name && dmgEvt.isKnockdown != u.isKnockdown && dmgEvt.isElimination != u.isElimination
+            );
+        };
+
+        merge(this.myDamageEvent$, this.myKillfeedEvent$)
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((event) => !findTempMyUniqueDamageEventFn(event)),
+                tap((event) => addTempMyUniqueDamageEventFn(event)),
+                tap((event) => this.myUniqueDamageEvent$.next(event)),
+                delay(UNIQUE_WINDOW),
+                tap((event) => removeTempMyUniqueDamageEventFn(event))
+            )
+            .subscribe();
     }
 }
