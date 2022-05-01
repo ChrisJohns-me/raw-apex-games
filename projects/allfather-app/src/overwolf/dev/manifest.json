@@ -237,21 +237,15 @@
         },
         "externally_connectable": {
             "matches": [
-                "http://*.allfather.app",
                 "https://*.allfather.app",
-                "http://*.mozambiquehe.re",
+                "https://discord.gg/v5cfBTq",
                 "https://*.mozambiquehe.re",
-                "http://*.overwolf.com",
                 "https://*.overwolf.com",
                 "https://overwolf.github.io",
-                "https://*.google-analytics.com",
-                "http://*.google-analytics.com",
-                "https://www.googleapis.com",
-                "https://discord.gg/v5cfBTq",
-                "https://twitter.com/",
-                "https://www.facebook.com",
-                "https://www.reddit.com",
                 "https://*.google.com",
+                "https://*.google-analytics.com",
+                "https://*.googletagmanager.com",
+                "https://*.googleapis.com",
                 "https://*.youtube.com"
             ]
         },
