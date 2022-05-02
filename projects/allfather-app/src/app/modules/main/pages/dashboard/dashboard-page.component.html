@@ -1,4 +1,4 @@
-<div class="container-lg mt-4">
+<div class="container-lg mt-3">
     <div class="row">
         <div class="col pe-4">
             <app-legend-icons-board
@@ -7,6 +7,10 @@
                 (onLegendHover)="hoverLegend($event)"
                 (onLegendUnhover)="unhoverLegend()"
             ></app-legend-icons-board>
+
+            <div class="card px-3 py-1 mt-4">
+                <app-map-rotation-display></app-map-rotation-display>
+            </div>
         </div>
         <div class="col">
             <div class="row">
@@ -195,16 +199,8 @@
                 </div>
             </div>
             <!-- #endregion -->
-        </div>
-    </div>
-    <div class="row mt-4">
-        <div class="col-6">
-            <div class="card px-3 py-1">
-                <app-map-rotation-display></app-map-rotation-display>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="card">
+
+            <div class="card mt-4">
                 <app-account-stats-display></app-account-stats-display>
             </div>
         </div>

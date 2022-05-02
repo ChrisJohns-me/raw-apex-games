@@ -50,5 +50,14 @@
         <h3 class="m-0 rank-score">+{{ myAccountStats?.nextRank?.tierDivisionDistance | number }} RP</h3>
     </div>
 
+    <div
+        class="rank-score-rate text-center mt-3"
+        *ngIf="!!averageRPRate"
+        [ngClass]="{ 'text-success': averageRPRate > 0, 'text-danger': averageRPRate < 0 }"
+    >
+        You Average <strong><ng-container *ngIf="averageRPRate > 0">+</ng-container> {{ averageRPRate | number: "1.0-0" }} RP</strong> per
+        Ranked Game
+    </div>
+
     <!-- BattlePass: {{ myAccountStats.battlePass?.level }} -->
 </div>
