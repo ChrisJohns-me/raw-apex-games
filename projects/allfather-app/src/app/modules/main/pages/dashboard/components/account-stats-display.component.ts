@@ -57,7 +57,8 @@ export class AccountStatsDisplayComponent implements OnInit, OnDestroy {
     private calcAverageRPRate(matchList: MatchDataStore[]): Optional<number> {
         const rankedMatches = matchList
             .filter((match) => !isEmpty(match.rankScore) && !!match.endDate && isDate(match.endDate))
-            .slice(0, AVG_RP_MATCH_LIMIT);
+            .slice(0, AVG_RP_MATCH_LIMIT)
+            .sort((a, b) => a.endDate!.getTime() - b.endDate!.getTime());
         const rankedScores: number[] = rankedMatches.map((match) => match.rankScore!);
         if (rankedScores.length < 2) return;
 

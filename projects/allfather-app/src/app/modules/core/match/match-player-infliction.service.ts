@@ -170,16 +170,25 @@ export class MatchPlayerInflictionService extends BaseService {
     private setupUniqueDamageEvents(): void {
         const UNIQUE_WINDOW = 5000;
         let tempMyUniqueDamageEvents: MatchInflictionEvent[] = [];
-        const addTempMyUniqueDamageEventFn = (dmgEvt: MatchInflictionEvent) => tempMyUniqueDamageEvents.push(dmgEvt);
-        const findTempMyUniqueDamageEventFn = (dmgEvt: MatchInflictionEvent) =>
-            tempMyUniqueDamageEvents.find(
-                (u) =>
-                    dmgEvt.victim?.name == u.victim?.name && dmgEvt.isKnockdown == u.isKnockdown && dmgEvt.isElimination == u.isElimination
+        const hasDamage = (dmgEvt: MatchInflictionEvent) => (dmgEvt.shieldDamage ?? 0) > 0 || (dmgEvt.healthDamage ?? 0) > 0;
+        const addTempMyUniqueDamageEventFn = (dmgEvt: MatchInflictionEvent) => {
+            if (!hasDamage(dmgEvt)) tempMyUniqueDamageEvents.push(dmgEvt);
+        };
+        const findTempMyUniqueDamageEventFn = (dmgEvt: MatchInflictionEvent) => {
+            if (hasDamage(dmgEvt)) return;
+            return tempMyUniqueDamageEvents.find(
+                (uDmgEvt) =>
+                    dmgEvt.victim?.name == uDmgEvt.victim?.name &&
+                    dmgEvt.isKnockdown == uDmgEvt.isKnockdown &&
+                    dmgEvt.isElimination == uDmgEvt.isElimination
             );
+        };
         const removeTempMyUniqueDamageEventFn = (dmgEvt: MatchInflictionEvent) => {
             tempMyUniqueDamageEvents = tempMyUniqueDamageEvents.filter(
-                (u) =>
-                    dmgEvt.victim?.name != u.victim?.name && dmgEvt.isKnockdown != u.isKnockdown && dmgEvt.isElimination != u.isElimination
+                (uDmgEvt) =>
+                    dmgEvt.victim?.name != uDmgEvt.victim?.name &&
+                    dmgEvt.isKnockdown != uDmgEvt.isKnockdown &&
+                    dmgEvt.isElimination != uDmgEvt.isElimination
             );
         };
 

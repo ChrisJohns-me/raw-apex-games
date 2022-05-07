@@ -404,6 +404,6 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
     }
 
     private traceLog(...args: any[]): void {
-        if (this.TRACELOG) console.trace(`[InflictionInsightWindow]`, ...args);
+        if (this.TRACELOG) console.log(`[InflictionInsightWindow]`, ...args);
     }
 }

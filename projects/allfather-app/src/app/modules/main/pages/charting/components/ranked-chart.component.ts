@@ -12,13 +12,12 @@ import {
     LineElement,
     PointElement,
     ScriptableLineSegmentContext,
-    TimeScale,
     Tooltip,
     TooltipItem,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { isEmpty } from "common/utilities/";
-import { subDays } from "date-fns";
+import { format } from "date-fns";
 import {
     ChartRankBronzeHEXColor,
     ChartRankDiamondHEXColor,
@@ -47,7 +46,6 @@ import {
 export class RankedChartComponent implements AfterViewInit, OnChanges {
     @Input() public matchList: MatchDataStore[] = [];
 
-    private recentMatchList: MatchDataStore[] = [];
     private get chartOptions(): ChartOptions {
         return {
             responsive: true,
@@ -60,8 +58,6 @@ export class RankedChartComponent implements AfterViewInit, OnChanges {
                     display: false,
                 },
                 tooltip: {
-                    xAlign: "center",
-                    yAlign: "top",
                     callbacks: {
                         beforeTitle: (tooltipItems: TooltipItem<"line">[]): string => {
                             const ctxRankScore = tooltipItems[0]?.raw;
@@ -73,15 +69,11 @@ export class RankedChartComponent implements AfterViewInit, OnChanges {
             },
             scales: {
                 x: {
-                    type: "time",
                     axis: "x",
-                    time: {
-                        unit: "day",
-                        tooltipFormat: "MMM dd, K:mm a",
-                        displayFormats: {
-                            day: "MMM dd",
-                        },
+                    ticks: {
+                        display: false,
                     },
+                    reverse: true,
                 },
                 y: {
                     axis: "y",
@@ -97,12 +89,12 @@ export class RankedChartComponent implements AfterViewInit, OnChanges {
 
     @ViewChild("chartRef") public chartRef?: ElementRef<HTMLCanvasElement>;
     private chart?: Chart;
-    private readonly numDaysToShow = 30;
+    private readonly numMatchesToShow = 100;
     private dataLabels: string[] = [];
     private datasets: ChartDataset[] = [];
 
     constructor() {
-        Chart.register(LineElement, PointElement, LineController, CategoryScale, TimeScale, LinearScale, Legend, Tooltip);
+        Chart.register(LineElement, PointElement, LineController, CategoryScale, LinearScale, Legend, Tooltip);
     }
 
     public ngAfterViewInit(): void {
@@ -130,20 +122,14 @@ export class RankedChartComponent implements AfterViewInit, OnChanges {
 
     private loadChartData(): void {
         if (isEmpty(this.matchList)) return;
-        const now = new Date();
         const rankScores: number[] = [];
         this.dataLabels = [];
+        const matchList = this.matchList.filter((match) => !isEmpty(match.rankScore)).slice(0, this.numMatchesToShow);
 
-        const matchList = this.matchList
-            .slice()
-            .sort((a, b) => (a.startDate?.getTime() ?? Infinity) - (b.startDate?.getTime() ?? Infinity));
-        const recentStartDate = subDays(now, this.numDaysToShow);
-        this.recentMatchList = matchList.filter((match) => (match.endDate ?? 0) > recentStartDate);
-
-        for (const recentMatch of this.recentMatchList) {
-            if (!recentMatch.endDate || !recentMatch.rankScore) continue;
-            this.dataLabels.push(recentMatch.endDate.toISOString());
-            rankScores.push(recentMatch.rankScore);
+        for (const match of matchList) {
+            if (!match.rankScore) continue;
+            rankScores.push(match.rankScore);
+            this.dataLabels.push(match.endDate ? format(match.endDate, "MMM dd, K:mm a") : "");
         }
 
         this.datasets = [
