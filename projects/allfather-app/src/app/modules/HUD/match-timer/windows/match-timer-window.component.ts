@@ -1,4 +1,5 @@
 import { MatchState } from "@allfather-app/app/common/match/state";
+import { OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { MatchService } from "@allfather-app/app/modules/core/match/match.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { isValid } from "date-fns";
@@ -27,6 +28,7 @@ export class MatchTimerWindowComponent implements OnInit, OnDestroy {
     }
 
     public showTimer = false;
+    public readonly OverwolfWindowName = OverwolfWindowName;
 
     private matchStartDate?: Date;
     private matchEndDate?: Date;

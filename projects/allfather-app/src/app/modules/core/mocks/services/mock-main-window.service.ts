@@ -1,6 +1,6 @@
 import { OverwolfWindow } from "@allfather-app/app/common/overwolf-window";
 import { MainPage } from "@allfather-app/app/modules/main/pages/main-page";
-import { MainWindowService } from "@allfather-app/app/modules/main/windows/main-window.service";
+import { MainWindowService } from "@allfather-app/app/modules/main/windows/main-window.abstract";
 import { BehaviorSubject, of } from "rxjs";
 import { MockOverwolfWindow } from "../components/mock-ui-window";
 

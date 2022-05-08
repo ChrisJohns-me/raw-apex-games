@@ -11,7 +11,8 @@ import { MockSettingsService } from "../core/mocks/services/mock-settings.servic
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
 import { SettingsService } from "../core/settings.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
-import { MainWindowService } from "../main/windows/main-window.service";
+import { MainDesktopWindowService } from "../main/windows/main-desktop-window.service";
+import { MainInGameWindowService } from "../main/windows/main-ingame-window.service";
 import { BackgroundComponent } from "./background.component";
 import { BackgroundService } from "./background.service";
 import { CaptureControllerService } from "./capture-controller.service";
@@ -42,7 +43,8 @@ describe("BackgroundComponent", () => {
                 { provide: GameProcessService, useClass: MockGameProcessService },
                 { provide: HotkeyService, useClass: MockHotkeyService },
                 { provide: HUDWindowControllerService, useClass: MockHUDWindowControllerService },
-                { provide: MainWindowService, useClass: MockMainWindowService },
+                { provide: MainDesktopWindowService, useClass: MockMainWindowService },
+                { provide: MainInGameWindowService, useClass: MockMainWindowService },
                 { provide: OverwolfExtensionsService, useClass: MockOverwolfExtensionsService },
                 { provide: SystemTrayService, useClass: MockSystemTrayService },
                 { provide: SettingsService, useClass: MockSettingsService },

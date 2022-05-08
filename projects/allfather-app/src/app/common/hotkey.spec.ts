@@ -5,7 +5,7 @@ describe("Hotkey Class", () => {
     describe("computed properties", () => {
         it("isBound", () => {
             // Arrange
-            const hotkey = new Hotkey(HotkeyEnum.ToggleMain, "Test Title", "F", false, false, false);
+            const hotkey = new Hotkey(HotkeyEnum.ToggleMainInGame, "Test Title", "F", false, false, false);
 
             // Assert
             expect(hotkey.isBound).toBe(true);
@@ -13,7 +13,7 @@ describe("Hotkey Class", () => {
 
         it("friendlyBinding", () => {
             // Arrange
-            const hotkey = new Hotkey(HotkeyEnum.ToggleMain, "Test Title", "F", true, true, true);
+            const hotkey = new Hotkey(HotkeyEnum.ToggleMainInGame, "Test Title", "F", true, true, true);
 
             // Assert
             expect(hotkey.friendlyBinding).toBe("Ctrl+Alt+Shift+F");
@@ -21,7 +21,7 @@ describe("Hotkey Class", () => {
 
         it("keyCode", () => {
             // Arrange
-            const hotkey = new Hotkey(HotkeyEnum.ToggleMain, "Test Title", "F", true, true, true);
+            const hotkey = new Hotkey(HotkeyEnum.ToggleMainInGame, "Test Title", "F", true, true, true);
 
             // Assert
             expect(hotkey.keyCode).toBe(70);
@@ -29,7 +29,7 @@ describe("Hotkey Class", () => {
 
         it("keyCode (F3)", () => {
             // Arrange
-            const hotkey = new Hotkey(HotkeyEnum.ToggleMain, "Test Title", "F3", true, true, true);
+            const hotkey = new Hotkey(HotkeyEnum.ToggleMainInGame, "Test Title", "F3", true, true, true);
 
             // Assert
             expect(hotkey.keyCode).toBe(114);
@@ -37,7 +37,7 @@ describe("Hotkey Class", () => {
 
         it("key returns uppercase", () => {
             // Arrange
-            const hotkey = new Hotkey(HotkeyEnum.ToggleMain, "Test Title", "f", true, true, true);
+            const hotkey = new Hotkey(HotkeyEnum.ToggleMainInGame, "Test Title", "f", true, true, true);
 
             // Assert
             expect(hotkey.key).toBe("F");
@@ -46,7 +46,7 @@ describe("Hotkey Class", () => {
 
         it("key can be undefined", () => {
             // Arrange
-            const hotkey = new Hotkey(HotkeyEnum.ToggleMain, "Test Title", "", true, true, true);
+            const hotkey = new Hotkey(HotkeyEnum.ToggleMainInGame, "Test Title", "", true, true, true);
 
             // Assert
             expect(hotkey.key).toBe("");
@@ -59,7 +59,7 @@ describe("Hotkey Class", () => {
             // Arrange
             const title = "Test Title";
             const owHotKeyObject: OWHotKey = {
-                name: HotkeyEnum.ToggleMain,
+                name: HotkeyEnum.ToggleMainInGame,
                 title: title,
                 virtualKeycode: 70, // F
                 modifierKeys: 7, // Ctrl + Alt + Shift
@@ -69,7 +69,7 @@ describe("Hotkey Class", () => {
                 IsUnassigned: false,
                 binding: "Ctrl+Alt+Shift+F",
             };
-            const expectedHotkey = new Hotkey(HotkeyEnum.ToggleMain, title, "F", true, true, true);
+            const expectedHotkey = new Hotkey(HotkeyEnum.ToggleMainInGame, title, "F", true, true, true);
 
             // Act
             const result = Hotkey.fromOWHotKeyObject(owHotKeyObject);
@@ -82,7 +82,7 @@ describe("Hotkey Class", () => {
             // Arrange
             const title = "Test Title";
             const owHotKeyObject: OWHotKey = {
-                name: HotkeyEnum.ToggleMain,
+                name: HotkeyEnum.ToggleMainInGame,
                 title: title,
                 virtualKeycode: 114, // F3
                 modifierKeys: 7, // Ctrl + Alt + Shift
@@ -92,7 +92,7 @@ describe("Hotkey Class", () => {
                 IsUnassigned: false,
                 binding: "Ctrl+Alt+Shift+F3",
             };
-            const expectedHotkey = new Hotkey(HotkeyEnum.ToggleMain, title, "F3", true, true, true);
+            const expectedHotkey = new Hotkey(HotkeyEnum.ToggleMainInGame, title, "F3", true, true, true);
 
             // Act
             const result = Hotkey.fromOWHotKeyObject(owHotKeyObject);
@@ -105,7 +105,7 @@ describe("Hotkey Class", () => {
             // Arrange
             const title = "Test Title";
             const owHotKeyObject: OWHotKey = {
-                name: HotkeyEnum.ToggleMain,
+                name: HotkeyEnum.ToggleMainInGame,
                 title: title,
                 virtualKeycode: 0,
                 modifierKeys: 0,
@@ -115,7 +115,7 @@ describe("Hotkey Class", () => {
                 IsUnassigned: true,
                 binding: "",
             };
-            const expectedHotkey = new Hotkey(HotkeyEnum.ToggleMain, title, "", false, false, false);
+            const expectedHotkey = new Hotkey(HotkeyEnum.ToggleMainInGame, title, "", false, false, false);
 
             // Act
             const result = Hotkey.fromOWHotKeyObject(owHotKeyObject);
@@ -130,7 +130,7 @@ describe("Hotkey Class", () => {
             // Arrange
             const title = "Test Title";
             const expectedOWHotKeyObject: OWHotKeyAssignHotkeyObject = {
-                name: HotkeyEnum.ToggleMain,
+                name: HotkeyEnum.ToggleMainInGame,
                 modifiers: {
                     ctrl: true,
                     alt: true,
@@ -140,7 +140,7 @@ describe("Hotkey Class", () => {
             };
 
             // Act
-            const hotkey = new Hotkey(HotkeyEnum.ToggleMain, title, "f", true, true, true);
+            const hotkey = new Hotkey(HotkeyEnum.ToggleMainInGame, title, "f", true, true, true);
             const result = hotkey.toOWHotKeyAssignHotkeyObject();
 
             // Assert
@@ -151,7 +151,7 @@ describe("Hotkey Class", () => {
             // Arrange
             const title = "Test Title";
             const expectedOWHotKeyObject: OWHotKeyAssignHotkeyObject = {
-                name: HotkeyEnum.ToggleMain,
+                name: HotkeyEnum.ToggleMainInGame,
                 modifiers: {
                     ctrl: true,
                     alt: true,
@@ -161,7 +161,7 @@ describe("Hotkey Class", () => {
             };
 
             // Act
-            const hotkey = new Hotkey(HotkeyEnum.ToggleMain, title, "f3", true, true, true);
+            const hotkey = new Hotkey(HotkeyEnum.ToggleMainInGame, title, "f3", true, true, true);
             const result = hotkey.toOWHotKeyAssignHotkeyObject();
 
             // Assert

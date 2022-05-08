@@ -1,6 +1,7 @@
 import { Legend } from "@allfather-app/app/common/legend/legend";
 import { MatchGameModeList } from "@allfather-app/app/common/match/game-mode/game-mode-list";
 import { MatchGameModeGenericId } from "@allfather-app/app/common/match/game-mode/game-mode.enum";
+import { OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { SettingKey } from "@allfather-app/app/common/settings";
 import { AvgMatchStats } from "@allfather-app/app/common/utilities/match-stats";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
@@ -49,8 +50,9 @@ export class LegendSelectAssistWindowComponent implements OnInit, OnDestroy {
     public get limitLegendStatsMatches(): Optional<number> {
         return this.config?.featureConfigs.legendSelectAssist.limitLegendStatsMatches;
     }
-
     //#endregion
+
+    public readonly OverwolfWindowName = OverwolfWindowName;
 
     private hoverLegendSubscription?: Subscription;
     private config?: Configuration;

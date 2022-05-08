@@ -1,11 +1,12 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
-import { OverwolfWindow, OverwolfWindowState } from "@allfather-app/app/common/overwolf-window";
+import { OverwolfWindow, OverwolfWindowName, OverwolfWindowState } from "@allfather-app/app/common/overwolf-window";
 import { SettingKey } from "@allfather-app/app/common/settings";
 import { GoogleAnalyticsService } from "@allfather-app/app/modules/core/google-analytics.service";
 import { OverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf";
 import { SettingsService } from "@allfather-app/app/modules/core/settings.service";
 import { MainPage } from "@allfather-app/app/modules/main/pages/main-page";
-import { MainWindowService } from "@allfather-app/app/modules/main/windows/main-window.service";
+import { MainDesktopWindowService } from "@allfather-app/app/modules/main/windows/main-desktop-window.service";
+import { MainInGameWindowService } from "@allfather-app/app/modules/main/windows/main-ingame-window.service";
 import { environment } from "@allfather-app/environments/environment";
 import {
     AfterViewInit,
@@ -41,7 +42,7 @@ type WindowSizeInput = {
     heightPercent: number;
 };
 
-const TITLE_SUFFIX = " (Alpha)";
+const TITLE_SUFFIX = " (Beta)";
 
 @Component({
     selector: "app-ui-container",
@@ -50,6 +51,9 @@ const TITLE_SUFFIX = " (Alpha)";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+    @Input() public set overwolfWindowName(value: Optional<OverwolfWindowName>) {
+        if (value) this.overwolfWindow.name = value;
+    }
     @Input() public injectBootstrapCSS = false;
     @Input() public resolutionZoom = true;
     @Input() public isContentDraggable = true;
@@ -93,7 +97,8 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly googleAnalytics: GoogleAnalyticsService,
-        private readonly mainWindow: MainWindowService,
+        private readonly mainDesktopWindow: MainDesktopWindowService,
+        private readonly mainInGameWindow: MainInGameWindowService,
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly settings: SettingsService,
         private readonly titleService: Title
@@ -135,7 +140,8 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     public onSettingsButtonClick(): void {
-        this.mainWindow.goToPage(MainPage.Settings);
+        this.mainDesktopWindow.goToPage(MainPage.Settings);
+        this.mainInGameWindow.goToPage(MainPage.Settings);
     }
 
     public onMinimizeButtonClick(): void {

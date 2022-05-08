@@ -2,6 +2,7 @@ import { InventorySlot } from "@allfather-app/app/common/inventory-slots";
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchRing } from "@allfather-app/app/common/match/ring";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
+import { OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { PlayerState } from "@allfather-app/app/common/player-state";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { MatchPlayerInventoryService } from "@allfather-app/app/modules/core/match/match-player-inventory.service";
@@ -40,9 +41,9 @@ export class HealingHelperWindowComponent implements OnInit, OnDestroy {
     public get ringDamagePerTick(): Optional<number> {
         return this.currentRing?.damagePerTick;
     }
-    //#region Config
 
-    //#endregion
+    public readonly OverwolfWindowName = OverwolfWindowName;
+
     private currentRing: Optional<MatchRing>;
     private ringDamageTickRateMs = 1500;
     private maxHealth = 100;

@@ -3,7 +3,14 @@
         <app-background *ngSwitchCase="OverwolfWindowName.Background"></app-background>
 
         <app-development-tools-window *ngSwitchCase="OverwolfWindowName.DevelopmentTools"></app-development-tools-window>
-        <app-main-window *ngSwitchCase="OverwolfWindowName.Main"></app-main-window>
+        <app-main-window
+            *ngSwitchCase="OverwolfWindowName.MainDesktop"
+            [overwolfWindowName]="OverwolfWindowName.MainDesktop"
+        ></app-main-window>
+        <app-main-window
+            *ngSwitchCase="OverwolfWindowName.MainInGame"
+            [overwolfWindowName]="OverwolfWindowName.MainInGame"
+        ></app-main-window>
         <app-hud-infliction-insight-window *ngSwitchCase="OverwolfWindowName.HUDInflictionInsight"></app-hud-infliction-insight-window>
         <app-hud-healing-helper-window *ngSwitchCase="OverwolfWindowName.HUDHealingHelper"></app-hud-healing-helper-window>
         <app-hud-match-timer-window *ngSwitchCase="OverwolfWindowName.HUDMatchTimer"></app-hud-match-timer-window>

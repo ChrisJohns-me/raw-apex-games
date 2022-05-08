@@ -1,3 +1,4 @@
+import { OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { OWGameEvent, OWInfoUpdates2Event } from "@allfather-app/app/modules/core/overwolf";
 import { ExposedOverwolfGameDataService } from "@allfather-app/app/modules/core/overwolf-exposed-data.service";
 import { OverwolfExtensionsService } from "@allfather-app/app/modules/core/overwolf/overwolf-extensions.service";
@@ -18,6 +19,8 @@ export class DevelopmentToolsWindowComponent implements OnInit, OnDestroy {
 
     public infoUpdates$: Subject<OWInfoUpdates2Event>;
     public newGameEvent$: Subject<OWGameEvent>;
+
+    public readonly OverwolfWindowName = OverwolfWindowName;
 
     private destroy$ = new Subject<void>();
 

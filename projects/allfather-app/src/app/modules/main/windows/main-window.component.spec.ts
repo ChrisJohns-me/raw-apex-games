@@ -54,8 +54,9 @@ import { MapRotationDisplayComponent } from "../pages/dashboard/components/map-r
 import { DashboardPageComponent } from "../pages/dashboard/dashboard-page.component";
 import { MatchExplorerPageComponent } from "../pages/match-explorer/match-explorer-page.component";
 import { SettingsPageComponent } from "../pages/settings/settings-page.component";
+import { MainDesktopWindowService } from "./main-desktop-window.service";
+import { MainInGameWindowService } from "./main-ingame-window.service";
 import { MainWindowComponent } from "./main-window.component";
-import { MainWindowService } from "./main-window.service";
 
 describe("MainWindowComponent", () => {
     let component: MainWindowComponent;
@@ -89,7 +90,8 @@ describe("MainWindowComponent", () => {
                 { provide: HotkeyService, useClass: MockHotkeyService },
                 { provide: LocalDatabaseService, useClass: MockLocalDatabaseService },
                 { provide: LocalStorageService, useClass: MockLocalStorageService },
-                { provide: MainWindowService, useClass: MockMainWindowService },
+                { provide: MainDesktopWindowService, useClass: MockMainWindowService },
+                { provide: MainInGameWindowService, useClass: MockMainWindowService },
                 { provide: MapRotationService, useClass: MockMapRotationService },
                 { provide: MatchRosterService, useClass: MockMatchRosterService },
                 { provide: MatchService, useClass: MockMatchService },

@@ -17,7 +17,8 @@ import { SettingsService } from "@allfather-app/app/modules/core/settings.servic
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";
 import { IconComponent } from "@shared/components/icon/icon.component";
-import { MainWindowService } from "../../windows/main-window.service";
+import { MainDesktopWindowService } from "../../windows/main-desktop-window.service";
+import { MainInGameWindowService } from "../../windows/main-ingame-window.service";
 import { SettingsPageComponent } from "./settings-page.component";
 
 describe("SettingsPageComponent", () => {
@@ -29,7 +30,8 @@ describe("SettingsPageComponent", () => {
             imports: [ReactiveFormsModule],
             declarations: [SettingsPageComponent, IconComponent],
             providers: [
-                { provide: MainWindowService, useClass: MockMainWindowService },
+                { provide: MainDesktopWindowService, useClass: MockMainWindowService },
+                { provide: MainInGameWindowService, useClass: MockMainWindowService },
                 { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: FileService, useClass: MockFileService },
                 { provide: HotkeyService, useClass: MockHotkeyService },

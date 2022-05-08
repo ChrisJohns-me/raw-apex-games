@@ -1,3 +1,4 @@
+import { OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { DefaultSetting } from "@allfather-app/app/common/settings";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
 import { OverwolfInputTrackingService } from "@allfather-app/app/modules/core/overwolf/overwolf-input-tracking.service";
@@ -19,6 +20,8 @@ export class ReticleHelperWindowComponent implements OnInit, OnDestroy {
     public get isAimingReticleHidden(): boolean {
         return this.isAimingReticleDynamicHideSetting && this.isRMBPressed;
     }
+
+    public readonly OverwolfWindowName = OverwolfWindowName;
 
     private isRMBPressed = false;
     private isAimingReticleDynamicHideSetting = false;

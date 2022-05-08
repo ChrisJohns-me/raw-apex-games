@@ -5,9 +5,6 @@ import { BehaviorSubject, Subject } from "rxjs";
 import { ReportableDataFactoryMap } from "../reportable-data";
 import { ReportingEngine, ReportingEngineId, ReportingStatus } from "../reporting-engine";
 import { RunCondition } from "../run-condition";
-// ###############
-// ##### WIP #####
-// ###############
 
 /**
  * @class GoogleAnalyticsReportingEngine
@@ -80,7 +77,7 @@ export class GoogleAnalyticsReportingEngine implements ReportingEngine {
         const map = getDataById("map")?.value;
         const locationHistory = getDataById("locationHistory")?.value ?? [];
 
-        // const myName = getDataById("name")?.value ?? "";
+        const myName = getDataById("name")?.value ?? "";
         const duration = differenceInMinutes(matchMeta?.endDate ?? new Date(), matchMeta?.startDate ?? new Date());
         const gameModeId = getDataById("gameMode")?.value?.gameModeId ?? "";
         const mapId = map?.mapId ?? "";
@@ -95,6 +92,7 @@ export class GoogleAnalyticsReportingEngine implements ReportingEngine {
         const landingLocation = locationHistory.find((l) => l.value.phase === MatchLocationPhase.HasLanded)?.value ?? { x: 0, y: 0, z: 0 };
         const playerEndLocation = locationHistory[locationHistory.length - 1]?.value ?? { x: 0, y: 0, z: 0 };
 
+        this.googleAnalytics.sendEvent("Match Meta", "Player Play Duration", `${myName}`, duration);
         this.googleAnalytics.sendEvent("Match Meta", "Game Mode Play Duration", `${gameModeId}`, duration);
         this.googleAnalytics.sendEvent("Match Meta", "Map Play Duration", `${mapId}`, duration);
         this.googleAnalytics.sendEvent("Match Meta", "Legend Play Duration", `${legendId}`, duration);

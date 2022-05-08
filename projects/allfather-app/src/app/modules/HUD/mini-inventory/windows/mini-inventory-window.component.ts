@@ -2,6 +2,7 @@ import { InventorySlot, InventorySlots } from "@allfather-app/app/common/invento
 import { Item } from "@allfather-app/app/common/items/item";
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
+import { OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { PlayerState } from "@allfather-app/app/common/player-state";
 import { MatchPlayerInventoryService } from "@allfather-app/app/modules/core/match/match-player-inventory.service";
 import { MatchPlayerLocationService } from "@allfather-app/app/modules/core/match/match-player-location.service";
@@ -36,9 +37,8 @@ export class MiniInventoryWindowComponent implements OnInit, OnDestroy {
     public isVisible = false; // based on match state + player state
     public myInventorySlotList: InventorySlot<Item>[] = [];
 
-    //#region Config
+    public readonly OverwolfWindowName = OverwolfWindowName;
 
-    //#endregion
     private readonly visibleStates$: Observable<[MatchStateChangedEvent, PlayerState, Optional<MatchLocationPhase>, boolean]>;
     private destroy$ = new Subject<void>();
 

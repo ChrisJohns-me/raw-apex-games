@@ -1,5 +1,5 @@
 import { APP_NAME } from "@allfather-app/app/common/app";
-import { OverwolfWindowState } from "@allfather-app/app/common/overwolf-window";
+import { OverwolfWindowName, OverwolfWindowState } from "@allfather-app/app/common/overwolf-window";
 import {
     ConfigPositionXAnchor,
     ConfigPositionYAnchor,
@@ -32,6 +32,7 @@ type WindowSizeInput = {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MockUIContainerComponent implements MockedClass<UIContainerComponent> {
+    @Input() public set overwolfWindowName(value: OverwolfWindowName) {}
     @Input() public injectBootstrapCSS = false;
     @Input() public resolutionZoom = true;
     @Input() public isContentDraggable = true;

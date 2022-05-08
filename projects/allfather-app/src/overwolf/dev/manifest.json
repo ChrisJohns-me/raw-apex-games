@@ -5,7 +5,7 @@
     "meta": {
         "name": "Allfather [DEV]",
         "author": "MasterKriff",
-        "version": "0.0.315",
+        "version": "0.1.0",
         "minimum-overwolf-version": "0.165.0",
         "minimum-gep-version": "0.165.0",
         "description": "(Development) Allfather, give me sight!",
@@ -53,20 +53,44 @@
                     "height": 250
                 }
             },
-            "main": {
+            "main-desktop": {
+                "file": "index.html",
+                "desktop_only": true,
+                "native_window": true,
+                "use_os_windowing": true,
+                "in_game_only": false,
+                "transparent": true,
+                "resizable": true,
+                "show_in_taskbar": true,
+                "restrict_to_game_bounds": false,
+                "keep_window_location": true,
+                "allow_local_file_access": true,
+                "block_top_window_navigation": true,
+                "size": {
+                    "width": 1000,
+                    "height": 750
+                },
+                "min_size": {
+                    "width": 750,
+                    "height": 600
+                }
+            },
+            "main-ingame": {
                 "file": "index.html",
                 "desktop_only": false,
                 "native_window": false,
-                "in_game_only": false,
+                "use_os_windowing": false,
+                "in_game_only": true,
                 "transparent": true,
                 "resizable": false,
-                "show_in_taskbar": true,
-                "restrict_to_game_bounds": false,
+                "show_in_taskbar": false,
+                "restrict_to_game_bounds": true,
                 "keep_window_location": false,
                 "allow_local_file_access": true,
                 "block_top_window_navigation": true,
                 "focus_game_takeover": "ReleaseOnHidden",
-                "focus_game_takeover_release_hotkey": "toggle_main",
+                "focus_game_takeover_release_hotkey": "toggle_main_ingame",
+                "topmost": true,
                 "size": {
                     "width": 1000,
                     "height": 750
@@ -85,7 +109,6 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "disable_blur": true,
                 "show_in_taskbar": true,
                 "clickthrough": true,
                 "mute": true,
@@ -101,7 +124,6 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "disable_blur": true,
                 "show_in_taskbar": true,
                 "clickthrough": true,
                 "mute": true,
@@ -117,7 +139,6 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "disable_blur": true,
                 "show_in_taskbar": true,
                 "clickthrough": true,
                 "mute": true,
@@ -133,7 +154,6 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "disable_blur": true,
                 "show_in_taskbar": true,
                 "clickthrough": true,
                 "mute": true,
@@ -149,7 +169,6 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "disable_blur": true,
                 "show_in_taskbar": true,
                 "clickthrough": false,
                 "mute": true,
@@ -165,7 +184,6 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "disable_blur": true,
                 "show_in_taskbar": true,
                 "clickthrough": true,
                 "mute": true,
@@ -181,7 +199,6 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "disable_blur": true,
                 "show_in_taskbar": true,
                 "clickthrough": true,
                 "mute": true,
@@ -197,7 +214,6 @@
                 "in_game_only": false,
                 "resizable": false,
                 "transparent": true,
-                "disable_blur": true,
                 "show_in_taskbar": true,
                 "style": "InputPassThrough",
                 "mute": true,
@@ -225,10 +241,10 @@
             }
         ],
         "hotkeys": {
-            "toggle_main": {
+            "toggle_main_ingame": {
                 "title": "Show/Hide In-Game Window",
                 "action-type": "custom",
-                "default": "Alt+F",
+                "default": "Alt+G",
                 "passthrough": false
             }
         },

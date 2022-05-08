@@ -1,5 +1,5 @@
 import { combineLatest, from, Observable, of } from "rxjs";
-import { filter, map, mergeMap, switchMap } from "rxjs/operators";
+import { filter, map, mergeMap, switchMap, tap } from "rxjs/operators";
 import { OWDisplay, OWWindowInfo } from "../modules/core/overwolf";
 
 type WindowIdResultCallback = overwolf.CallbackFunction<overwolf.windows.WindowIdResult>;
@@ -30,7 +30,8 @@ export enum OverwolfWindowName {
     HUDUltTimer = "hud-ult-timer",
     LegendSelectAssist = "legend-select-assist",
     LobbyStatus = "lobby-status",
-    Main = "main",
+    MainDesktop = "main-desktop",
+    MainInGame = "main-ingame",
 }
 
 export class OverwolfWindow {

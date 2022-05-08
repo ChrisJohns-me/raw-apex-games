@@ -1,21 +1,18 @@
-import { OverwolfWindow, OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
-import { SingletonServiceProviderFactory } from "@allfather-app/app/singleton-service.provider.factory";
+import { OverwolfWindow } from "@allfather-app/app/common/overwolf-window";
 import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, from, Observable, Subject } from "rxjs";
 import { concatAll, map, takeUntil, tap } from "rxjs/operators";
 import { MainPage } from "../pages/main-page";
 
-@Injectable({
-    providedIn: "root",
-    deps: [],
-    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MainWindowService", MainWindowService, deps),
-})
-export class MainWindowService implements OnDestroy {
+@Injectable()
+export abstract class MainWindowService implements OnDestroy {
+    /** Needs to be defined by the inheriting class */
+    protected overwolfWindow!: OverwolfWindow;
+
     public mainPage = new BehaviorSubject<MainPage>(MainPage.Dashboard);
     /** App is still initializing; ie. booting up the app */
     public isStarting$ = new BehaviorSubject<boolean>(false);
     public isRequestingExit$ = new BehaviorSubject<boolean>(false);
-    public readonly overwolfWindow = new OverwolfWindow(OverwolfWindowName.Main);
 
     private destroy$ = new Subject<void>();
 

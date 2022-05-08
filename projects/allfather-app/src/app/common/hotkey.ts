@@ -2,7 +2,7 @@ import keycode from "keycode";
 import { OWHotKey, OWHotKeyAssignHotkeyObject } from "../modules/core/overwolf";
 
 export enum HotkeyEnum {
-    ToggleMain = "toggle_main",
+    ToggleMainInGame = "toggle_main_ingame",
 }
 
 export class Hotkey {

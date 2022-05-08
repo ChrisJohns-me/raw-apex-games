@@ -1,5 +1,6 @@
 import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchState, MatchStateChangedEvent } from "@allfather-app/app/common/match/state";
+import { OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { PlayerState } from "@allfather-app/app/common/player-state";
 import { SettingKey } from "@allfather-app/app/common/settings";
 import { ConfigurationService } from "@allfather-app/app/modules/core/configuration.service";
@@ -82,6 +83,8 @@ export class UltTimerWindowComponent implements OnInit, OnDestroy {
     }
     /** Confidence level of accuracy in percent */
     public confidenceAmount = 0;
+
+    public readonly OverwolfWindowName = OverwolfWindowName;
 
     private _maybeReadyDate?: Date;
 

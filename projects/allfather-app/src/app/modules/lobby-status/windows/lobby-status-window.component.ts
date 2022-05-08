@@ -1,13 +1,14 @@
 import { Hotkey, HotkeyEnum } from "@allfather-app/app/common/hotkey";
 import { MatchGameMode } from "@allfather-app/app/common/match/game-mode/game-mode";
 import { MatchMap } from "@allfather-app/app/common/match/map/match-map";
+import { OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { combineLatest, filter, map, merge, Subject, takeUntil } from "rxjs";
 import { HotkeyService } from "../../background/hotkey.service";
 import { MapRotationService } from "../../core/map-rotation/map-rotation.service";
 import { MatchService } from "../../core/match/match.service";
 
-const MAIN_HOTKEY_NAME = HotkeyEnum.ToggleMain;
+const MAIN_HOTKEY_NAME = HotkeyEnum.ToggleMainInGame;
 
 @Component({
     selector: "app-lobby-status-window",
@@ -27,6 +28,8 @@ export class LobbyStatusWindowComponent implements OnInit, OnDestroy {
     public gameMode?: MatchGameMode;
     public matchMap?: MatchMap;
     public mainHotkey?: Hotkey;
+
+    public readonly OverwolfWindowName = OverwolfWindowName;
 
     private destroy$ = new Subject<void>();
 

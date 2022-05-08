@@ -3,6 +3,7 @@ import { MatchLocationPhase } from "@allfather-app/app/common/match/location";
 import { MatchRosterPlayer } from "@allfather-app/app/common/match/roster-player";
 import { MatchRosterTeam } from "@allfather-app/app/common/match/roster-team";
 import { MatchState } from "@allfather-app/app/common/match/state";
+import { OverwolfWindowName } from "@allfather-app/app/common/overwolf-window";
 import { PlayerState } from "@allfather-app/app/common/player-state";
 import { generateTeamColorList } from "@allfather-app/app/common/team-color-generator";
 import { InflictionAggregator } from "@allfather-app/app/common/utilities/infliction-aggregator";
@@ -44,6 +45,9 @@ export class InflictionInsightWindowComponent implements OnInit, OnDestroy {
     }
     public opponentBannerList: OpponentBanner[] = [];
     public rgbTeamColors: string[] = generateTeamColorList(65);
+
+    public readonly OverwolfWindowName = OverwolfWindowName;
+
     private config: Configuration;
 
     private readonly inflictionAggregator;

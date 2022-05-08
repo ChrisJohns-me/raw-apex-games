@@ -44,7 +44,8 @@ import { InflictionInsightWindowService } from "../HUD/infliction-insight/window
 import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
 import { UltTimerWindowService } from "../HUD/ult-timer/windows/ult-timer-window.service";
 import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
-import { MainWindowService } from "../main/windows/main-window.service";
+import { MainDesktopWindowService } from "../main/windows/main-desktop-window.service";
+import { MainInGameWindowService } from "../main/windows/main-ingame-window.service";
 import { CaptureControllerService } from "./capture-controller.service";
 import { HotkeyService } from "./hotkey.service";
 import { HUDWindowControllerService } from "./hud-window-controller.service";
@@ -71,7 +72,8 @@ import { SystemTrayService } from "./system-tray.service";
         LegendSelectAssistWindowService,
         LocalDatabaseService,
         LocalStorageService,
-        MainWindowService,
+        MainDesktopWindowService,
+        MainInGameWindowService,
         MapRotationService,
         MatchArenasScoreboardService,
         MatchKillfeedService,
@@ -127,7 +129,8 @@ export class SingletonServiceContainerService {
         public readonly LegendSelectAssistWindowService: LegendSelectAssistWindowService,
         public readonly LocalDatabaseService: LocalDatabaseService,
         public readonly LocalStorageService: LocalStorageService,
-        public readonly MainWindowService: MainWindowService,
+        public readonly MainDesktopWindowService: MainDesktopWindowService,
+        public readonly MainInGameWindowService: MainInGameWindowService,
         public readonly MapRotationService: MapRotationService,
         public readonly MatchArenasScoreboardService: MatchArenasScoreboardService,
         public readonly MatchKillfeedService: MatchKillfeedService,
