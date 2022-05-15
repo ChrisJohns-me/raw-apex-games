@@ -5,7 +5,7 @@
     "meta": {
         "name": "Allfather [DEV]",
         "author": "MasterKriff",
-        "version": "0.1.0",
+        "version": "0.13.0",
         "minimum-overwolf-version": "0.165.0",
         "minimum-gep-version": "0.165.0",
         "description": "(Development) Allfather, give me sight!",
@@ -66,9 +66,10 @@
                 "keep_window_location": true,
                 "allow_local_file_access": true,
                 "block_top_window_navigation": true,
+                "popup_blocker": true,
                 "size": {
-                    "width": 1000,
-                    "height": 750
+                    "width": 850,
+                    "height": 675
                 },
                 "min_size": {
                     "width": 750,
@@ -91,17 +92,18 @@
                 "focus_game_takeover": "ReleaseOnHidden",
                 "focus_game_takeover_release_hotkey": "toggle_main_ingame",
                 "topmost": true,
+                "popup_blocker": true,
                 "size": {
-                    "width": 1000,
-                    "height": 750
+                    "width": 850,
+                    "height": 675
                 },
                 "min_size": {
-                    "width": 1000,
-                    "height": 750
+                    "width": 850,
+                    "height": 675
                 },
                 "max_size": {
-                    "width": 1000,
-                    "height": 750
+                    "width": 850,
+                    "height": 675
                 }
             },
             "lobby-status": {
@@ -219,6 +221,24 @@
                 "mute": true,
                 "popup_blocker": true,
                 "allow_local_file_access": true,
+                "size": {
+                    "width": 1,
+                    "height": 1
+                }
+            },
+            "match-summary": {
+                "file": "index.html",
+                "desktop_only": false,
+                "native_window": false,
+                "use_os_windowing": false,
+                "in_game_only": false,
+                "transparent": true,
+                "resizable": false,
+                "show_in_taskbar": true,
+                "restrict_to_game_bounds": true,
+                "keep_window_location": false,
+                "allow_local_file_access": true,
+                "block_top_window_navigation": true,
                 "size": {
                     "width": 1,
                     "height": 1

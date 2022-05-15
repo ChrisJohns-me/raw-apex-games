@@ -1,12 +1,9 @@
+/** Damage is not increased UNTIL the ring BEGINS to shrink. */
 export interface MatchRing {
     ringNumber: number;
-    /** Time in ms when ring is waiting to close */
-    holdStartTime: number;
-    /** Time in ms when ring is closed */
-    holdEndTime: number;
-    /** Time in ms when ring starts to shrink; since match start */
-    shrinkStartTime: number;
-    /** Time in ms when ring stops shrinking; since match start */
-    shrinkEndTime: number;
+    /** Time in seconds when ring starts to shrink; since match start */
+    startTimeSec: number;
+    /** Time in seconds when ring is closed + right before next ring shrink; since match start */
+    endTimeSec: number;
     damagePerTick: number;
 }

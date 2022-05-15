@@ -1,5 +1,6 @@
 /** Friendly naming */
 export enum RankTierName {
+    Rookie = "Rookie",
     Bronze = "Bronze",
     Silver = "Silver",
     Gold = "Gold",
@@ -19,13 +20,14 @@ export const RankTierDivisionMap: { [num: number]: RankTierDivision } = {
 };
 /** HEX Colors also found in SCSS */
 export const RankTierHEXColor: { [tierName in RankTierName]: string } = {
-    Bronze: "#8e6f63",
+    Rookie: "#75584c",
+    Bronze: "#75584c",
     Silver: "#afafb9",
-    Gold: "#d0b583",
-    Platinum: "#5ad2ff",
-    Diamond: "#1d8ff2",
+    Gold: "#b99f6f",
+    Platinum: "#549ab5",
+    Diamond: "#31a3ff",
     Master: "#7e4ad7",
-    "Apex Predator": "#ff4139",
+    "Apex Predator": "#ff5f58",
 };
 
 export interface RankTierLevel {
@@ -34,27 +36,38 @@ export interface RankTierLevel {
     division: RankTierDivision;
 }
 export const RankTierLevels: RankTierLevel[] = [
-    { minScore: 0, tier: RankTierName.Bronze, division: RankTierDivisionMap[4] },
-    { minScore: 300, tier: RankTierName.Bronze, division: RankTierDivisionMap[3] },
-    { minScore: 600, tier: RankTierName.Bronze, division: RankTierDivisionMap[2] },
-    { minScore: 900, tier: RankTierName.Bronze, division: RankTierDivisionMap[1] },
-    { minScore: 1200, tier: RankTierName.Silver, division: RankTierDivisionMap[4] },
-    { minScore: 1600, tier: RankTierName.Silver, division: RankTierDivisionMap[3] },
-    { minScore: 2000, tier: RankTierName.Silver, division: RankTierDivisionMap[2] },
-    { minScore: 2400, tier: RankTierName.Silver, division: RankTierDivisionMap[1] },
-    { minScore: 2800, tier: RankTierName.Gold, division: RankTierDivisionMap[4] },
-    { minScore: 3300, tier: RankTierName.Gold, division: RankTierDivisionMap[3] },
-    { minScore: 3800, tier: RankTierName.Gold, division: RankTierDivisionMap[2] },
-    { minScore: 4300, tier: RankTierName.Gold, division: RankTierDivisionMap[1] },
-    { minScore: 4800, tier: RankTierName.Platinum, division: RankTierDivisionMap[4] },
-    { minScore: 5400, tier: RankTierName.Platinum, division: RankTierDivisionMap[3] },
-    { minScore: 6000, tier: RankTierName.Platinum, division: RankTierDivisionMap[2] },
-    { minScore: 6600, tier: RankTierName.Platinum, division: RankTierDivisionMap[1] },
-    { minScore: 7200, tier: RankTierName.Diamond, division: RankTierDivisionMap[4] },
-    { minScore: 7900, tier: RankTierName.Diamond, division: RankTierDivisionMap[3] },
-    { minScore: 8600, tier: RankTierName.Diamond, division: RankTierDivisionMap[2] },
-    { minScore: 9300, tier: RankTierName.Diamond, division: RankTierDivisionMap[1] },
-    { minScore: 10000, tier: RankTierName.Master, division: RankTierDivisionMap[0] },
+    // Rookie
+    { minScore: 0, tier: RankTierName.Rookie, division: RankTierDivisionMap[4] },
+    { minScore: 250, tier: RankTierName.Rookie, division: RankTierDivisionMap[3] },
+    { minScore: 500, tier: RankTierName.Rookie, division: RankTierDivisionMap[2] },
+    { minScore: 750, tier: RankTierName.Rookie, division: RankTierDivisionMap[1] },
+    // Bronze
+    { minScore: 1000, tier: RankTierName.Bronze, division: RankTierDivisionMap[4] },
+    { minScore: 1500, tier: RankTierName.Bronze, division: RankTierDivisionMap[3] },
+    { minScore: 2000, tier: RankTierName.Bronze, division: RankTierDivisionMap[2] },
+    { minScore: 2500, tier: RankTierName.Bronze, division: RankTierDivisionMap[1] },
+    // Silver
+    { minScore: 3000, tier: RankTierName.Silver, division: RankTierDivisionMap[4] },
+    { minScore: 3600, tier: RankTierName.Silver, division: RankTierDivisionMap[3] },
+    { minScore: 4200, tier: RankTierName.Silver, division: RankTierDivisionMap[2] },
+    { minScore: 4800, tier: RankTierName.Silver, division: RankTierDivisionMap[1] },
+    // Gold
+    { minScore: 5400, tier: RankTierName.Gold, division: RankTierDivisionMap[4] },
+    { minScore: 6100, tier: RankTierName.Gold, division: RankTierDivisionMap[3] },
+    { minScore: 6800, tier: RankTierName.Gold, division: RankTierDivisionMap[2] },
+    { minScore: 7500, tier: RankTierName.Gold, division: RankTierDivisionMap[1] },
+    // Platinum
+    { minScore: 8200, tier: RankTierName.Platinum, division: RankTierDivisionMap[4] },
+    { minScore: 9000, tier: RankTierName.Platinum, division: RankTierDivisionMap[3] },
+    { minScore: 9800, tier: RankTierName.Platinum, division: RankTierDivisionMap[2] },
+    { minScore: 10600, tier: RankTierName.Platinum, division: RankTierDivisionMap[1] },
+    // Diamond
+    { minScore: 11400, tier: RankTierName.Diamond, division: RankTierDivisionMap[4] },
+    { minScore: 12300, tier: RankTierName.Diamond, division: RankTierDivisionMap[3] },
+    { minScore: 13200, tier: RankTierName.Diamond, division: RankTierDivisionMap[2] },
+    { minScore: 14100, tier: RankTierName.Diamond, division: RankTierDivisionMap[1] },
+    // Master
+    { minScore: 15000, tier: RankTierName.Master, division: RankTierDivisionMap[0] },
     { minScore: Infinity, tier: RankTierName.ApexPredator, division: RankTierDivisionMap[0] }, // Indeterminable by score
 ].sort((a, b) => a.minScore - b.minScore);
 
@@ -93,7 +106,7 @@ export class Rank {
         } else if (this._givenTierName) {
             return this._givenTierName;
         }
-        return RankTierName.Bronze;
+        return RankTierName.Rookie;
     }
 
     /** Division based on score OR givenTierDivision OR defaults to default division */
@@ -141,8 +154,10 @@ export class Rank {
             case "apexpredator":
                 return RankTierName.ApexPredator;
             case "bronze":
-            default:
                 return RankTierName.Bronze;
+            case "rookie":
+            default:
+                return RankTierName.Rookie;
         }
     }
 

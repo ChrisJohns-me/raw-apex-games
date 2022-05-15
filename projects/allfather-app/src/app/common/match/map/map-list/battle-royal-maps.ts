@@ -178,7 +178,7 @@ export const MatchMapListBattleRoyalMaps = [
     new MatchMap({
         mapName: MatchMapFriendlyName.StormPoint,
         mapGenericId: MatchMapGenericId.StormPoint,
-        mapId: "mp_rr_stormpoint",
+        mapId: "mp_rr_tropic_island",
         isBattleRoyaleMap: true,
         isArenasMap: false,
         isControlMap: false,
@@ -190,6 +190,34 @@ export const MatchMapListBattleRoyalMaps = [
         activeDates: [
             {
                 from: new Date("Nov 02, 2021"),
+                to: new Date("May 09, 2022"),
+            },
+        ],
+        zStartPos: 254,
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -506,
+                xEnd: 522,
+                yStart: -511,
+                yEnd: 525,
+            },
+        },
+    }),
+    new MatchMap({
+        mapName: MatchMapFriendlyName.StormPoint,
+        mapGenericId: MatchMapGenericId.StormPoint,
+        mapId: "mp_rr_tropic_island_mu1",
+        isBattleRoyaleMap: true,
+        isArenasMap: false,
+        isControlMap: false,
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
+        activeDates: [
+            {
+                from: new Date("May 10, 2022"),
             },
         ],
         zStartPos: 254,

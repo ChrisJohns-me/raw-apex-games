@@ -22,6 +22,7 @@ import { resetToLobby } from "./simulations/reset-to-lobby";
 import { s12Control } from "./simulations/s12-control";
 import { s12Flashpoint } from "./simulations/s12-flashpoint";
 import { s12Quick } from "./simulations/s12-quick";
+import { s13GameBroke } from "./simulations/s13-game-broke";
 import { stupidGame1Full } from "./simulations/stupid-game1";
 import { valkUltGame } from "./simulations/valk-ult-game";
 
@@ -137,6 +138,11 @@ export class GameSimulatorComponent implements OnDestroy {
 
     public onPerformLegendSelectGameClick(speedAdjust?: number): void {
         const commands = this.logToCommands(legendSelectEvents());
+        this.runCommands(commands, speedAdjust);
+    }
+
+    public onPerformS13GameBrokeClick(speedAdjust?: number): void {
+        const commands = this.logToCommands(s13GameBroke());
         this.runCommands(commands, speedAdjust);
     }
 

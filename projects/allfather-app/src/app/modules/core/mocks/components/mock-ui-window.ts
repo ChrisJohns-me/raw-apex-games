@@ -58,4 +58,8 @@ export class MockOverwolfWindow implements MockedClass<OverwolfWindow> {
     public getPosition(): Observable<{ top: number; right: number }> {
         return of();
     }
+
+    public isWindowVisibleToUser(): Observable<"hidden" | "full" | "partial"> {
+        return of();
+    }
 }

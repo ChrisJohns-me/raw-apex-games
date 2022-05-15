@@ -24,6 +24,7 @@ import {
     ChartRankGoldHEXColor,
     ChartRankMasterHEXColor,
     ChartRankPlatinumHEXColor,
+    ChartRankRookieHEXColor,
     ChartRankSilverHEXColor,
 } from "./chart";
 
@@ -141,7 +142,8 @@ export class RankedChartComponent implements AfterViewInit, OnChanges {
                     borderColor: (ctx: ScriptableLineSegmentContext) => {
                         const ctxRankScore = ctx.p0.parsed.y;
                         const ctxRankTierName: RankTierName = Rank.getTierNameFromScore(ctxRankScore);
-                        if (ctxRankTierName === RankTierName.Bronze) return ChartRankBronzeHEXColor;
+                        if (ctxRankTierName === RankTierName.Rookie) return ChartRankRookieHEXColor;
+                        else if (ctxRankTierName === RankTierName.Bronze) return ChartRankBronzeHEXColor;
                         else if (ctxRankTierName === RankTierName.Silver) return ChartRankSilverHEXColor;
                         else if (ctxRankTierName === RankTierName.Gold) return ChartRankGoldHEXColor;
                         else if (ctxRankTierName === RankTierName.Platinum) return ChartRankPlatinumHEXColor;

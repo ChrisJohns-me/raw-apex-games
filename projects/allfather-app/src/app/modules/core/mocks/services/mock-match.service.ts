@@ -38,6 +38,10 @@ export class MockMatchService implements MockedClass<MatchService> {
         return of();
     }
 
+    public getLatestMatchData$(): Observable<Optional<MatchDataStore>> {
+        return of();
+    }
+
     public getLatestMatchDataByPlayerName$(playerName: string): Observable<Optional<MatchDataStore>> {
         return of();
     }

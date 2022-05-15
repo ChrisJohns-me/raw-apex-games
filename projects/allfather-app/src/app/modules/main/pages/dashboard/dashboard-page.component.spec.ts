@@ -29,11 +29,11 @@ import { PlayerAccountStatsService } from "@allfather-app/app/modules/core/playe
 import { PlayerLocalStatsService } from "@allfather-app/app/modules/core/player-local-stats.service";
 import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
+import { ComplimentaryWeaponsComponent } from "@allfather-app/app/shared/components/complimentary-weapons/complimentary-weapons.component";
 import { WelcomeContentComponent } from "@allfather-app/app/shared/components/welcome-content/welcome-content.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { AccountStatsDisplayComponent } from "./components/account-stats-display.component";
 import { ComplimentaryLegendsComponent } from "./components/complimentary-legends.component";
-import { ComplimentaryWeaponsComponent } from "./components/complimentary-weapons.component";
 import { LegendIconsBoardComponent } from "./components/legend-icons-board.component";
 import { MapRotationDisplayComponent } from "./components/map-rotation-display.component";
 import { DashboardPageComponent } from "./dashboard-page.component";

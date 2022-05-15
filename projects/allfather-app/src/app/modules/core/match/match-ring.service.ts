@@ -61,23 +61,24 @@ export class MatchRingService extends BaseService {
         combineLatest([matchStart$, refresh$])
             .pipe(
                 map(([matchEvent]) => this.timeSinceMatchStart(matchEvent)),
-                map((timeSinceMatchStartMs) => this.getCurrentRing(timeSinceMatchStartMs))
+                map((timeSinceMatchStartSec) => this.getCurrentRing(timeSinceMatchStartSec))
             )
             .subscribe((currentRing) => {
                 if (currentRing && currentRing !== this.currentBRRing$.value) this.currentBRRing$.next(currentRing);
             });
     }
 
+    /** Time in seconds */
     private timeSinceMatchStart(matchEvent: MatchStateChangedEvent): number {
         const now = new Date().getTime();
         if (!matchEvent.startDate) return 0;
         const matchStartTime = matchEvent.startDate.getTime();
         if (now < matchStartTime) return 0;
         const timeSinceMatchStart = now - matchStartTime;
-        return timeSinceMatchStart;
+        return Math.round(timeSinceMatchStart / 1000);
     }
 
-    private getCurrentRing(timeSinceMatchStartMs: number): Optional<MatchRing> {
-        return this.allBRRings.find((ring) => ring.holdStartTime <= timeSinceMatchStartMs && ring.shrinkEndTime >= timeSinceMatchStartMs);
+    private getCurrentRing(timeSinceMatchStartSec: number): Optional<MatchRing> {
+        return this.allBRRings.find((ring) => ring.startTimeSec <= timeSinceMatchStartSec && ring.endTimeSec >= timeSinceMatchStartSec);
     }
 }

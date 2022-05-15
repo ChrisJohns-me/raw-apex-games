@@ -87,7 +87,7 @@
                             "budgets": [
                                 {
                                     "type": "initial",
-                                    "maximumWarning": "2.5mb",
+                                    "maximumWarning": "3mb",
                                     "maximumError": "5mb"
                                 },
                                 {
@@ -161,18 +161,19 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "dist/allfatherWeb",
+                        "outputPath": "dist/allfatherWeb_dev",
                         "index": "projects/allfather-web/src/index.html",
                         "main": "projects/allfather-web/src/main.ts",
                         "polyfills": "projects/allfather-web/src/polyfills.ts",
                         "tsConfig": "projects/allfather-web/tsconfig.app.json",
                         "aot": true,
-                        "assets": ["projects/allfather-web/src/assets/fonts"],
+                        "assets": ["projects/allfather-web/src/assets/images", "projects/allfather-web/src/assets/fonts"],
                         "styles": ["projects/allfather-web/src/styles.scss"],
                         "scripts": []
                     },
                     "configurations": {
                         "production": {
+                            "outputPath": "dist/allfatherWeb",
                             "fileReplacements": [
                                 {
                                     "replace": "projects/allfather-web/src/environments/environment.ts",
@@ -198,6 +199,19 @@
                                     "maximumError": "4kb"
                                 }
                             ]
+                        }
+                    }
+                },
+                "serve": {
+                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "options": {
+                        "browserTarget": "allfatherWeb:build",
+                        "open": true,
+                        "liveReload": true
+                    },
+                    "configurations": {
+                        "production": {
+                            "browserTarget": "allfatherWeb:build:production"
                         }
                     }
                 },

@@ -21,11 +21,11 @@ import { PlayerService } from "@allfather-app/app/modules/core/player.service";
 import { ReportingService } from "@allfather-app/app/modules/core/reporting/reporting.service";
 import { GameModesDropdownFilterComponent } from "@allfather-app/app/shared/components/game-modes-dropdown-filter/game-modes-dropdown-filter.component";
 import { LegendsDropdownFilterComponent } from "@allfather-app/app/shared/components/legends-dropdown-filter/legends-dropdown-filter.component";
+import { MapHeatmapComponent } from "@allfather-app/app/shared/components/map-heatmap/map-heatmap.component";
 import { MapsDropdownFilterComponent } from "@allfather-app/app/shared/components/maps-dropdown-filter/maps-dropdown-filter.component";
 import { MatchListingComponent } from "@allfather-app/app/shared/components/match-listing/match-listing.component";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";
-import { MapHeatmapComponent } from "./components/map-heatmap.component";
 import { MapExplorerPageComponent } from "./map-explorer-page.component";
 
 describe("MapExplorerPageComponent", () => {

@@ -65,23 +65,17 @@
                                 "ringNumber": {
                                     "type": "number"
                                 },
-                                "holdStartTime": {
+                                "startTimeSec": {
                                     "type": "number"
                                 },
-                                "holdEndTime": {
-                                    "type": "number"
-                                },
-                                "shrinkStartTime": {
-                                    "type": "number"
-                                },
-                                "shrinkEndTime": {
+                                "endTimeSec": {
                                     "type": "number"
                                 },
                                 "damagePerTick": {
                                     "type": "number"
                                 }
                             },
-                            "required": ["ringNumber", "holdStartTime", "holdEndTime", "shrinkStartTime", "shrinkEndTime", "damagePerTick"]
+                            "required": ["ringNumber", "startTimeSec", "endTimeSec", "damagePerTick"]
                         }
                     ]
                 }
@@ -122,6 +116,9 @@
                     "type": "boolean"
                 },
                 "enableReticleHelperWindow": {
+                    "type": "boolean"
+                },
+                "enableMatchSummaryWindow": {
                     "type": "boolean"
                 },
                 "enableVideoCapture": {
@@ -202,6 +199,7 @@
                 "enableUltTimerWindow",
                 "enableInflictionInsightWindow",
                 "enableReticleHelperWindow",
+                "enableMatchSummaryWindow",
                 "inflictionInsight",
                 "legendSelectAssist",
                 "reticleHelper"
@@ -328,8 +326,12 @@
         },
         "general": {
             "type": "object",
-            "properties": {},
-            "required": []
+            "properties": {
+                "enableMatchSummaryAd": {
+                    "type": "boolean"
+                }
+            },
+            "required": ["enableMatchSummaryAd"]
         },
         "overwolfQuirks": {
             "type": "object"

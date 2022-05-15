@@ -145,7 +145,7 @@ export class PlayerAccountStatsMozambiquehereDTO {
         if (!input) return;
         return {
             rankScore: cleanInt(input.rankScore),
-            rankName: input.rankName ? this.sanitizeNonWordCharacters(input.rankName) : "Bronze",
+            rankName: input.rankName ? this.sanitizeNonWordCharacters(input.rankName) : "Rookie",
             rankDiv: input.rankDiv ? cleanInt(input.rankDiv) : 4,
             ladderPosPlatform: cleanInt(input.ladderPosPlatform),
             rankImg: input.rankImg ? ɵ_sanitizeUrl(input.rankImg) : "",

@@ -44,6 +44,7 @@ export class MapHeatmapComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     public set primaryCoordinates(value: MatchMapCoordinates[]) {
         this._primaryCoordinates = value;
+        this.initGraph();
         this.drawAllGraphs();
         this.refreshUI();
     }
@@ -53,13 +54,32 @@ export class MapHeatmapComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     public set secondaryCoordinates(value: MatchMapCoordinates[]) {
         this._secondaryCoordinates = value;
+        this.initGraph();
         this.drawAllGraphs();
         this.refreshUI();
     }
     //#endregion
 
-    @ViewChild("mapOverlayGraphPrimary") public mapOverlayGraphRefPrimary?: ElementRef<HTMLDivElement>;
-    @ViewChild("mapOverlayGraphSecondary") public mapOverlayGraphRefSecondary?: ElementRef<HTMLDivElement>;
+    @ViewChild("mapOverlayGraphPrimary")
+    public set mapOverlayGraphRefPrimary(value: Optional<ElementRef<HTMLDivElement>>) {
+        this._mapOverlayGraphRefPrimary = value;
+        this.initGraph();
+    }
+    public get mapOverlayGraphRefPrimary(): Optional<ElementRef<HTMLDivElement>> {
+        return this._mapOverlayGraphRefPrimary;
+    }
+    private _mapOverlayGraphRefPrimary: Optional<ElementRef<HTMLDivElement>>;
+
+    @ViewChild("mapOverlayGraphSecondary")
+    public set mapOverlayGraphRefSecondary(value: Optional<ElementRef<HTMLDivElement>>) {
+        this._mapOverlayGraphRefSecondary = value;
+        this.initGraph();
+    }
+    public get mapOverlayGraphRefSecondary(): Optional<ElementRef<HTMLDivElement>> {
+        return this._mapOverlayGraphRefSecondary;
+    }
+    private _mapOverlayGraphRefSecondary: Optional<ElementRef<HTMLDivElement>>;
+
     public get isLoadingMapImage(): boolean {
         return this._isLoadingMapImage;
     }
@@ -116,6 +136,10 @@ export class MapHeatmapComponent implements OnInit, AfterViewInit, OnDestroy {
     //#endregion
 
     private initGraph(): void {
+        if (this.graphSvgPrimary || this.graphSvgSecondary) {
+            console.log(`[MapHeatmapComponent] initGraph(): Graph already initialized; skipping`);
+            return;
+        }
         if (!this.mapOverlayGraphRefPrimary?.nativeElement || !this.mapOverlayGraphRefSecondary?.nativeElement) return;
         this.graphSvgPrimary = d3
             .select(this.mapOverlayGraphRefPrimary.nativeElement)
@@ -166,7 +190,7 @@ export class MapHeatmapComponent implements OnInit, AfterViewInit, OnDestroy {
         customImageAxisScale?: MatchMapImageAxisScale,
         customHeatSize?: number
     ): void {
-        if (!elementRef?.nativeElement) return void console.error(`Map graph element was not found.`);
+        if (!elementRef?.nativeElement) return void console.log(`[MapHeatmapComponent] drawGraph(): Map graph element was not found.`);
 
         const xStart = customImageAxisScale?.xStart ?? this.map?.chartConfig?.imageAxisScale?.xStart ?? -500,
             xEnd = customImageAxisScale?.xEnd ?? this.map?.chartConfig?.imageAxisScale?.xEnd ?? 500,

@@ -13,6 +13,7 @@ import { GameModeLineupChartComponent } from "./components/game-mode-lineup-char
 import { GameModePlayrateChartComponent } from "./components/game-mode-playrate-chart.component";
 import { LegendLineupChartComponent } from "./components/legend-lineup-chart.component";
 import { LegendPickrateChartComponent } from "./components/legend-pickrate-chart.component";
+import { RankedChartComponent } from "./components/ranked-chart.component";
 import { StatsChartComponent } from "./components/stats-chart.component";
 
 describe("ChartingPageComponent", () => {
@@ -33,6 +34,7 @@ describe("ChartingPageComponent", () => {
                 GameModePlayrateChartComponent,
                 GameModeLineupChartComponent,
                 MockFullHeightDirective,
+                RankedChartComponent,
             ],
             providers: [
                 { provide: MatchService, useClass: MockMatchService },

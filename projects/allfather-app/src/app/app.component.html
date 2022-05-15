@@ -11,14 +11,15 @@
             *ngSwitchCase="OverwolfWindowName.MainInGame"
             [overwolfWindowName]="OverwolfWindowName.MainInGame"
         ></app-main-window>
-        <app-hud-infliction-insight-window *ngSwitchCase="OverwolfWindowName.HUDInflictionInsight"></app-hud-infliction-insight-window>
         <app-hud-healing-helper-window *ngSwitchCase="OverwolfWindowName.HUDHealingHelper"></app-hud-healing-helper-window>
+        <app-hud-infliction-insight-window *ngSwitchCase="OverwolfWindowName.HUDInflictionInsight"></app-hud-infliction-insight-window>
         <app-hud-match-timer-window *ngSwitchCase="OverwolfWindowName.HUDMatchTimer"></app-hud-match-timer-window>
         <app-hud-mini-inventory-window *ngSwitchCase="OverwolfWindowName.HUDMiniInventory"></app-hud-mini-inventory-window>
+        <app-hud-reticle-helper-window *ngSwitchCase="OverwolfWindowName.HUDReticleHelper"></app-hud-reticle-helper-window>
         <app-hud-ult-timer-window *ngSwitchCase="OverwolfWindowName.HUDUltTimer"></app-hud-ult-timer-window>
         <app-legend-select-assist-window *ngSwitchCase="OverwolfWindowName.LegendSelectAssist"></app-legend-select-assist-window>
         <app-lobby-status-window *ngSwitchCase="OverwolfWindowName.LobbyStatus"></app-lobby-status-window>
-        <app-hud-reticle-helper-window *ngSwitchCase="OverwolfWindowName.HUDReticleHelper"></app-hud-reticle-helper-window>
+        <app-match-summary-window *ngSwitchCase="OverwolfWindowName.MatchSummary"></app-match-summary-window>
 
         <div *ngSwitchDefault>Could not match window with name: {{ winInfo.name }}</div>
     </ng-container>

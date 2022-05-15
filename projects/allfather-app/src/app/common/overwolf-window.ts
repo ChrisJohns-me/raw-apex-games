@@ -1,5 +1,5 @@
 import { combineLatest, from, Observable, of } from "rxjs";
-import { filter, map, mergeMap, switchMap, tap } from "rxjs/operators";
+import { filter, map, mergeMap, switchMap } from "rxjs/operators";
 import { OWDisplay, OWWindowInfo } from "../modules/core/overwolf";
 
 type WindowIdResultCallback = overwolf.CallbackFunction<overwolf.windows.WindowIdResult>;
@@ -32,6 +32,7 @@ export enum OverwolfWindowName {
     LobbyStatus = "lobby-status",
     MainDesktop = "main-desktop",
     MainInGame = "main-ingame",
+    MatchSummary = "match-summary",
 }
 
 export class OverwolfWindow {
@@ -220,6 +221,20 @@ export class OverwolfWindow {
 
     public getPosition(): Observable<{ top: number; right: number }> {
         return this.obtain().pipe(map((window) => ({ top: window.top, right: window.left })));
+    }
+
+    public isWindowVisibleToUser(): Observable<"hidden" | "full" | "partial"> {
+        const promise = new Promise<"hidden" | "full" | "partial">((resolve, reject) => {
+            overwolf.windows.isWindowVisibleToUser((result) => {
+                if (result.success) {
+                    resolve(result.visible);
+                } else {
+                    reject(`OverwolfWindow.isWindowVisibleToUser() error: ${result.error}`);
+                    reject(result.error);
+                }
+            });
+        });
+        return from(promise);
     }
 
     /** Internal methods */

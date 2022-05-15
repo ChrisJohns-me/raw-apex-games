@@ -148,7 +148,7 @@ export class ReportingService extends BaseService implements OnDestroy {
                 });
 
                 if (allFinished) {
-                    console.debug(
+                    console.log(
                         `[ReportingService] [Reporting Engines] ` +
                             `All Finished (${numFailed} Failed, ${numSucceeded} Succeeded, ${numSkipped} Skipped)`
                     );

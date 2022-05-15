@@ -24,6 +24,7 @@ import { UltimateTimerType } from "../HUD/ult-timer/windows/ult-timer-window.com
 import { UltTimerWindowService } from "../HUD/ult-timer/windows/ult-timer-window.service";
 import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
 import { LobbyStatusWindowService } from "../lobby-status/windows/lobby-status-window.service";
+import { MatchSummaryWindowService } from "../match-summary/windows/match-summary-window.service";
 
 type HUDTriggers = {
     windowService: { open: () => Observable<void>; close: () => Observable<void> };
@@ -43,6 +44,7 @@ type HUDTriggers = {
         LegendSelectAssistWindowService,
         LobbyStatusWindowService,
         MatchService,
+        MatchSummaryWindowService,
         MatchTimerWindowService,
         MiniInventoryWindowService,
         OverwolfProfileService,
@@ -58,6 +60,13 @@ export class HUDWindowControllerService extends BaseService {
             windowService: this.lobbyStatusWindow,
             requiredGamePhases: [GamePhase.Lobby],
             requiredConfigurations: [],
+            requiredSettings: [],
+            requiredGameModes: [],
+        },
+        {
+            windowService: this.matchSummaryWindow,
+            requiredGamePhases: [GamePhase.Lobby],
+            requiredConfigurations: [(config) => config.featureFlags.enableMatchSummaryWindow],
             requiredSettings: [],
             requiredGameModes: [],
         },
@@ -172,6 +181,7 @@ export class HUDWindowControllerService extends BaseService {
         private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
         private readonly lobbyStatusWindow: LobbyStatusWindowService,
         private readonly match: MatchService,
+        private readonly matchSummaryWindow: MatchSummaryWindowService,
         private readonly matchTimerWindow: MatchTimerWindowService,
         private readonly miniInventoryWindow: MiniInventoryWindowService,
         private readonly overwolfProfile: OverwolfProfileService,

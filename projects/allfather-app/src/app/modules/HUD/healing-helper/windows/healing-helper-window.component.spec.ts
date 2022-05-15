@@ -330,15 +330,15 @@ describe("HealingHelperWindowComponent", () => {
             const expected: HealingItemHealthTime[] = [
                 {
                     id: "syringe",
-                    neededHealthTime: 6.667999999999999,
+                    neededHealthTime: 6.66,
                 },
                 {
                     id: "med_kit",
-                    neededHealthTime: 10.668,
+                    neededHealthTime: 10.66,
                 },
                 {
                     id: "phoenix_kit",
-                    neededHealthTime: 13.334666666666665,
+                    neededHealthTime: 13.33,
                 },
             ];
 
@@ -346,7 +346,12 @@ describe("HealingHelperWindowComponent", () => {
             const actual = sut.availableHealingItems;
 
             // Assert
-            expect(actual).toEqual(expected);
+            expected.forEach((expectedItem) => {
+                const actualItem = actual.find((actualItem) => actualItem.id === expectedItem.id);
+                expect(actualItem).toBeDefined();
+                expect(actualItem?.id).toBe(expectedItem.id);
+                expect(actualItem?.neededHealthTime).toBeCloseTo(expectedItem.neededHealthTime, 0);
+            });
         }));
 
         it("returns some healing items for ring 1", fakeAsync(() => {
@@ -360,18 +365,15 @@ describe("HealingHelperWindowComponent", () => {
             };
             matchPlayerInventoryService.myInventorySlots$.next(inventorySlots);
 
-            const expected: HealingItemHealthTime[] = [
-                {
-                    id: "syringe",
-                    neededHealthTime: 6.667999999999999,
-                },
-            ];
-
             // Act
             const actual = sut.availableHealingItems;
+            const actualItem = actual.find((actualItem) => actualItem.id === "syringe");
 
             // Assert
-            expect(actual).toEqual(expected);
+            expect(actual).toBeDefined();
+            expect(actualItem).toBeDefined();
+            expect(actualItem?.id).toEqual("syringe");
+            expect(actualItem?.neededHealthTime).toBeCloseTo(6.66, 0);
         }));
 
         it("returns healing items for ring 6", fakeAsync(() => {
@@ -385,18 +387,15 @@ describe("HealingHelperWindowComponent", () => {
             };
             matchPlayerInventoryService.myInventorySlots$.next(inventorySlots);
 
-            const expected: HealingItemHealthTime[] = [
-                {
-                    id: "syringe",
-                    neededHealthTime: 83.35,
-                },
-            ];
-
             // Act
             const actual = sut.availableHealingItems;
+            const actualItem = actual.find((actualItem) => actualItem.id === "syringe");
 
             // Assert
-            expect(actual).toEqual(expected);
+            expect(actual).toBeDefined();
+            expect(actualItem).toBeDefined();
+            expect(actualItem?.id).toEqual("syringe");
+            expect(actualItem?.neededHealthTime).toBeCloseTo(83.35, 0);
         }));
     });
 

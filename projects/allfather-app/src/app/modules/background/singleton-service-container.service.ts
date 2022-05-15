@@ -46,6 +46,7 @@ import { UltTimerWindowService } from "../HUD/ult-timer/windows/ult-timer-window
 import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
 import { MainDesktopWindowService } from "../main/windows/main-desktop-window.service";
 import { MainInGameWindowService } from "../main/windows/main-ingame-window.service";
+import { MatchSummaryWindowService } from "../match-summary/windows/match-summary-window.service";
 import { CaptureControllerService } from "./capture-controller.service";
 import { HotkeyService } from "./hotkey.service";
 import { HUDWindowControllerService } from "./hud-window-controller.service";
@@ -89,6 +90,7 @@ import { SystemTrayService } from "./system-tray.service";
         MatchRingService,
         MatchRosterService,
         MatchService,
+        MatchSummaryWindowService,
         MatchTimerWindowService,
         MyPlayerAccountStatsService,
         OverwolfExtensionsService,
@@ -146,6 +148,7 @@ export class SingletonServiceContainerService {
         public readonly MatchRingService: MatchRingService,
         public readonly MatchRosterService: MatchRosterService,
         public readonly MatchService: MatchService,
+        public readonly MatchSummaryWindowService: MatchSummaryWindowService,
         public readonly MatchTimerWindowService: MatchTimerWindowService,
         public readonly MyPlayerAccountStatsService: MyPlayerAccountStatsService,
         public readonly OverwolfExtensionsService: OverwolfExtensionsService,

@@ -1,0 +1,117 @@
+<app-ui-container
+    [overwolfWindowName]="OverwolfWindowName.MatchSummary"
+    [isDesktopWindow]="false"
+    [isContentDraggable]="false"
+    primaryTitle="Match Summary"
+    [position]="{ xPercent: 0, yPercent: 0.035, xAnchor: 'right', yAnchor: 'middle' }"
+    [size]="{ widthPercent: 0.39, heightPercent: 0.7 }"
+    [injectBootstrapCSS]="true"
+>
+    <div class="match-summary-container" *ngIf="isVisible && latestMatch" @slideInLeft>
+        <!-- #region Match Summary Title -->
+        <div class="text-center">
+            <h1>
+                <img class="logo" src="./../../../../assets/images/allfather_border_logo_md.webp" alt="" />
+                Match Summary
+            </h1>
+        </div>
+        <!-- #endregion Match Summary Title -->
+
+        <!-- #region Stats -->
+        <div class="row justify-content-center overflow-hidden" style="max-height: 10%">
+            <div class="col-2 align-middle text-center">
+                <div *ngIf="!latestMatch.placement && !latestMatch.maxPlacement">N/A</div>
+
+                <h3 class="data-digit-primary mb-0" *ngIf="latestMatch.placement || latestMatch.maxPlacement">
+                    {{ latestMatch.placement ?? "-" }}
+                    <sub class="max-placement-sign text-muted" *ngIf="latestMatch.maxPlacement">/</sub>
+                    <sub class="max-placement-digit text-muted" *ngIf="latestMatch.maxPlacement">{{ latestMatch.maxPlacement }}</sub>
+                </h3>
+                <small class="text-muted">placement</small>
+            </div>
+            <div class="col-2 align-middle text-center">
+                <h3 class="data-digit mb-1">{{ latestMatch.eliminations ?? 0 | number: "1.0-0" }}</h3>
+                <small class="text-muted">kills</small>
+            </div>
+            <div class="col-2 align-middle text-center">
+                <h3 class="data-digit mb-1">{{ latestMatch.knockdowns ?? 0 | number: "1.0-0" }}</h3>
+                <small class="text-muted">knockdowns</small>
+            </div>
+            <div class="col-2 align-middle text-center">
+                <h3 class="data-digit mb-1">{{ latestMatch.assists ?? 0 | number: "1.0-0" }}</h3>
+                <small class="text-muted">assists</small>
+            </div>
+            <div class="col-2 align-middle text-center">
+                <h3 class="data-digit mb-1">{{ latestMatch.damage ?? 0 | number: "1.0-0" }}</h3>
+                <small class="text-muted">damage</small>
+            </div>
+            <div class="col-2 align-middle text-center">
+                <h3 class="data-digit mb-1">{{ distanceTraveled ?? 0 | number: "1.0-0" }}m</h3>
+                <small class="text-muted">distance</small>
+            </div>
+        </div>
+        <!-- #endregion Stats -->
+
+        <div class="row justify-content-evenly m-4 overflow-hidden" style="max-height: 50%">
+            <!-- #region Travel Heatmap -->
+            <div class="col-6">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h6 class="card-title">Travel Heatmap</h6>
+                    </div>
+
+                    <div class="card-content">
+                        <app-map-heatmap [map]="latestMatchMap" [primaryCoordinates]="travelCoordinatesList"></app-map-heatmap>
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion Travel Heatmap -->
+            <!-- #region Elimination Heatmap -->
+            <div class="col-6" *ngIf="eliminationCoordinatesList.length > 0">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h6 class="card-title">Kill Heatmap</h6>
+                    </div>
+
+                    <div class="card-content">
+                        <app-map-heatmap [map]="latestMatchMap" [primaryCoordinates]="eliminationCoordinatesList"></app-map-heatmap>
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion Elimination Heatmap -->
+        </div>
+
+        <div class="row justify-content-evenly m-4">
+            <div class="col-6">
+                <div class="row">
+                    <!-- #region Best Weapons -->
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h6 class="card-title">Best Weapons</h6>
+                            </div>
+                            <div class="card-content">
+                                <app-complimentary-weapons
+                                    *ngIf="weaponEliminations.length"
+                                    [complimentaryWeaponsAvgEliminations]="weaponEliminations"
+                                ></app-complimentary-weapons>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- #endregion Best Weapons -->
+                    <div class="col-12 mt-5">
+                        <button (click)="onDismissClick()" class="btn btn-lg btn-outline-danger w-100" type="button">Dismiss</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- #region Video Advertisement -->
+            <div class="col-6">
+                <div *ngIf="showAd && !aXNWSVA" class="video-ad m-auto">
+                    <div #videoAd></div>
+                </div>
+            </div>
+            <!-- #endregion Video Advertisement -->
+        </div>
+    </div>
+</app-ui-container>

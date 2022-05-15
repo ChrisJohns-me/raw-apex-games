@@ -1,4 +1,4 @@
-@import "./reset";
+@import "./../../../../shared/assets/styles/reset";
 
 /**
  * Appears on all user-interfaces
@@ -20,4 +20,14 @@ body {
 
 .clickable {
     cursor: pointer;
+}
+
+/** Override text selection */
+* {
+    user-select: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
 }

@@ -13,6 +13,6 @@ export class RankIconComponent {
 
     public generateImageFilename(): string {
         const extension = "webp";
-        return `${this.rank?.tierName.toLowerCase() ?? "bronze"}.${extension}`;
+        return `${this.rank?.tierName.toLowerCase() ?? "rookie"}.${extension}`;
     }
 }

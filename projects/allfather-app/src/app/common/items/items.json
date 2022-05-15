@@ -61,88 +61,88 @@
             "id": "ammo_light",
             "friendlyName": "Light Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "121$"
+            "inGameInventoryIdRegExPattern": "124$"
         },
         {
             "id": "ammo_energy",
             "friendlyName": "Energy Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "122$"
+            "inGameInventoryIdRegExPattern": "125$"
         },
         {
             "id": "ammo_shotgun",
             "friendlyName": "Shotgun Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "123$"
+            "inGameInventoryIdRegExPattern": "126$"
         },
         {
             "id": "ammo_heavy",
             "friendlyName": "Heavy Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "124$"
+            "inGameInventoryIdRegExPattern": "127$"
         },
         {
             "id": "ammo_sniper",
             "friendlyName": "Sniper Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "125$"
+            "inGameInventoryIdRegExPattern": "128$"
         },
         {
             "id": "ammo_arrows",
             "friendlyName": "Arrow Ammo",
             "inGameInfoNameRegExPattern": null,
-            "inGameInventoryIdRegExPattern": "126$"
+            "inGameInventoryIdRegExPattern": "129$"
         },
         {
             "id": "ultimate_accelerant",
             "friendlyName": "Ultimate Accelerant",
-            "inGameInventoryIdRegExPattern": "162$"
+            "inGameInventoryIdRegExPattern": "164$"
         },
         {
             "id": "phoenix_kit",
             "friendlyName": "Phoenix Kit",
-            "inGameInventoryIdRegExPattern": "163$"
+            "inGameInventoryIdRegExPattern": "164$"
         },
         {
             "id": "med_kit",
             "friendlyName": "Med Kit",
-            "inGameInventoryIdRegExPattern": "164$"
+            "inGameInventoryIdRegExPattern": "166$"
         },
         {
             "id": "syringe",
             "friendlyName": "Syringe",
-            "inGameInventoryIdRegExPattern": "165$"
+            "inGameInventoryIdRegExPattern": "167$"
         },
         {
             "id": "shield_battery",
             "friendlyName": "Shield Battery",
-            "inGameInventoryIdRegExPattern": "166$"
+            "inGameInventoryIdRegExPattern": "168$"
         },
         {
             "id": "shield_cell",
             "friendlyName": "Shield Cell",
-            "inGameInventoryIdRegExPattern": "167$"
+            "inGameInventoryIdRegExPattern": "169$"
         },
         {
             "id": "grenade_thermite",
             "friendlyName": "Thermite Grenade",
             "inGameInfoNameRegExPattern": "^Thermite Grenade$",
             "inGameEventNameRegExPattern": "grenade_incendiary",
-            "inGameInventoryIdRegExPattern": "190$"
+            "inGameInventoryIdRegExPattern": "192$"
         },
         {
             "id": "grenade_frag",
             "friendlyName": "Frag Grenade",
             "inGameInfoNameRegExPattern": "^Frag Grenade$",
             "inGameEventNameRegExPattern": "grenade_frag",
-            "inGameInventoryIdRegExPattern": "191$"
+            "inGameInventoryIdRegExPattern": "193$"
         },
         {
             "id": "grenade_arc_star",
             "friendlyName": "Arc Star",
             "inGameInfoNameRegExPattern": "^Arc Star$",
             "inGameEventNameRegExPattern": "grenade_arc",
-            "inGameInventoryIdRegExPattern": "192$"
+            "inGameInventoryIdRegExPattern": "194$"
         },
         {
             "id": "knockdownshield",
@@ -420,6 +420,16 @@
             "id": "bangalore_smoke_launcher",
             "friendlyName": "Smoke Launcher",
             "inGameEventNameRegExPattern": "Smoke Launcher"
+        },
+        {
+            "id": "newcastle_mobile_shield",
+            "friendlyName": "Mobile Shield",
+            "inGameInfoNameRegExPattern": "mp_ability_shield_throw"
+        },
+        {
+            "id": "newcastle_castle_wall",
+            "friendlyName": "Castle Wall",
+            "inGameInfoNameRegExPattern": "mp_ability_armored_leap"
         },
         {
             "id": "valkyrie_vtol_jets",

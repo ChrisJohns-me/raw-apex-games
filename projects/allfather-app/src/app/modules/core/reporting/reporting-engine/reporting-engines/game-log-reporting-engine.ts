@@ -71,7 +71,6 @@ export class GameLogReportingEngine implements ReportingEngine {
                 delay(SAVE_DELAY)
             )
             .subscribe((shouldRun) => {
-                console.log(`[${this.constructor.name}] RUNNING: ${shouldRun}`);
                 if (shouldRun) {
                     const logStr = this.formatGameLog(this.gameLogArr);
                     const result = this.saveGameLog(logStr);

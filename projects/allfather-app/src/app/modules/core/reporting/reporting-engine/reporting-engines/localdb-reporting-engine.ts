@@ -94,7 +94,6 @@ export class LocalDBReportingEngine implements ReportingEngine {
      * Throws error if any data item is missing
      * @returns {MatchDataStore}
      * @todo Profile Performance
-     * @throws if data is missing or corrupt
      */
     private getMatchData(): MatchDataStore {
         const getDataById = <T extends ReportableDataFactoryMap, K extends keyof T, P extends T[K]>(dataId: K) =>
@@ -113,7 +112,7 @@ export class LocalDBReportingEngine implements ReportingEngine {
         const matchMeta = getDataById("matchMeta")?.value;
         const map = getDataById("map")?.value;
 
-        const matchData = {
+        const matchData: MatchDataStore = {
             matchId: matchMeta?.matchId ?? "",
             startDate: matchMeta?.startDate ?? new Date(),
             endDate: matchMeta?.endDate ?? new Date(),
@@ -139,7 +138,11 @@ export class LocalDBReportingEngine implements ReportingEngine {
             rankScore: undefined, // retrieved from external API
         };
 
-        if (!matchData.matchRoster?.length || isEmpty(matchData.matchId)) throw Error(`Match data is missing or corrupt`);
+        for (const key in matchData) {
+            if (!Object.prototype.hasOwnProperty.call(matchData, key)) continue;
+            const dataItem = matchData[key as keyof MatchDataStore];
+            if (isEmpty(dataItem)) console.error(`[LocalDBReportingEngine] Missing data for "${key}"`);
+        }
 
         return matchData;
     }

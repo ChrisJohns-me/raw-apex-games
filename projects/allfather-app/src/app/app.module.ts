@@ -17,6 +17,7 @@ import { UltTimerWindowModule } from "./modules/HUD/ult-timer/ult-timer.module";
 import { LegendSelectAssistWindowModule } from "./modules/legend-select-assist/legend-select-assist.module";
 import { LobbyStatusWindowModule } from "./modules/lobby-status/lobby-status.module";
 import { MainModule } from "./modules/main/main.module";
+import { MatchSummaryWindowModule } from "./modules/match-summary/match-summary.module";
 
 @NgModule({
     declarations: [AppComponent],
@@ -30,6 +31,7 @@ import { MainModule } from "./modules/main/main.module";
         InflictionInsightWindowModule,
         LegendSelectAssistWindowModule,
         LobbyStatusWindowModule,
+        MatchSummaryWindowModule,
         MatchTimerWindowModule,
         MiniInventoryWindowModule,
         OverwolfModule,

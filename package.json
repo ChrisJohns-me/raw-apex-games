@@ -1,6 +1,6 @@
 {
     "name": "allfather",
-    "version": "0.1.0",
+    "version": "0.13.0",
     "engines": {
         "node": ">= 14.0.0"
     },
@@ -21,7 +21,7 @@
         "affunc:deploy-prod": "",
         "afweb:test": "ng test --project=allfatherWeb",
         "afweb:e2e": "ng e2e --project=allfatherWeb",
-        "afweb:serve-dev": "ng build --watch --project=allfatherWeb",
+        "afweb:serve-dev": "ng serve --project=allfatherWeb",
         "afweb:build-prod": "ng build --project=allfatherWeb --configuration production"
     },
     "browserslist": [

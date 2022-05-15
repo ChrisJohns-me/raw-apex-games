@@ -98,6 +98,14 @@ export class MatchService extends BaseService {
     }
 
     /**
+     * The latest match stored in the local database.
+     * @returns {MatchDataStore}
+     */
+    public getLatestMatchData$(): Observable<Optional<MatchDataStore>> {
+        return defer(() => from(this.localDatabase.matches.orderBy(":id").last()));
+    }
+
+    /**
      * The latest match stored in the local database (by player name).
      * @returns {MatchDataStore}
      */

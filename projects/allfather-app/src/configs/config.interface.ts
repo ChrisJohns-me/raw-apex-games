@@ -60,6 +60,7 @@ export interface FeatureFlags {
     enableInflictionInsightWindow: boolean;
     enableHealingHelperWindow: boolean;
     enableReticleHelperWindow: boolean;
+    enableMatchSummaryWindow: boolean;
     enableVideoCapture: boolean;
     inflictionInsight: {
         /** Visualize teams */
@@ -139,6 +140,8 @@ export interface FeatureConfigs {
     };
 }
 
-export interface General {}
+export interface General {
+    enableMatchSummaryAd: boolean;
+}
 
 export interface OverwolfQuirks {}
