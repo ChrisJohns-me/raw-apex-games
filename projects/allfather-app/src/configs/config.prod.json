@@ -67,7 +67,7 @@
         "enableInflictionInsightWindow": true,
         "enableHealingHelperWindow": true,
         "enableReticleHelperWindow": false,
-        "enableMatchSummaryWindow": false,
+        "enableMatchSummaryWindow": true,
         "enableVideoCapture": false,
         "inflictionInsight": {
             "teamIndicatorUI": true,
