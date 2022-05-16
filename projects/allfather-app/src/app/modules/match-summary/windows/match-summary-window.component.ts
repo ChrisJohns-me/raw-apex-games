@@ -13,6 +13,8 @@ import { ConfigurationService } from "../../core/configuration.service";
 import { WINDOW } from "../../core/global-window.provider";
 import { LocationPhaseNum, MatchDataStore } from "../../core/local-database/match-data-store";
 import { MatchService } from "../../core/match/match.service";
+import { MainPage } from "../../main/pages/main-page";
+import { MainInGameWindowService } from "../../main/windows/main-ingame-window.service";
 
 const LATEST_MATCH_MS = 1000 * 60;
 
@@ -43,8 +45,8 @@ export class MatchSummaryWindowComponent implements OnInit, OnDestroy {
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly configuration: ConfigurationService,
+        private readonly mainInGameWindow: MainInGameWindowService,
         private readonly match: MatchService,
-        // private readonly overwolfWindow: OverwolfWindowService,
         @Inject(WINDOW) private readonly window: Window
     ) {}
 
@@ -56,6 +58,14 @@ export class MatchSummaryWindowComponent implements OnInit, OnDestroy {
     public ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    public onTravelHeatmapClick(): void {
+        this.mainInGameWindow.focus(MainPage.MapExplorer).pipe(takeUntil(this.destroy$)).subscribe();
+    }
+
+    public onEliminationHeatmapClick(): void {
+        this.mainInGameWindow.focus(MainPage.MapExplorer).pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     public onDismissClick(): void {

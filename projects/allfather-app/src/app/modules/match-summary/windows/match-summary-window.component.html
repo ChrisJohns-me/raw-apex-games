@@ -15,7 +15,7 @@
                 Match Summary
             </h1>
         </div>
-        <!-- #endregion Match Summary Title -->
+        <!-- #endregion -->
 
         <!-- #region Stats -->
         <div class="row justify-content-center overflow-hidden" style="max-height: 10%">
@@ -50,7 +50,7 @@
                 <small class="text-muted">distance</small>
             </div>
         </div>
-        <!-- #endregion Stats -->
+        <!-- #endregion -->
 
         <div class="row justify-content-evenly m-4 overflow-hidden" style="max-height: 50%">
             <!-- #region Travel Heatmap -->
@@ -60,12 +60,12 @@
                         <h6 class="card-title">Travel Heatmap</h6>
                     </div>
 
-                    <div class="card-content">
+                    <div class="card-content clickable" (click)="onTravelHeatmapClick()">
                         <app-map-heatmap [map]="latestMatchMap" [primaryCoordinates]="travelCoordinatesList"></app-map-heatmap>
                     </div>
                 </div>
             </div>
-            <!-- #endregion Travel Heatmap -->
+            <!-- #endregion -->
             <!-- #region Elimination Heatmap -->
             <div class="col-6" *ngIf="eliminationCoordinatesList.length > 0">
                 <div class="card">
@@ -73,19 +73,19 @@
                         <h6 class="card-title">Kill Heatmap</h6>
                     </div>
 
-                    <div class="card-content">
+                    <div class="card-content clickable" (click)="onEliminationHeatmapClick()">
                         <app-map-heatmap [map]="latestMatchMap" [primaryCoordinates]="eliminationCoordinatesList"></app-map-heatmap>
                     </div>
                 </div>
             </div>
-            <!-- #endregion Elimination Heatmap -->
+            <!-- #endregion -->
         </div>
 
         <div class="row justify-content-evenly m-4">
             <div class="col-6">
                 <div class="row">
                     <!-- #region Best Weapons -->
-                    <div class="col-12">
+                    <div class="col-12" *ngIf="weaponEliminations.length">
                         <div class="card">
                             <div class="card-header">
                                 <h6 class="card-title">Best Weapons</h6>
@@ -98,7 +98,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- #endregion Best Weapons -->
+                    <!-- #endregion -->
                     <div class="col-12 mt-5">
                         <button (click)="onDismissClick()" class="btn btn-lg btn-outline-danger w-100" type="button">Dismiss</button>
                     </div>
@@ -111,7 +111,7 @@
                     <div #videoAd></div>
                 </div>
             </div>
-            <!-- #endregion Video Advertisement -->
+            <!-- #endregion -->
         </div>
     </div>
 </app-ui-container>
