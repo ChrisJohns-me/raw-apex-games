@@ -7,7 +7,7 @@ export class IODelegate {
      * Make sure all nested folders exist before calling.
      * @param storageSpace Which directory to write to.
      * @returns {true} if successful
-     * @returns {error} if failed
+     * @throws {error} if failed
      */
     public writeTextFile(storageSpace: overwolf.extensions.io.enums.StorageSpace, filePath: string, content: string): Observable<true> {
         const writeTextFileObs = bindCallback(overwolf.extensions.io.writeTextFile);
@@ -57,7 +57,7 @@ export class IODelegate {
     /**
      * @param storageSpace Which directory to write to.
      * @returns {true} if successful
-     * @returns {error} if failed
+     * @throws {error} if failed
      */
     public createDirectory(storageSpace: overwolf.extensions.io.enums.StorageSpace, path: string): Observable<true> {
         // TODO: Check to see if they've added this namespace to the types

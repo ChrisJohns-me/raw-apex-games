@@ -21,6 +21,47 @@
     </div>
 </div>
 <!-- #endregion -->
+<!-- #region Update Available Modal -->
+<div class="modal fade" tabindex="-1" #appUpdateModal>
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Current {{ APP_NAME }} version: {{ appVersion }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row" *ngIf="isCheckingForUpdates">
+                    <div class="col-1">
+                        <div class="spinner-border" role="status"></div>
+                    </div>
+                    <div class="col">
+                        <div>Checking for updates...</div>
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="!isCheckingForUpdates">
+                    <div class="col-12 text-center">
+                        <p *ngIf="appUpdateState === 'UpToDate'">{{ APP_NAME }} is up to date!</p>
+                        <p *ngIf="appUpdateState === 'UpdateAvailable'">
+                            <strong>Update is available for {{ APP_NAME }}</strong>
+                        </p>
+                        <p *ngIf="appUpdateState === 'PendingRestart'">
+                            <strong>Update is installed.</strong><br />Please restart {{ APP_NAME }} to finish update.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" *ngIf="appUpdateState === 'PendingRestart'" (click)="onRestartButtonClick()">
+                    Restart
+                </button>
+                <button type="button" class="btn btn-danger" *ngIf="appUpdateState === 'UpdateAvailable'" (click)="(0)">Update</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- #endregion -->
 <app-ui-container
     @fadeInOut
     @scaleInOut
@@ -71,7 +112,7 @@
         </ng-container>
 
         <div class="info-bar">
-            <div class="info-bar-item" *ngIf="appVersion">{{ appVersion }} {{ aXNWSVA }}</div>
+            <div class="info-bar-item clickable" *ngIf="appVersion" (click)="onAppVersionClick()">{{ appVersion }} {{ aXNWSVA }}</div>
             <div class="info-bar-item">
                 Service Status:&nbsp;
                 <app-game-events-status-indicator [allFeatureStates]="allFeatureStates"></app-game-events-status-indicator>

@@ -58,11 +58,10 @@ const FOOTER_MENUITEMS: OWSystemTrayMenuItem[] = [
         label: `Restart ${APP_NAME}`,
         id: SystemTrayItemKey.RestartApp,
     },
-    // {
-    //     label: `Check for updates`,
-    //     id: SystemTrayItemKey.UpdateApp,
-    //     enabled: false,
-    // },
+    {
+        label: `Check for updates`,
+        id: SystemTrayItemKey.UpdateApp,
+    },
     {
         label: `Exit ${APP_NAME}`,
         id: SystemTrayItemKey.ExitApp,
@@ -164,7 +163,7 @@ export class SystemTrayService extends BaseService {
                 this.overwolfExtensions.relaunchApp();
                 break;
             case SystemTrayItemKey.UpdateApp:
-                console.error("DOES NOT EXIST");
+                this.mainDesktopWindow.requestAppUpdate();
                 break;
             case SystemTrayItemKey.ExitApp:
                 console.trace(`[SystemTrayService] Requesting exit from MainWindowService`);

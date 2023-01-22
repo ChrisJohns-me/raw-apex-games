@@ -21,13 +21,15 @@ import { Modal } from "bootstrap";
 import { isEmpty, parseBoolean, wordsToUpperCase } from "common/utilities/";
 import { exhaustiveEnumSwitch } from "common/utilities/switch";
 import { combineLatest, interval, merge, of, Subject } from "rxjs";
-import { delay, delayWhen, filter, map, take, takeUntil } from "rxjs/operators";
+import { delay, delayWhen, filter, map, switchMap, take, takeUntil, tap, throttleTime } from "rxjs/operators";
 import { Hotkey, HotkeyEnum } from "../../../common/hotkey";
 import { BackgroundService } from "../../background/background.service";
 import { HotkeyService } from "../../background/hotkey.service";
 import { ConfigLoadStatus, ConfigurationService } from "../../core/configuration.service";
 import { LocalStorageKeys } from "../../core/local-storage/local-storage-keys";
 import { LocalStorageService } from "../../core/local-storage/local-storage.service";
+import { OWExtensionUpdateState } from "../../core/overwolf";
+import { OverwolfExtensionsService } from "../../core/overwolf/overwolf-extensions.service";
 import { OverwolfFeatureStatusService } from "../../core/overwolf/overwolf-feature-status.service";
 import { OverwolfProfileService } from "../../core/overwolf/overwolf-profile.service";
 import { VersionService } from "../../core/version.service";
@@ -52,6 +54,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     /** isVIP text */
     public aXNWSVA = "";
     @ViewChild("confirmExitModal") private confirmExitModal?: ElementRef;
+    @ViewChild("appUpdateModal") private appUpdateModal?: ElementRef;
     public get activePage(): MainPage {
         return this._activePage;
     }
@@ -66,6 +69,8 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     public toggleMainHotkey?: Hotkey;
     public randomCaption = this.captionGenerator();
     public allFeatureStates?: FeatureState;
+    public isCheckingForUpdates = false;
+    public appUpdateState?: OWExtensionUpdateState;
 
     //#region Passthrough Variables
     public MainPage = MainPage;
@@ -86,6 +91,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         private readonly localStorage: LocalStorageService,
         private readonly mainDesktopWindow: MainDesktopWindowService,
         private readonly mainInGameWindow: MainInGameWindowService,
+        private readonly overwolfExtensions: OverwolfExtensionsService,
         private readonly overwolfFeatureStatus: OverwolfFeatureStatusService,
         private readonly overwolfProfile: OverwolfProfileService,
         private readonly version: VersionService
@@ -122,6 +128,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setupLoading();
         this.setupPageRouting();
         this.setupRequestingExit();
+        this.setupRequestingAppUpdate();
     }
 
     public ngOnDestroy(): void {
@@ -140,6 +147,11 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         this.mainInGameWindow.goToPage(page);
     }
 
+    public onAppVersionClick(): void {
+        this.mainDesktopWindow.isRequestingAppUpdate$.next(true);
+        this.mainInGameWindow.isRequestingAppUpdate$.next(true);
+    }
+
     public onExitAppClick(): void {
         this.backgroundService.exitApp();
     }
@@ -147,6 +159,10 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     public onCloseButtonClick(): void {
         this.mainDesktopWindow.isRequestingExit$.next(true);
         this.mainInGameWindow.isRequestingExit$.next(true);
+    }
+
+    public onRestartButtonClick(): void {
+        this.overwolfExtensions.relaunchApp();
     }
 
     private trackPageChange(newPage: MainPage): void {
@@ -218,6 +234,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         merge(this.mainDesktopWindow.isRequestingExit$, this.mainInGameWindow.isRequestingExit$)
             .pipe(
                 takeUntil(this.destroy$),
+                throttleTime(1000),
                 filter((isRequestingExit) => !!isRequestingExit)
             )
             .subscribe(() => {
@@ -225,6 +242,34 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (!confirmModal) confirmModal = getConfirmModal();
                 if (confirmModal) confirmModal.show();
                 else this.backgroundService.exitApp();
+            });
+    }
+
+    private setupRequestingAppUpdate(): void {
+        const getAppUpdateModal = () => new Modal(this.appUpdateModal?.nativeElement);
+        this.appUpdateModal?.nativeElement.addEventListener("hidden.bs.modal", () => {
+            this.mainDesktopWindow.isRequestingAppUpdate$.next(false);
+            this.mainInGameWindow.isRequestingAppUpdate$.next(false);
+        });
+        let appUpdateModal = getAppUpdateModal();
+        merge(this.mainDesktopWindow.isRequestingAppUpdate$, this.mainInGameWindow.isRequestingAppUpdate$)
+            .pipe(
+                takeUntil(this.destroy$),
+                throttleTime(1000),
+                filter((isRequestingAppUpdate) => !!isRequestingAppUpdate),
+                tap(() => {
+                    this.isCheckingForUpdates = true;
+                    console.trace(`[MainWindow] Seen an App Update Request; showing Modal`);
+                    if (!appUpdateModal) appUpdateModal = getAppUpdateModal();
+                    if (appUpdateModal) appUpdateModal.show();
+                    this.cdr.detectChanges();
+                }),
+                switchMap(() => this.version.getAppUpdateState$())
+            )
+            .subscribe((appUpdateState) => {
+                this.appUpdateState = appUpdateState;
+                this.isCheckingForUpdates = false;
+                this.cdr.detectChanges();
             });
     }
 

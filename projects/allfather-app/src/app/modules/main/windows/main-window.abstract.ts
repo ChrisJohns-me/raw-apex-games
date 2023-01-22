@@ -13,6 +13,7 @@ export abstract class MainWindowService implements OnDestroy {
     /** App is still initializing; ie. booting up the app */
     public isStarting$ = new BehaviorSubject<boolean>(false);
     public isRequestingExit$ = new BehaviorSubject<boolean>(false);
+    public isRequestingAppUpdate$ = new BehaviorSubject<boolean>(false);
 
     private destroy$ = new Subject<void>();
 
@@ -60,6 +61,12 @@ export abstract class MainWindowService implements OnDestroy {
     public requestExit(): void {
         console.trace(`[MainWindowService] Received request to Exit App; Relaying to Main Window`);
         const grabFocus$ = this.focus().pipe(tap(() => this.isRequestingExit$.next(true)));
+        from([this.restore(), grabFocus$]).pipe(takeUntil(this.destroy$), concatAll()).subscribe();
+    }
+
+    public requestAppUpdate(): void {
+        console.trace(`[MainWindowService] Received request to App Update; Relaying to Main Window`);
+        const grabFocus$ = this.focus().pipe(tap(() => this.isRequestingAppUpdate$.next(true)));
         from([this.restore(), grabFocus$]).pipe(takeUntil(this.destroy$), concatAll()).subscribe();
     }
 

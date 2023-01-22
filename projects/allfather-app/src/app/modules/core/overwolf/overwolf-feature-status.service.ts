@@ -76,10 +76,7 @@ export class OverwolfFeatureStatusService implements OnDestroy {
         timer(0, this.owConfig.FEATURE_HEALTHCHECK_TIME)
             .pipe(
                 takeUntil(this.destroy$),
-                switchMap(() => this.getFeatureStates$()),
-                tap((states) =>
-                    console.debug(`[${this.constructor.name}] (Feature Status Check) Status: "this.checkAllFeatureStatus()"`, states)
-                )
+                switchMap(() => this.getFeatureStates$())
             )
             .subscribe();
     }

@@ -1,5 +1,6 @@
 // export type OWGameInfoUpdatedEvent = overwolf.games.GameInfoUpdatedEvent;
 export type OWDisplay = overwolf.utils.Display;
+export type OWExtensionUpdateState = overwolf.extensions.ExtensionUpdateState;
 export type OWGameEvent = overwolf.gep.ApexLegends.GameEvent;
 export type OWGameEventKillFeed = overwolf.gep.ApexLegends.GameEventKillFeed;
 export type OWGetManifestResult = overwolf.extensions.GetManifestResult;

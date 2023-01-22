@@ -141,6 +141,7 @@ export interface FeatureConfigs {
 }
 
 export interface General {
+    /** Display advertisement on the match summary window */
     enableMatchSummaryAd: boolean;
 }
 

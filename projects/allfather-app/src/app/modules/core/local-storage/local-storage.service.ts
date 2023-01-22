@@ -6,7 +6,7 @@ import { LocalStorageKeys } from "./local-storage-keys";
 
 /**
  * @class LocalStorageService
- * @classdesc Wrapper class used for short term and less important data storage.
+ * @classdesc Wrapper class used for less important data storage.
  */
 @Injectable({
     providedIn: "root",

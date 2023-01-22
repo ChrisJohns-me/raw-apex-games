@@ -5,7 +5,7 @@ import { BaseService } from "../base-service.abstract";
 import { ExtensionsDelegate } from "./api/extensions-delegate";
 import { CurrentDelegate } from "./api/extensions/current-delegate";
 import { IODelegate } from "./api/extensions/io-delegate";
-import { OWAppLaunchTriggeredEvent, OWGetManifestResult } from "./types/overwolf-types";
+import { OWAppLaunchTriggeredEvent, OWExtensionUpdateState, OWGetManifestResult } from "./types/overwolf-types";
 
 /**
  * @class OverwolfExtensionsService
@@ -59,6 +59,10 @@ export class OverwolfExtensionsService extends BaseService {
 
     public createDirectory(storageSpace: overwolf.extensions.io.enums.StorageSpace, path: string): Observable<true> {
         return this.ioDelegate.createDirectory(storageSpace, path);
+    }
+
+    public checkForExtensionUpdate(): Observable<OWExtensionUpdateState> {
+        return this.extensionsDelegate.checkForExtensionUpdate();
     }
 
     //#region Delegate event listeners

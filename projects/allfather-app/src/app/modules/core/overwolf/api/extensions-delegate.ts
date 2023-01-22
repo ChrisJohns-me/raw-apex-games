@@ -1,5 +1,5 @@
-import { Subject } from "rxjs";
-import { OWAppLaunchTriggeredEvent } from "../types/overwolf-types";
+import { bindCallback, map, Observable, Subject } from "rxjs";
+import { OWAppLaunchTriggeredEvent, OWExtensionUpdateState } from "../types/overwolf-types";
 import { OverwolfEventListenerDelegate } from "./overwolf-delegate";
 
 export class ExtensionsDelegate implements OverwolfEventListenerDelegate {
@@ -27,6 +27,26 @@ export class ExtensionsDelegate implements OverwolfEventListenerDelegate {
 
     public relaunchApp(): void {
         overwolf.extensions.relaunch();
+    }
+
+    /**
+     * Checks if an update is available for the calling extension.
+     * Always returns UpToDate when used on an unpacked extension.
+     * This function allows the current app to check if there is an extension update,
+     * without having to wait for Overwolf to do so.
+     * Calling this function will not automatically update the extension, just checks if an update exists.
+     * @returns {OWExtensionUpdateState}
+     * @throws {error} if failed
+     */
+    public checkForExtensionUpdate(): Observable<OWExtensionUpdateState> {
+        const checkForExtensionUpdateObs = bindCallback(overwolf.extensions.checkForExtensionUpdate);
+
+        return checkForExtensionUpdateObs().pipe(
+            map((result) => {
+                if (result?.success && result?.state) return result.state as OWExtensionUpdateState;
+                else throw new Error(result?.error || (result as any)?.reason);
+            })
+        );
     }
 
     private onAppLaunchTriggered(appLaunchTriggeredEvent: overwolf.extensions.AppLaunchTriggeredEvent): void {

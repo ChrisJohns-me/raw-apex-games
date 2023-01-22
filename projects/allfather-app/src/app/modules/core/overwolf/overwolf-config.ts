@@ -2,6 +2,8 @@ import { InjectionToken } from "@angular/core";
 
 export const OW_CONFIG = new InjectionToken<OWConfig>("overwolf.config");
 export interface OWConfig {
+    /** Time in ms to automatically check for updates */
+    APP_UPDATE_CHECK_INTERVAL: number;
     REQUIRED_FEATURES_RETRY_COUNT: number;
     REQUIRED_FEATURES_RETRY_DELAY_MULTIPLIER: number;
     REQUIRED_FEATURES: string[];
@@ -15,8 +17,9 @@ export interface OWConfig {
 }
 
 export const OverwolfConfig: OWConfig = {
+    APP_UPDATE_CHECK_INTERVAL: 1000 * 60 * 60,
     REQUIRED_FEATURES_RETRY_COUNT: 5,
-    REQUIRED_FEATURES_RETRY_DELAY_MULTIPLIER: 5000,
+    REQUIRED_FEATURES_RETRY_DELAY_MULTIPLIER: 1000 * 5,
     REQUIRED_FEATURES: [
         "death",
         "kill",
@@ -37,7 +40,7 @@ export const OverwolfConfig: OWConfig = {
     ],
     HEALTHCHECK_TIME: 1 * 60 * 1000,
     FEATURE_HEALTHCHECK_RETRY_COUNT: 5,
-    FEATURE_HEALTHCHECK_RETRY_DELAY_MULTIPLIER: 5000,
+    FEATURE_HEALTHCHECK_RETRY_DELAY_MULTIPLIER: 1000 * 5,
     FEATURE_HEALTHCHECK_TIME: 10 * 60 * 1000,
     APEXLEGENDSCLASSID: 21566,
 };
