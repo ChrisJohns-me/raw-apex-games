@@ -1,7 +1,5 @@
 import { Legend } from "./legend/legend";
 import { PlatformHardware } from "./platform";
-import { Rank } from "./rank/rank";
-import { RankNext } from "./rank/rank-next";
 
 export interface PlayerLevel {
     level: number;
@@ -28,7 +26,7 @@ export interface PlayerAccountStatsConstructor {
     uid?: number;
     platformHardware?: PlatformHardware;
     level?: PlayerLevel;
-    rank?: Rank;
+    // rank?: Rank;
     battlePass?: PlayerBattlePass;
     accountStatus?: AccountStatus;
 }
@@ -39,8 +37,8 @@ export class PlayerAccountStats implements PlayerAccountStatsConstructor {
     public uid?: number;
     public platformHardware?: PlatformHardware;
     public level?: PlayerLevel;
-    public rank?: Rank;
-    public nextRank?: RankNext;
+    // public rank?: Rank;
+    // public nextRank?: RankNext;
     public battlePass?: PlayerBattlePass;
     public accountStatus?: AccountStatus;
 
@@ -50,11 +48,11 @@ export class PlayerAccountStats implements PlayerAccountStatsConstructor {
         this.uid = ctor.uid;
         this.platformHardware = ctor.platformHardware;
         this.level = ctor.level;
-        this.rank = ctor.rank;
+        // this.rank = ctor.rank;
         this.battlePass = ctor.battlePass;
         this.accountStatus = ctor.accountStatus;
 
-        if (this.rank) this.nextRank = new RankNext(this.rank);
+        // if (this.rank) this.nextRank = new RankNext(this.rank);
 
         if (this.accountStatus && this.accountStatus?.selectedLegendName) {
             const legendId = Legend.generateLegendId(this.accountStatus.selectedLegendName);

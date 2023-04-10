@@ -145,38 +145,13 @@
                         </div>
                         <div class="card-content">
                             <ng-container *ngIf="focusedLegendId">
-                                <ng-container
-                                    *ngIf="
-                                        (legendBattleRoyaleStats?.numMatches ?? 0) >= ((minShowComplimentaryLegendsMatches$ | async) ?? 0)
-                                    "
-                                >
-                                    <app-complimentary-legends
-                                        class="complimentary-legends"
-                                        *ngIf="legendComplimentaryLegendWeights; let legendWeights"
-                                        [complimentaryLegendWeights]="legendWeights"
-                                    ></app-complimentary-legends>
-                                </ng-container>
-                                <div
-                                    class="my-1 p-2 text-center small"
-                                    *ngIf="
-                                        (legendBattleRoyaleStats?.numMatches ?? 0) < ((minShowComplimentaryLegendsMatches$ | async) ?? 0)
-                                    "
-                                >
+                                <div class="my-1 p-2 text-center small" *ngIf="(legendBattleRoyaleStats?.numMatches ?? 0) < 0">
                                     Play
-                                    {{ ((minShowComplimentaryLegendsMatches$ | async) ?? 0) - (legendBattleRoyaleStats?.numMatches ?? 0) }}
+                                    {{ legendBattleRoyaleStats?.numMatches ?? 0 }}
                                     more matches with {{ getLegendName(focusedLegendId) | titlecase }} to see suggested squad.
                                 </div>
                             </ng-container>
-                            <ng-container *ngIf="!focusedLegendId">
-                                <app-complimentary-legends
-                                    class="complimentary-legends"
-                                    *ngIf="
-                                        focusedLegendId ? legendComplimentaryLegendWeights : playerComplimentaryLegendWeights;
-                                        let legendWeights
-                                    "
-                                    [complimentaryLegendWeights]="legendWeights"
-                                ></app-complimentary-legends>
-                            </ng-container>
+                            <ng-container *ngIf="!focusedLegendId"> </ng-container>
                         </div>
                     </div>
                 </div>
@@ -185,15 +160,7 @@
                         <div class="card-header">
                             <h6 class="card-title">SUGGESTED WEAPONS</h6>
                         </div>
-                        <div class="card-content">
-                            <app-complimentary-weapons
-                                *ngIf="
-                                    focusedLegendId ? legendComplimentaryWeaponAvgEliminations : playerComplimentaryWeaponAvgEliminations;
-                                    let weaponAvgEliminations
-                                "
-                                [complimentaryWeaponsAvgEliminations]="weaponAvgEliminations"
-                            ></app-complimentary-weapons>
-                        </div>
+                        <div class="card-content"></div>
                     </div>
                 </div>
             </div>

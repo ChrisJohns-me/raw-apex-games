@@ -1,13 +1,10 @@
 import { isObservable, Observable, Subscription, Timestamp } from "rxjs";
 import { AssistsDataFactory } from "./reportable-data/assists";
 import { DamageDataFactory } from "./reportable-data/damage";
-import { DamageEventsHistoryDataFactory } from "./reportable-data/damage-events-history";
 import { DeathLocationHistoryDataFactory } from "./reportable-data/death-location-history";
 import { EliminationLocationHistoryDataFactory } from "./reportable-data/elimination-location-history";
-import { EliminationWeaponIdsDataFactory } from "./reportable-data/elimination-weapon-ids";
 import { EliminationsDataFactory } from "./reportable-data/eliminations";
 import { GameModeDataFactory } from "./reportable-data/game-mode";
-import { KillfeedHistoryDataFactory } from "./reportable-data/killfeed-history";
 import { KnockdownsDataFactory } from "./reportable-data/knockdowns";
 import { LegendDataFactory } from "./reportable-data/legend";
 import { LocationHistoryDataFactory } from "./reportable-data/location-history";
@@ -25,13 +22,10 @@ import { TeamRosterDataFactory } from "./reportable-data/team-roster";
 export interface ReportableDataFactoryMap {
     assists: ReturnType<typeof AssistsDataFactory>;
     damage: ReturnType<typeof DamageDataFactory>;
-    damageEventsHistory: ReturnType<typeof DamageEventsHistoryDataFactory>;
     deathLocationHistory: ReturnType<typeof DeathLocationHistoryDataFactory>;
     eliminationLocationHistory: ReturnType<typeof EliminationLocationHistoryDataFactory>;
-    eliminationWeaponIds: ReturnType<typeof EliminationWeaponIdsDataFactory>;
     eliminations: ReturnType<typeof EliminationsDataFactory>;
     gameMode: ReturnType<typeof GameModeDataFactory>;
-    killfeedHistory: ReturnType<typeof KillfeedHistoryDataFactory>;
     knockdowns: ReturnType<typeof KnockdownsDataFactory>;
     legendId: ReturnType<typeof LegendDataFactory>;
     locationHistory: ReturnType<typeof LocationHistoryDataFactory>;

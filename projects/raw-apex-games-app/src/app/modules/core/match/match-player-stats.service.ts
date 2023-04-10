@@ -7,8 +7,6 @@ import { BehaviorSubject } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { BaseService } from "../base-service.abstract";
 import { OverwolfGameDataService } from "../overwolf";
-import { MatchArenasScoreboardService } from "./match-arenas-scoreboard.service";
-import { MatchPlayerInflictionService } from "./match-player-infliction.service";
 import { MatchPlayerService } from "./match-player.service";
 import { MatchService } from "./match.service";
 
@@ -17,7 +15,7 @@ import { MatchService } from "./match.service";
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, MatchArenasScoreboardService, MatchPlayerService, MatchPlayerInflictionService, OverwolfGameDataService],
+    deps: [MatchService, MatchPlayerService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerStatsService", MatchPlayerStatsService, deps),
 })
 export class MatchPlayerStatsService extends BaseService {
@@ -38,7 +36,10 @@ export class MatchPlayerStatsService extends BaseService {
     public readonly victory$ = new BehaviorSubject<boolean>(false);
     /** @deprecated May not work; Feature is unavailable in game-UI. */
     public readonly mySpectators$ = new BehaviorSubject<number>(0);
-    /** Inferred from player infliction. Reset on match start. */
+    /**
+     * Inferred from player infliction. Reset on match start.
+     * @deprecated
+     */
     public readonly myKnockdowns$ = new BehaviorSubject<number>(0);
     /**
      * Does not take into consideration victim's HP, only the raw inflicted amount.
@@ -49,9 +50,7 @@ export class MatchPlayerStatsService extends BaseService {
 
     constructor(
         private readonly match: MatchService,
-        private readonly matchArenasScoreboard: MatchArenasScoreboardService,
         private readonly matchPlayer: MatchPlayerService,
-        private readonly matchPlayerInfliction: MatchPlayerInflictionService,
         private readonly overwolfGameData: OverwolfGameDataService
     ) {
         super();
@@ -60,8 +59,6 @@ export class MatchPlayerStatsService extends BaseService {
         this.setupTotalDamageDealt();
         this.setupDeaths();
         this.setupVictory();
-        this.setupMyKnockdowns();
-        this.setupArenasScoreboard();
     }
 
     private setupMatchStateEvents(): void {
@@ -95,7 +92,7 @@ export class MatchPlayerStatsService extends BaseService {
                 setAmountFn(tabs.damage, this.myDamage$);
                 this.mySpectators$.next(cleanInt(tabs.spectators));
 
-                if (!this.match.gameMode$.value?.isArenasGameMode) {
+                if (this.match.gameMode$.value?.isBattleRoyaleGameMode) {
                     this.myPlacement$.next(cleanInt(tabs.teams));
                 }
             });
@@ -146,24 +143,5 @@ export class MatchPlayerStatsService extends BaseService {
                 this.myPlacement$.next(1);
                 this.victory$.next(isVictory);
             });
-    }
-
-    private setupMyKnockdowns(): void {
-        this.matchPlayerInfliction.myKillfeedEvent$
-            .pipe(
-                takeUntil(this.destroy$),
-                filter((myKillfeedEvent) => !!myKillfeedEvent.isKnockdown)
-            )
-            .subscribe(() => {
-                this.myKnockdowns$.next(this.myKnockdowns$.value + 1);
-            });
-    }
-
-    private setupArenasScoreboard(): void {
-        this.matchArenasScoreboard.scoreboard$.pipe(takeUntil(this.destroy$)).subscribe((scoreboard) => {
-            if (Number.isFinite(scoreboard.placement)) {
-                this.myPlacement$.next(cleanInt(scoreboard.placement));
-            }
-        });
     }
 }

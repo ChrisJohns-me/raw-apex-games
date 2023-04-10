@@ -14,7 +14,6 @@ import { getLegendBGColor } from "@raw-apex-games-app/app/common/legend/legend-l
 import { MatchGameMode } from "@raw-apex-games-app/app/common/match/game-mode/game-mode";
 import { MatchGameModeList } from "@raw-apex-games-app/app/common/match/game-mode/game-mode-list";
 import { MatchMapList } from "@raw-apex-games-app/app/common/match/map/map-list";
-import { Rank } from "@raw-apex-games-app/app/common/rank/rank";
 import { ConfigurationService } from "@raw-apex-games-app/app/modules/core/configuration.service";
 import { MatchDataStore } from "@raw-apex-games-app/app/modules/core/local-database/match-data-store";
 import { isEmpty } from "common/utilities/";
@@ -84,7 +83,6 @@ export class MatchListingComponent implements OnInit, OnDestroy {
     public getMatchMapName = (matchMapId: string): Optional<string> => MatchMapList.find((m) => m.mapId === matchMapId)?.mapName;
     public getLegendImageName = (legendId?: string): string => Legend.getSquarePortraitFilename(legendId);
     public getLegendName = (legendId?: string): Optional<string> => Legend.getName(legendId);
-    public getRankFromScore = (rankScore: number): Optional<Rank> => new Rank({ score: rankScore });
     public getLegendBGColor = (legendId?: string): string => getLegendBGColor(legendId);
     public isRecent = (baseDate?: Date): boolean => !!baseDate && differenceInMilliseconds(new Date(), baseDate) <= MATCH_RECENT_TIME;
 

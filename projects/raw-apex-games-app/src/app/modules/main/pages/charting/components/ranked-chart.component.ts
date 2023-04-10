@@ -1,5 +1,4 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, ViewChild } from "@angular/core";
-import { Rank, RankTierName } from "@raw-apex-games-app/app/common/rank/rank";
 import { MatchDataStore } from "@raw-apex-games-app/app/modules/core/local-database/match-data-store";
 import {
     CategoryScale,
@@ -11,22 +10,12 @@ import {
     LineElement,
     LinearScale,
     PointElement,
-    ScriptableLineSegmentContext,
     Tooltip,
     TooltipItem,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { isEmpty } from "common/utilities/";
 import { format } from "date-fns";
-import {
-    ChartRankBronzeHEXColor,
-    ChartRankDiamondHEXColor,
-    ChartRankGoldHEXColor,
-    ChartRankMasterHEXColor,
-    ChartRankPlatinumHEXColor,
-    ChartRankRookieHEXColor,
-    ChartRankSilverHEXColor,
-} from "./chart";
 
 @Component({
     selector: "app-ranked-chart",
@@ -61,9 +50,7 @@ export class RankedChartComponent implements AfterViewInit, OnChanges {
                 tooltip: {
                     callbacks: {
                         beforeTitle: (tooltipItems: TooltipItem<"line">[]): string => {
-                            const ctxRankScore = tooltipItems[0]?.raw;
-                            if (typeof ctxRankScore !== "number") return "";
-                            return Rank.getTierNameFromScore(ctxRankScore);
+                            return "";
                         },
                     },
                 },
@@ -133,26 +120,26 @@ export class RankedChartComponent implements AfterViewInit, OnChanges {
             this.dataLabels.push(match.endDate ? format(match.endDate, "MMM dd, K:mm a") : "");
         }
 
-        this.datasets = [
-            {
-                label: "Rank Score",
-                data: rankScores,
-                stepped: false,
-                segment: {
-                    borderColor: (ctx: ScriptableLineSegmentContext) => {
-                        const ctxRankScore = ctx.p0.parsed.y;
-                        const ctxRankTierName: RankTierName = Rank.getTierNameFromScore(ctxRankScore);
-                        if (ctxRankTierName === RankTierName.Rookie) return ChartRankRookieHEXColor;
-                        else if (ctxRankTierName === RankTierName.Bronze) return ChartRankBronzeHEXColor;
-                        else if (ctxRankTierName === RankTierName.Silver) return ChartRankSilverHEXColor;
-                        else if (ctxRankTierName === RankTierName.Gold) return ChartRankGoldHEXColor;
-                        else if (ctxRankTierName === RankTierName.Platinum) return ChartRankPlatinumHEXColor;
-                        else if (ctxRankTierName === RankTierName.Diamond) return ChartRankDiamondHEXColor;
-                        else if (ctxRankTierName === RankTierName.Master) return ChartRankMasterHEXColor;
-                        return;
-                    },
-                },
-            },
-        ];
+        // this.datasets = [
+        //     {
+        //         label: "Rank Score",
+        //         data: rankScores,
+        //         stepped: false,
+        //         segment: {
+        //             borderColor: (ctx: ScriptableLineSegmentContext) => {
+        //                 const ctxRankScore = ctx.p0.parsed.y;
+        //                 const ctxRankTierName: RankTierName = Rank.getTierNameFromScore(ctxRankScore);
+        //                 if (ctxRankTierName === RankTierName.Rookie) return ChartRankRookieHEXColor;
+        //                 else if (ctxRankTierName === RankTierName.Bronze) return ChartRankBronzeHEXColor;
+        //                 else if (ctxRankTierName === RankTierName.Silver) return ChartRankSilverHEXColor;
+        //                 else if (ctxRankTierName === RankTierName.Gold) return ChartRankGoldHEXColor;
+        //                 else if (ctxRankTierName === RankTierName.Platinum) return ChartRankPlatinumHEXColor;
+        //                 else if (ctxRankTierName === RankTierName.Diamond) return ChartRankDiamondHEXColor;
+        //                 else if (ctxRankTierName === RankTierName.Master) return ChartRankMasterHEXColor;
+        //                 return;
+        //             },
+        //         },
+        //     },
+        // ];
     }
 }

@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { SingletonServiceProviderFactory } from "@raw-apex-games-app/app/singleton-service.provider.factory";
 import { MatchKillfeedService } from "../../match/match-killfeed.service";
 import { MatchMapService } from "../../match/match-map.service";
-import { MatchPlayerInflictionService } from "../../match/match-player-infliction.service";
 import { MatchPlayerInventoryService } from "../../match/match-player-inventory.service";
 import { MatchPlayerLegendService } from "../../match/match-player-legend.service";
 import { MatchPlayerLocationService } from "../../match/match-player-location.service";
@@ -13,13 +12,10 @@ import { PlayerService } from "../../player.service";
 import { ReportableDataFactoryMap } from "./reportable-data";
 import { AssistsDataFactory } from "./reportable-data/assists";
 import { DamageDataFactory } from "./reportable-data/damage";
-import { DamageEventsHistoryDataFactory } from "./reportable-data/damage-events-history";
 import { DeathLocationHistoryDataFactory } from "./reportable-data/death-location-history";
 import { EliminationLocationHistoryDataFactory } from "./reportable-data/elimination-location-history";
-import { EliminationWeaponIdsDataFactory } from "./reportable-data/elimination-weapon-ids";
 import { EliminationsDataFactory } from "./reportable-data/eliminations";
 import { GameModeDataFactory } from "./reportable-data/game-mode";
-import { KillfeedHistoryDataFactory } from "./reportable-data/killfeed-history";
 import { KnockdownsDataFactory } from "./reportable-data/knockdowns";
 import { LegendDataFactory } from "./reportable-data/legend";
 import { LocationHistoryDataFactory } from "./reportable-data/location-history";
@@ -45,7 +41,6 @@ import { TeamRosterDataFactory } from "./reportable-data/team-roster";
         MatchService,
         MatchKillfeedService,
         MatchMapService,
-        MatchPlayerInflictionService,
         MatchPlayerInventoryService,
         MatchPlayerLegendService,
         MatchPlayerLocationService,
@@ -65,7 +60,6 @@ export class ReportableDataManagerService {
         private readonly match: MatchService,
         private readonly matchKillfeed: MatchKillfeedService,
         private readonly matchMap: MatchMapService,
-        private readonly matchPlayerInfliction: MatchPlayerInflictionService,
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
         private readonly matchPlayerLegend: MatchPlayerLegendService,
         private readonly matchPlayerLocation: MatchPlayerLocationService,
@@ -87,13 +81,10 @@ export class ReportableDataManagerService {
         this.instantiatedDataItems = [
             AssistsDataFactory(this.matchPlayerStats.myAssists$),
             DamageDataFactory(this.matchPlayerStats.myDamage$),
-            DamageEventsHistoryDataFactory(this.matchPlayerInfliction.myDamageEvent$),
             DeathLocationHistoryDataFactory(this.matchPlayerLocation.myDeathCoordinates$),
             EliminationsDataFactory(this.matchPlayerStats.myEliminations$),
             EliminationLocationHistoryDataFactory(this.matchPlayerLocation.myEliminationCoordinates$),
-            EliminationWeaponIdsDataFactory(this.matchPlayerInfliction.myKillfeedEvent$),
             GameModeDataFactory(this.match.gameMode$),
-            KillfeedHistoryDataFactory(this.matchKillfeed.killfeedEvent$),
             KnockdownsDataFactory(this.matchPlayerStats.myKnockdowns$),
             LegendDataFactory(this.matchPlayerLegend.myLegend$),
             LocationHistoryDataFactory(this.matchPlayerLocation.myCoordinates$, this.matchPlayerLocation.myLocationPhase$),

@@ -1,3 +1,0 @@
-<div class="legend-icon-row" *ngFor="let legendRow of legendIconRows" [ngStyle]="{ 'top.vh': legendRow.top, 'right.vw': legendRow.right }">
-    <div class="legend-icon-hitbox" *ngFor="let legendId of legendRow.legendIds" (mouseover)="onLegendHover.next(legendId)"></div>
-</div>

@@ -1,8 +1,6 @@
 import { MatchDataStore } from "@raw-apex-games-app/app/modules/core/local-database/match-data-store";
-import { isEmpty, mathClamp } from "common/utilities/";
-import { unique } from "common/utilities/primitives/array";
+import { mathClamp } from "common/utilities/";
 import isDate from "date-fns/isDate";
-import { WeaponItem } from "../items/weapon-item";
 
 // Safe-guards
 const MAX_PLACEMENT = 50;
@@ -81,119 +79,6 @@ interface StatBounds {
     knockdownsMax: number;
     assistsMax: number;
     durationMax: number;
-}
-
-/**
- * List all complimentary Legends (greatest to least).
- * Respective to the given Legend (optionally).
- */
-export function listComplimentaryLegends(matchList: MatchDataStore[], statWeights: StatWeights): string[] {
-    const avgCompLegendWeights = complimentaryLegendsWeights(matchList, statWeights);
-    const avgCompLegend = Array.from(avgCompLegendWeights)
-        .slice()
-        .sort((a, b) => b[1].totalAvgWeight - a[1].totalAvgWeight)
-        .map((l) => l[0]);
-    return avgCompLegend;
-}
-
-/**
- * Map all Legends with complimentary avg stat weights.
- * Respective to the given Legend (optionally).
- * @returns {Map<LegendId, AvgStatWeights>}
- */
-export function complimentaryLegendsWeights(
-    matchList: MatchDataStore[],
-    statWeights: StatWeights,
-    legendId?: string
-): Map<string, AvgStatWeights> {
-    type LegendId = string;
-    const filteredMatchList = legendId
-        ? matchList.filter((m) => m.teamRoster?.find((tr) => !!tr.isMe && tr.legendId === legendId))
-        : matchList;
-    const statBounds = matchStatBounds(matchList);
-    const numLegendMatches = new Map<LegendId, number>(); // number of matches with each Legend
-    const sumCompLegendWeights = new Map<LegendId, SumStatWeights>(); // summed weights with each Legend
-    const avgCompLegendWeights = new Map<LegendId, AvgStatWeights>(); // avg weights with each Legend
-
-    for (let i = 0; i < filteredMatchList.length; i++) {
-        const match: MatchDataStore = filteredMatchList[i];
-        const matchStats: AvgMatchStats = {
-            numMatches: 1,
-            avgDamage: match.damage ?? 0,
-            avgWins: match.placement === 1 ? 1 : 0,
-            avgDuration: match.endDate && match.startDate ? match.endDate.getTime() - match.startDate.getTime() : 0,
-            avgEliminations: match.eliminations ?? 0,
-            avgDeaths: match.deaths ?? 1,
-            avgKnockdowns: match.knockdowns ?? 0,
-            avgAssists: match.assists ?? 0,
-            avgPlacement: match.placement ?? 0,
-        };
-        // Sum complimentary Legend weights
-        match.teamRoster?.forEach((rosterPlayer) => {
-            if (rosterPlayer.isMe || rosterPlayer.legendId === legendId || isEmpty(rosterPlayer.legendId)) return;
-            const existingSumWeights = sumCompLegendWeights.get(rosterPlayer.legendId);
-            const matchStatWeights = matchAvgStatWeights(matchStats, statBounds, statWeights);
-            const newSumWeights = reduceSumWeights(existingSumWeights, matchStatWeights);
-
-            numLegendMatches.set(rosterPlayer.legendId, (numLegendMatches.get(rosterPlayer.legendId) ?? 0) + 1);
-            return sumCompLegendWeights.set(rosterPlayer.legendId, newSumWeights);
-        });
-    }
-
-    // Average complimentary legend weights
-    for (const sumLegendWeight of sumCompLegendWeights) {
-        const legendId = sumLegendWeight[0];
-        const sumStatWeights = sumLegendWeight[1];
-        const numLegendWeights = numLegendMatches.get(sumLegendWeight[0]) || 0;
-        const avgLegendStats = calcAvgWeights(sumStatWeights, numLegendWeights);
-
-        avgCompLegendWeights.set(legendId, avgLegendStats);
-    }
-
-    console.log(`Loaded Complimentary Legends for "${legendId ?? "all legends"}":`, avgCompLegendWeights);
-    return avgCompLegendWeights;
-}
-
-/**
- * Map all weapons with average eliminations per match.
- * Respective to the given Legend (optionally).
- * @returns {Map<WeaponId, Eliminations>}
- */
-export function complimentaryWeaponsAvgEliminations(matchList: MatchDataStore[], legendId?: string): Map<string, number> {
-    type WeaponId = string;
-    const filteredMatchList = legendId
-        ? matchList.filter((m) => m.teamRoster?.find((tr) => !!tr.isMe && tr.legendId === legendId))
-        : matchList;
-    const numWeaponMatches = new Map<WeaponId, number>(); // number of matches with each Weapon
-    const sumWeaponEliminations = new Map<WeaponId, number>(); // summed eliminations with each Weapon
-    const avgWeaponEliminations = new Map<WeaponId, number>(); // summed eliminations with each Weapon per match
-
-    for (let i = 0; i < filteredMatchList.length; i++) {
-        const match: MatchDataStore = filteredMatchList[i];
-        const matchWeaponEliminations = match.eliminationWeaponIds
-            ?.map((weaponId) => (WeaponItem.isWeaponId(weaponId) ? weaponId : undefined))
-            .filter((weaponId) => !!weaponId) as string[];
-        if (!matchWeaponEliminations || !Array.isArray(matchWeaponEliminations) || isEmpty(matchWeaponEliminations)) continue;
-
-        // Number of matches with each weapon
-        unique(matchWeaponEliminations)?.forEach((weaponId) => {
-            numWeaponMatches.set(weaponId, (numWeaponMatches.get(weaponId) ?? 0) + 1);
-        });
-
-        // Sum of eliminations with each weapon
-        matchWeaponEliminations?.forEach((weaponId) => {
-            sumWeaponEliminations.set(weaponId, (sumWeaponEliminations.get(weaponId) ?? 0) + 1);
-        });
-    }
-
-    // Average number of eliminations with each weapon
-    sumWeaponEliminations.forEach((sumEliminations, weaponId) => {
-        const avgEliminations = sumEliminations / (numWeaponMatches.get(weaponId) ?? 0);
-        avgWeaponEliminations.set(weaponId, avgEliminations);
-    });
-
-    console.log(`Loaded Complimentary Weapons for "${legendId ?? "all legends"}"`);
-    return avgWeaponEliminations;
 }
 
 /**

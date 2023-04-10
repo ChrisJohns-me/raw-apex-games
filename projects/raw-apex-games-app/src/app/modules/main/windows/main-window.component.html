@@ -60,7 +60,6 @@
         <app-navbar *ngIf="hasSeenFirstRun" (navPage)="goToPage($event)" [currentPage]="activePage"></app-navbar>
         <ng-container [ngSwitch]="activePage">
             <app-about-page *ngSwitchCase="MainPage.About"></app-about-page>
-            <app-academy-page *ngSwitchCase="MainPage.Academy"></app-academy-page>
             <app-charting-page *ngSwitchCase="MainPage.Charting"></app-charting-page>
             <app-first-run-page *ngSwitchCase="MainPage.FirstRun" (finishButtonClick)="onFinishFirstRunClick()"></app-first-run-page>
             <app-map-explorer-page *ngSwitchCase="MainPage.MapExplorer"></app-map-explorer-page>

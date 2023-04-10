@@ -30,10 +30,8 @@ import { PlayerAccountStatsService } from "@raw-apex-games-app/app/modules/core/
 import { PlayerLocalStatsService } from "@raw-apex-games-app/app/modules/core/player-local-stats.service";
 import { PlayerService } from "@raw-apex-games-app/app/modules/core/player.service";
 import { ReportingService } from "@raw-apex-games-app/app/modules/core/reporting/reporting.service";
-import { ComplimentaryWeaponsComponent } from "@raw-apex-games-app/app/shared/components/complimentary-weapons/complimentary-weapons.component";
 import { WelcomeContentComponent } from "@raw-apex-games-app/app/shared/components/welcome-content/welcome-content.component";
 import { AccountStatsDisplayComponent } from "./components/account-stats-display.component";
-import { ComplimentaryLegendsComponent } from "./components/complimentary-legends.component";
 import { LegendIconsBoardComponent } from "./components/legend-icons-board.component";
 import { MapRotationDisplayComponent } from "./components/map-rotation-display.component";
 import { DashboardPageComponent } from "./dashboard-page.component";
@@ -46,8 +44,6 @@ describe("DashboardPageComponent", () => {
         await TestBed.configureTestingModule({
             declarations: [
                 AccountStatsDisplayComponent,
-                ComplimentaryLegendsComponent,
-                ComplimentaryWeaponsComponent,
                 DashboardPageComponent,
                 LegendIconsBoardComponent,
                 MapRotationDisplayComponent,

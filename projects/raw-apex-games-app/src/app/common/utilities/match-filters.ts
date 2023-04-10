@@ -28,9 +28,7 @@ class StaticMatchFilters {
 
     /** @returns All non-training and non-firing range game modes */
     public static getNonTrainingGameModeList(afSupportedOnly = true): MatchGameMode[] {
-        return MatchGameModeList.filter(
-            (g) => g.isAFSupported == afSupportedOnly && (g.isBattleRoyaleGameMode || g.isArenasGameMode || g.isControlGameMode)
-        );
+        return MatchGameModeList.filter((g) => g.isAFSupported == afSupportedOnly && (g.isBattleRoyaleGameMode || g.isControlGameMode));
     }
 
     public static isMatchInGameModeSelection(

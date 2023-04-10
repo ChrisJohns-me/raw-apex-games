@@ -61,108 +61,11 @@
     },
     "featureFlags": {
         "enableMatchTimerWindow": true,
-        "enableLegendSelectAssistWindow": true,
         "enableMiniInventoryWindow": true,
-        "enableUltTimerWindow": true,
-        "enableInflictionInsightWindow": true,
-        "enableHealingHelperWindow": true,
-        "enableReticleHelperWindow": false,
         "enableMatchSummaryWindow": true,
-        "enableVideoCapture": false,
-        "inflictionInsight": {
-            "teamIndicatorUI": true,
-            "visualizeDamageUI": true,
-            "totalDamageAmount": true,
-            "shieldDamageAmount": true,
-            "healthDamageAmount": true,
-            "platformUI": true,
-            "showAssumedOpponentTeammateShields": false,
-            "showAssumedOpponentTeammateHealth": false,
-            "assumeKnockdownExpires": true,
-            "assumeEliminationExpires": true
-        },
-        "legendSelectAssist": {
-            "legendStats": true,
-            "complimentaryLegends": true
-        },
-        "reticleHelper": {
-            "aimingReticle": true
-        }
+        "enableVideoCapture": false
     },
-    "featureConfigs": {
-        "inflictionInsight": {
-            "damageResetTime": 20000
-        },
-        "legendSelectAssist": {
-            "minLegendStatsMatches": 1,
-            "maxComplimentaryLegends": 3,
-            "minShowComplimentaryLegendsMatches": 100,
-            "limitLegendStatsMatches": null,
-            "limitComplimentaryLegendsMatches": 500,
-            "complimentaryLegendsWeights": {
-                "winWeight": 0.1,
-                "placementWeight": 0.15,
-                "damageWeight": 0.2,
-                "eliminationWeight": 0.4,
-                "deathWeight": 0.05,
-                "assistWeight": 0.05,
-                "knockdownWeight": 0.05,
-                "durationWeight": 0
-            },
-            "legendRows": [
-                {
-                    "top": 26.15,
-                    "right": 22.15,
-                    "legendIds": [
-                        "#character_bloodhound_NAME",
-                        "#character_gibraltar_NAME",
-                        "#character_lifeline_NAME",
-                        "#character_pathfinder_NAME",
-                        "#character_wraith_NAME"
-                    ]
-                },
-                {
-                    "top": 37.75,
-                    "right": 14.7,
-                    "legendIds": [
-                        "#character_bangalore_NAME",
-                        "#character_caustic_NAME",
-                        "#character_mirage_NAME",
-                        "#character_octane_NAME",
-                        "#character_wattson_NAME",
-                        "#character_crypto_NAME"
-                    ]
-                },
-                {
-                    "top": 49.37,
-                    "right": 18.4,
-                    "legendIds": [
-                        "#character_revenant_NAME",
-                        "#character_loba_NAME",
-                        "#character_rampart_NAME",
-                        "#character_horizon_NAME",
-                        "#character_fuse_NAME"
-                    ]
-                },
-                {
-                    "top": 61,
-                    "right": 22,
-                    "legendIds": [
-                        "#character_valkyrie_NAME",
-                        "#character_seer_NAME",
-                        "#character_ash_NAME",
-                        "#character_maggie_NAME",
-                        "#character_newcastle_NAME"
-                    ]
-                }
-            ]
-        },
-        "ultTimer": {
-            "maxHistoryCount": 5,
-            "highConfidenceAmount": 0.7,
-            "lowConfidenceAmount": 0.35
-        }
-    },
+    "featureConfigs": {},
     "general": {
         "enableMatchSummaryAd": false
     },

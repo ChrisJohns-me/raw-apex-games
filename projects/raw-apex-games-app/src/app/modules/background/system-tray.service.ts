@@ -6,25 +6,19 @@ import { environment } from "@raw-apex-games-app/environments/environment";
 import { exhaustiveEnumSwitch } from "common/utilities/switch";
 import { of } from "rxjs";
 import { catchError, takeUntil } from "rxjs/operators";
-import { InflictionInsightWindowService } from "../HUD/infliction-insight/windows/infliction-insight-window.service";
 import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
-import { UltTimerWindowService } from "../HUD/ult-timer/windows/ult-timer-window.service";
 import { BaseService } from "../core/base-service.abstract";
 import { OWSystemTrayMenuItem } from "../core/overwolf";
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
 import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
-import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
 import { MainPage } from "../main/pages/main-page";
 import { MainDesktopWindowService } from "../main/windows/main-desktop-window.service";
 
 export enum SystemTrayItemKey {
     Main = "main",
     DevelopmentTools = "development-tools",
-    HUDInflictionInsight = "hud-infliction-insight",
     HUDMatchTimer = "hud-match-timer",
-    HUDUltTimer = "hud-ult-timer",
-    LegendSelectAssist = "legend-select-assist",
     MatchExplorer = "matchexplorer",
     Charting = "charting",
     Settings = "settings",
@@ -73,13 +67,10 @@ const FOOTER_MENUITEMS: OWSystemTrayMenuItem[] = [
     providedIn: "root",
     deps: [
         DevelopmentToolsWindowService,
-        InflictionInsightWindowService,
-        LegendSelectAssistWindowService,
         MainDesktopWindowService,
         MatchTimerWindowService,
         OverwolfExtensionsService,
         OverwolfSystemTrayService,
-        UltTimerWindowService,
     ],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("SystemTrayService", SystemTrayService, deps),
 })
@@ -88,13 +79,10 @@ export class SystemTrayService extends BaseService {
 
     constructor(
         private readonly developmentToolsWindow: DevelopmentToolsWindowService,
-        private readonly inflictionInsightWindow: InflictionInsightWindowService,
-        private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
         private readonly mainDesktopWindow: MainDesktopWindowService,
         private readonly matchTimerWindow: MatchTimerWindowService,
         private readonly overwolfExtensions: OverwolfExtensionsService,
-        private readonly overwolfSystemTray: OverwolfSystemTrayService,
-        private readonly ultTimerWindow: UltTimerWindowService
+        private readonly overwolfSystemTray: OverwolfSystemTrayService
     ) {
         super();
 
@@ -139,17 +127,8 @@ export class SystemTrayService extends BaseService {
             case SystemTrayItemKey.DevelopmentTools:
                 this.developmentToolsWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
                 break;
-            case SystemTrayItemKey.HUDInflictionInsight:
-                this.inflictionInsightWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
-                break;
             case SystemTrayItemKey.HUDMatchTimer:
                 this.matchTimerWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
-                break;
-            case SystemTrayItemKey.HUDUltTimer:
-                this.ultTimerWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
-                break;
-            case SystemTrayItemKey.LegendSelectAssist:
-                this.legendSelectAssistWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.MatchExplorer:
                 this.mainDesktopWindow.open(MainPage.MatchExplorer).pipe(takeUntil(this.destroy$)).subscribe();

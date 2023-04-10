@@ -5,7 +5,6 @@ import { RawApexGamesSharedModule } from "@raw-apex-games-app/app/shared/raw-ape
 import { SharedModule } from "@shared/shared.module";
 import { NavbarComponent } from "./components/navbar.component";
 import { AboutPageModule } from "./pages/about/about-page.module";
-import { AcademyPageModule } from "./pages/academy/academy-page.module";
 import { ChartingPageModule } from "./pages/charting/charting-page.module";
 import { DashboardPageModule } from "./pages/dashboard/dashboard-page.module";
 import { DatasheetPageModule } from "./pages/datasheet/datasheet-page.module";
@@ -17,7 +16,6 @@ import { MainWindowComponent } from "./windows/main-window.component";
 
 const PAGES = [
     AboutPageModule,
-    AcademyPageModule,
     ChartingPageModule,
     DashboardPageModule,
     DatasheetPageModule,

@@ -2,16 +2,10 @@ import { Injectable } from "@angular/core";
 import { MatchGameMode } from "@raw-apex-games-app/app/common/match/game-mode/game-mode";
 import { MatchGameModeList } from "@raw-apex-games-app/app/common/match/game-mode/game-mode-list";
 import { MatchGameModeGenericId } from "@raw-apex-games-app/app/common/match/game-mode/game-mode.enum";
-import {
-    AvgMatchStats,
-    avgStats,
-    complimentaryLegendsWeights,
-    complimentaryWeaponsAvgEliminations,
-    legendAvgStats,
-} from "@raw-apex-games-app/app/common/utilities/match-stats";
+import { AvgMatchStats, avgStats, legendAvgStats } from "@raw-apex-games-app/app/common/utilities/match-stats";
 import { SingletonServiceProviderFactory } from "@raw-apex-games-app/app/singleton-service.provider.factory";
 import { Stopwatch } from "common/utilities/";
-import { Observable, combineLatest, of } from "rxjs";
+import { Observable, of } from "rxjs";
 import { filter, map, tap } from "rxjs/operators";
 import { BaseService } from "./base-service.abstract";
 import { ConfigurationService } from "./configuration.service";
@@ -32,13 +26,9 @@ type LegendIdAndGameModeGenericId = string;
 })
 export class PlayerLocalStatsService extends BaseService {
     private cachedPlayerStats?: AvgMatchStats;
-    private cachedPlayerComplimentaryLegendWeights?: { legendId: string; weightScore: number }[];
-    private cachedPlayerComplimentaryWeaponAvgEliminations?: { weaponId: string; avgEliminations: number }[];
 
     private cachedLegendStats = new Map<LegendId, AvgMatchStats>();
     private cachedLegendGameModeGenericStats = new Map<LegendIdAndGameModeGenericId, AvgMatchStats>();
-    private cachedLegendComplimentaryLegendWeights = new Map<LegendId, { legendId: string; weightScore: number }[]>();
-    private cachedLegendComplimentaryWeaponAvgEliminations = new Map<LegendId, { weaponId: string; avgEliminations: number }[]>();
 
     private watchdogTime = 500;
 
@@ -47,14 +37,10 @@ export class PlayerLocalStatsService extends BaseService {
     }
 
     public clearPlayerCache(): void {
-        this.cachedPlayerComplimentaryLegendWeights = undefined;
-        this.cachedPlayerComplimentaryWeaponAvgEliminations = undefined;
         this.cachedPlayerStats = undefined;
     }
 
     public clearLegendCache(): void {
-        this.cachedLegendComplimentaryLegendWeights = new Map();
-        this.cachedLegendComplimentaryWeaponAvgEliminations = new Map();
         this.cachedLegendStats = new Map();
         this.cachedLegendGameModeGenericStats = new Map();
     }
@@ -95,71 +81,6 @@ export class PlayerLocalStatsService extends BaseService {
                 this.cachedPlayerStats = avgStats;
                 stopwatch.stop();
                 stopwatch.watchdog(this.watchdogTime, (time) => `"Player Stats Calculation (limit ${limit})" took ${time}ms`);
-            })
-        );
-    }
-
-    /**
-     * Sorted complimentary Legends and their weight scores.
-     * @returns {Observable<[legendId, weightScore]>} WeightScore in percent
-     */
-    public getPlayerComplimentaryLegendWeights$(
-        limit?: number,
-        breakCache = false
-    ): Observable<{ legendId: string; weightScore: number }[]> {
-        const cachedResult = this.cachedPlayerComplimentaryLegendWeights;
-        if (!breakCache && cachedResult && cachedResult.length) return of(cachedResult);
-
-        const stopwatch = new Stopwatch();
-        stopwatch.start();
-        return combineLatest([this.configuration.config$, this.match.getAllMatchData$(limit)]).pipe(
-            filter(([, matchList]) => !!matchList && Array.isArray(matchList)),
-            map(([config, matchList]) => {
-                const weightsMap = complimentaryLegendsWeights(
-                    matchList as MatchDataStore[],
-                    config.featureConfigs.legendSelectAssist.complimentaryLegendsWeights
-                );
-                const weights = Array.from(weightsMap)
-                    .slice()
-                    .sort((a, b) => b[1].totalAvgWeight - a[1].totalAvgWeight)
-                    .map((l) => ({ legendId: l[0], weightScore: l[1].totalAvgWeight }));
-                return weights;
-            }),
-            tap((legendWeights) => {
-                this.cachedPlayerComplimentaryLegendWeights = legendWeights;
-                stopwatch.stop();
-                stopwatch.watchdog(this.watchdogTime, (time) => `"Player Complimentary Legends (limit ${limit})" took ${time}ms`);
-            })
-        );
-    }
-
-    /**
-     * Sorted complimentary Weapons and their avg eliminations per match.
-     * @returns {Observable<[weaponId, avgEliminations]>}
-     */
-    public getPlayerComplimentaryWeaponAvgEliminations$(
-        limit?: number,
-        breakCache = false
-    ): Observable<{ weaponId: string; avgEliminations: number }[]> {
-        const cachedResult = this.cachedPlayerComplimentaryWeaponAvgEliminations;
-        if (!breakCache && cachedResult && cachedResult.length) return of(cachedResult);
-
-        const stopwatch = new Stopwatch();
-        stopwatch.start();
-        return this.match.getAllMatchData$(limit).pipe(
-            filter((matchList) => !!matchList && Array.isArray(matchList)),
-            map((matchList) => {
-                const weaponsAvgEliminationsMap = complimentaryWeaponsAvgEliminations(matchList as MatchDataStore[]);
-                const weaponsAvgEliminations = Array.from(weaponsAvgEliminationsMap)
-                    .slice()
-                    .sort((a, b) => b[1] - a[1])
-                    .map((w) => ({ weaponId: w[0], avgEliminations: w[1] }));
-                return weaponsAvgEliminations;
-            }),
-            tap((weaponsAvgEliminations) => {
-                this.cachedPlayerComplimentaryWeaponAvgEliminations = weaponsAvgEliminations;
-                stopwatch.stop();
-                stopwatch.watchdog(this.watchdogTime, (time) => `"Player Complimentary Legends (limit ${limit})" took ${time}ms`);
             })
         );
     }
@@ -205,80 +126,6 @@ export class PlayerLocalStatsService extends BaseService {
                 stopwatch.watchdog(
                     this.watchdogTime,
                     (time) => `"Legend Stats '${legendId}' GameModeList '${gameModeGenericIds}' (limit ${limit})" took ${time}ms`
-                );
-            })
-        );
-    }
-
-    /**
-     * Sorted complimentary Legends and their weight scores, from the given LegendId.
-     * @returns {Observable<[legendId, weightScore]>} WeightScore in percent
-     */
-    public getLegendComplimentaryLegendWeights$(
-        legendId: string,
-        limit?: number,
-        breakCache = false
-    ): Observable<{ legendId: string; weightScore: number }[]> {
-        const cachedResult = this.cachedLegendComplimentaryLegendWeights.get(legendId);
-        if (!breakCache && cachedResult) return of(cachedResult);
-
-        const stopwatch = new Stopwatch();
-        stopwatch.start();
-        return combineLatest([this.configuration.config$, this.match.getMatchDataByLegendId$(legendId, limit)]).pipe(
-            filter(([, matchList]) => !!matchList && Array.isArray(matchList)),
-            map(([config, matchList]) => {
-                const legendWeightsMap = complimentaryLegendsWeights(
-                    matchList as MatchDataStore[],
-                    config.featureConfigs.legendSelectAssist.complimentaryLegendsWeights,
-                    legendId
-                );
-                const legendWeights = Array.from(legendWeightsMap)
-                    .slice()
-                    .sort((a, b) => b[1].totalAvgWeight - a[1].totalAvgWeight)
-                    .map((l) => ({ legendId: l[0], weightScore: l[1].totalAvgWeight }));
-                return legendWeights;
-            }),
-            tap((legendWeights) => {
-                this.cachedLegendComplimentaryLegendWeights.set(legendId, legendWeights);
-                stopwatch.stop();
-                stopwatch.watchdog(
-                    this.watchdogTime,
-                    (time) => `"Legend '${legendId}' Complimentary Legends (limit ${limit})" took ${time}ms`
-                );
-            })
-        );
-    }
-
-    /**
-     * Sorted complimentary Weapons and their avg eliminations, from the given LegendId.
-     * @returns {Observable<[weaponId, avgEliminations]>}
-     */
-    public getLegendComplimentaryAvgWeaponEliminations$(
-        legendId: string,
-        limit?: number,
-        breakCache = false
-    ): Observable<{ weaponId: string; avgEliminations: number }[]> {
-        const cachedResult = this.cachedLegendComplimentaryWeaponAvgEliminations.get(legendId);
-        if (!breakCache && cachedResult) return of(cachedResult);
-
-        const stopwatch = new Stopwatch();
-        stopwatch.start();
-        return this.match.getMatchDataByLegendId$(legendId, limit).pipe(
-            filter((matchList) => !!matchList && Array.isArray(matchList)),
-            map((matchList) => {
-                const weaponsAvgEliminationsMap = complimentaryWeaponsAvgEliminations(matchList as MatchDataStore[], legendId);
-                const weaponsAvgEliminations = Array.from(weaponsAvgEliminationsMap)
-                    .slice()
-                    .sort((a, b) => b[1] - a[1])
-                    .map((w) => ({ weaponId: w[0], avgEliminations: w[1] }));
-                return weaponsAvgEliminations;
-            }),
-            tap((weaponsAvgEliminations) => {
-                this.cachedLegendComplimentaryWeaponAvgEliminations.set(legendId, weaponsAvgEliminations);
-                stopwatch.stop();
-                stopwatch.watchdog(
-                    this.watchdogTime,
-                    (time) => `"Legend '${legendId}' Complimentary Weapons (limit ${limit})" took ${time}ms`
                 );
             })
         );

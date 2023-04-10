@@ -29,9 +29,7 @@ export class MatchGameMode {
     public isAFSupported: boolean;
     public isReportable: boolean;
     public isBattleRoyaleGameMode: boolean;
-    public isArenasGameMode: boolean;
     public isControlGameMode: boolean;
-    public isRanked?: boolean;
     public activeDates?: ActiveDates;
 
     public get isActive(): boolean {
@@ -47,9 +45,7 @@ export class MatchGameMode {
         this.isAFSupported = ctor.isAFSupported ?? true;
         this.isReportable = ctor.isReportable ?? true;
         this.isBattleRoyaleGameMode = ctor.isBattleRoyaleGameMode;
-        this.isArenasGameMode = ctor.isArenasGameMode;
         this.isControlGameMode = ctor.isControlGameMode;
-        this.isRanked = ctor.isRanked ?? false;
         this.activeDates = ctor.activeDates;
     }
 

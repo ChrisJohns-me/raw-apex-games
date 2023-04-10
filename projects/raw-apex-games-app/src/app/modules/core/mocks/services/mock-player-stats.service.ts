@@ -19,18 +19,6 @@ export class MockPlayerStatsService implements MockedClass<PlayerLocalStatsServi
         return of();
     }
 
-    public getPlayerComplimentaryLegendWeights$(
-        ...args: Parameters<PlayerLocalStatsService["getPlayerComplimentaryLegendWeights$"]>
-    ): ReturnType<PlayerLocalStatsService["getPlayerComplimentaryLegendWeights$"]> {
-        return of();
-    }
-
-    public getPlayerComplimentaryWeaponAvgEliminations$(
-        ...args: Parameters<PlayerLocalStatsService["getPlayerComplimentaryWeaponAvgEliminations$"]>
-    ): ReturnType<PlayerLocalStatsService["getPlayerComplimentaryWeaponAvgEliminations$"]> {
-        return of();
-    }
-
     public getLegendStats$(
         ...args: Parameters<PlayerLocalStatsService["getLegendStats$"]>
     ): ReturnType<PlayerLocalStatsService["getLegendStats$"]> {
@@ -40,18 +28,6 @@ export class MockPlayerStatsService implements MockedClass<PlayerLocalStatsServi
     public getLegendGameModeGenericStats$(
         ...args: Parameters<PlayerLocalStatsService["getLegendGameModeGenericStats$"]>
     ): ReturnType<PlayerLocalStatsService["getLegendGameModeGenericStats$"]> {
-        return of();
-    }
-
-    public getLegendComplimentaryLegendWeights$(
-        ...args: Parameters<PlayerLocalStatsService["getLegendComplimentaryLegendWeights$"]>
-    ): ReturnType<PlayerLocalStatsService["getLegendComplimentaryLegendWeights$"]> {
-        return of();
-    }
-
-    public getLegendComplimentaryAvgWeaponEliminations$(
-        ...args: Parameters<PlayerLocalStatsService["getLegendComplimentaryAvgWeaponEliminations$"]>
-    ): ReturnType<PlayerLocalStatsService["getLegendComplimentaryAvgWeaponEliminations$"]> {
         return of();
     }
 

@@ -5,9 +5,6 @@ import { APP_NAME } from "@raw-apex-games-app/app/common/app";
 import { Hotkey } from "@raw-apex-games-app/app/common/hotkey";
 import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@raw-apex-games-app/app/common/settings";
 import { aXNWSVA } from "@raw-apex-games-app/app/common/vip";
-import { InflictionInsightType } from "@raw-apex-games-app/app/modules/HUD/infliction-insight/windows/infliction-insight-window.component";
-import { AimingReticle, AimingReticleList } from "@raw-apex-games-app/app/modules/HUD/reticle-helper/components/aiming-reticle/aiming-reticles";
-import { UltimateTimerType } from "@raw-apex-games-app/app/modules/HUD/ult-timer/windows/ult-timer-window.component";
 import { HotkeyService } from "@raw-apex-games-app/app/modules/background/hotkey.service";
 import { ConfigurationService } from "@raw-apex-games-app/app/modules/core/configuration.service";
 import { FileService } from "@raw-apex-games-app/app/modules/core/file.service";
@@ -33,25 +30,9 @@ import { MainPage } from "../main-page";
 const SAVE_SETTINGS_DEBOUNCETIME = 1000;
 
 enum SettingPreview {
-    AimingReticle = "aimingreticle",
     MinimizeToTray = "minimizetotray",
     MatchTimer = "matchtimer",
     MiniInventory = "miniinventory",
-    HealingHelper = "healinghelper",
-    UltTimer = "ulttimer",
-    InflictionInsight = "inflictioninsight",
-    LegendSelectionStats = "legendselectionstats",
-    LegendSelectionSuggestions = "legendselectionsuggestions",
-}
-
-enum AimingReticlePreview {
-    NoWeapon = "noweapon",
-    HipfireAssaultRifle = "hipfireassaultrifle",
-    HipfirePistol = "hipfirepistol",
-    HipfireShotgun = "hipfireshotgun",
-    ADSAssaultRifle = "adsassaultrifle",
-    ADSPistol = "adspistol",
-    ADSShotgun = "adsshotgun",
 }
 
 @Component({
@@ -75,19 +56,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         inGameHUDFormGroup: this.formBuilder.group({
             [SettingKey.EnableInGameMatchTimerHUD]: [false],
             [SettingKey.EnableInGameMiniInventoryHUD]: [false],
-            [SettingKey.InflictionInsightType]: [InflictionInsightType.Digits],
-            [SettingKey.EnableInGameHealingHelperHUD]: [false],
-            [SettingKey.EnableInGameAimingReticle]: [false],
-            [SettingKey.UltimateTimerType]: [UltimateTimerType.TimeTotal],
-            [SettingKey.InGameAimingReticleId]: [AimingReticleList[0].reticleId],
-            [SettingKey.InGameAimingReticleColor]: [AimingReticleList[0].hexColor],
-            [SettingKey.InGameAimingReticleAlpha]: [AimingReticleList[0].alpha],
-            [SettingKey.InGameAimingReticleDynamicHide]: [false],
-        }),
-        [SettingKey.EnableAllLegendSelectHUD]: false,
-        legendSelectHUDFormGroup: this.formBuilder.group({
-            [SettingKey.EnableLegendSelectLegendStats]: [false],
-            [SettingKey.EnableLegendSelectLegendSuggestions]: [false],
         }),
     });
     public get [SettingKey.MinimizeToTray](): FormControl {
@@ -98,12 +66,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     }
     public get inGameHUDFormGroup(): FormGroup {
         return this.settingsForm.get("inGameHUDFormGroup") as FormGroup;
-    }
-    public get [SettingKey.EnableAllLegendSelectHUD](): FormControl {
-        return this.settingsForm.get([SettingKey.EnableAllLegendSelectHUD]) as FormControl;
-    }
-    public get legendSelectHUDFormGroup(): FormGroup {
-        return this.settingsForm.get("legendSelectHUDFormGroup") as FormGroup;
     }
     public get [SettingKey.EnableLocalDBReporting](): FormControl {
         return this.settingsForm.get([SettingKey.EnableLocalDBReporting]) as FormControl;
@@ -118,10 +80,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         this.cdr.detectChanges();
     }
     private _selectedPreviewSetting?: SettingPreview;
-    /** Which background to show for aiming reticle preview */
-    public selectedAimingReticleBackground: AimingReticlePreview = AimingReticlePreview.NoWeapon;
-    /** Actual aiming reticle */
-    public aimingReticlePreview?: AimingReticle;
 
     //#region State Variables
     public isEditing = false;
@@ -140,36 +98,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     public APP_NAME = APP_NAME;
     public SettingKey = SettingKey;
     public SettingPreview = SettingPreview;
-    public UltimateTimerTypeList: { key: UltimateTimerType; value: string }[] = [
-        {
-            key: UltimateTimerType.Disabled,
-            value: "Off",
-        },
-        {
-            key: UltimateTimerType.TimeTotal,
-            value: "Cooldown Total",
-        },
-        {
-            key: UltimateTimerType.TimeRemaining,
-            value: "Cooldown Remaining",
-        },
-    ];
-    public InflictionInsightTypeList: { key: InflictionInsightType; value: string }[] = [
-        {
-            key: InflictionInsightType.Disabled,
-            value: "Off",
-        },
-        {
-            key: InflictionInsightType.Digits,
-            value: "Damage Numbers",
-        },
-        {
-            key: InflictionInsightType.Emulated,
-            value: "Health Bar",
-        },
-    ];
-    public AimingReticlePreview = AimingReticlePreview;
-    public AimingReticleList = AimingReticleList;
     public mdiAttachment = mdiAttachment;
     public mdiInformationOutline = mdiInformationOutline;
     //#endregion
@@ -213,7 +141,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         this.setupHotkeyForm();
         this.setupMinimizeToTrayForm();
         this.setupInGameHUDForm();
-        this.setupLegendSelectHUDForm();
         this.setupLocalDBReportingForm();
         this.setupSettingsListener();
     }
@@ -293,12 +220,8 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             this.settingsForm
                 .get([SettingKey.EnableAllInGameHUD])
                 ?.patchValue(settings[SettingKey.EnableAllInGameHUD], { emitEvent: false });
-            this.settingsForm
-                .get([SettingKey.EnableAllLegendSelectHUD])
-                ?.patchValue(settings[SettingKey.EnableAllLegendSelectHUD], { emitEvent: false });
 
             this.inGameHUDFormGroup.patchValue(settings, { emitEvent: false });
-            this.legendSelectHUDFormGroup.patchValue(settings, { emitEvent: false });
         };
 
         this.settings
@@ -306,38 +229,12 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this.destroy$))
             .subscribe((allSettings) => {
                 applyAllSettingsFn(allSettings);
-                this.updateAimingReticlePreview(
-                    allSettings.inGameAimingReticleId as string,
-                    allSettings.inGameAimingReticleColor as string,
-                    allSettings.inGameAimingReticleAlpha as number
-                );
                 this.refreshAllFormStates();
             });
     }
 
     private refreshAllFormStates(): void {
         this.refreshInGameHUDFormState();
-        this.refreshLegendSelectHUDFormState();
-        this.refreshAimingReticleFormState();
-    }
-
-    private updateAimingReticlePreview(
-        reticleId: AimingReticle["reticleId"],
-        reticleColor: AimingReticle["hexColor"],
-        reticleAlpha: AimingReticle["alpha"]
-    ): void {
-        const aimingReticle = AimingReticleList.find((reticle) => reticle.reticleId === reticleId);
-        if (!aimingReticle) return;
-        aimingReticle.hexColor = reticleColor;
-        aimingReticle.alpha = reticleAlpha;
-
-        this.aimingReticlePreview = undefined;
-        this.cdr.detectChanges();
-
-        setTimeout(() => {
-            this.aimingReticlePreview = aimingReticle;
-            this.cdr.detectChanges();
-        }, 10);
     }
 
     //#region HotKeys
@@ -389,54 +286,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             this.inGameHUDFormGroup.enable({ emitEvent: false });
         } else {
             this.inGameHUDFormGroup.disable({ emitEvent: false });
-        }
-    }
-
-    private refreshAimingReticleFormState(): void {
-        const isEnabled = this.inGameHUDFormGroup.get([SettingKey.EnableInGameAimingReticle])?.value;
-        const reticleIdForm = this.inGameHUDFormGroup.get(SettingKey.InGameAimingReticleId);
-        const reticleColorForm = this.inGameHUDFormGroup.get(SettingKey.InGameAimingReticleColor);
-        const reticleAlphaForm = this.inGameHUDFormGroup.get(SettingKey.InGameAimingReticleAlpha);
-        const reticleDynamicHideForm = this.inGameHUDFormGroup.get(SettingKey.InGameAimingReticleDynamicHide);
-
-        if (isEnabled) {
-            reticleIdForm?.enable({ emitEvent: false });
-            reticleColorForm?.enable({ emitEvent: false });
-            reticleAlphaForm?.enable({ emitEvent: false });
-            reticleDynamicHideForm?.enable({ emitEvent: false });
-        } else {
-            reticleIdForm?.disable({ emitEvent: false });
-            reticleColorForm?.disable({ emitEvent: false });
-            reticleAlphaForm?.disable({ emitEvent: false });
-            reticleDynamicHideForm?.disable({ emitEvent: false });
-        }
-    }
-    //#endregion
-
-    //#region Legend Select HUD
-    private setupLegendSelectHUDForm(): void {
-        this.settingsForm
-            .get([SettingKey.EnableAllLegendSelectHUD])
-            ?.valueChanges.pipe(takeUntil(this.destroy$))
-            .subscribe(() => {
-                this.refreshLegendSelectHUDFormState();
-            });
-
-        merge(
-            this.settingsForm
-                .get([SettingKey.EnableAllLegendSelectHUD])
-                ?.valueChanges.pipe(map((value) => ({ [SettingKey.EnableAllLegendSelectHUD]: value }))) ?? of(),
-            this.legendSelectHUDFormGroup.valueChanges ?? of()
-        )
-            .pipe(takeUntil(this.destroy$), debounceTime(SAVE_SETTINGS_DEBOUNCETIME))
-            .subscribe(this.saveSettingsChanges.bind(this));
-    }
-
-    private refreshLegendSelectHUDFormState(): void {
-        if (this.settingsForm.get([SettingKey.EnableAllLegendSelectHUD])?.value) {
-            this.legendSelectHUDFormGroup.enable({ emitEvent: false });
-        } else {
-            this.legendSelectHUDFormGroup.disable({ emitEvent: false });
         }
     }
     //#endregion

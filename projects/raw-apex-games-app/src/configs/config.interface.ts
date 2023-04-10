@@ -54,91 +54,15 @@ export interface Facts {
  */
 export interface FeatureFlags {
     enableMatchTimerWindow: boolean;
-    enableLegendSelectAssistWindow: boolean;
     enableMiniInventoryWindow: boolean;
-    enableUltTimerWindow: boolean;
-    enableInflictionInsightWindow: boolean;
-    enableHealingHelperWindow: boolean;
-    enableReticleHelperWindow: boolean;
     enableMatchSummaryWindow: boolean;
     enableVideoCapture: boolean;
-    inflictionInsight: {
-        /** Visualize teams */
-        teamIndicatorUI: boolean;
-        /** Visualize the damage amount to shield or health */
-        visualizeDamageUI: boolean;
-        /** Shield + Health damage text */
-        totalDamageAmount: boolean;
-        /** Shield damage text */
-        shieldDamageAmount: boolean;
-        /** Health damage text */
-        healthDamageAmount: boolean;
-        /** Opponent's platform icon */
-        platformUI: boolean;
-        /** Show non-damaged teammates' shields */
-        showAssumedOpponentTeammateShields: boolean;
-        /** Show non-damaged teammates' health */
-        showAssumedOpponentTeammateHealth: boolean;
-        assumeKnockdownExpires: boolean;
-        assumeEliminationExpires: boolean;
-    };
-    legendSelectAssist: {
-        legendStats: boolean;
-        complimentaryLegends: boolean;
-    };
-    reticleHelper: {
-        aimingReticle: boolean;
-    };
 }
 
 /**
  * Configuration settings for features / mini-features; not enabling or disabling.
  */
-export interface FeatureConfigs {
-    inflictionInsight: {
-        /** Time in ms before damage accumulation is reset */
-        damageResetTime: number;
-    };
-    legendSelectAssist: {
-        /** How many matches are required to show stats for legends */
-        minLegendStatsMatches: number;
-        /** How many complimentary legends to show */
-        maxComplimentaryLegends: number;
-        /** How many matches are required to show complimentary legends */
-        minShowComplimentaryLegendsMatches: number;
-        /** Number of matches to use to calculate legend stats */
-        limitLegendStatsMatches?: number;
-        /** Number of matches to use to calculate complimentary legends */
-        limitComplimentaryLegendsMatches: number;
-        /** Weight distrubution used to calculate complimentary legends */
-        complimentaryLegendsWeights: {
-            winWeight: number;
-            placementWeight: number;
-            damageWeight: number;
-            eliminationWeight: number;
-            deathWeight: number;
-            assistWeight: number;
-            knockdownWeight: number;
-            durationWeight: number;
-        };
-        legendRows: {
-            /** Row's distance from top of screen */
-            top: number;
-            /** Row's distance from right of screen */
-            right: number;
-            /** Legends in the row, in order */
-            legendIds: string[];
-        }[];
-    };
-    ultTimer: {
-        /** Number of percents to keep for calculation */
-        maxHistoryCount: number;
-        /** Minimum percent amount of confidence that the ready date is deemed accurate */
-        highConfidenceAmount: number;
-        /** Minimum percent amount of confidence to display the ultimate timer at all */
-        lowConfidenceAmount: number;
-    };
-}
+export interface FeatureConfigs {}
 
 export interface General {
     enableMatchSummaryAd: boolean;

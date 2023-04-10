@@ -8,9 +8,8 @@ import { MatchService } from "@raw-apex-games-app/app/modules/core/match/match.s
 import { PlayerService } from "@raw-apex-games-app/app/modules/core/player.service";
 import { SingletonServiceProviderFactory } from "@raw-apex-games-app/app/singleton-service.provider.factory";
 import { cleanInt, findKeyByKeyRegEx, findValueByKeyRegEx, isEmpty } from "common/utilities";
-import { unique } from "common/utilities/primitives/array";
-import { BehaviorSubject, Observable, combineLatest } from "rxjs";
-import { filter, map, switchMap, takeUntil } from "rxjs/operators";
+import { BehaviorSubject, Observable } from "rxjs";
+import { filter, map, takeUntil } from "rxjs/operators";
 import { BaseService } from "../base-service.abstract";
 import { OWMatchInfo, OWMatchInfoRoster, OWMatchInfoTeammate, OverwolfGameDataService } from "../overwolf";
 import { MatchLegendSelectService } from "./match-legend-select.service";
@@ -102,7 +101,6 @@ export class MatchRosterService extends BaseService {
         this.setupOnMatchStart();
         this.setupOnMatchEnd();
         this.setupBattleRoyaleCounts();
-        this.setupArenasEnemyRoster();
         this.setupMatchRoster();
         this.setupPlayerDisconnectionList();
         this.setupTeammateRosterPrimary();
@@ -198,7 +196,7 @@ export class MatchRosterService extends BaseService {
         this.overwolfGameData.infoUpdates$
             .pipe(
                 takeUntil(this.destroy$),
-                filter(() => !this.match.gameMode$.value?.isArenasGameMode),
+                filter(() => !!this.match.gameMode$.value?.isBattleRoyaleGameMode),
                 filter((infoUpdate) => infoUpdate.feature === "match_info" && !!infoUpdate.info.match_info?.tabs),
                 map((infoUpdate) => infoUpdate.info.match_info?.tabs),
                 filter((tabs) => !isEmpty(tabs))
@@ -220,37 +218,6 @@ export class MatchRosterService extends BaseService {
                         this.startingNumPlayers$.next(numPlayers);
                     }
                 }
-            });
-    }
-
-    /**
-     * Sets up the enemy roster and update teams/players counters for Arenas.
-     */
-    private setupArenasEnemyRoster(): void {
-        this.match.startedEvent$
-            .pipe(
-                takeUntil(this.destroy$),
-                filter(() => !!this.match.gameMode$.value?.isArenasGameMode && !!this.match.gameMode$.value.isAFSupported),
-                switchMap(() => combineLatest([this.matchRoster$, this.teammateRoster$])),
-                filter(([matchRoster, teammateRoster]) => !!matchRoster.allPlayers.length && !!teammateRoster.allPlayers.length)
-            )
-            .subscribe(([matchRoster, teammateRoster]) => {
-                const enemyRoster = new MatchRoster();
-
-                matchRoster.allPlayers.forEach((matchRosterPlayer) => {
-                    const foundTeammate = teammateRoster.allPlayers.find((t) => isPlayerNameEqual(t.name, matchRosterPlayer.name));
-                    if (!foundTeammate) enemyRoster.addPlayer(matchRosterPlayer);
-                });
-
-                const numEnemyTeams = unique(enemyRoster.allPlayers, (p) => p.teamId).length;
-                const numEnemyPlayers = unique(enemyRoster.allPlayers, (p) => p.rosterId).length;
-                const numTeamPlayers = unique(enemyRoster.allPlayers, (p) => p.rosterId).length;
-
-                this.numTeams$.next(numEnemyTeams + 1);
-                this.numPlayers$.next(numEnemyPlayers + numTeamPlayers);
-                this.startingNumTeams$.next(numEnemyTeams + 1);
-                this.startingNumPlayers$.next(numEnemyPlayers + numTeamPlayers);
-                this.arenasEnemyRoster$.next(enemyRoster);
             });
     }
 

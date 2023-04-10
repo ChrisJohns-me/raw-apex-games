@@ -9,20 +9,13 @@ import { Configuration } from "@raw-apex-games-app/configs/config.interface";
 import { isEmpty } from "common/utilities";
 import { Observable, Subscription, combineLatest, merge } from "rxjs";
 import { filter, map, switchMap, take, takeUntil } from "rxjs/operators";
-import { HealingHelperWindowService } from "../HUD/healing-helper/windows/healing-helper-window.service";
-import { InflictionInsightType } from "../HUD/infliction-insight/windows/infliction-insight-window.component";
-import { InflictionInsightWindowService } from "../HUD/infliction-insight/windows/infliction-insight-window.service";
 import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
 import { MiniInventoryWindowService } from "../HUD/mini-inventory/windows/mini-inventory-window.service";
-import { ReticleHelperWindowService } from "../HUD/reticle-helper/windows/reticle-helper-window.service";
-import { UltimateTimerType } from "../HUD/ult-timer/windows/ult-timer-window.component";
-import { UltTimerWindowService } from "../HUD/ult-timer/windows/ult-timer-window.service";
 import { BaseService } from "../core/base-service.abstract";
 import { ConfigurationService } from "../core/configuration.service";
 import { GameService } from "../core/game.service";
 import { MatchService } from "../core/match/match.service";
 import { OverwolfProfileService } from "../core/overwolf/overwolf-profile.service";
-import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
 import { LobbyStatusWindowService } from "../lobby-status/windows/lobby-status-window.service";
 import { MatchSummaryWindowService } from "../match-summary/windows/match-summary-window.service";
 
@@ -39,18 +32,13 @@ type HUDTriggers = {
     deps: [
         ConfigurationService,
         GameService,
-        HealingHelperWindowService,
-        InflictionInsightWindowService,
-        LegendSelectAssistWindowService,
         LobbyStatusWindowService,
         MatchService,
         MatchSummaryWindowService,
         MatchTimerWindowService,
         MiniInventoryWindowService,
         OverwolfProfileService,
-        ReticleHelperWindowService,
         SettingsService,
-        UltTimerWindowService,
     ],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("HUDWindowControllerService", HUDWindowControllerService, deps),
 })
@@ -69,32 +57,6 @@ export class HUDWindowControllerService extends BaseService {
             requiredConfigurations: [(config) => config.featureFlags.enableMatchSummaryWindow],
             requiredSettings: [],
             requiredGameModes: [],
-        },
-        {
-            windowService: this.inflictionInsightWindow,
-            requiredGamePhases: [GamePhase.InGame],
-            requiredConfigurations: [(config) => config.featureFlags.enableInflictionInsightWindow],
-            requiredSettings: [
-                { key: SettingKey.EnableAllInGameHUD },
-                { key: SettingKey.InflictionInsightType, predicate: (value) => value !== InflictionInsightType.Disabled },
-            ],
-            requiredGameModes: [
-                MatchGameModeGenericId.Arenas,
-                MatchGameModeGenericId.BattleRoyale_Duos,
-                MatchGameModeGenericId.BattleRoyale_Trios,
-                MatchGameModeGenericId.BattleRoyale_Ranked,
-            ],
-        },
-        {
-            windowService: this.legendSelectAssistWindow,
-            requiredGamePhases: [GamePhase.LegendSelection],
-            requiredConfigurations: [(config) => config.featureFlags.enableLegendSelectAssistWindow],
-            requiredSettings: [{ key: SettingKey.EnableAllLegendSelectHUD }],
-            requiredGameModes: [
-                MatchGameModeGenericId.BattleRoyale_Duos,
-                MatchGameModeGenericId.BattleRoyale_Trios,
-                MatchGameModeGenericId.BattleRoyale_Ranked,
-            ],
         },
         {
             windowService: this.matchTimerWindow,
@@ -125,48 +87,6 @@ export class HUDWindowControllerService extends BaseService {
                 MatchGameModeGenericId.BattleRoyale_Ranked,
             ],
         },
-        {
-            windowService: this.ultTimerWindow,
-            requiredGamePhases: [GamePhase.InGame],
-            requiredConfigurations: [(config) => config.featureFlags.enableUltTimerWindow],
-            requiredSettings: [
-                { key: SettingKey.EnableAllInGameHUD },
-                { key: SettingKey.UltimateTimerType, predicate: (value) => value !== UltimateTimerType.Disabled },
-            ],
-            requiredGameModes: [
-                MatchGameModeGenericId.Training,
-                MatchGameModeGenericId.FiringRange,
-                MatchGameModeGenericId.BattleRoyale_Duos,
-                MatchGameModeGenericId.BattleRoyale_Trios,
-                MatchGameModeGenericId.BattleRoyale_Ranked,
-            ],
-        },
-        {
-            windowService: this.healingHelperWindow,
-            requiredGamePhases: [GamePhase.InGame],
-            requiredConfigurations: [(config) => config.featureFlags.enableHealingHelperWindow],
-            requiredSettings: [{ key: SettingKey.EnableAllInGameHUD }, { key: SettingKey.EnableInGameHealingHelperHUD }],
-            requiredGameModes: [
-                MatchGameModeGenericId.BattleRoyale_Duos,
-                MatchGameModeGenericId.BattleRoyale_Trios,
-                MatchGameModeGenericId.BattleRoyale_Ranked,
-            ],
-        },
-        {
-            windowService: this.reticleHelperWindow,
-            requiredGamePhases: [GamePhase.InGame],
-            requiredConfigurations: [(config) => config.featureFlags.enableReticleHelperWindow],
-            requiredSettings: [{ key: SettingKey.EnableInGameAimingReticle }],
-            requiredGameModes: [
-                MatchGameModeGenericId.Training,
-                MatchGameModeGenericId.FiringRange,
-                MatchGameModeGenericId.Arenas,
-                MatchGameModeGenericId.Control,
-                MatchGameModeGenericId.BattleRoyale_Duos,
-                MatchGameModeGenericId.BattleRoyale_Trios,
-                MatchGameModeGenericId.BattleRoyale_Ranked,
-            ],
-        },
     ];
 
     /** isVIP */
@@ -176,18 +96,13 @@ export class HUDWindowControllerService extends BaseService {
     constructor(
         private readonly configuration: ConfigurationService,
         private readonly game: GameService,
-        private readonly healingHelperWindow: HealingHelperWindowService,
-        private readonly inflictionInsightWindow: InflictionInsightWindowService,
-        private readonly legendSelectAssistWindow: LegendSelectAssistWindowService,
         private readonly lobbyStatusWindow: LobbyStatusWindowService,
         private readonly match: MatchService,
         private readonly matchSummaryWindow: MatchSummaryWindowService,
         private readonly matchTimerWindow: MatchTimerWindowService,
         private readonly miniInventoryWindow: MiniInventoryWindowService,
         private readonly overwolfProfile: OverwolfProfileService,
-        private readonly reticleHelperWindow: ReticleHelperWindowService,
-        private readonly settings: SettingsService,
-        private readonly ultTimerWindow: UltTimerWindowService
+        private readonly settings: SettingsService
     ) {
         super();
 

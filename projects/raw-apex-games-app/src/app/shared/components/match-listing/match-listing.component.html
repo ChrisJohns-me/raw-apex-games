@@ -74,13 +74,8 @@
                     </div>
                 </td>
                 <td class="align-middle" *ngIf="showDataItems.includes(DataItem.Rank)">
-                    <div class="rank-container" *ngIf="match.rankScore && getRankFromScore(match.rankScore); let rank">
+                    <!-- <div class="rank-container" *ngIf="match.rankScore && getRankFromScore(match.rankScore); let rank">
                         <div class="rank-group">
-                            <app-rank-icon
-                                class="rank-icon"
-                                [rank]="rank"
-                                [title]="rank.friendlyName + ' (' + rank.score + ')'"
-                            ></app-rank-icon>
                             <h4 class="rank-score">{{ match.rankScore | number }}</h4>
                         </div>
                         <div class="rank-diff" *ngIf="getRankDiffFromMatchIndex(i); let rankScoreDiff">
@@ -88,7 +83,7 @@
                                 {{ rankScoreDiff > 0 ? "+" + rankScoreDiff : rankScoreDiff }}
                             </h6>
                         </div>
-                    </div>
+                    </div> -->
                 </td>
                 <td class="align-middle text-center">
                     <div *ngIf="showDataItems.includes(DataItem.Placement) && !match.placement && !match.maxPlacement">N/A</div>

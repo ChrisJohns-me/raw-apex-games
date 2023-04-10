@@ -79,21 +79,6 @@ export const MatchGameModeList: MatchGameMode[] = [
         ],
     }),
     new MatchGameMode({
-        gameModeId: "#GAMEMODE_ARENAS",
-        gameModeGenericId: MatchGameModeGenericId.Arenas,
-        gameModeName: MatchGameModeFriendlyName.Arenas,
-        gameModeIdRegExPattern: "arenas",
-        isReportable: false,
-        isBattleRoyaleGameMode: false,
-        isArenasGameMode: true,
-        isControlGameMode: false,
-        activeDates: [
-            {
-                from: new Date("May 04, 2021"),
-            },
-        ],
-    }),
-    new MatchGameMode({
         gameModeId: "#CONTROL_NAME",
         gameModeGenericId: MatchGameModeGenericId.Control,
         gameModeName: MatchGameModeFriendlyName.Control,
@@ -109,28 +94,11 @@ export const MatchGameModeList: MatchGameMode[] = [
             },
         ],
     }),
-    new MatchGameMode({
-        gameModeId: "#CAMPFIRE_MODE",
-        gameModeGenericId: MatchGameModeGenericId.BattleRoyale_Trios,
-        gameModeName: MatchGameModeFriendlyName.FlashPoint,
-        gameModeIdRegExPattern: "campfire",
-        isReportable: true,
-        isBattleRoyaleGameMode: true,
-        isArenasGameMode: false,
-        isControlGameMode: false,
-        activeDates: [
-            {
-                from: new Date("Apr 19, 2022"),
-                to: new Date("May 3, 2022"),
-            },
-        ],
-    }),
 ];
 
 /**
  * Sorts by:
  *  - Battle Royale game modes first
- *  - Arenas game modes second
  *  - Control game modes third
  *  - Alphabetically
  */
@@ -138,8 +106,6 @@ export function sortMatchGameModeList(matchGameModeList: MatchGameMode[]): Match
     return matchGameModeList.slice().sort((a, b) => {
         if (a.isBattleRoyaleGameMode && !b.isBattleRoyaleGameMode) return -1;
         if (!a.isBattleRoyaleGameMode && b.isBattleRoyaleGameMode) return 1;
-        if (a.isArenasGameMode && !b.isArenasGameMode) return -1;
-        if (!a.isArenasGameMode && b.isArenasGameMode) return 1;
         if (a.isControlGameMode && !b.isControlGameMode) return -1;
         if (!a.isControlGameMode && b.isControlGameMode) return 1;
         if (a.gameModeName.toLowerCase() < b.gameModeName.toLowerCase()) return -1;

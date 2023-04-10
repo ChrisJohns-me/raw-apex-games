@@ -39,7 +39,10 @@
                     "type": "integer"
                 }
             },
-            "required": ["playerDeathHUDTimeout", "matchEndHUDTimeout"]
+            "required": [
+                "playerDeathHUDTimeout",
+                "matchEndHUDTimeout"
+            ]
         },
         "brFacts": {
             "type": "object",
@@ -75,12 +78,23 @@
                                     "type": "number"
                                 }
                             },
-                            "required": ["ringNumber", "startTimeSec", "endTimeSec", "damagePerTick"]
+                            "required": [
+                                "ringNumber",
+                                "startTimeSec",
+                                "endTimeSec",
+                                "damagePerTick"
+                            ]
                         }
                     ]
                 }
             },
-            "required": ["respawnBannerExpireTime", "maxUltimateCooldownTime", "maxSquadSize", "ringDamageTickRate", "rings"]
+            "required": [
+                "respawnBannerExpireTime",
+                "maxUltimateCooldownTime",
+                "maxSquadSize",
+                "ringDamageTickRate",
+                "rings"
+            ]
         },
         "facts": {
             "type": "object",
@@ -92,7 +106,10 @@
                     "type": "integer"
                 }
             },
-            "required": ["maxShield", "maxHealth"]
+            "required": [
+                "maxShield",
+                "maxHealth"
+            ]
         },
         "featureFlags": {
             "type": "object",
@@ -100,22 +117,7 @@
                 "enableMatchTimerWindow": {
                     "type": "boolean"
                 },
-                "enableLegendSelectAssistWindow": {
-                    "type": "boolean"
-                },
                 "enableMiniInventoryWindow": {
-                    "type": "boolean"
-                },
-                "enableUltTimerWindow": {
-                    "type": "boolean"
-                },
-                "enableInflictionInsightWindow": {
-                    "type": "boolean"
-                },
-                "enableHealingHelperWindow": {
-                    "type": "boolean"
-                },
-                "enableReticleHelperWindow": {
                     "type": "boolean"
                 },
                 "enableMatchSummaryWindow": {
@@ -123,206 +125,18 @@
                 },
                 "enableVideoCapture": {
                     "type": "boolean"
-                },
-                "inflictionInsight": {
-                    "type": "object",
-                    "properties": {
-                        "teamIndicatorUI": {
-                            "type": "boolean"
-                        },
-                        "visualizeDamageUI": {
-                            "type": "boolean"
-                        },
-                        "totalDamageAmount": {
-                            "type": "boolean"
-                        },
-                        "shieldDamageAmount": {
-                            "type": "boolean"
-                        },
-                        "healthDamageAmount": {
-                            "type": "boolean"
-                        },
-                        "platformUI": {
-                            "type": "boolean"
-                        },
-                        "showAssumedOpponentTeammateShields": {
-                            "type": "boolean"
-                        },
-                        "showAssumedOpponentTeammateHealth": {
-                            "type": "boolean"
-                        },
-                        "assumeKnockdownExpires": {
-                            "type": "boolean"
-                        },
-                        "assumeEliminationExpires": {
-                            "type": "boolean"
-                        }
-                    },
-                    "required": [
-                        "teamIndicatorUI",
-                        "visualizeDamageUI",
-                        "totalDamageAmount",
-                        "shieldDamageAmount",
-                        "healthDamageAmount",
-                        "platformUI",
-                        "showAssumedOpponentTeammateShields",
-                        "showAssumedOpponentTeammateHealth",
-                        "assumeKnockdownExpires",
-                        "assumeEliminationExpires"
-                    ]
-                },
-                "legendSelectAssist": {
-                    "type": "object",
-                    "properties": {
-                        "legendStats": {
-                            "type": "boolean"
-                        },
-                        "complimentaryLegends": {
-                            "type": "boolean"
-                        }
-                    },
-                    "required": ["legendStats", "complimentaryLegends"]
-                },
-                "reticleHelper": {
-                    "type": "object",
-                    "properties": {
-                        "aimingReticle": {
-                            "type": "boolean"
-                        }
-                    },
-                    "required": ["aimingReticle"]
                 }
             },
             "required": [
                 "enableMatchTimerWindow",
                 "enableMiniInventoryWindow",
-                "enableUltTimerWindow",
-                "enableInflictionInsightWindow",
-                "enableReticleHelperWindow",
-                "enableMatchSummaryWindow",
-                "inflictionInsight",
-                "legendSelectAssist",
-                "reticleHelper"
+                "enableMatchSummaryWindow"
             ]
         },
         "featureConfigs": {
             "type": "object",
-            "properties": {
-                "inflictionInsight": {
-                    "type": "object",
-                    "properties": {
-                        "damageResetTime": {
-                            "type": "number"
-                        }
-                    },
-                    "required": ["damageResetTime"]
-                },
-                "legendSelectAssist": {
-                    "type": "object",
-                    "properties": {
-                        "maxComplimentaryLegends": {
-                            "type": "number"
-                        },
-                        "minShowComplimentaryLegendsMatches": {
-                            "type": "number"
-                        },
-                        "limitLegendStatsMatches": {
-                            "type": ["null", "number"]
-                        },
-                        "limitComplimentaryLegendsMatches": {
-                            "type": "number"
-                        },
-                        "minLegendStatsMatches": {
-                            "type": "number"
-                        },
-                        "complimentaryLegendsWeights": {
-                            "type": "object",
-                            "properties": {
-                                "winWeight": {
-                                    "type": "number"
-                                },
-                                "placementWeight": {
-                                    "type": "number"
-                                },
-                                "damageWeight": {
-                                    "type": "number"
-                                },
-                                "eliminationWeight": {
-                                    "type": "number"
-                                },
-                                "deathWeight": {
-                                    "type": "number"
-                                },
-                                "knockdownWeight": {
-                                    "type": "number"
-                                },
-                                "durationWeight": {
-                                    "type": "number"
-                                }
-                            },
-                            "required": [
-                                "winWeight",
-                                "placementWeight",
-                                "damageWeight",
-                                "eliminationWeight",
-                                "assistWeight",
-                                "knockdownWeight",
-                                "durationWeight"
-                            ]
-                        },
-                        "legendRows": {
-                            "type": "array",
-                            "items": [
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "top": {
-                                            "type": "number"
-                                        },
-                                        "right": {
-                                            "type": "number"
-                                        },
-                                        "legendIds": {
-                                            "type": "array",
-                                            "items": [
-                                                {
-                                                    "type": "string"
-                                                }
-                                            ]
-                                        }
-                                    },
-                                    "required": ["top", "right", "legendIds"]
-                                }
-                            ]
-                        }
-                    },
-                    "required": [
-                        "maxComplimentaryLegends",
-                        "minShowComplimentaryLegendsMatches",
-                        "limitLegendStatsMatches",
-                        "limitComplimentaryLegendsMatches",
-                        "minLegendStatsMatches",
-                        "complimentaryLegendsWeights",
-                        "legendRows"
-                    ]
-                },
-                "ultTimer": {
-                    "type": "object",
-                    "properties": {
-                        "maxHistoryCount": {
-                            "type": "number"
-                        },
-                        "highConfidenceAmount": {
-                            "type": "number"
-                        },
-                        "lowConfidenceAmount": {
-                            "type": "number"
-                        }
-                    },
-                    "required": ["maxHistoryCount", "highConfidenceAmount", "lowConfidenceAmount"]
-                }
-            },
-            "required": ["inflictionInsight", "ultTimer"]
+            "properties": {},
+            "required": []
         },
         "general": {
             "type": "object",
@@ -331,12 +145,21 @@
                     "type": "boolean"
                 }
             },
-            "required": ["enableMatchSummaryAd"]
+            "required": [
+                "enableMatchSummaryAd"
+            ]
         },
         "overwolfQuirks": {
             "type": "object"
         }
     },
-    "required": ["assumptions", "common", "featureFlags", "facts", "general", "overwolfQuirks"],
+    "required": [
+        "assumptions",
+        "common",
+        "featureFlags",
+        "facts",
+        "general",
+        "overwolfQuirks"
+    ],
     "additionalProperties": false
 }

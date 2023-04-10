@@ -13,50 +13,38 @@ import { MatchService } from "./match.service";
 const MOCKALLRINGS: MatchRing[] = [
     {
         ringNumber: 1,
-        holdStartTime: 65000,
-        holdEndTime: 245000,
-        shrinkStartTime: 248000,
-        shrinkEndTime: 475000,
+        startTimeSec: 65000,
+        endTimeSec: 475000,
         damagePerTick: 2,
     },
     {
         ringNumber: 2,
-        holdStartTime: 478000,
-        holdEndTime: 645000,
-        shrinkStartTime: 647000,
-        shrinkEndTime: 717000,
+        startTimeSec: 478000,
+        endTimeSec: 717000,
         damagePerTick: 3,
     },
     {
         ringNumber: 3,
-        holdStartTime: 720000,
-        holdEndTime: 855000,
-        shrinkStartTime: 857000,
-        shrinkEndTime: 902000,
+        startTimeSec: 720000,
+        endTimeSec: 902000,
         damagePerTick: 10,
     },
     {
         ringNumber: 4,
-        holdStartTime: 905000,
-        holdEndTime: 1012000,
-        shrinkStartTime: 1012000,
-        shrinkEndTime: 1057000,
+        startTimeSec: 905000,
+        endTimeSec: 1057000,
         damagePerTick: 20,
     },
     {
         ringNumber: 5,
-        holdStartTime: 1060000,
-        holdEndTime: 1152000,
-        shrinkStartTime: 1152000,
-        shrinkEndTime: 1196000,
+        startTimeSec: 1060000,
+        endTimeSec: 1196000,
         damagePerTick: 20,
     },
     {
         ringNumber: 6,
-        holdStartTime: 1200000,
-        holdEndTime: 1260000,
-        shrinkStartTime: 1263000,
-        shrinkEndTime: 1383000,
+        startTimeSec: 1200000,
+        endTimeSec: 1383000,
         damagePerTick: 25,
     },
 ];
@@ -133,7 +121,7 @@ describe("MatchRingService", () => {
                 cold("a-", { a: startEvent }).subscribe(matchService.startedEvent$);
                 cold("a-", { a: startEvent }).subscribe(matchService.state$);
                 cold("-1", {
-                    1: frame * firstBRRing.holdStartTime,
+                    1: frame * firstBRRing.startTimeSec,
                 }).subscribe((tickDuration) => {
                     jasmine.clock().tick(tickDuration);
                 });
@@ -165,8 +153,8 @@ describe("MatchRingService", () => {
                 cold("a--", { a: startEvent }).subscribe(matchService.startedEvent$);
                 cold("a--", { a: startEvent }).subscribe(matchService.state$);
                 cold("-12", {
-                    1: frame * firstBRRing.holdStartTime,
-                    2: frame * (secondBRRing.holdStartTime - firstBRRing.holdStartTime),
+                    1: frame * firstBRRing.startTimeSec,
+                    2: frame * (secondBRRing.startTimeSec - firstBRRing.startTimeSec),
                 }).subscribe((tickDuration) => {
                     jasmine.clock().tick(tickDuration);
                 });
@@ -200,9 +188,9 @@ describe("MatchRingService", () => {
                 cold("a---", { a: startEvent }).subscribe(matchService.startedEvent$);
                 cold("a---", { a: startEvent }).subscribe(matchService.state$);
                 cold("-123", {
-                    1: frame * firstBRRing.holdStartTime,
-                    2: frame * (secondBRRing.holdStartTime - firstBRRing.holdStartTime),
-                    3: frame * (thirdBRRing.holdStartTime - secondBRRing.holdStartTime),
+                    1: frame * firstBRRing.startTimeSec,
+                    2: frame * (secondBRRing.startTimeSec - firstBRRing.startTimeSec),
+                    3: frame * (thirdBRRing.startTimeSec - secondBRRing.startTimeSec),
                 }).subscribe((tickDuration) => {
                     jasmine.clock().tick(tickDuration);
                 });
@@ -238,10 +226,10 @@ describe("MatchRingService", () => {
                 cold("a----", { a: startEvent }).subscribe(matchService.startedEvent$);
                 cold("a----", { a: startEvent }).subscribe(matchService.state$);
                 cold("-1234", {
-                    1: frame * firstBRRing.holdStartTime,
-                    2: frame * (secondBRRing.holdStartTime - firstBRRing.holdStartTime),
-                    3: frame * (thirdBRRing.holdStartTime - secondBRRing.holdStartTime),
-                    4: frame * (fourthBRRing.holdStartTime - thirdBRRing.holdStartTime),
+                    1: frame * firstBRRing.startTimeSec,
+                    2: frame * (secondBRRing.startTimeSec - firstBRRing.startTimeSec),
+                    3: frame * (thirdBRRing.startTimeSec - secondBRRing.startTimeSec),
+                    4: frame * (fourthBRRing.startTimeSec - thirdBRRing.startTimeSec),
                 }).subscribe((tickDuration) => {
                     jasmine.clock().tick(tickDuration);
                 });
@@ -279,11 +267,11 @@ describe("MatchRingService", () => {
                 cold("a-----", { a: startEvent }).subscribe(matchService.startedEvent$);
                 cold("a-----", { a: startEvent }).subscribe(matchService.state$);
                 cold("-12345", {
-                    1: frame * firstBRRing.holdStartTime,
-                    2: frame * (secondBRRing.holdStartTime - firstBRRing.holdStartTime),
-                    3: frame * (thirdBRRing.holdStartTime - secondBRRing.holdStartTime),
-                    4: frame * (fourthBRRing.holdStartTime - thirdBRRing.holdStartTime),
-                    5: frame * (fifthBRRing.holdStartTime - fourthBRRing.holdStartTime),
+                    1: frame * firstBRRing.startTimeSec,
+                    2: frame * (secondBRRing.startTimeSec - firstBRRing.startTimeSec),
+                    3: frame * (thirdBRRing.startTimeSec - secondBRRing.startTimeSec),
+                    4: frame * (fourthBRRing.startTimeSec - thirdBRRing.startTimeSec),
+                    5: frame * (fifthBRRing.startTimeSec - fourthBRRing.startTimeSec),
                 }).subscribe((tickDuration) => {
                     jasmine.clock().tick(tickDuration);
                 });
@@ -323,12 +311,12 @@ describe("MatchRingService", () => {
                 cold("a------", { a: startEvent }).subscribe(matchService.startedEvent$);
                 cold("a------", { a: startEvent }).subscribe(matchService.state$);
                 cold("-123456", {
-                    1: frame * firstBRRing.holdStartTime,
-                    2: frame * (secondBRRing.holdStartTime - firstBRRing.holdStartTime),
-                    3: frame * (thirdBRRing.holdStartTime - secondBRRing.holdStartTime),
-                    4: frame * (fourthBRRing.holdStartTime - thirdBRRing.holdStartTime),
-                    5: frame * (fifthBRRing.holdStartTime - fourthBRRing.holdStartTime),
-                    6: frame * (sixthBRRing.holdStartTime - fifthBRRing.holdStartTime),
+                    1: frame * firstBRRing.startTimeSec,
+                    2: frame * (secondBRRing.startTimeSec - firstBRRing.startTimeSec),
+                    3: frame * (thirdBRRing.startTimeSec - secondBRRing.startTimeSec),
+                    4: frame * (fourthBRRing.startTimeSec - thirdBRRing.startTimeSec),
+                    5: frame * (fifthBRRing.startTimeSec - fourthBRRing.startTimeSec),
+                    6: frame * (sixthBRRing.startTimeSec - fifthBRRing.startTimeSec),
                 }).subscribe((tickDuration) => {
                     jasmine.clock().tick(tickDuration);
                 });
@@ -364,7 +352,7 @@ describe("MatchRingService", () => {
                 };
                 const endEvent: MatchStateChangedEvent = {
                     startDate: startEvent.startDate,
-                    endDate: addMilliseconds(startEvent.startDate!, sixthBRRing.shrinkEndTime),
+                    endDate: addMilliseconds(startEvent.startDate!, sixthBRRing.endTimeSec),
                     state: MatchState.Inactive,
                     matchId: "test",
                 };
@@ -377,13 +365,13 @@ describe("MatchRingService", () => {
                 cold("-------a-", { a: endEvent }).subscribe(matchService.state$);
                 cold("-------a-", { a: endEvent }).subscribe(matchService.endedEvent$);
                 cold("-123456e-", {
-                    1: frame * firstBRRing.holdStartTime,
-                    2: frame * (secondBRRing.holdStartTime - firstBRRing.holdStartTime),
-                    3: frame * (thirdBRRing.holdStartTime - secondBRRing.holdStartTime),
-                    4: frame * (fourthBRRing.holdStartTime - thirdBRRing.holdStartTime),
-                    5: frame * (fifthBRRing.holdStartTime - fourthBRRing.holdStartTime),
-                    6: frame * (sixthBRRing.holdStartTime - fifthBRRing.holdStartTime),
-                    e: frame * (sixthBRRing.holdStartTime - endEvent.endDate!.getTime()),
+                    1: frame * firstBRRing.startTimeSec,
+                    2: frame * (secondBRRing.startTimeSec - firstBRRing.startTimeSec),
+                    3: frame * (thirdBRRing.startTimeSec - secondBRRing.startTimeSec),
+                    4: frame * (fourthBRRing.startTimeSec - thirdBRRing.startTimeSec),
+                    5: frame * (fifthBRRing.startTimeSec - fourthBRRing.startTimeSec),
+                    6: frame * (sixthBRRing.startTimeSec - fifthBRRing.startTimeSec),
+                    e: frame * (sixthBRRing.startTimeSec - endEvent.endDate!.getTime()),
                 }).subscribe((tickDuration) => {
                     jasmine.clock().tick(tickDuration);
                 });

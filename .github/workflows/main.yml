@@ -19,8 +19,8 @@ jobs:
 
             - name: Test App
               run: |
-                  npm run afapp:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+                  npm run rawapp:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
 
             - name: Test Web
               run: |
-                  npm run afweb:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+                  npm run rawweb:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI

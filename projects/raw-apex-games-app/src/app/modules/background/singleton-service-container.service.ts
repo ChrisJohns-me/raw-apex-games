@@ -6,9 +6,7 @@ import { MatchRosterService } from "@raw-apex-games-app/app/modules/core/match/m
 import { MatchService } from "@raw-apex-games-app/app/modules/core/match/match.service";
 import { SettingsService } from "@raw-apex-games-app/app/modules/core/settings.service";
 import { SingletonServiceProviderFactory } from "@raw-apex-games-app/app/singleton-service.provider.factory";
-import { InflictionInsightWindowService } from "../HUD/infliction-insight/windows/infliction-insight-window.service";
 import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
-import { UltTimerWindowService } from "../HUD/ult-timer/windows/ult-timer-window.service";
 import { ConfigurationService } from "../core/configuration.service";
 import { FileService } from "../core/file.service";
 import { GameProcessService } from "../core/game-process.service";
@@ -16,7 +14,6 @@ import { GameService } from "../core/game.service";
 import { GoogleAnalyticsService } from "../core/google-analytics.service";
 import { LocalDatabaseService } from "../core/local-database/local-database.service";
 import { LocalStorageService } from "../core/local-storage/local-storage.service";
-import { MatchArenasScoreboardService } from "../core/match/match-arenas-scoreboard.service";
 import { MatchLegendSelectService } from "../core/match/match-legend-select.service";
 import { MatchMapService } from "../core/match/match-map.service";
 import { MatchPlayerInflictionService } from "../core/match/match-player-infliction.service";
@@ -33,8 +30,6 @@ import { OverwolfInputTrackingService } from "../core/overwolf/overwolf-input-tr
 import { OverwolfProfileService } from "../core/overwolf/overwolf-profile.service";
 import { OverwolfStreamingService } from "../core/overwolf/overwolf-streaming.service";
 import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service";
-import { MyPlayerAccountStatsService } from "../core/player-account-stats/my-player-account-stats.service";
-import { PlayerAccountStatsService } from "../core/player-account-stats/player-account-stats.service";
 import { PlayerLocalStatsService } from "../core/player-local-stats.service";
 import { PlayerService } from "../core/player.service";
 import { ReportableDataManagerService } from "../core/reporting/reporting-engine/reportable-data-manager";
@@ -43,14 +38,12 @@ import { SessionStorageService } from "../core/session-storage/session-storage.s
 import { VersionService } from "../core/version.service";
 import { VideoRecordingService } from "../core/video-recording/video-recording.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
-import { LegendSelectAssistWindowService } from "../legend-select-assist/windows/legend-select-assist-window.service";
 import { MainDesktopWindowService } from "../main/windows/main-desktop-window.service";
 import { MainInGameWindowService } from "../main/windows/main-ingame-window.service";
 import { MatchSummaryWindowService } from "../match-summary/windows/match-summary-window.service";
 import { CaptureControllerService } from "./capture-controller.service";
 import { HotkeyService } from "./hotkey.service";
 import { HUDWindowControllerService } from "./hud-window-controller.service";
-import { MatchRankSyncService } from "./match-rank-sync.service";
 import { SystemTrayService } from "./system-tray.service";
 
 /**
@@ -69,14 +62,11 @@ import { SystemTrayService } from "./system-tray.service";
         GoogleAnalyticsService,
         HotkeyService,
         HUDWindowControllerService,
-        InflictionInsightWindowService,
-        LegendSelectAssistWindowService,
         LocalDatabaseService,
         LocalStorageService,
         MainDesktopWindowService,
         MainInGameWindowService,
         MapRotationService,
-        MatchArenasScoreboardService,
         MatchKillfeedService,
         MatchLegendSelectService,
         MatchMapService,
@@ -86,13 +76,11 @@ import { SystemTrayService } from "./system-tray.service";
         MatchPlayerLocationService,
         MatchPlayerService,
         MatchPlayerStatsService,
-        MatchRankSyncService,
         MatchRingService,
         MatchRosterService,
         MatchService,
         MatchSummaryWindowService,
         MatchTimerWindowService,
-        MyPlayerAccountStatsService,
         OverwolfExtensionsService,
         OverwolfFeatureStatusService,
         OverwolfGameDataService,
@@ -101,7 +89,6 @@ import { SystemTrayService } from "./system-tray.service";
         OverwolfProfileService,
         OverwolfStreamingService,
         OverwolfSystemTrayService,
-        PlayerAccountStatsService,
         PlayerLocalStatsService,
         PlayerService,
         ReportableDataManagerService,
@@ -109,7 +96,6 @@ import { SystemTrayService } from "./system-tray.service";
         SessionStorageService,
         SettingsService,
         SystemTrayService,
-        UltTimerWindowService,
         VersionService,
         VideoRecordingService,
     ],
@@ -127,14 +113,11 @@ export class SingletonServiceContainerService {
         public readonly GoogleAnalyticsService: GoogleAnalyticsService,
         public readonly HotkeyService: HotkeyService,
         public readonly HUDWindowControllerService: HUDWindowControllerService,
-        public readonly InflictionInsightWindowService: InflictionInsightWindowService,
-        public readonly LegendSelectAssistWindowService: LegendSelectAssistWindowService,
         public readonly LocalDatabaseService: LocalDatabaseService,
         public readonly LocalStorageService: LocalStorageService,
         public readonly MainDesktopWindowService: MainDesktopWindowService,
         public readonly MainInGameWindowService: MainInGameWindowService,
         public readonly MapRotationService: MapRotationService,
-        public readonly MatchArenasScoreboardService: MatchArenasScoreboardService,
         public readonly MatchKillfeedService: MatchKillfeedService,
         public readonly MatchLegendSelectService: MatchLegendSelectService,
         public readonly MatchMapService: MatchMapService,
@@ -144,13 +127,11 @@ export class SingletonServiceContainerService {
         public readonly MatchPlayerLocationService: MatchPlayerLocationService,
         public readonly MatchPlayerService: MatchPlayerService,
         public readonly MatchPlayerStatsService: MatchPlayerStatsService,
-        public readonly MatchRankSyncService: MatchRankSyncService,
         public readonly MatchRingService: MatchRingService,
         public readonly MatchRosterService: MatchRosterService,
         public readonly MatchService: MatchService,
         public readonly MatchSummaryWindowService: MatchSummaryWindowService,
         public readonly MatchTimerWindowService: MatchTimerWindowService,
-        public readonly MyPlayerAccountStatsService: MyPlayerAccountStatsService,
         public readonly OverwolfExtensionsService: OverwolfExtensionsService,
         public readonly OverwolfFeatureStatusService: OverwolfFeatureStatusService,
         public readonly OverwolfGameDataService: OverwolfGameDataService,
@@ -159,7 +140,6 @@ export class SingletonServiceContainerService {
         public readonly OverwolfProfileService: OverwolfProfileService,
         public readonly OverwolfStreamingService: OverwolfStreamingService,
         public readonly OverwolfSystemTrayService: OverwolfSystemTrayService,
-        public readonly PlayerAccountStatsService: PlayerAccountStatsService,
         public readonly PlayerLocalStatsService: PlayerLocalStatsService,
         public readonly PlayerService: PlayerService,
         public readonly ReportableDataManagerService: ReportableDataManagerService,
@@ -167,7 +147,6 @@ export class SingletonServiceContainerService {
         public readonly SessionStorageService: SessionStorageService,
         public readonly SettingsService: SettingsService,
         public readonly SystemTrayService: SystemTrayService,
-        public readonly UltTimerWindowService: UltTimerWindowService,
         public readonly VersionService: VersionService,
         public readonly VideoRecordingService: VideoRecordingService
     ) {}

@@ -4,19 +4,12 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { RawApexGamesSharedModule } from "@raw-apex-games-app/app/shared/raw-apex-games-shared.module";
 import { SharedModule } from "@shared/shared.module";
 import { AccountStatsDisplayComponent } from "./components/account-stats-display.component";
-import { ComplimentaryLegendsComponent } from "./components/complimentary-legends.component";
 import { LegendIconsBoardComponent } from "./components/legend-icons-board.component";
 import { MapRotationDisplayComponent } from "./components/map-rotation-display.component";
 import { DashboardPageComponent } from "./dashboard-page.component";
 
 @NgModule({
-    declarations: [
-        AccountStatsDisplayComponent,
-        ComplimentaryLegendsComponent,
-        DashboardPageComponent,
-        LegendIconsBoardComponent,
-        MapRotationDisplayComponent,
-    ],
+    declarations: [AccountStatsDisplayComponent, DashboardPageComponent, LegendIconsBoardComponent, MapRotationDisplayComponent],
     imports: [CommonModule, ReactiveFormsModule, RawApexGamesSharedModule, SharedModule],
     providers: [],
     exports: [DashboardPageComponent],
