@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "allfatherApp": {
+        "rawApexGamesApp": {
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:component": {
@@ -14,68 +14,76 @@
                     "strict": true
                 }
             },
-            "root": "projects/allfather-app",
-            "sourceRoot": "projects/allfather-app/src",
+            "root": "projects/raw-apex-games-app",
+            "sourceRoot": "projects/raw-apex-games-app/src",
             "prefix": "app",
             "architect": {
                 "build": {
                     "builder": "ngx-build-plus:browser",
                     "options": {
-                        "allowedCommonJsDependencies": ["zone.js/dist/zone-error"],
-                        "outputPath": "dist/allfatherApp_dev",
-                        "index": "projects/allfather-app/src/index.html",
-                        "main": "projects/allfather-app/src/main.ts",
-                        "polyfills": "projects/allfather-app/src/polyfills.ts",
-                        "tsConfig": "projects/allfather-app/tsconfig.app.json",
+                        "allowedCommonJsDependencies": [
+                            "zone.js/dist/zone-error"
+                        ],
+                        "outputPath": "dist/rawApexGamesApp_dev",
+                        "index": "projects/raw-apex-games-app/src/index.html",
+                        "main": "projects/raw-apex-games-app/src/main.ts",
+                        "polyfills": "projects/raw-apex-games-app/src/polyfills.ts",
+                        "tsConfig": "projects/raw-apex-games-app/tsconfig.app.json",
                         "aot": true,
                         "assets": [
                             {
                                 "glob": "**/*",
-                                "input": "projects/allfather-app/src/overwolf/dev/",
+                                "input": "projects/raw-apex-games-app/src/overwolf/dev/",
                                 "output": "/"
                             },
                             {
                                 "glob": "config.json",
-                                "input": "projects/allfather-app/src/configs/",
+                                "input": "projects/raw-apex-games-app/src/configs/",
                                 "output": "/"
                             },
-                            "projects/allfather-app/src/assets/images",
-                            "projects/allfather-app/src/assets/svgs",
-                            "projects/allfather-app/src/assets/fonts"
+                            "projects/raw-apex-games-app/src/assets/images",
+                            "projects/raw-apex-games-app/src/assets/svgs",
+                            "projects/raw-apex-games-app/src/assets/fonts"
                         ],
                         "optimization": true,
                         "sourceMap": true,
                         "namedChunks": true,
                         "vendorChunk": true,
                         "buildOptimizer": false,
-                        "styles": ["projects/allfather-app/src/styles.scss"],
+                        "styles": [
+                            "projects/raw-apex-games-app/src/styles.scss"
+                        ],
                         "stylePreprocessorOptions": {
-                            "includePaths": ["projects/allfather-app/src/assets/styles/"]
+                            "includePaths": [
+                                "projects/raw-apex-games-app/src/assets/styles/"
+                            ]
                         },
-                        "scripts": ["projects/allfather-app/src/ga.js"]
+                        "scripts": [
+                            "projects/raw-apex-games-app/src/ga.js"
+                        ]
                     },
                     "configurations": {
                         "production": {
-                            "outputPath": "dist/allfatherApp",
+                            "outputPath": "dist/rawApexGamesApp",
                             "fileReplacements": [
                                 {
-                                    "replace": "projects/allfather-app/src/environments/environment.ts",
-                                    "with": "projects/allfather-app/src/environments/environment.prod.ts"
+                                    "replace": "projects/raw-apex-games-app/src/environments/environment.ts",
+                                    "with": "projects/raw-apex-games-app/src/environments/environment.prod.ts"
                                 },
                                 {
-                                    "replace": "projects/allfather-app/src/configs/config.json",
-                                    "with": "projects/allfather-app/src/configs/config.prod.json"
+                                    "replace": "projects/raw-apex-games-app/src/configs/config.json",
+                                    "with": "projects/raw-apex-games-app/src/configs/config.prod.json"
                                 }
                             ],
                             "assets": [
                                 {
                                     "glob": "**/*",
-                                    "input": "projects/allfather-app/src/overwolf/prod/",
+                                    "input": "projects/raw-apex-games-app/src/overwolf/prod/",
                                     "output": "/"
                                 },
-                                "projects/allfather-app/src/assets/images",
-                                "projects/allfather-app/src/assets/svgs",
-                                "projects/allfather-app/src/assets/fonts"
+                                "projects/raw-apex-games-app/src/assets/images",
+                                "projects/raw-apex-games-app/src/assets/svgs",
+                                "projects/raw-apex-games-app/src/assets/fonts"
                             ],
                             "optimization": true,
                             "outputHashing": "all",
@@ -102,18 +110,22 @@
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
-                        "main": "projects/allfather-app/test.ts",
-                        "polyfills": "projects/allfather-app/src/polyfills.ts",
-                        "tsConfig": "projects/allfather-app/tsconfig.spec.json",
-                        "karmaConfig": "projects/allfather-app/karma.conf.js",
+                        "main": "projects/raw-apex-games-app/test.ts",
+                        "polyfills": "projects/raw-apex-games-app/src/polyfills.ts",
+                        "tsConfig": "projects/raw-apex-games-app/tsconfig.spec.json",
+                        "karmaConfig": "projects/raw-apex-games-app/karma.conf.js",
                         "assets": [
-                            "projects/allfather-app/src/assets/images",
-                            "projects/allfather-app/src/assets/svgs",
-                            "projects/allfather-app/src/assets/fonts"
+                            "projects/raw-apex-games-app/src/assets/images",
+                            "projects/raw-apex-games-app/src/assets/svgs",
+                            "projects/raw-apex-games-app/src/assets/fonts"
                         ],
-                        "styles": ["projects/allfather-app/src/styles.scss"],
+                        "styles": [
+                            "projects/raw-apex-games-app/src/styles.scss"
+                        ],
                         "stylePreprocessorOptions": {
-                            "includePaths": ["projects/allfather-app/src/assets/styles/"]
+                            "includePaths": [
+                                "projects/raw-apex-games-app/src/assets/styles/"
+                            ]
                         },
                         "scripts": [],
                         "codeCoverage": true
@@ -123,28 +135,30 @@
                     "builder": "@angular-devkit/build-angular:tslint",
                     "options": {
                         "tsConfig": [
-                            "projects/allfather-app/tsconfig.app.json",
-                            "projects/allfather-app/tsconfig.spec.json",
-                            "projects/allfather-app/e2e/tsconfig.json"
+                            "projects/raw-apex-games-app/tsconfig.app.json",
+                            "projects/raw-apex-games-app/tsconfig.spec.json",
+                            "projects/raw-apex-games-app/e2e/tsconfig.json"
                         ],
-                        "exclude": ["**/node_modules/**"]
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
                     }
                 },
                 "e2e": {
                     "builder": "@angular-devkit/build-angular:protractor",
                     "options": {
-                        "protractorConfig": "projects/allfather-app/e2e/protractor.conf.js",
-                        "devServerTarget": "allfatherApp:serve"
+                        "protractorConfig": "projects/raw-apex-games-app/e2e/protractor.conf.js",
+                        "devServerTarget": "rawApexGamesApp:serve"
                     },
                     "configurations": {
                         "production": {
-                            "devServerTarget": "allfatherApp:serve:production"
+                            "devServerTarget": "rawApexGamesApp:serve:production"
                         }
                     }
                 }
             }
         },
-        "allfatherWeb": {
+        "rawApexGamesWeb": {
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:component": {
@@ -154,30 +168,35 @@
                     "strict": true
                 }
             },
-            "root": "projects/allfather-web",
-            "sourceRoot": "projects/allfather-web/src",
+            "root": "projects/raw-apex-games-web",
+            "sourceRoot": "projects/raw-apex-games-web/src",
             "prefix": "app",
             "architect": {
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "dist/allfatherWeb_dev",
-                        "index": "projects/allfather-web/src/index.html",
-                        "main": "projects/allfather-web/src/main.ts",
-                        "polyfills": "projects/allfather-web/src/polyfills.ts",
-                        "tsConfig": "projects/allfather-web/tsconfig.app.json",
+                        "outputPath": "dist/rawApexGamesWeb_dev",
+                        "index": "projects/raw-apex-games-web/src/index.html",
+                        "main": "projects/raw-apex-games-web/src/main.ts",
+                        "polyfills": "projects/raw-apex-games-web/src/polyfills.ts",
+                        "tsConfig": "projects/raw-apex-games-web/tsconfig.app.json",
                         "aot": true,
-                        "assets": ["projects/allfather-web/src/assets/images", "projects/allfather-web/src/assets/fonts"],
-                        "styles": ["projects/allfather-web/src/styles.scss"],
+                        "assets": [
+                            "projects/raw-apex-games-web/src/assets/images",
+                            "projects/raw-apex-games-web/src/assets/fonts"
+                        ],
+                        "styles": [
+                            "projects/raw-apex-games-web/src/styles.scss"
+                        ],
                         "scripts": []
                     },
                     "configurations": {
                         "production": {
-                            "outputPath": "dist/allfatherWeb",
+                            "outputPath": "dist/rawApexGamesWeb",
                             "fileReplacements": [
                                 {
-                                    "replace": "projects/allfather-web/src/environments/environment.ts",
-                                    "with": "projects/allfather-web/src/environments/environment.prod.ts"
+                                    "replace": "projects/raw-apex-games-web/src/environments/environment.ts",
+                                    "with": "projects/raw-apex-games-web/src/environments/environment.prod.ts"
                                 }
                             ],
                             "optimization": true,
@@ -205,25 +224,29 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "allfatherWeb:build",
+                        "browserTarget": "rawApexGamesWeb:build",
                         "open": true,
                         "liveReload": true
                     },
                     "configurations": {
                         "production": {
-                            "browserTarget": "allfatherWeb:build:production"
+                            "browserTarget": "rawApexGamesWeb:build:production"
                         }
                     }
                 },
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
-                        "main": "projects/allfather-web/test.ts",
-                        "polyfills": "projects/allfather-web/src/polyfills.ts",
-                        "tsConfig": "projects/allfather-web/tsconfig.spec.json",
-                        "karmaConfig": "projects/allfather-web/karma.conf.js",
-                        "assets": ["projects/allfather-web/src/assets/fonts"],
-                        "styles": ["projects/allfather-web/src/styles.scss"],
+                        "main": "projects/raw-apex-games-web/test.ts",
+                        "polyfills": "projects/raw-apex-games-web/src/polyfills.ts",
+                        "tsConfig": "projects/raw-apex-games-web/tsconfig.spec.json",
+                        "karmaConfig": "projects/raw-apex-games-web/karma.conf.js",
+                        "assets": [
+                            "projects/raw-apex-games-web/src/assets/fonts"
+                        ],
+                        "styles": [
+                            "projects/raw-apex-games-web/src/styles.scss"
+                        ],
                         "scripts": []
                     }
                 },
@@ -231,22 +254,24 @@
                     "builder": "@angular-devkit/build-angular:tslint",
                     "options": {
                         "tsConfig": [
-                            "projects/allfather-web/tsconfig.app.json",
-                            "projects/allfather-web/tsconfig.spec.json",
-                            "projects/allfather-web/e2e/tsconfig.json"
+                            "projects/raw-apex-games-web/tsconfig.app.json",
+                            "projects/raw-apex-games-web/tsconfig.spec.json",
+                            "projects/raw-apex-games-web/e2e/tsconfig.json"
                         ],
-                        "exclude": ["**/node_modules/**"]
+                        "exclude": [
+                            "**/node_modules/**"
+                        ]
                     }
                 },
                 "e2e": {
                     "builder": "@angular-devkit/build-angular:protractor",
                     "options": {
-                        "protractorConfig": "projects/allfather-web/e2e/protractor.conf.js",
-                        "devServerTarget": "allfatherWeb:serve"
+                        "protractorConfig": "projects/raw-apex-games-web/e2e/protractor.conf.js",
+                        "devServerTarget": "rawApexGamesWeb:serve"
                     },
                     "configurations": {
                         "production": {
-                            "devServerTarget": "allfatherWeb:serve:production"
+                            "devServerTarget": "rawApexGamesWeb:serve:production"
                         }
                     }
                 }

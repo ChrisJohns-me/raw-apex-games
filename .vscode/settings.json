@@ -6,8 +6,8 @@
     "source.fixAll.eslint": true
   },
   "eslint.alwaysShowStatus": true,
-  "jasmineExplorer.cwd": "C:\\dev\\allfather",
-  "jasmineExplorer.logfile": "C:\\dev\\allfather\\jasmine.logs",
+  "jasmineExplorer.cwd": "C:\\dev\\raw-apex-games",
+  "jasmineExplorer.logfile": "C:\\dev\\raw-apex-games\\jasmine.logs",
   "jasmineExplorer.logpanel": true,
   "jasmineExplorer.nodeArgv": [
     "[\"-r\", \"ts-node/register\"]"

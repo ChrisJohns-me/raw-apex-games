@@ -36,7 +36,7 @@ speed-measure-plugin*.json
 /.sass-cache
 /connect.lock
 /coverage
-/projects/allfather-app/coverage
+/projects/raw-apex-games-app/coverage
 /libpeerconnection.log
 npm-debug.log
 yarn-error.log
