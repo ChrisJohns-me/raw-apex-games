@@ -38,7 +38,7 @@
         "@angular/platform-browser-dynamic": "^13.3.1",
         "@angular/router": "^13.3.1",
         "@mdi/js": "^6.6.96",
-        "@overwolf/types": "^3.17.0",
+        "@overwolf/types": "^3.23.1",
         "@popperjs/core": "^2.11.5",
         "@svgdotjs/svg.js": "^3.1.2",
         "bootstrap": "^5.1.3",

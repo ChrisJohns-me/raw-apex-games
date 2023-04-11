@@ -160,11 +160,11 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
     public onChangeLocationPhaseClick(): void {
         const phase = this.matchPlayerLocation.myLocationPhase$.value;
         const newPhase = !phase
-            ? MatchLocationPhase.Dropship
-            : phase === MatchLocationPhase.Dropship
-            ? MatchLocationPhase.Dropping
-            : phase === MatchLocationPhase.Dropping
-            ? MatchLocationPhase.HasLanded
+            ? MatchLocationPhase.Aircraft
+            : phase === MatchLocationPhase.Aircraft
+            ? MatchLocationPhase.Freefly
+            : phase === MatchLocationPhase.Freefly
+            ? MatchLocationPhase.Landed
             : undefined;
         this.matchPlayerLocation.myLocationPhase$.next(newPhase);
     }

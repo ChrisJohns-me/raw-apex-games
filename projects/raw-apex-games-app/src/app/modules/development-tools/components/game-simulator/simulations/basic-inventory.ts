@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-
+// Outdated
 export const basicInventoryQuick = (): string => `
 [2022-04-27 10:01:20.004 PM] {"info":{"match_info":{"game_mode":"#PL_Ranked_Leagues"}},"feature":"match_info"}
 [2022-04-27 10:01:21.004 PM] {"info":{"match_info":{"location":{"x":"-204","y":"220","z":"22"}}},"feature":"location"}

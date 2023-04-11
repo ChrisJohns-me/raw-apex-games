@@ -1,5 +1,5 @@
 export enum MatchLocationPhase {
-    Dropship = "dropship",
-    Dropping = "dropping",
-    HasLanded = "has_landed",
+    Aircraft = "aircraft",
+    Freefly = "freefly",
+    Landed = "landed",
 }

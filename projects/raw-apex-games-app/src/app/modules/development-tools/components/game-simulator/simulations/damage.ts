@@ -1,3 +1,4 @@
+// Outdated
 export const damage = (): string => `
 [2021-03-21 02:53:05.361 AM] {"name":"damage","data":{"targetName":"RarestXxIQ","damageAmount":"25.000000","armor":"true","headshot":"true"}}
 [2021-03-21 02:53:05.750 AM] {"name":"damage","data":{"targetName":"RarestXxIQ","damageAmount":"24.000000","armor":"true","headshot":"true"}}

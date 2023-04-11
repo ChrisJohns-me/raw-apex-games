@@ -5,7 +5,6 @@ import { MatchMap } from "@raw-apex-games-app/app/common/match/map/match-map";
 import { OverwolfWindowName } from "@raw-apex-games-app/app/common/overwolf-window";
 import { Subject, combineLatest, filter, map, merge, takeUntil } from "rxjs";
 import { HotkeyService } from "../../background/hotkey.service";
-import { MapRotationService } from "../../core/map-rotation/map-rotation.service";
 import { MatchService } from "../../core/match/match.service";
 
 const MAIN_HOTKEY_NAME = HotkeyEnum.ToggleMainInGame;
@@ -33,16 +32,11 @@ export class LobbyStatusWindowComponent implements OnInit, OnDestroy {
 
     private destroy$ = new Subject<void>();
 
-    constructor(
-        private readonly cdr: ChangeDetectorRef,
-        private readonly hotkey: HotkeyService,
-        private readonly mapRotation: MapRotationService,
-        private readonly match: MatchService
-    ) {}
+    constructor(private readonly cdr: ChangeDetectorRef, private readonly hotkey: HotkeyService, private readonly match: MatchService) {}
 
     public ngOnInit(): void {
         this.setupHotkeys();
-        this.setupGameModeAndMapRotation();
+        this.setupGameMode();
     }
 
     public ngOnDestroy(): void {
@@ -61,18 +55,15 @@ export class LobbyStatusWindowComponent implements OnInit, OnDestroy {
             });
     }
 
-    private setupGameModeAndMapRotation(): void {
-        combineLatest([
-            this.match.gameMode$,
-            this.mapRotation.mapRotation$, // Also update the map when the map rotation changes
-        ])
+    private setupGameMode(): void {
+        combineLatest([this.match.gameMode$])
             .pipe(
                 takeUntil(this.destroy$),
                 map(([gameMode]) => gameMode)
             )
             .subscribe((gameMode) => {
                 this.gameMode = gameMode;
-                this.matchMap = gameMode ? this.mapRotation.getCurrentMapFromGameMode(gameMode?.gameModeGenericId) : undefined;
+                // this.matchMap = gameMode ? this.mapRotation.getCurrentMapFromGameMode(gameMode?.gameModeGenericId) : undefined;
                 this.cdr.detectChanges();
             });
     }

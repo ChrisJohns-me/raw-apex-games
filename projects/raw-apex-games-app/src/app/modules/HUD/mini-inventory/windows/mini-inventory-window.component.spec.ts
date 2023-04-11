@@ -86,7 +86,7 @@ describe("MiniInventoryWindowComponent", () => {
             let actual = sut.isVisible;
             expect(actual).toBeFalse();
 
-            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.Landed);
             actual = sut.isVisible;
 
             // Assert
@@ -104,7 +104,7 @@ describe("MiniInventoryWindowComponent", () => {
             matchService.startedEvent$.next(startEvent);
             matchService.state$.next(startEvent);
             matchPlayerService.myState$.next(PlayerState.Alive);
-            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.Landed);
             tick(60 * 1000);
 
             // Act
@@ -127,7 +127,7 @@ describe("MiniInventoryWindowComponent", () => {
             matchService.startedEvent$.next(startEvent);
             matchService.state$.next(startEvent);
             matchPlayerService.myState$.next(PlayerState.Alive);
-            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.Landed);
             tick(60 * 1000);
 
             // Act
@@ -150,7 +150,7 @@ describe("MiniInventoryWindowComponent", () => {
             matchService.startedEvent$.next(startEvent);
             matchService.state$.next(startEvent);
             matchPlayerService.myState$.next(PlayerState.Alive);
-            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.Landed);
             tick(60 * 1000);
 
             // Act
@@ -173,7 +173,7 @@ describe("MiniInventoryWindowComponent", () => {
             matchService.startedEvent$.next(startEvent);
             matchService.state$.next(startEvent);
             matchPlayerService.myState$.next(PlayerState.Alive);
-            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.Landed);
             tick(60 * 1000);
 
             // Act
@@ -203,7 +203,7 @@ describe("MiniInventoryWindowComponent", () => {
             matchService.startedEvent$.next(startEvent);
             matchService.state$.next(startEvent);
             matchPlayerService.myState$.next(PlayerState.Alive);
-            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.HasLanded);
+            matchPlayerLocationService.myLocationPhase$.next(MatchLocationPhase.Landed);
             tick(60 * 1000);
 
             // Act

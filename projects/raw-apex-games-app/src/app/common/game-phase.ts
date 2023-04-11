@@ -1,6 +1,7 @@
 export enum GamePhase {
     Lobby = "lobby",
+    LoadingScreen = "loading_screen",
     LegendSelection = "legend_selection",
-    PreGame = "pre_game",
     InGame = "in_game",
+    MatchSummary = "match_summary",
 }

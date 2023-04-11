@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { MapRotationData } from "@raw-apex-games-app/app/common/match/map/map-rotation-data";
 import { MatchMap } from "@raw-apex-games-app/app/common/match/map/match-map";
-import { MapRotationService } from "@raw-apex-games-app/app/modules/core/map-rotation/map-rotation.service";
 import { isFuture, isPast } from "date-fns";
 import addMinutes from "date-fns/addMinutes";
 import { Subject, interval } from "rxjs";
@@ -21,7 +20,7 @@ export class MapRotationDisplayComponent implements OnInit, OnDestroy {
 
     private destroy$ = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef, private readonly mapRotation: MapRotationService) {}
+    constructor(private readonly cdr: ChangeDetectorRef) {}
 
     public forceTemplateDateRefresh = (input: Date): Date => new Date(input);
     public getMapImageName = MatchMap.getPreviewFilename;
@@ -29,23 +28,12 @@ export class MapRotationDisplayComponent implements OnInit, OnDestroy {
     public isPast = isPast;
 
     public ngOnInit(): void {
-        this.setupMapRotation();
         this.setupUIRefreshTimer();
     }
 
     public ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
-    }
-
-    /**
-     * Checks once a minute to see if the map rotation data needs to be updated.
-     */
-    private setupMapRotation(): void {
-        this.mapRotation.mapRotation$.pipe(takeUntil(this.destroy$)).subscribe((rotationData) => {
-            this.mapRotationData = rotationData;
-            this.fastUIRefresh = true; // Temporarily turn on fast refreshing after data is fetched
-        });
     }
 
     private setupUIRefreshTimer(): void {

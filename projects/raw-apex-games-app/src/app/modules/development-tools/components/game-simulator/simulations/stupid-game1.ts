@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-
+// Outdated
 export const stupidGame1Full = (): string => `
 [2021-05-06 04:46:12.526 AM] {"info":{"me":{"name":"MasterKriff"}},"feature":"me"}
 [2021-05-06 04:46:12.526 AM] {"info":{"match_info":{"game_mode":"#PL_DUO"}},"feature":"match_info"}

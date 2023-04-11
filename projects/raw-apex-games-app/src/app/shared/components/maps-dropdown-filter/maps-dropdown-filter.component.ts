@@ -20,22 +20,14 @@ export class MapsDropdownFilterComponent implements OnInit, OnChanges, OnDestroy
     @Input() public clearAll?: Subject<void>;
     @Output("selectedMaps") public selectedMapsOutput = new EventEmitter<MatchMap[]>();
 
-    public get battleRoyaleMapList(): MatchMap[] {
-        return this.genericMapList.filter((m) => m.isBattleRoyaleMap);
-    }
-    public get arenasMapList(): MatchMap[] {
-        return this.genericMapList.filter((m) => m.isArenasMap);
+    public get mapList(): MatchMap[] {
+        return this.genericMapList;
     }
 
     public selectedMapsFormGroup!: FormGroup;
-    public get selectedBattleRoyaleMapsForms(): Array<[mapGenericId: string, form: FormControl]> {
+    public get mapsForms(): Array<[mapGenericId: string, form: FormControl]> {
         return Object.entries(this.selectedMapsFormGroup.controls).filter(([mapGenericId]) =>
-            this.battleRoyaleMapList.map((m) => m.mapGenericId).includes(mapGenericId as MatchMapGenericId)
-        ) as Array<[string, FormControl]>;
-    }
-    public get selectedArenasMapsForms(): Array<[mapGenericId: string, form: FormControl]> {
-        return Object.entries(this.selectedMapsFormGroup.controls).filter(([mapGenericId]) =>
-            this.arenasMapList.map((m) => m.mapGenericId).includes(mapGenericId as MatchMapGenericId)
+            this.mapList.map((m) => m.mapGenericId).includes(mapGenericId as MatchMapGenericId)
         ) as Array<[string, FormControl]>;
     }
 

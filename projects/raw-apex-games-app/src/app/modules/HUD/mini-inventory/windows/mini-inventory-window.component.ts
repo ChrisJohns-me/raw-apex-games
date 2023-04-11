@@ -80,7 +80,7 @@ export class MiniInventoryWindowComponent implements OnInit, OnDestroy {
             this.isVisible =
                 stateChanged.state === MatchState.Active &&
                 myState === PlayerState.Alive &&
-                locationPhase === MatchLocationPhase.HasLanded &&
+                locationPhase === MatchLocationPhase.Landed &&
                 victory === false;
             this.cdr.detectChanges();
         });

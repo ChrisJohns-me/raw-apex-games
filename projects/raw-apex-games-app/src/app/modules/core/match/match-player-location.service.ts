@@ -1,15 +1,14 @@
 import { Injectable } from "@angular/core";
-import { MatchGameModeGenericId } from "@raw-apex-games-app/app/common/match/game-mode/game-mode.enum";
 import { MatchLocationPhase } from "@raw-apex-games-app/app/common/match/location";
 import { MatchMapCoordinates } from "@raw-apex-games-app/app/common/match/map/map-coordinates";
 import { PlayerState } from "@raw-apex-games-app/app/common/player-state";
-import { TriggerConditions } from "@raw-apex-games-app/app/common/utilities/trigger-conditions";
 import { SingletonServiceProviderFactory } from "@raw-apex-games-app/app/singleton-service.provider.factory";
 import { cleanInt } from "common/utilities/";
+import { exhaustiveEnumSwitch } from "common/utilities/switch";
 import { BehaviorSubject } from "rxjs";
-import { bufferCount, filter, map, takeUntil } from "rxjs/operators";
+import { bufferCount, filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { BaseService } from "../base-service.abstract";
-import { OWInfoUpdates2Event, OverwolfGameDataService } from "../overwolf";
+import { OverwolfGameDataService } from "../overwolf";
 import { MatchPlayerInflictionService } from "./match-player-infliction.service";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service";
 import { MatchPlayerLegendService } from "./match-player-legend.service";
@@ -82,31 +81,25 @@ export class MatchPlayerLocationService extends BaseService {
     }
 
     private setupMyLocationPhase(): void {
-        const setNewLocationPhaseFn = (newPhase?: MatchLocationPhase): void => {
-            if (newPhase && newPhase !== this.myLocationPhase$.value) this.myLocationPhase$.next(newPhase);
-        };
-
-        const triggers = new TriggerConditions<MatchLocationPhase, [OWInfoUpdates2Event?, boolean?]>("MatchLocationPhase", {
-            [MatchLocationPhase.Dropship]: (infoUpdate, isMatchReset) => !!isMatchReset && !this.myStartingCoordinates$.value,
-            [MatchLocationPhase.Dropping]: (infoUpdate) =>
-                this.myLocationPhase$.value === MatchLocationPhase.Dropship &&
-                infoUpdate?.feature === "location" &&
-                (infoUpdate.info.match_info?.location?.z ?? Infinity) < (this.myStartingCoordinates$.value?.z ?? -Infinity),
-            [MatchLocationPhase.HasLanded]: () =>
-                (this.myLocationPhase$.value === MatchLocationPhase.Dropping && !!this.myLandingCoordinates$.value) ||
-                this.match.gameMode$.value?.gameModeGenericId === MatchGameModeGenericId.Training ||
-                this.match.gameMode$.value?.gameModeGenericId === MatchGameModeGenericId.FiringRange,
-        });
-
-        this.overwolfGameData.infoUpdates$.pipe(takeUntil(this.destroy$)).subscribe((infoUpdate) => {
-            const newPhase = triggers.triggeredFirstKey(infoUpdate, false);
-            setNewLocationPhaseFn(newPhase);
-        });
-
-        this.match.startedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-            const newPhase = triggers.triggeredFirstKey(undefined, true);
-            setNewLocationPhaseFn(newPhase);
-        });
+        this.match.startedEvent$
+            .pipe(
+                takeUntil(this.destroy$),
+                switchMap(() => this.overwolfGameData.infoUpdates$),
+                filter((infoUpdate) => infoUpdate.feature === "game_info" && !!infoUpdate.info.game_info?.phase),
+                map((infoUpdate) => infoUpdate.info.game_info?.phase as MatchLocationPhase)
+            )
+            .subscribe((newPhase) => {
+                if (newPhase && newPhase === this.myLocationPhase$.value) return;
+                switch (newPhase) {
+                    case MatchLocationPhase.Aircraft:
+                    case MatchLocationPhase.Freefly:
+                    case MatchLocationPhase.Landed:
+                        this.myLocationPhase$.next(newPhase);
+                        return;
+                    default:
+                        exhaustiveEnumSwitch(newPhase);
+                }
+            });
     }
 
     private setupMyCoordinates(): void {
@@ -184,7 +177,7 @@ export class MatchPlayerLocationService extends BaseService {
         this.matchPlayerLegend.myUltimateCooldown$
             .pipe(
                 takeUntil(this.destroy$),
-                filter(() => this.myLocationPhase$.value === MatchLocationPhase.Dropping),
+                filter(() => this.myLocationPhase$.value === MatchLocationPhase.Freefly),
                 filter((ultimateCooldown) => ultimateCooldown <= ULTIMATE_COOLDOWN_TRIGGER),
                 map(() => this.myCoordinates$.value),
                 filter(() => !this.myLandingCoordinates$.value),
@@ -213,7 +206,7 @@ export class MatchPlayerLocationService extends BaseService {
         this.myCoordinates$
             .pipe(
                 takeUntil(this.destroy$),
-                filter(() => this.myLocationPhase$.value === MatchLocationPhase.Dropping),
+                filter(() => this.myLocationPhase$.value === MatchLocationPhase.Freefly),
                 filter(() => !this.myLandingCoordinates$.value),
                 filter((coord) => !!coord && isFinite(coord.x) && isFinite(coord.y) && isFinite(coord.z)),
                 bufferCount(2, 5) // bufferSize = 2, startBufferEvery = 5 (coordinate updates)

@@ -172,11 +172,11 @@ function mapLocationPhase<T extends MapLocationPhaseDirection>(
     inputPhase: number | MatchLocationPhase,
     direction: T
 ): MapLocationPhaseType<T> {
-    const defaultPhase = MatchLocationPhase.HasLanded;
+    const defaultPhase = MatchLocationPhase.Landed;
     const mapping: { [key in MatchLocationPhase]: number } = {
-        [MatchLocationPhase.Dropping]: 0,
-        [MatchLocationPhase.Dropship]: 1,
-        [MatchLocationPhase.HasLanded]: 2,
+        [MatchLocationPhase.Freefly]: 0,
+        [MatchLocationPhase.Aircraft]: 1,
+        [MatchLocationPhase.Landed]: 2,
     };
 
     if (typeof inputPhase === "number" && direction === "out") {

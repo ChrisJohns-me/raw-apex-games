@@ -1,7 +1,4 @@
 import { MatchGameModeGenericId } from "../game-mode/game-mode.enum";
-import { MatchMapListArenasMaps } from "./map-list/arenas-maps";
-import { MatchMapListBattleRoyalMaps } from "./map-list/battle-royal-maps";
-import { MatchMapListControlMaps } from "./map-list/control-maps";
 import { MatchMapFriendlyName, MatchMapGenericId } from "./map.enum";
 import { MatchMap } from "./match-map";
 
@@ -11,39 +8,169 @@ export const MatchMapList: MatchMap[] = [
         mapName: MatchMapFriendlyName.FiringRange,
         mapGenericId: MatchMapGenericId.FiringRange,
         mapId: "mp_rr_canyonlands_staging",
-        isBattleRoyaleMap: false,
-        isArenasMap: false,
-        isControlMap: false,
         isChartable: false,
         gameModeTypes: [MatchGameModeGenericId.Training, MatchGameModeGenericId.FiringRange],
-        activeDates: [
-            {
-                from: new Date(0),
-            },
-        ],
-        zStartPos: -Infinity,
     }),
     //#endregion
-    ...MatchMapListBattleRoyalMaps,
-    ...MatchMapListArenasMaps,
-    ...MatchMapListControlMaps,
+    //#region Kings Canyon
+    new MatchMap({
+        mapName: MatchMapFriendlyName.KingsCanyon,
+        mapGenericId: MatchMapGenericId.KingsCanyon,
+        mapId: "mp_rr_canyonlands_mu3",
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -373,
+                xEnd: 442,
+                yStart: -371,
+                yEnd: 441,
+            },
+        },
+    }),
+    //#endregion
+    //#region Worlds Edge
+    new MatchMap({
+        mapName: MatchMapFriendlyName.WorldsEdge,
+        mapGenericId: MatchMapGenericId.WorldsEdge,
+        mapId: "mp_rr_desertlands_mu2",
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -450,
+                xEnd: 450,
+                yStart: -450,
+                yEnd: 450,
+            },
+        },
+    }),
+    new MatchMap({
+        mapName: MatchMapFriendlyName.WorldsEdge,
+        mapGenericId: MatchMapGenericId.WorldsEdge,
+        mapId: "mp_rr_desertlands_mu3",
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -450,
+                xEnd: 450,
+                yStart: -450,
+                yEnd: 450,
+            },
+        },
+    }),
+    //#endregion
+    //#region Olympus
+    new MatchMap({
+        mapName: MatchMapFriendlyName.Olympus,
+        mapGenericId: MatchMapGenericId.Olympus,
+        mapId: "mp_rr_olympus",
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -520,
+                xEnd: 378,
+                yStart: -421,
+                yEnd: 480,
+            },
+        },
+    }),
+    new MatchMap({
+        mapName: MatchMapFriendlyName.Olympus,
+        mapGenericId: MatchMapGenericId.Olympus,
+        mapId: "mp_rr_olympus_mu1",
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -520,
+                xEnd: 378,
+                yStart: -421,
+                yEnd: 480,
+            },
+        },
+    }),
+    new MatchMap({
+        mapName: MatchMapFriendlyName.Olympus,
+        mapGenericId: MatchMapGenericId.Olympus,
+        mapId: "mp_rr_olympus_mu2",
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -520,
+                xEnd: 378,
+                yStart: -421,
+                yEnd: 480,
+            },
+        },
+    }),
+    //#endregion
+    //#region Storm Point
+    new MatchMap({
+        mapName: MatchMapFriendlyName.StormPoint,
+        mapGenericId: MatchMapGenericId.StormPoint,
+        mapId: "mp_rr_tropic_island",
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -506,
+                xEnd: 522,
+                yStart: -511,
+                yEnd: 525,
+            },
+        },
+    }),
+    new MatchMap({
+        mapName: MatchMapFriendlyName.StormPoint,
+        mapGenericId: MatchMapGenericId.StormPoint,
+        mapId: "mp_rr_tropic_island_mu1",
+        gameModeTypes: [
+            MatchGameModeGenericId.BattleRoyale_Duos,
+            MatchGameModeGenericId.BattleRoyale_Trios,
+            MatchGameModeGenericId.BattleRoyale_Ranked,
+        ],
+        chartConfig: {
+            imageAxisScale: {
+                xStart: -506,
+                xEnd: 522,
+                yStart: -511,
+                yEnd: 525,
+            },
+        },
+    }),
+    //#endregion
 ];
 
 /**
- * Sorts by:
- *  - Battle Royale maps first
- *  - Arenas maps second
- *  - Control maps third
- *  - Alphabetically
+ * Sorts maps Alphabetically
  */
 export function sortMatchMapList(matchMapList: MatchMap[]): MatchMap[] {
     return matchMapList.slice().sort((a, b) => {
-        if (a.isBattleRoyaleMap && !b.isBattleRoyaleMap) return -1;
-        if (!a.isBattleRoyaleMap && b.isBattleRoyaleMap) return 1;
-        if (a.isArenasMap && !b.isArenasMap) return -1;
-        if (!a.isArenasMap && b.isArenasMap) return 1;
-        if (a.isControlMap && !b.isControlMap) return -1;
-        if (!a.isControlMap && b.isControlMap) return 1;
         if (a.mapName.toLowerCase() < b.mapName.toLowerCase()) return -1;
         if (a.mapName.toLowerCase() > b.mapName.toLowerCase()) return 1;
         return 0;

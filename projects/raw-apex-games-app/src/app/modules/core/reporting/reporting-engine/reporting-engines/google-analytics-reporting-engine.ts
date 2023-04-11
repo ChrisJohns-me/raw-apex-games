@@ -89,7 +89,7 @@ export class GoogleAnalyticsReportingEngine implements ReportingEngine {
         const placement = matchSummary.placement;
         const legendId = getDataById("legendId")?.value?.legendId ?? "";
         const dropshipStartLocation = locationHistory[0]?.value ?? { x: 0, y: 0, z: 0 };
-        const landingLocation = locationHistory.find((l) => l.value.phase === MatchLocationPhase.HasLanded)?.value ?? { x: 0, y: 0, z: 0 };
+        const landingLocation = locationHistory.find((l) => l.value.phase === MatchLocationPhase.Landed)?.value ?? { x: 0, y: 0, z: 0 };
         const playerEndLocation = locationHistory[locationHistory.length - 1]?.value ?? { x: 0, y: 0, z: 0 };
 
         this.googleAnalytics.sendEvent("Match Meta", "Player Play Duration", `${myName}`, duration);

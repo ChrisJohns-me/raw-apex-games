@@ -76,6 +76,7 @@ declare namespace overwolf.gep.ApexLegends {
     }
 
     interface MatchInfoMe {
+        /** @deprecated */
         name?: string;
         totalDamageDealt?: number; // This value may be incorrect!
         ultimate_cooldown?: MatchInfoMeUltimateCooldown;
@@ -168,6 +169,7 @@ declare namespace overwolf.gep.ApexLegends {
         tabs?: MatchInfoTabs;
         team_info?: MatchInfoTeamInfo;
         match_summary?: MatchInfoMatchSummary;
+        map_id?: string;
         location?: MatchInfoLocation;
         victory?: boolean;
         legendSelect_0?: MatchInfoLegendSelect;
@@ -281,6 +283,20 @@ declare namespace overwolf.gep.ApexLegends {
 
     interface GameInfo {
         match_state?: "active" | "inactive";
+        phase?:
+            | "lobby"
+            | "loading_screen"
+            | "legend_selection"
+            | "aircraft"
+            | "freefly"
+            | "landed"
+            | "match_summary"
+            | "shopping"
+            | "combat";
+        player?: {
+            player_name?: string;
+            in_game_player_name?: string;
+        };
     }
 
     enum GameInfoKey {
@@ -289,6 +305,7 @@ declare namespace overwolf.gep.ApexLegends {
         Inventory = "inventory",
         Kill = "kill",
         KillFeed = "kill_feed",
+        GameInfo = "game_info",
         Location = "location",
         MatchInfo = "match_info",
         MatchState = "match_state",
@@ -302,8 +319,8 @@ declare namespace overwolf.gep.ApexLegends {
     }
 
     interface InfoUpdates2 extends overwolf.games.events.InfoUpdate2 {
-        match_info?: MatchInfo;
         game_info?: GameInfo;
+        match_info?: MatchInfo;
         me?: MatchInfoMe;
     }
 

@@ -1,5 +1,5 @@
 import { v4 as uuid } from "uuid";
-
+// Outdated
 export const resetToInGame = (): string => `
 [2020-01-01 00:00:00.000 AM] {"info":{"me":{"name":"MasterKriff"}},"feature":"me"}
 [2020-01-01 00:00:00.500 AM] {"info":{"match_info":{"game_mode":"#PL_TRIO_RINGCOLLAPSE"}},"feature":"match_info"}
