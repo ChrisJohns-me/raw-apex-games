@@ -123,11 +123,13 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
         const phase = this.game.phase$.value;
         const newPhase =
             phase === GamePhase.Lobby
+                ? GamePhase.LoadingScreen
+                : phase === GamePhase.LoadingScreen
                 ? GamePhase.LegendSelection
                 : phase === GamePhase.LegendSelection
-                ? GamePhase.PreGame
-                : phase === GamePhase.PreGame
                 ? GamePhase.InGame
+                : phase === GamePhase.InGame
+                ? GamePhase.MatchSummary
                 : GamePhase.Lobby;
         this.game.phase$.next(newPhase);
     }

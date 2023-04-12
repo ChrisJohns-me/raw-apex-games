@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { MapRotationService } from "@raw-apex-games-app/app/modules/core/map-rotation/map-rotation.service";
 import { MatchKillfeedService } from "@raw-apex-games-app/app/modules/core/match/match-killfeed.service";
 import { MatchPlayerService } from "@raw-apex-games-app/app/modules/core/match/match-player.service";
 import { MatchRosterService } from "@raw-apex-games-app/app/modules/core/match/match-roster.service";
@@ -66,7 +65,6 @@ import { SystemTrayService } from "./system-tray.service";
         LocalStorageService,
         MainDesktopWindowService,
         MainInGameWindowService,
-        MapRotationService,
         MatchKillfeedService,
         MatchLegendSelectService,
         MatchMapService,
@@ -117,7 +115,6 @@ export class SingletonServiceContainerService {
         public readonly LocalStorageService: LocalStorageService,
         public readonly MainDesktopWindowService: MainDesktopWindowService,
         public readonly MainInGameWindowService: MainInGameWindowService,
-        public readonly MapRotationService: MapRotationService,
         public readonly MatchKillfeedService: MatchKillfeedService,
         public readonly MatchLegendSelectService: MatchLegendSelectService,
         public readonly MatchMapService: MatchMapService,

@@ -12,6 +12,7 @@ export enum OverwolfFeatureDep {
     KnockedOut = "knocked_out",
     LegendSelect = "legendSelect",
     Location = "location",
+    MatchInfo = "match_info",
     MatchEnd = "match_end",
     MatchStart = "match_start",
     MatchState = "match_state",

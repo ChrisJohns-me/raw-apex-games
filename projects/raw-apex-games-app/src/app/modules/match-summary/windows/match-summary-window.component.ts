@@ -4,11 +4,11 @@ import { MatchMapCoordinates } from "@raw-apex-games-app/app/common/match/map/ma
 import { MatchMapList } from "@raw-apex-games-app/app/common/match/map/map-list";
 import { MatchMap } from "@raw-apex-games-app/app/common/match/map/match-map";
 import { OverwolfWindowName } from "@raw-apex-games-app/app/common/overwolf-window";
-import { coordinatesDistance, INGAME_UNITS_PER_METER } from "@raw-apex-games-app/app/common/utilities/coordinates-distance";
+import { INGAME_UNITS_PER_METER, coordinatesDistance } from "@raw-apex-games-app/app/common/utilities/coordinates-distance";
 import { slideInLeftAnimation } from "@shared/animations/slide-in-left.animation";
 import { isEmpty } from "common/utilities";
 import { addMilliseconds, isDate } from "date-fns";
-import { filter, OperatorFunction, Subject, takeUntil, tap } from "rxjs";
+import { OperatorFunction, Subject, filter, takeUntil, tap } from "rxjs";
 import { ConfigurationService } from "../../core/configuration.service";
 import { WINDOW } from "../../core/global-window.provider";
 import { LocationPhaseNum, MatchDataStore } from "../../core/local-database/match-data-store";
@@ -34,7 +34,6 @@ export class MatchSummaryWindowComponent implements OnInit, OnDestroy {
     public latestMatchMap?: MatchMap;
     public travelCoordinatesList: MatchMapCoordinates[] = [];
     public eliminationCoordinatesList: MatchMapCoordinates[] = [];
-    public weaponEliminations: { weaponId: string; avgEliminations: number }[] = [];
     public distanceTraveled? = 0;
     public videoAd!: Advertisement;
     public readonly OverwolfWindowName = OverwolfWindowName;
@@ -89,7 +88,6 @@ export class MatchSummaryWindowComponent implements OnInit, OnDestroy {
                     this.travelCoordinatesList = this.getTravelCoordinatesList(this.latestMatch.locationHistory);
                     this.eliminationCoordinatesList = this.getEliminationCoordinatesList(this.latestMatch.eliminationLocationHistory);
                     this.distanceTraveled = this.getDistanceTraveled(this.latestMatch.locationHistory);
-                    this.weaponEliminations = this.getWeaponEliminations(this.latestMatch.eliminationWeaponIds);
                 })
                 // switchMap(() => ),
             )
@@ -124,23 +122,6 @@ export class MatchSummaryWindowComponent implements OnInit, OnDestroy {
         const distanceInUnits = coordinatesDistance(travelCoordinatesList, true);
         const distanceInMeters = distanceInUnits * INGAME_UNITS_PER_METER;
         return distanceInMeters;
-    }
-
-    private getWeaponEliminations(
-        eliminationWeaponIds: MatchDataStore["eliminationWeaponIds"]
-    ): { weaponId: string; avgEliminations: number }[] {
-        if (isEmpty(eliminationWeaponIds)) return [];
-        const weaponEliminations: { weaponId: string; avgEliminations: number }[] = [];
-
-        for (const weaponId of eliminationWeaponIds!) {
-            const foundWeaponElim = weaponEliminations.find((elimination) => elimination.weaponId === weaponId);
-            if (foundWeaponElim) {
-                foundWeaponElim.avgEliminations++;
-                continue;
-            }
-            weaponEliminations.push({ weaponId, avgEliminations: 1 });
-        }
-        return weaponEliminations;
     }
     //#endregion
 

@@ -50,7 +50,7 @@ export class ChartingPageComponent implements OnInit, AfterViewInit, OnDestroy {
     public get legendList(): Legend[] {
         return this.matchFilters.legendList;
     }
-    private _supportedGameModeList: MatchGameMode[] = MatchFilters.getNonTrainingGameModeList().filter((gm) => gm.isBattleRoyaleGameMode);
+    private _supportedGameModeList: MatchGameMode[] = MatchFilters.getNonSandboxGameModeList().filter((gm) => gm.isBattleRoyaleGameMode);
     private matchFilters = new MatchFilters(undefined, undefined, this._supportedGameModeList, undefined);
     //#endregion
 

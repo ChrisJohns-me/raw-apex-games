@@ -1,52 +1,38 @@
 import { wordsToUpperCase } from "common/utilities/";
 import { MatchGameModeFriendlyName, MatchGameModeGenericId } from "./game-mode.enum";
 
-type ActiveDates = Array<{
-    from: Date; // Useful to also cross-reference with the current date
-    to?: Date; // if undefined, game mode is currently active
-}>;
-
 interface MatchGameModeConstructor {
     gameModeId: string;
     /** Used as an alternate way to determine the game mode */
     gameModeIdRegExPattern?: string;
     gameModeName: MatchGameModeFriendlyName;
     gameModeGenericId: MatchGameModeGenericId;
-    /** Is supported by Allfather app; typically used by certain UI windows to display */
-    isAFSupported?: boolean; // TODO: Rename
     isReportable?: boolean;
+    /** FiringRange or Training game modes */
+    isSandboxGameMode?: boolean;
     isBattleRoyaleGameMode: boolean;
-    isArenasGameMode: boolean;
     isControlGameMode: boolean;
     isRanked?: boolean;
-    activeDates?: ActiveDates;
 }
 export class MatchGameMode {
     public gameModeId: string;
     public gameModeIdRegExPattern?: string;
     public gameModeName: MatchGameModeFriendlyName;
     public gameModeGenericId: MatchGameModeGenericId;
-    public isAFSupported: boolean;
     public isReportable: boolean;
+    public isSandboxGameMode: boolean;
     public isBattleRoyaleGameMode: boolean;
     public isControlGameMode: boolean;
-    public activeDates?: ActiveDates;
-
-    public get isActive(): boolean {
-        const now = new Date();
-        return !!this.activeDates?.some((date) => date.from <= now && (!date.to || now <= date.to));
-    }
 
     constructor(ctor: MatchGameModeConstructor) {
         this.gameModeId = ctor.gameModeId;
         this.gameModeIdRegExPattern = ctor.gameModeIdRegExPattern;
         this.gameModeName = ctor.gameModeName;
         this.gameModeGenericId = ctor.gameModeGenericId;
-        this.isAFSupported = ctor.isAFSupported ?? true;
         this.isReportable = ctor.isReportable ?? true;
+        this.isSandboxGameMode = ctor.isSandboxGameMode ?? false;
         this.isBattleRoyaleGameMode = ctor.isBattleRoyaleGameMode;
         this.isControlGameMode = ctor.isControlGameMode;
-        this.activeDates = ctor.activeDates;
     }
 
     //#region Static Methods
@@ -76,15 +62,13 @@ export class MatchGameMode {
         if (!gameModeName) gameModeName = "Unknown";
         const gameModeGenericId = gameModeId;
         const isBattleRoyaleGameMode = new RegExp("trios|duos|ranked_leagues", "i").test(gameModeId);
-        const isArenasGameMode = !isBattleRoyaleGameMode && new RegExp("arena", "i").test(gameModeId);
-        const isControlGameMode = !isBattleRoyaleGameMode && !isArenasGameMode && new RegExp("control", "i").test(gameModeId);
+        const isControlGameMode = !isBattleRoyaleGameMode && new RegExp("control", "i").test(gameModeId);
 
         return new MatchGameMode({
             gameModeId,
             gameModeGenericId: gameModeGenericId as MatchGameModeGenericId,
             gameModeName: gameModeName as MatchGameModeFriendlyName,
             isBattleRoyaleGameMode,
-            isArenasGameMode,
             isControlGameMode,
         });
     }

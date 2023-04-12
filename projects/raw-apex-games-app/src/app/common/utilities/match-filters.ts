@@ -15,20 +15,20 @@ import { MatchMap } from "../match/map/match-map";
  */
 class StaticMatchFilters {
     /** @returns All non-training and non-firing range maps */
-    public static getNonTrainingMapList(): MatchMap[] {
-        return MatchMapList.filter((m) => m.isBattleRoyaleMap || m.isArenasMap || m.isControlMap);
+    public static getNonSandboxMapList(): MatchMap[] {
+        return MatchMapList.filter((m) => !m.isSandboxMap);
     }
 
     /** @returns The latest (generic) MatchMaps from a given mapList; or if undefined, defaults to non-training and non-firing range maps */
     public static getGenericMapList(mapList?: MatchMap[]): MatchMap[] {
-        if (!mapList) mapList = StaticMatchFilters.getNonTrainingMapList();
+        if (!mapList) mapList = StaticMatchFilters.getNonSandboxMapList();
         const genericMapList = mapList.map((m) => MatchMap.latestGenericMap(m.mapGenericId, mapList!)).filter((m) => !!m) as MatchMap[];
         return unique(genericMapList, (m) => m.mapGenericId);
     }
 
     /** @returns All non-training and non-firing range game modes */
-    public static getNonTrainingGameModeList(afSupportedOnly = true): MatchGameMode[] {
-        return MatchGameModeList.filter((g) => g.isAFSupported == afSupportedOnly && (g.isBattleRoyaleGameMode || g.isControlGameMode));
+    public static getNonSandboxGameModeList(): MatchGameMode[] {
+        return MatchGameModeList.filter((g) => !g.isSandboxGameMode);
     }
 
     public static isMatchInGameModeSelection(
@@ -106,9 +106,6 @@ class StaticMatchFilters {
         } else if (match.gameModeId && searchInput === "control") {
             const gameMode = MatchGameMode.getFromId(MatchGameModeList, match.gameModeId);
             return gameMode.gameModeGenericId === MatchGameModeGenericId.Control;
-        } else if (match.gameModeId && (searchInput === "arena" || searchInput === "arenas")) {
-            const gameMode = MatchGameMode.getFromId(MatchGameModeList, match.gameModeId);
-            return gameMode.gameModeGenericId === MatchGameModeGenericId.Arenas;
         } else if (match.gameModeId && (searchInput === "battleroyale" || searchInput === "battle royale")) {
             const gameMode = MatchGameMode.getFromId(MatchGameModeList, match.gameModeId);
             return (
@@ -190,7 +187,6 @@ export class MatchFilters extends StaticMatchFilters {
     public searchQuery = "";
 
     // Options
-    private afSupportedOnlyGameModes = true;
     private chartableMapsOnly = true;
     private sortMapList = true;
     private sortGameModeList = true;
@@ -202,7 +198,6 @@ export class MatchFilters extends StaticMatchFilters {
         gameModeList?: MatchGameMode[],
         legendList?: Legend[],
         options?: {
-            afSupportedOnlyGameModes?: boolean;
             chartableMapsOnly?: boolean;
             sortMapList?: boolean;
             sortGameModeList?: boolean;
@@ -211,7 +206,6 @@ export class MatchFilters extends StaticMatchFilters {
     ) {
         super();
         if (options) {
-            if (!isEmpty(options.afSupportedOnlyGameModes)) this.afSupportedOnlyGameModes = options.afSupportedOnlyGameModes!;
             if (!isEmpty(options.chartableMapsOnly)) this.chartableMapsOnly = options.chartableMapsOnly!;
             if (!isEmpty(options.sortMapList)) this.sortMapList = options.sortMapList!;
             if (!isEmpty(options.sortGameModeList)) this.sortGameModeList = options.sortGameModeList!;
@@ -220,7 +214,7 @@ export class MatchFilters extends StaticMatchFilters {
 
         this.matchList = matchList ?? [];
         this.mapList = mapList ?? MatchFilters.getGenericMapList();
-        this.gameModeList = gameModeList ?? MatchFilters.getNonTrainingGameModeList(this.afSupportedOnlyGameModes);
+        this.gameModeList = gameModeList ?? MatchFilters.getNonSandboxGameModeList();
         this.legendList = legendList ?? LegendList;
 
         if (this.chartableMapsOnly) this.mapList = this.mapList.filter((map) => map.isChartable);

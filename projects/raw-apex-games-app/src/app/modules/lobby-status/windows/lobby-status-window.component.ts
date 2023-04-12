@@ -17,11 +17,11 @@ const MAIN_HOTKEY_NAME = HotkeyEnum.ToggleMainInGame;
 })
 export class LobbyStatusWindowComponent implements OnInit, OnDestroy {
     public get isGameModeSupported(): boolean {
-        return !!this.gameMode?.isAFSupported && !!this.gameMode?.isReportable && !!this.gameMode?.isActive;
+        return !!this.gameMode?.isReportable && !this.gameMode.isSandboxGameMode;
     }
 
     public get isMapSupported(): boolean {
-        return !!this.matchMap?.isChartable && !!this.matchMap?.isActive;
+        return !!this.matchMap?.isChartable && !this.matchMap?.isSandboxMap;
     }
 
     public gameMode?: MatchGameMode;

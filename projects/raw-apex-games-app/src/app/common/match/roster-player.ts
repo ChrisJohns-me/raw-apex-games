@@ -5,6 +5,7 @@ export interface MatchRosterPlayer {
     isMe: boolean;
     teamId?: number;
     rosterId?: number;
+    originId?: string; // TODO: NEW!
     platformHardware?: PlatformHardware;
     platformSoftware?: PlatformSoftware;
 }

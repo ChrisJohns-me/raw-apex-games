@@ -9,6 +9,7 @@ export const MatchMapList: MatchMap[] = [
         mapGenericId: MatchMapGenericId.FiringRange,
         mapId: "mp_rr_canyonlands_staging",
         isChartable: false,
+        isSandboxMap: true,
         gameModeTypes: [MatchGameModeGenericId.Training, MatchGameModeGenericId.FiringRange],
     }),
     //#endregion

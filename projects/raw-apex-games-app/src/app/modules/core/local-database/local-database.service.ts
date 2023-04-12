@@ -11,12 +11,6 @@ import { MatchDataStore } from "./match-data-store";
 import { SettingsDataStore } from "./settings-data-store";
 import { populateData } from "./versions/populate-data";
 import { version1 } from "./versions/version1";
-import { version2 } from "./versions/version2";
-import { version3 } from "./versions/version3";
-import { version4 } from "./versions/version4";
-import { version5 } from "./versions/version5";
-import { version6 } from "./versions/version6";
-import { version7 } from "./versions/version7";
 
 const DATABASE_NAME = "RawApexGamesApp";
 
@@ -53,12 +47,6 @@ export class LocalDatabaseService extends Dexie {
 
     private handleVersions() {
         version1(this);
-        version2(this);
-        version3(this);
-        version4(this);
-        version5(this);
-        version6(this);
-        version7(this);
     }
 
     /** Only populates data on first run. */

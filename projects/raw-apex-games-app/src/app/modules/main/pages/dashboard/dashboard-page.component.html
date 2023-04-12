@@ -1,16 +1,7 @@
 <div class="container-lg mt-3">
     <div class="row">
         <div class="col pe-4">
-            <app-legend-icons-board
-                *ngIf="legendIdsRows$ | async as legendIdsRows"
-                [legendIconRows]="legendIdsRows"
-                (onLegendHover)="hoverLegend($event)"
-                (onLegendUnhover)="unhoverLegend()"
-            ></app-legend-icons-board>
-
-            <div class="card px-3 py-1 mt-4">
-                <app-map-rotation-display></app-map-rotation-display>
-            </div>
+            <div class="card px-3 py-1 mt-4"></div>
         </div>
         <div class="col">
             <div class="row">
@@ -89,53 +80,6 @@
             </div>
             <!-- #endregion -->
 
-            <!-- #region Your Arenas Stats / Legend Stats -->
-            <!-- <div class="row">
-                <div class="col">
-                    <div class="card">
-                        <div class="card-header">
-                            <h6 class="card-title">
-                                ARENAS STATS ({{ ((focusedLegendId ? legendArenasStats?.numMatches : playerArenasStats?.numMatches) ?? 0) | number:'1.0':'en-US' }}
-                                {{
-                                    (focusedLegendId ? legendArenasStats?.numMatches : playerArenasStats?.numMatches) == 1
-                                    ? "match"
-                                    : "matches"
-                                }})
-                            </h6>
-                        </div>
-                        <div class="card-content">
-                            <div class="row" *ngIf="(focusedLegendId ? legendArenasStats : playerArenasStats) ?? emptyStats; let stats">
-                                <div class="col-3 stat-group">
-                                    <h1 class="stat-digit">
-                                        {{ ((stats?.avgWins ?? 0) >= 0 && (stats?.avgWins ?? 0) < 1 ? stats.avgWins : 0) | percent }}
-                                    </h1>
-                                    <h5 class="stat-title">Win Rate</h5>
-                                </div>
-                                <div class="col-3 stat-group">
-                                    <h1 class="stat-digit">
-                                        {{ ((stats?.avgEliminations ?? 0) >= 0 && (stats?.avgEliminations ?? 0) <= 100 ? stats.avgEliminations : 0) | number: "1.2-2" }}
-                                    </h1>
-                                    <h5 class="stat-title">Kill Rate</h5>
-                                </div>
-                                <div class="col-3 stat-group">
-                                    <h1 class="stat-digit">
-                                        {{ ((stats?.avgKnockdowns ?? 0) >= 0 && (stats?.avgKnockdowns ?? 0) <= 100 ? stats.avgKnockdowns : 0) | number: "1.2-2" }}
-                                    </h1>
-                                    <h5 class="stat-title">Knockdown Rate</h5>
-                                </div>
-                                <div class="col-3 stat-group">
-                                    <h1 class="stat-digit">
-                                        {{ ((stats?.avgDamage ?? 0) >= 0 && (stats?.avgDamage ?? 0) <= 50000 ? stats.avgDamage : 0) | number: "1.0-0" }}
-                                    </h1>
-                                    <h5 class="stat-title">Avg Damage</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-            <!-- #endregion -->
-
             <!-- #region Suggestions -->
             <div class="row">
                 <div class="col-6 pe-0">
@@ -166,9 +110,7 @@
             </div>
             <!-- #endregion -->
 
-            <div class="card mt-4">
-                <app-account-stats-display></app-account-stats-display>
-            </div>
+            <div class="card mt-4"></div>
         </div>
     </div>
 </div>

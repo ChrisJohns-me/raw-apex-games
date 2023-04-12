@@ -66,7 +66,6 @@ export class HUDWindowControllerService extends BaseService {
             requiredGameModes: [
                 MatchGameModeGenericId.Training,
                 MatchGameModeGenericId.FiringRange,
-                MatchGameModeGenericId.Arenas,
                 MatchGameModeGenericId.Control,
                 MatchGameModeGenericId.BattleRoyale_Duos,
                 MatchGameModeGenericId.BattleRoyale_Trios,
@@ -81,7 +80,6 @@ export class HUDWindowControllerService extends BaseService {
             requiredGameModes: [
                 MatchGameModeGenericId.Training,
                 MatchGameModeGenericId.FiringRange,
-                MatchGameModeGenericId.Arenas,
                 MatchGameModeGenericId.BattleRoyale_Duos,
                 MatchGameModeGenericId.BattleRoyale_Trios,
                 MatchGameModeGenericId.BattleRoyale_Ranked,
@@ -120,7 +118,7 @@ export class HUDWindowControllerService extends BaseService {
 
     public startWatchEvents(): void {
         const genericGameModeId$ = this.match.gameMode$.pipe(
-            filter((gameMode) => !!gameMode?.gameModeGenericId && !!gameMode.isAFSupported),
+            filter((gameMode) => !!gameMode?.gameModeGenericId),
             map((gameMode) => gameMode!.gameModeGenericId as MatchGameModeGenericId)
         );
         combineLatest([this.configuration.config$, this.settings.streamAllSettings$(), this.game.phase$, genericGameModeId$])

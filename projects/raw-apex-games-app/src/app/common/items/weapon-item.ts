@@ -2,7 +2,6 @@ import { isEmpty } from "common/utilities/";
 import { Item, ItemType } from "./item";
 // import * as WeaponJSONData from "./weapon-list.json";
 // import WeaponJSONData from "./weapon-list.json";
-// TODO: Load weapon statistics from json
 
 enum WeaponAmmo {
     Light = "light",

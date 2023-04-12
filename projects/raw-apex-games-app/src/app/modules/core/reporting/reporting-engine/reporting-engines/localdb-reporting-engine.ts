@@ -132,7 +132,6 @@ export class LocalDBReportingEngine implements ReportingEngine {
             legendId: getDataById("legendId")?.value?.legendId ?? "",
             deathLocationHistory: getDataById("deathLocationHistory")?.value ?? [],
             locationHistory: getDataById("locationHistory")?.value.map((loc) => composeLocationCoordinate(loc)) ?? [],
-            rankScore: undefined, // retrieved from external API
         };
 
         for (const key in matchData) {

@@ -13,15 +13,3 @@ export interface MatchInflictionEvent {
     isElimination?: boolean;
     weapon?: WeaponItem;
 }
-
-// Accumulated version of MatchInflictionEvents
-export interface MatchInflictionEventAccum {
-    victim: Optional<MatchRosterPlayer>;
-    shieldDamageSum: number;
-    healthDamageSum: number;
-    hasShield: boolean;
-    isKnocked: boolean;
-    isEliminated: boolean;
-    latestAttacker: Optional<MatchRosterPlayer>;
-    latestTimestamp: Optional<Date>;
-}

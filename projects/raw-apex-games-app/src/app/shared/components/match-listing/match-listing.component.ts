@@ -10,7 +10,6 @@ import {
     TrackByFunction,
 } from "@angular/core";
 import { Legend } from "@raw-apex-games-app/app/common/legend/legend";
-import { getLegendBGColor } from "@raw-apex-games-app/app/common/legend/legend-list";
 import { MatchGameMode } from "@raw-apex-games-app/app/common/match/game-mode/game-mode";
 import { MatchGameModeList } from "@raw-apex-games-app/app/common/match/game-mode/game-mode-list";
 import { MatchMapList } from "@raw-apex-games-app/app/common/match/map/map-list";
@@ -83,7 +82,6 @@ export class MatchListingComponent implements OnInit, OnDestroy {
     public getMatchMapName = (matchMapId: string): Optional<string> => MatchMapList.find((m) => m.mapId === matchMapId)?.mapName;
     public getLegendImageName = (legendId?: string): string => Legend.getSquarePortraitFilename(legendId);
     public getLegendName = (legendId?: string): Optional<string> => Legend.getName(legendId);
-    public getLegendBGColor = (legendId?: string): string => getLegendBGColor(legendId);
     public isRecent = (baseDate?: Date): boolean => !!baseDate && differenceInMilliseconds(new Date(), baseDate) <= MATCH_RECENT_TIME;
 
     public ngOnInit(): void {
@@ -118,16 +116,6 @@ export class MatchListingComponent implements OnInit, OnDestroy {
     public onTeamRosterClick(teamRoster: TeamRosterPlayer): void {
         if (!this.isTeamRosterPlayerClickable) return;
         this.teamRosterClick.emit(teamRoster);
-    }
-
-    /** Attempts to get the rankScore difference from the given match index. */
-    public getRankDiffFromMatchIndex(matchIndex: number): Optional<number> {
-        const match = this.matches[matchIndex];
-        if (!match?.rankScore) return;
-        const olderMatches = this.matches.slice(matchIndex + 1);
-        const prevMatch = olderMatches.find((m) => m.rankScore !== undefined);
-        if (!prevMatch?.rankScore) return;
-        return match.rankScore - prevMatch.rankScore;
     }
 
     private refreshUI(): void {

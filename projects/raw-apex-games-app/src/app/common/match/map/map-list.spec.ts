@@ -7,12 +7,8 @@ function createMap(id: string, activeDates: Array<{ from: Date; to?: Date }>, ge
         mapName: MatchMapFriendlyName.FiringRange,
         mapGenericId: genericId,
         mapId: id,
-        isBattleRoyaleMap: false,
-        isArenasMap: false,
-        isControlMap: false,
         isChartable: false,
         gameModeTypes: [MatchGameModeGenericId.FiringRange],
-        activeDates: activeDates,
     });
 }
 

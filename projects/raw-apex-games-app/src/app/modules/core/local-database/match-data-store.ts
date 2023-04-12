@@ -18,20 +18,16 @@ export interface MatchDataStore {
     legendId?: string;
     assists?: number;
     damage?: number;
-    damageEventsHistory?: TimestampedStream<DamageEvent>;
     deaths?: number;
     deathLocationHistory?: TimestampedStream<Coordinates>;
     eliminations?: number;
     eliminationLocationHistory?: TimestampedStream<Coordinates>;
-    eliminationWeaponIds?: Stream<string>;
     knockdowns?: number;
     maxPlacement?: number;
     placement?: number;
-    killfeedHistory?: TimestampedStream<MatchKillfeed>;
     locationHistory?: TimestampedStream<LocationHistory>;
     matchRoster?: Stream<MatchRosterPlayer>;
     teamRoster?: TeamRosterPlayer[];
-    rankScore?: number; // undefined = unchanged / not retrieved
 }
 
 type Stream<T> = T[];
@@ -64,22 +60,6 @@ interface TeamRosterPlayer {
     isMe: boolean;
     legendId: string;
     name: string;
-}
-
-interface MatchKillfeed {
-    victimName: string;
-    attackerName?: string;
-    isKnockdown?: boolean;
-    isElimination?: boolean;
-    weaponId?: string;
-}
-
-interface DamageEvent {
-    hasShield?: boolean;
-    healthDamage?: number;
-    shieldDamage?: number;
-    victimName: string;
-    weaponId?: string;
 }
 
 interface Coordinates {

@@ -43,15 +43,9 @@ export class MapsDropdownFilterComponent implements OnInit, OnChanges, OnDestroy
         }
 
         // Battle Royal only Maps
-        if (this.someBattleRoyaleMapsSelected && !this.someArenasMapsSelected) {
+        if (this.someBattleRoyaleMapsSelected) {
             if (this.everyBattleRoyaleMapsSelected) return "All Battle Royale Maps";
             else return "Some Battle Royale Maps";
-        }
-
-        // Arenas only Maps
-        if (this.someArenasMapsSelected && !this.someBattleRoyaleMapsSelected) {
-            if (this.everyArenasMapsSelected) return "All Arenas Maps";
-            else return "Some Arenas Maps";
         }
 
         return "Selected Maps";
@@ -66,22 +60,13 @@ export class MapsDropdownFilterComponent implements OnInit, OnChanges, OnDestroy
         return this.someMapsSelected && !this.everyMapsSelected;
     }
     public get everyBattleRoyaleMapsSelected(): boolean {
-        return this.selectedBattleRoyaleMapsForms.every(([, mapFormControl]) => !!mapFormControl.value);
+        return this.mapsForms.every(([, mapFormControl]) => !!mapFormControl.value);
     }
     public get someBattleRoyaleMapsSelected(): boolean {
-        return this.selectedBattleRoyaleMapsForms.some(([, mapFormControl]) => !!mapFormControl.value);
+        return this.mapsForms.some(([, mapFormControl]) => !!mapFormControl.value);
     }
     public get partialBattleRoyaleMapsSelected(): boolean {
         return this.someBattleRoyaleMapsSelected && !this.everyBattleRoyaleMapsSelected;
-    }
-    public get everyArenasMapsSelected(): boolean {
-        return this.selectedArenasMapsForms.every(([, mapFormControl]) => !!mapFormControl.value);
-    }
-    public get someArenasMapsSelected(): boolean {
-        return this.selectedArenasMapsForms.some(([, mapFormControl]) => !!mapFormControl.value);
-    }
-    public get partialArenasMapsSelected(): boolean {
-        return this.someArenasMapsSelected && !this.everyArenasMapsSelected;
     }
 
     private get selectedMapGenericIds(): string[] {
@@ -164,10 +149,10 @@ export class MapsDropdownFilterComponent implements OnInit, OnChanges, OnDestroy
     }
 
     private setBattleRoyaleMapsAllSelected(selectAll: boolean): void {
-        this.selectedBattleRoyaleMapsForms.forEach(([, form]) => form.setValue(selectAll, { emitEvent: false }));
+        this.mapsForms.forEach(([, form]) => form.setValue(selectAll, { emitEvent: false }));
     }
 
     private setArenasMapsAllSelected(selectAll: boolean): void {
-        this.selectedArenasMapsForms.forEach(([, form]) => form.setValue(selectAll, { emitEvent: false }));
+        this.mapsForms.forEach(([, form]) => form.setValue(selectAll, { emitEvent: false }));
     }
 }

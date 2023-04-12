@@ -9,21 +9,10 @@ import { PlayerService } from "@raw-apex-games-app/app/modules/core/player.servi
 import { JSONTryParse } from "common/utilities/";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
 import { Subject } from "rxjs";
-import { almost1 } from "./simulations/almost1";
-import { arenaModeSuddenDeath } from "./simulations/arena-mode-sudden-death";
 import { basicInventoryQuick } from "./simulations/basic-inventory";
-import { fullGame1Eventful } from "./simulations/full-game1-eventful";
-import { fullGame1Quick } from "./simulations/full-game1-quick";
-import { fullGame2_2k } from "./simulations/full-game2-2k";
-import { legendSelectEvents } from "./simulations/legend-select-events";
 import { resetToInGame } from "./simulations/reset-to-in-game";
 import { resetToLobby } from "./simulations/reset-to-lobby";
-import { s12Control } from "./simulations/s12-control";
-import { s12Flashpoint } from "./simulations/s12-flashpoint";
-import { s12Quick } from "./simulations/s12-quick";
-import { s13GameBroke } from "./simulations/s13-game-broke";
-import { stupidGame1Full } from "./simulations/stupid-game1";
-import { valkUltGame } from "./simulations/valk-ult-game";
+import { s16BattleRoyale } from "./simulations/s16-battle-royale";
 
 interface Command {
     timestamp: Date;
@@ -70,73 +59,8 @@ export class GameSimulatorComponent implements OnDestroy {
         this.destroy$.complete();
     }
 
-    public onPerformArenaModeSuddenDeathClick(speedAdjust?: number): void {
-        const commands = this.logToCommands(arenaModeSuddenDeath());
-        this.runCommands(commands, speedAdjust);
-    }
-
-    public onPerformArenasModeClick(speedAdjust?: number): void {
-        // const commands = this.logToCommands(arenaMode());
-        // this.runCommands(commands, speedAdjust);
-    }
-
-    public onPerformAlmost1GameClick(speedAdjust?: number): void {
-        const commands = this.logToCommands(almost1());
-        this.runCommands(commands, speedAdjust);
-    }
-
-    public onPerformFullQuickGameClick(): void {
-        const commands = this.logToCommands(fullGame1Quick());
-        this.runCommands(commands);
-    }
-
-    public onPerformStupidGame1FullGameClick(speedAdjust?: number): void {
-        const commands = this.logToCommands(stupidGame1Full());
-        this.runCommands(commands, speedAdjust);
-    }
-
-    public onPerformFullGame1Click(speedAdjust?: number): void {
-        const commands = this.logToCommands(fullGame1Eventful());
-        this.runCommands(commands, speedAdjust);
-    }
-
-    public onPerformFullGame2Click(speedAdjust?: number): void {
-        const commands = this.logToCommands(fullGame2_2k());
-        this.runCommands(commands, speedAdjust);
-    }
-
-    public onPerformValkUltGameClick(speedAdjust?: number): void {
-        const commands = this.logToCommands(valkUltGame());
-        this.runCommands(commands, speedAdjust);
-    }
-
-    public onPerformS12QuickGameClick(speedAdjust?: number): void {
-        const commands = this.logToCommands(s12Quick());
-        this.runCommands(commands, speedAdjust);
-    }
-
-    public onPerformS12ControlGameClick(speedAdjust?: number): void {
-        const commands = this.logToCommands(s12Control());
-        this.runCommands(commands, speedAdjust);
-    }
-
-    public onPerformS12FlashpointGameClick(speedAdjust?: number): void {
-        const commands = this.logToCommands(s12Flashpoint());
-        this.runCommands(commands, speedAdjust);
-    }
-
     public onPerformBasicInventoryGameClick(speedAdjust?: number): void {
         const commands = this.logToCommands(basicInventoryQuick());
-        this.runCommands(commands, speedAdjust);
-    }
-
-    public onPerformLegendSelectGameClick(speedAdjust?: number): void {
-        const commands = this.logToCommands(legendSelectEvents());
-        this.runCommands(commands, speedAdjust);
-    }
-
-    public onPerformS13GameBrokeClick(speedAdjust?: number): void {
-        const commands = this.logToCommands(s13GameBroke());
         this.runCommands(commands, speedAdjust);
     }
 
@@ -148,6 +72,11 @@ export class GameSimulatorComponent implements OnDestroy {
     public onResetToLobbyClick(): void {
         const commands = this.logToCommands(resetToLobby());
         this.runCommands(commands);
+    }
+
+    public onPerformS16BattleRoyaleClick(speedAdjust?: number): void {
+        const commands = this.logToCommands(s16BattleRoyale());
+        this.runCommands(commands, speedAdjust);
     }
 
     public onKillfeedKnockeddownClick(player?: MatchRosterPlayer, randomAttacker = false): void {

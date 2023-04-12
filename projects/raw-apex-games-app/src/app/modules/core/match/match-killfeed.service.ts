@@ -13,9 +13,6 @@ import { OWGameEventKillFeed, OverwolfGameDataService } from "../overwolf";
 import { MatchRosterService } from "./match-roster.service";
 import { MatchService } from "./match.service";
 
-const KILLFEED_SECONDARY_DELAY = 1000; // Should be larger than `KILLFEED_UNIQUE_TIMEFRAME`
-const KILLFEED_UNIQUE_TIMEFRAME = 3000; // Prevents duplicates from Primary & Secondary source within this timeframe
-
 /**
  * @classdesc Provides all killfeed events.
  */
@@ -41,6 +38,7 @@ export class MatchKillfeedService extends BaseService {
     /**
      * Accounts for knockdowns and eliminations done by requested player via killfeed (inferring that the requested player might be alive).
      * Makes assumption about disconnected players to be eliminated.
+     * TODO: Maybe deprecate?
      * @param player
      */
     public playerLastKnownState(player: MatchRosterPlayer): Optional<{ timestamp: Date; state: PlayerState }> {

@@ -16,6 +16,8 @@ interface MatchMapConstructor {
     mapName: MatchMapFriendlyName;
     gameModeTypes?: MatchGameModeGenericId[];
     isChartable?: boolean;
+    /** FiringRange or Training map */
+    isSandboxMap?: boolean;
     chartConfig?: MatchMapChartingConfig;
 }
 export class MatchMap implements MatchMapConstructor {
@@ -24,6 +26,7 @@ export class MatchMap implements MatchMapConstructor {
     public mapName: MatchMapFriendlyName;
     public gameModeTypes?: MatchGameModeGenericId[];
     public isChartable?: boolean;
+    public isSandboxMap?: boolean;
     public chartConfig?: MatchMapChartingConfig;
 
     public get layoutFilename(): string {
@@ -42,6 +45,7 @@ export class MatchMap implements MatchMapConstructor {
         this.mapName = ctor.mapName;
         this.gameModeTypes = ctor.gameModeTypes;
         this.isChartable = ctor.isChartable ?? true;
+        this.isSandboxMap = ctor.isSandboxMap ?? false;
         this.chartConfig = ctor.chartConfig;
     }
 

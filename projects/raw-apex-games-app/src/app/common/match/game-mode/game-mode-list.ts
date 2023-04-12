@@ -8,32 +8,20 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeGenericId: MatchGameModeGenericId.Training,
         gameModeName: MatchGameModeFriendlyName.Training,
         gameModeIdRegExPattern: "training",
-        isAFSupported: true,
         isReportable: false,
+        isSandboxGameMode: true,
         isBattleRoyaleGameMode: false,
-        isArenasGameMode: false,
         isControlGameMode: false,
-        activeDates: [
-            {
-                from: new Date(0),
-            },
-        ],
     }),
     new MatchGameMode({
         gameModeId: "#PL_FIRINGRANGE",
         gameModeGenericId: MatchGameModeGenericId.FiringRange,
         gameModeName: MatchGameModeFriendlyName.FiringRange,
         gameModeIdRegExPattern: "firingrange",
-        isAFSupported: true,
         isReportable: false,
+        isSandboxGameMode: true,
         isBattleRoyaleGameMode: false,
-        isArenasGameMode: false,
         isControlGameMode: false,
-        activeDates: [
-            {
-                from: new Date(0),
-            },
-        ],
     }),
     new MatchGameMode({
         gameModeId: "#PL_TRIO",
@@ -41,13 +29,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeName: MatchGameModeFriendlyName.BattleRoyale_Trios,
         gameModeIdRegExPattern: "trio",
         isBattleRoyaleGameMode: true,
-        isArenasGameMode: false,
         isControlGameMode: false,
-        activeDates: [
-            {
-                from: new Date(0),
-            },
-        ],
     }),
     new MatchGameMode({
         gameModeId: "#PL_DUO",
@@ -55,13 +37,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeName: MatchGameModeFriendlyName.BattleRoyale_Duos,
         gameModeIdRegExPattern: "duo",
         isBattleRoyaleGameMode: true,
-        isArenasGameMode: false,
         isControlGameMode: false,
-        activeDates: [
-            {
-                from: new Date(0),
-            },
-        ],
     }),
     new MatchGameMode({
         gameModeId: "#PL_Ranked_Leagues",
@@ -69,14 +45,8 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeName: MatchGameModeFriendlyName.BattleRoyale_Ranked,
         gameModeIdRegExPattern: "ranked_leagues",
         isBattleRoyaleGameMode: true,
-        isArenasGameMode: false,
         isControlGameMode: false,
         isRanked: true,
-        activeDates: [
-            {
-                from: new Date(0),
-            },
-        ],
     }),
     new MatchGameMode({
         gameModeId: "#CONTROL_NAME",
@@ -85,14 +55,7 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeIdRegExPattern: "control",
         isReportable: false,
         isBattleRoyaleGameMode: false,
-        isArenasGameMode: false,
         isControlGameMode: true,
-        activeDates: [
-            {
-                from: new Date("Mar 29, 2022"),
-                to: new Date("Apr 12, 2022"),
-            },
-        ],
     }),
 ];
 

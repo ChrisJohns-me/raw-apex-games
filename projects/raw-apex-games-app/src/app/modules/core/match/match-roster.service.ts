@@ -39,12 +39,6 @@ export class MatchRosterService extends BaseService {
      */
     public readonly teammateRoster$ = new BehaviorSubject<MatchRoster<MatchRosterTeammate>>(new MatchRoster<MatchRosterTeammate>());
     /**
-     * Provides list of enemies in the current match (for Arenas).
-     * Emits only at the beginning of the match, or upon subscription.
-     * @returns {MatchRoster<MatchRosterTeammate>}
-     */
-    public readonly arenasEnemyRoster$ = new BehaviorSubject<MatchRoster>(new MatchRoster());
-    /**
      * @returns {RosterPlayerDisconnected[]} List of players in the match who may have disconnected.
      */
     public readonly rosterPlayerDisconnectionList$ = new BehaviorSubject<RosterPlayerDisconnection[]>([]);
@@ -100,7 +94,7 @@ export class MatchRosterService extends BaseService {
         this.rosterUpdate$ = this.setupRosterUpdate$();
         this.setupOnMatchStart();
         this.setupOnMatchEnd();
-        this.setupBattleRoyaleCounts();
+        this.setupPlayerCounts();
         this.setupMatchRoster();
         this.setupPlayerDisconnectionList();
         this.setupTeammateRosterPrimary();
@@ -127,6 +121,8 @@ export class MatchRosterService extends BaseService {
                 platform_sw: prevRosterPlayer?.platformSoftware ?? 2,
                 team_id: prevRosterPlayer?.teamId ?? -1,
                 state: "dead",
+                is_local: prevRosterPlayer?.isMe ? "1" : "0",
+                origin_id: prevRosterPlayer?.originId ?? "",
             };
             return {
                 rosterId: rosterId,
@@ -192,7 +188,7 @@ export class MatchRosterService extends BaseService {
     /**
      * Update teams/players counters for BattleRoyale
      */
-    private setupBattleRoyaleCounts(): void {
+    private setupPlayerCounts(): void {
         this.overwolfGameData.infoUpdates$
             .pipe(
                 takeUntil(this.destroy$),
@@ -239,6 +235,7 @@ export class MatchRosterService extends BaseService {
                     name: rosterItem!.name,
                     isMe: isPlayerNameEqual(rosterItem!.name, this.player.myName$.value),
                     rosterId: rosterId,
+                    originId: rosterItem?.origin_id,
                     teamId: rosterItem!.team_id,
                     platformHardware: rosterItem?.platform_hw,
                     platformSoftware: rosterItem?.platform_sw,
@@ -286,6 +283,7 @@ export class MatchRosterService extends BaseService {
                     name: rosterItem.name,
                     isMe: isPlayerNameEqual(rosterItem!.name, this.player.myName$.value),
                     rosterId: rosterId,
+                    originId: rosterItem?.origin_id,
                     teamId: rosterItem.team_id,
                     platformHardware: rosterItem.platform_hw,
                     platformSoftware: rosterItem.platform_sw,
@@ -360,6 +358,7 @@ export class MatchRosterService extends BaseService {
                 platformHardware: teammate.platformHardware ?? existingTeammate.platformHardware,
                 platformSoftware: teammate.platformSoftware ?? existingTeammate.platformSoftware,
                 rosterId: teammate.rosterId ?? existingTeammate.rosterId,
+                originId: teammate.originId ?? existingTeammate.originId,
                 teamId: teammate.platformSoftware ?? existingTeammate.teamId,
             };
         }

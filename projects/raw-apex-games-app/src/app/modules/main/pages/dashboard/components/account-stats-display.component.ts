@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { PlayerAccountStats } from "@raw-apex-games-app/app/common/player-account-stats";
 import { MatchService } from "@raw-apex-games-app/app/modules/core/match/match.service";
 import { Subject } from "rxjs";
 import { switchMap, takeUntil } from "rxjs/operators";
@@ -12,7 +11,7 @@ import { switchMap, takeUntil } from "rxjs/operators";
 })
 export class AccountStatsDisplayComponent implements OnInit, OnDestroy {
     public Infinity = Infinity;
-    public myAccountStats?: PlayerAccountStats;
+    public myAccountStats?: unknown;
 
     private destroy$ = new Subject<void>();
 

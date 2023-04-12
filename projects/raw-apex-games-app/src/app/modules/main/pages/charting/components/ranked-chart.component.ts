@@ -15,7 +15,6 @@ import {
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { isEmpty } from "common/utilities/";
-import { format } from "date-fns";
 
 @Component({
     selector: "app-ranked-chart",
@@ -112,13 +111,13 @@ export class RankedChartComponent implements AfterViewInit, OnChanges {
         if (isEmpty(this.matchList)) return;
         const rankScores: number[] = [];
         this.dataLabels = [];
-        const matchList = this.matchList.filter((match) => !isEmpty(match.rankScore)).slice(0, this.numMatchesToShow);
+        // const matchList = this.matchList.filter((match) => !isEmpty(match.rankScore)).slice(0, this.numMatchesToShow);
 
-        for (const match of matchList) {
-            if (!match.rankScore) continue;
-            rankScores.push(match.rankScore);
-            this.dataLabels.push(match.endDate ? format(match.endDate, "MMM dd, K:mm a") : "");
-        }
+        // for (const match of matchList) {
+        //     if (!match.rankScore) continue;
+        //     rankScores.push(match.rankScore);
+        //     this.dataLabels.push(match.endDate ? format(match.endDate, "MMM dd, K:mm a") : "");
+        // }
 
         // this.datasets = [
         //     {

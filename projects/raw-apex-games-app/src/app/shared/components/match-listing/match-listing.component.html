@@ -34,7 +34,6 @@
                                 'teammate-legend-portrait': !teammate.isMe,
                                 clickable: isTeamRosterPlayerClickable
                             }"
-                            [style.backgroundColor]="getLegendBGColor(teammate.legendId)"
                             [src]="'../../../assets/images/legend-portraits/medium/' + getLegendImageName(teammate.legendId)"
                             [title]="teammate.name"
                             [alt]="teammate.name + ' playing ' + (getLegendName(teammate.legendId) ?? 'N/A')"
@@ -73,18 +72,7 @@
                         </ng-container>
                     </div>
                 </td>
-                <td class="align-middle" *ngIf="showDataItems.includes(DataItem.Rank)">
-                    <!-- <div class="rank-container" *ngIf="match.rankScore && getRankFromScore(match.rankScore); let rank">
-                        <div class="rank-group">
-                            <h4 class="rank-score">{{ match.rankScore | number }}</h4>
-                        </div>
-                        <div class="rank-diff" *ngIf="getRankDiffFromMatchIndex(i); let rankScoreDiff">
-                            <h6 class="rank-diff-amount" [ngClass]="{ positive: rankScoreDiff > 0, negative: rankScoreDiff < 0 }">
-                                {{ rankScoreDiff > 0 ? "+" + rankScoreDiff : rankScoreDiff }}
-                            </h6>
-                        </div>
-                    </div> -->
-                </td>
+                <td class="align-middle" *ngIf="showDataItems.includes(DataItem.Rank)"></td>
                 <td class="align-middle text-center">
                     <div *ngIf="showDataItems.includes(DataItem.Placement) && !match.placement && !match.maxPlacement">N/A</div>
 
