@@ -16,7 +16,7 @@ import { MatchService } from "./match.service";
  */
 @Injectable({
     providedIn: "root",
-    deps: [MatchPlayerService, MatchService, MatchPlayerInflictionService, OverwolfGameDataService],
+    deps: [MatchService, MatchPlayerService, MatchPlayerInflictionService, OverwolfGameDataService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerStatsService", MatchPlayerStatsService, deps),
 })
 export class MatchPlayerStatsService extends BaseService {

@@ -34,7 +34,7 @@ export class MatchMapService extends BaseService {
             .subscribe((mapId) => {
                 const matchMap = MatchMapList.find((matchMap) => matchMap.mapId === mapId);
                 if (isEmpty(matchMap)) {
-                    console.error(`[${this.constructor.name}] No map was identified!`);
+                    console.error(`[${this.constructor.name}] No map was identified from "${mapId}"`);
                 } else {
                     console.log(`[${this.constructor.name}] Identified map against predefined MapList: "${matchMap?.mapId}"`);
                     this.map$.next(matchMap);

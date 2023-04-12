@@ -13,7 +13,6 @@ import { FileService } from "../../core/file.service";
 import { GameProcessService } from "../../core/game-process.service";
 import { LocalDatabaseService } from "../../core/local-database/local-database.service";
 import { LocalStorageService } from "../../core/local-storage/local-storage.service";
-import { MapRotationService } from "../../core/map-rotation/map-rotation.service";
 import { MatchRosterService } from "../../core/match/match-roster.service";
 import { MatchService } from "../../core/match/match.service";
 import { MockUIContainerComponent } from "../../core/mocks/components/mock-ui-container.component";
@@ -26,12 +25,10 @@ import { MockHotkeyService } from "../../core/mocks/services/mock-hotkey.service
 import { MockLocalDatabaseService } from "../../core/mocks/services/mock-local-database.service";
 import { MockLocalStorageService } from "../../core/mocks/services/mock-local-storage.service";
 import { MockMainWindowService } from "../../core/mocks/services/mock-main-window.service";
-import { MockMapRotationService } from "../../core/mocks/services/mock-map-rotation.service";
 import { MockMatchRosterService } from "../../core/mocks/services/mock-match-roster.service";
 import { MockMatchService } from "../../core/mocks/services/mock-match.service";
 import { MockOverwolfFeatureStatusService } from "../../core/mocks/services/mock-overwolf-feature-status.service";
 import { MockOverwolfProfileService } from "../../core/mocks/services/mock-overwolf-profile.service";
-import { MockPlayerAccountStatsService } from "../../core/mocks/services/mock-player-account-stats.service";
 import { MockPlayerLocalStatsService } from "../../core/mocks/services/mock-player-local-stats.service";
 import { MockPlayerService } from "../../core/mocks/services/mock-player.service";
 import { MockReportingService } from "../../core/mocks/services/mock-reporting.service";
@@ -39,7 +36,6 @@ import { MockSettingsService } from "../../core/mocks/services/mock-settings.ser
 import { MockVersionService } from "../../core/mocks/services/mock-version.service";
 import { OverwolfFeatureStatusService } from "../../core/overwolf/overwolf-feature-status.service";
 import { OverwolfProfileService } from "../../core/overwolf/overwolf-profile.service";
-import { PlayerAccountStatsService } from "../../core/player-account-stats/player-account-stats.service";
 import { PlayerLocalStatsService } from "../../core/player-local-stats.service";
 import { PlayerService } from "../../core/player.service";
 import { ReportingService } from "../../core/reporting/reporting.service";
@@ -50,7 +46,6 @@ import { ChartingPageComponent } from "../pages/charting/charting-page.component
 import { StatsChartComponent } from "../pages/charting/components/stats-chart.component";
 import { AccountStatsDisplayComponent } from "../pages/dashboard/components/account-stats-display.component";
 import { LegendIconsBoardComponent } from "../pages/dashboard/components/legend-icons-board.component";
-import { MapRotationDisplayComponent } from "../pages/dashboard/components/map-rotation-display.component";
 import { DashboardPageComponent } from "../pages/dashboard/dashboard-page.component";
 import { MatchExplorerPageComponent } from "../pages/match-explorer/match-explorer-page.component";
 import { SettingsPageComponent } from "../pages/settings/settings-page.component";
@@ -73,7 +68,6 @@ describe("MainWindowComponent", () => {
                 IconComponent,
                 LegendIconsBoardComponent,
                 MainWindowComponent,
-                MapRotationDisplayComponent,
                 MatchExplorerPageComponent,
                 MockFullHeightDirective,
                 MockUIContainerComponent,
@@ -92,12 +86,10 @@ describe("MainWindowComponent", () => {
                 { provide: LocalStorageService, useClass: MockLocalStorageService },
                 { provide: MainDesktopWindowService, useClass: MockMainWindowService },
                 { provide: MainInGameWindowService, useClass: MockMainWindowService },
-                { provide: MapRotationService, useClass: MockMapRotationService },
                 { provide: MatchRosterService, useClass: MockMatchRosterService },
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: OverwolfFeatureStatusService, useClass: MockOverwolfFeatureStatusService },
                 { provide: OverwolfProfileService, useClass: MockOverwolfProfileService },
-                { provide: PlayerAccountStatsService, useClass: MockPlayerAccountStatsService },
                 { provide: PlayerLocalStatsService, useClass: MockPlayerLocalStatsService },
                 { provide: PlayerService, useClass: MockPlayerService },
                 { provide: ReportingService, useClass: MockReportingService },
