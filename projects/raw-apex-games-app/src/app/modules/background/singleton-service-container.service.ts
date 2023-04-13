@@ -38,7 +38,6 @@ import { VideoRecordingService } from "../core/video-recording/video-recording.s
 import { DesktopWindowService } from "../desktop/windows/desktop-window.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
 import { InGameWindowService } from "../in-game/windows/in-game-window.service";
-import { MatchSummaryWindowService } from "../match-summary/windows/match-summary-window.service";
 import { CaptureControllerService } from "./capture-controller.service";
 import { HotkeyService } from "./hotkey.service";
 import { HUDWindowControllerService } from "./hud-window-controller.service";
@@ -76,7 +75,6 @@ import { SystemTrayService } from "./system-tray.service";
         MatchRingService,
         MatchRosterService,
         MatchService,
-        MatchSummaryWindowService,
         OverwolfExtensionsService,
         OverwolfFeatureStatusService,
         OverwolfGameDataService,
@@ -125,7 +123,6 @@ export class SingletonServiceContainerService {
         public readonly MatchRingService: MatchRingService,
         public readonly MatchRosterService: MatchRosterService,
         public readonly MatchService: MatchService,
-        public readonly MatchSummaryWindowService: MatchSummaryWindowService,
         public readonly OverwolfExtensionsService: OverwolfExtensionsService,
         public readonly OverwolfFeatureStatusService: OverwolfFeatureStatusService,
         public readonly OverwolfGameDataService: OverwolfGameDataService,

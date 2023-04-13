@@ -206,18 +206,13 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     private setupDefaultSize(): void {
-        // Set default size (is DPI unaware)
         this.overwolfWindow
             .getMonitor()
             .pipe(takeUntil(this.destroy$))
             .subscribe((monitor) => {
-                const standardDPI = 96;
-                const dpiAdjustedWidth = (monitor.width * standardDPI) / monitor.dpiX;
-                const dpiAdjustedHeight = (monitor.height * standardDPI) / monitor.dpiY;
-
                 if (this.size) {
-                    this.setMinSizeByPercent(dpiAdjustedWidth, dpiAdjustedHeight, this.size?.minWidthPercent, this.size?.minHeightPercent);
-                    this.setSizeByPercent(dpiAdjustedWidth, dpiAdjustedHeight, this.size.widthPercent, this.size.heightPercent);
+                    this.setMinSizeByPercent(monitor.width, monitor.height, this.size.minWidthPercent, this.size.minHeightPercent);
+                    this.setSizeByPercent(monitor.width, monitor.height, this.size.widthPercent, this.size.heightPercent);
                 }
             });
     }
@@ -283,6 +278,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
 
     /**
      * Sets the window size to the pixel value from the given `width` and `height` percentage values.
+     * Accounts for DPI
      */
     private setSizeByPercent(screenWidth: number, screenHeight: number, widthPercent: number, heightPercent: number): void {
         const widthPercentClamp = mathClamp(widthPercent, 0, 1);

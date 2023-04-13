@@ -16,7 +16,6 @@ import { GameService } from "../core/game.service";
 import { MatchService } from "../core/match/match.service";
 import { OverwolfProfileService } from "../core/overwolf/overwolf-profile.service";
 import { InGameWindowService } from "../in-game/windows/in-game-window.service";
-import { MatchSummaryWindowService } from "../match-summary/windows/match-summary-window.service";
 
 type HUDTriggers = {
     windowService: { open: () => Observable<void>; close: () => Observable<void> };
@@ -33,7 +32,6 @@ type HUDTriggers = {
         GameService,
         InGameWindowService,
         MatchService,
-        MatchSummaryWindowService,
         MiniInventoryWindowService,
         OverwolfProfileService,
         SettingsService,
@@ -45,14 +43,7 @@ export class HUDWindowControllerService extends BaseService {
         {
             windowService: this.inGameWindow,
             requiredGamePhases: [GamePhase.Lobby],
-            requiredConfigurations: [],
-            requiredSettings: [],
-            requiredGameModes: [],
-        },
-        {
-            windowService: this.matchSummaryWindow,
-            requiredGamePhases: [GamePhase.Lobby],
-            requiredConfigurations: [(config) => config.featureFlags.enableMatchSummaryWindow],
+            requiredConfigurations: [(config) => config.featureFlags.enableInGameWindow],
             requiredSettings: [],
             requiredGameModes: [],
         },
@@ -81,7 +72,6 @@ export class HUDWindowControllerService extends BaseService {
         private readonly game: GameService,
         private readonly inGameWindow: InGameWindowService,
         private readonly match: MatchService,
-        private readonly matchSummaryWindow: MatchSummaryWindowService,
         private readonly miniInventoryWindow: MiniInventoryWindowService,
         private readonly overwolfProfile: OverwolfProfileService,
         private readonly settings: SettingsService

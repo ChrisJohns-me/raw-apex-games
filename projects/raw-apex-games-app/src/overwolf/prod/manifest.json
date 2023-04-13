@@ -93,16 +93,8 @@
                 "topmost": true,
                 "popup_blocker": true,
                 "size": {
-                    "width": 850,
-                    "height": 675
-                },
-                "min_size": {
-                    "width": 850,
-                    "height": 675
-                },
-                "max_size": {
-                    "width": 850,
-                    "height": 675
+                    "width": 1,
+                    "height": 1
                 }
             },
             "hud-mini-inventory": {
@@ -115,24 +107,6 @@
                 "mute": true,
                 "popup_blocker": true,
                 "allow_local_file_access": true,
-                "size": {
-                    "width": 1,
-                    "height": 1
-                }
-            },
-            "match-summary": {
-                "file": "index.html",
-                "desktop_only": false,
-                "native_window": false,
-                "use_os_windowing": false,
-                "in_game_only": true,
-                "transparent": true,
-                "resizable": false,
-                "show_in_taskbar": false,
-                "restrict_to_game_bounds": true,
-                "keep_window_location": false,
-                "allow_local_file_access": true,
-                "block_top_window_navigation": true,
                 "size": {
                     "width": 1,
                     "height": 1

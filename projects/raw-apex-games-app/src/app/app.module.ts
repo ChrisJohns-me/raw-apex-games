@@ -11,7 +11,6 @@ import { DesktopModule } from "./modules/desktop/desktop.module";
 import { DevelopmentToolsModule } from "./modules/development-tools/development-tools.module";
 import { NoopDevelopmentToolsModule } from "./modules/development-tools/noop-development-tools.module";
 import { InGameWindowModule } from "./modules/in-game/in-game.module";
-import { MatchSummaryWindowModule } from "./modules/match-summary/match-summary.module";
 
 @NgModule({
     declarations: [AppComponent],
@@ -22,7 +21,6 @@ import { MatchSummaryWindowModule } from "./modules/match-summary/match-summary.
         environment.allowDevTools ? DevelopmentToolsModule : NoopDevelopmentToolsModule,
         HttpClientModule,
         InGameWindowModule,
-        MatchSummaryWindowModule,
         MiniInventoryWindowModule,
         OverwolfModule,
     ],

@@ -9,7 +9,6 @@
         ></app-desktop-window>
         <app-in-game-window *ngSwitchCase="OverwolfWindowName.InGame"></app-in-game-window>
         <app-hud-mini-inventory-window *ngSwitchCase="OverwolfWindowName.HUDMiniInventory"></app-hud-mini-inventory-window>
-        <app-match-summary-window *ngSwitchCase="OverwolfWindowName.MatchSummary"></app-match-summary-window>
 
         <div *ngSwitchDefault>Could not match window with name: {{ winInfo.name }}</div>
     </ng-container>

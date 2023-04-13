@@ -25,7 +25,6 @@ export enum OverwolfWindowName {
     HUDMiniInventory = "hud-mini-inventory",
     Desktop = "desktop",
     InGame = "ingame",
-    MatchSummary = "match-summary",
 }
 
 export class OverwolfWindow {
@@ -139,6 +138,7 @@ export class OverwolfWindow {
         overwolf.windows.dragMove(this.name);
     }
 
+    /** Accounts for DPI */
     public changeSize(width: number, height: number): Observable<void> {
         const promise = new Promise<void>((resolve, reject) => {
             if (!this.name) return reject(`Unable to change window size; OverwolfWindow name was empty`);
