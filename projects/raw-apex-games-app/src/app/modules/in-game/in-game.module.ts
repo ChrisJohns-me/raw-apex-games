@@ -1,11 +1,11 @@
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { RawApexGamesSharedModule } from "@raw-apex-games-app/app/shared/raw-apex-games-shared.module";
-import { LobbyStatusWindowComponent } from "./windows/lobby-status-window.component";
+import { InGameWindowComponent } from "./windows/in-game-window.component";
 
 @NgModule({
-    declarations: [LobbyStatusWindowComponent],
+    declarations: [InGameWindowComponent],
     imports: [ReactiveFormsModule, RawApexGamesSharedModule],
-    exports: [LobbyStatusWindowComponent],
+    exports: [InGameWindowComponent],
 })
-export class LobbyStatusWindowModule {}
+export class InGameWindowModule {}

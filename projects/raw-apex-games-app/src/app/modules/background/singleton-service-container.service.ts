@@ -5,7 +5,6 @@ import { MatchRosterService } from "@raw-apex-games-app/app/modules/core/match/m
 import { MatchService } from "@raw-apex-games-app/app/modules/core/match/match.service";
 import { SettingsService } from "@raw-apex-games-app/app/modules/core/settings.service";
 import { SingletonServiceProviderFactory } from "@raw-apex-games-app/app/singleton-service.provider.factory";
-import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
 import { ConfigurationService } from "../core/configuration.service";
 import { FileService } from "../core/file.service";
 import { GameProcessService } from "../core/game-process.service";
@@ -36,9 +35,9 @@ import { ReportingService } from "../core/reporting/reporting.service";
 import { SessionStorageService } from "../core/session-storage/session-storage.service";
 import { VersionService } from "../core/version.service";
 import { VideoRecordingService } from "../core/video-recording/video-recording.service";
+import { DesktopWindowService } from "../desktop/windows/desktop-window.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
-import { MainDesktopWindowService } from "../main/windows/main-desktop-window.service";
-import { MainInGameWindowService } from "../main/windows/main-ingame-window.service";
+import { InGameWindowService } from "../in-game/windows/in-game-window.service";
 import { MatchSummaryWindowService } from "../match-summary/windows/match-summary-window.service";
 import { CaptureControllerService } from "./capture-controller.service";
 import { HotkeyService } from "./hotkey.service";
@@ -63,8 +62,8 @@ import { SystemTrayService } from "./system-tray.service";
         HUDWindowControllerService,
         LocalDatabaseService,
         LocalStorageService,
-        MainDesktopWindowService,
-        MainInGameWindowService,
+        DesktopWindowService,
+        InGameWindowService,
         MatchKillfeedService,
         MatchLegendSelectService,
         MatchMapService,
@@ -78,7 +77,6 @@ import { SystemTrayService } from "./system-tray.service";
         MatchRosterService,
         MatchService,
         MatchSummaryWindowService,
-        MatchTimerWindowService,
         OverwolfExtensionsService,
         OverwolfFeatureStatusService,
         OverwolfGameDataService,
@@ -113,8 +111,8 @@ export class SingletonServiceContainerService {
         public readonly HUDWindowControllerService: HUDWindowControllerService,
         public readonly LocalDatabaseService: LocalDatabaseService,
         public readonly LocalStorageService: LocalStorageService,
-        public readonly MainDesktopWindowService: MainDesktopWindowService,
-        public readonly MainInGameWindowService: MainInGameWindowService,
+        public readonly DesktopWindowService: DesktopWindowService,
+        public readonly InGameWindowService: InGameWindowService,
         public readonly MatchKillfeedService: MatchKillfeedService,
         public readonly MatchLegendSelectService: MatchLegendSelectService,
         public readonly MatchMapService: MatchMapService,
@@ -128,7 +126,6 @@ export class SingletonServiceContainerService {
         public readonly MatchRosterService: MatchRosterService,
         public readonly MatchService: MatchService,
         public readonly MatchSummaryWindowService: MatchSummaryWindowService,
-        public readonly MatchTimerWindowService: MatchTimerWindowService,
         public readonly OverwolfExtensionsService: OverwolfExtensionsService,
         public readonly OverwolfFeatureStatusService: OverwolfFeatureStatusService,
         public readonly OverwolfGameDataService: OverwolfGameDataService,

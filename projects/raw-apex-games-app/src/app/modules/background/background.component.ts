@@ -9,9 +9,9 @@ import { HotkeyEnum } from "../../common/hotkey";
 import { GameProcessService } from "../core/game-process.service";
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
 import { SettingsService } from "../core/settings.service";
+import { DesktopWindowService } from "../desktop/windows/desktop-window.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
-import { MainDesktopWindowService } from "../main/windows/main-desktop-window.service";
-import { MainInGameWindowService } from "../main/windows/main-ingame-window.service";
+import { InGameWindowService } from "../in-game/windows/in-game-window.service";
 import { BackgroundService } from "./background.service";
 import { CaptureControllerService } from "./capture-controller.service";
 import { HotkeyService } from "./hotkey.service";
@@ -34,8 +34,8 @@ export class BackgroundComponent implements OnInit, OnDestroy {
         private readonly gameProcess: GameProcessService,
         private readonly hotkey: HotkeyService,
         private readonly hudWindowController: HUDWindowControllerService,
-        private readonly mainDesktopWindow: MainDesktopWindowService,
-        private readonly mainInGameWindow: MainInGameWindowService,
+        private readonly desktopWindow: DesktopWindowService,
+        private readonly inGameWindow: InGameWindowService,
         private readonly overwolfExtensions: OverwolfExtensionsService,
         private readonly settings: SettingsService,
         private readonly systemTray: SystemTrayService,
@@ -64,10 +64,8 @@ export class BackgroundComponent implements OnInit, OnDestroy {
             this.developmentToolsWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
         }
 
-        this.mainDesktopWindow.setIsStarting(true);
-        this.mainInGameWindow.setIsStarting(true);
-        this.mainDesktopWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
-        this.mainInGameWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
+        this.desktopWindow.setIsStarting(true);
+        this.desktopWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     private setupSystemTray(): void {
@@ -80,7 +78,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
             switch (appLaunchTriggeredEvent.origin) {
                 case "dock":
                     if (this.gameProcess.isInFocus$.value) {
-                        this.toggleMainInGameWindow();
+                        // this.toggleMainInGameWindow();
                     } else {
                         this.toggleMainDesktopWindow();
                     }
@@ -94,7 +92,7 @@ export class BackgroundComponent implements OnInit, OnDestroy {
             console.log(`[BackgroundComponent] Hotkey Triggered:`, hotkey);
             switch (hotkey.hotkeyName) {
                 case HotkeyEnum.ToggleMainInGame:
-                    this.toggleMainInGameWindow();
+                    // this.toggleMainInGameWindow();
                     break;
             }
         });
@@ -112,13 +110,13 @@ export class BackgroundComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this.destroy$),
                 map((minimizeToTraySetting) => minimizeToTraySetting?.value ?? false),
-                switchMap((minimizeToTray) => this.mainDesktopWindow.toggle(minimizeToTray))
+                switchMap((minimizeToTray) => this.desktopWindow.toggle(minimizeToTray))
             )
             .subscribe();
     }
 
-    private toggleMainInGameWindow(): void {
-        this.mainInGameWindow.toggle(true).pipe(takeUntil(this.destroy$)).subscribe();
-    }
+    // private toggleMainInGameWindow(): void {
+    //     this.inGameWindow.toggle(true).pipe(takeUntil(this.destroy$)).subscribe();
+    // }
     //#endregion
 }

@@ -3,17 +3,12 @@
         <app-background *ngSwitchCase="OverwolfWindowName.Background"></app-background>
 
         <app-development-tools-window *ngSwitchCase="OverwolfWindowName.DevelopmentTools"></app-development-tools-window>
-        <app-main-window
-            *ngSwitchCase="OverwolfWindowName.MainDesktop"
-            [overwolfWindowName]="OverwolfWindowName.MainDesktop"
-        ></app-main-window>
-        <app-main-window
-            *ngSwitchCase="OverwolfWindowName.MainInGame"
-            [overwolfWindowName]="OverwolfWindowName.MainInGame"
-        ></app-main-window>
-        <app-hud-match-timer-window *ngSwitchCase="OverwolfWindowName.HUDMatchTimer"></app-hud-match-timer-window>
+        <app-desktop-window
+            *ngSwitchCase="OverwolfWindowName.Desktop"
+            [overwolfWindowName]="OverwolfWindowName.Desktop"
+        ></app-desktop-window>
+        <app-in-game-window *ngSwitchCase="OverwolfWindowName.InGame"></app-in-game-window>
         <app-hud-mini-inventory-window *ngSwitchCase="OverwolfWindowName.HUDMiniInventory"></app-hud-mini-inventory-window>
-        <app-lobby-status-window *ngSwitchCase="OverwolfWindowName.LobbyStatus"></app-lobby-status-window>
         <app-match-summary-window *ngSwitchCase="OverwolfWindowName.MatchSummary"></app-match-summary-window>
 
         <div *ngSwitchDefault>Could not match window with name: {{ winInfo.name }}</div>

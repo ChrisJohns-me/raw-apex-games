@@ -9,14 +9,13 @@ import { Configuration } from "@raw-apex-games-app/configs/config.interface";
 import { isEmpty } from "common/utilities";
 import { Observable, Subscription, combineLatest, merge } from "rxjs";
 import { filter, map, switchMap, take, takeUntil } from "rxjs/operators";
-import { MatchTimerWindowService } from "../HUD/match-timer/windows/match-timer-window.service";
 import { MiniInventoryWindowService } from "../HUD/mini-inventory/windows/mini-inventory-window.service";
 import { BaseService } from "../core/base-service.abstract";
 import { ConfigurationService } from "../core/configuration.service";
 import { GameService } from "../core/game.service";
 import { MatchService } from "../core/match/match.service";
 import { OverwolfProfileService } from "../core/overwolf/overwolf-profile.service";
-import { LobbyStatusWindowService } from "../lobby-status/windows/lobby-status-window.service";
+import { InGameWindowService } from "../in-game/windows/in-game-window.service";
 import { MatchSummaryWindowService } from "../match-summary/windows/match-summary-window.service";
 
 type HUDTriggers = {
@@ -32,10 +31,9 @@ type HUDTriggers = {
     deps: [
         ConfigurationService,
         GameService,
-        LobbyStatusWindowService,
+        InGameWindowService,
         MatchService,
         MatchSummaryWindowService,
-        MatchTimerWindowService,
         MiniInventoryWindowService,
         OverwolfProfileService,
         SettingsService,
@@ -45,7 +43,7 @@ type HUDTriggers = {
 export class HUDWindowControllerService extends BaseService {
     private HUDWindows: HUDTriggers[] = [
         {
-            windowService: this.lobbyStatusWindow,
+            windowService: this.inGameWindow,
             requiredGamePhases: [GamePhase.Lobby],
             requiredConfigurations: [],
             requiredSettings: [],
@@ -59,20 +57,6 @@ export class HUDWindowControllerService extends BaseService {
             requiredGameModes: [],
         },
         {
-            windowService: this.matchTimerWindow,
-            requiredGamePhases: [GamePhase.InGame],
-            requiredConfigurations: [(config) => config.featureFlags.enableMatchTimerWindow],
-            requiredSettings: [{ key: SettingKey.EnableAllInGameHUD }, { key: SettingKey.EnableInGameMatchTimerHUD }],
-            requiredGameModes: [
-                MatchGameModeGenericId.Training,
-                MatchGameModeGenericId.FiringRange,
-                MatchGameModeGenericId.Control,
-                MatchGameModeGenericId.BattleRoyale_Duos,
-                MatchGameModeGenericId.BattleRoyale_Trios,
-                MatchGameModeGenericId.BattleRoyale_Ranked,
-            ],
-        },
-        {
             windowService: this.miniInventoryWindow,
             requiredGamePhases: [GamePhase.InGame],
             requiredConfigurations: [(config) => config.featureFlags.enableMiniInventoryWindow],
@@ -83,6 +67,7 @@ export class HUDWindowControllerService extends BaseService {
                 MatchGameModeGenericId.BattleRoyale_Duos,
                 MatchGameModeGenericId.BattleRoyale_Trios,
                 MatchGameModeGenericId.BattleRoyale_Ranked,
+                MatchGameModeGenericId.Control,
             ],
         },
     ];
@@ -94,10 +79,9 @@ export class HUDWindowControllerService extends BaseService {
     constructor(
         private readonly configuration: ConfigurationService,
         private readonly game: GameService,
-        private readonly lobbyStatusWindow: LobbyStatusWindowService,
+        private readonly inGameWindow: InGameWindowService,
         private readonly match: MatchService,
         private readonly matchSummaryWindow: MatchSummaryWindowService,
-        private readonly matchTimerWindow: MatchTimerWindowService,
         private readonly miniInventoryWindow: MiniInventoryWindowService,
         private readonly overwolfProfile: OverwolfProfileService,
         private readonly settings: SettingsService

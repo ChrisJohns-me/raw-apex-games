@@ -77,7 +77,7 @@ export class MatchRosterService extends BaseService {
      */
     public readonly stagedTeammateRoster$ = new BehaviorSubject<MatchRoster<MatchRosterPlayer>>(new MatchRoster<MatchRosterTeammate>());
 
-    private isRosterNullPlayerDisconnect = true;
+    private readonly isRosterNullPlayerDisconnect = true;
     private readonly rosterUpdate$: Observable<RosterUpdate>;
 
     constructor(
@@ -88,9 +88,6 @@ export class MatchRosterService extends BaseService {
         private readonly player: PlayerService
     ) {
         super();
-        this.configuration.config$
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((config) => (this.isRosterNullPlayerDisconnect = config.assumptions.isRosterNullPlayerDisconnect));
         this.rosterUpdate$ = this.setupRosterUpdate$();
         this.setupOnMatchStart();
         this.setupOnMatchEnd();

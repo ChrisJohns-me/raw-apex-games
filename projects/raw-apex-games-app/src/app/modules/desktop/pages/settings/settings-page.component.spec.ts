@@ -6,10 +6,10 @@ import { FileService } from "@raw-apex-games-app/app/modules/core/file.service";
 import { WINDOW } from "@raw-apex-games-app/app/modules/core/global-window.provider";
 import { LocalDatabaseService } from "@raw-apex-games-app/app/modules/core/local-database/local-database.service";
 import { MockConfigurationService } from "@raw-apex-games-app/app/modules/core/mocks/services/mock-configuration.service";
+import { MockMainWindowService } from "@raw-apex-games-app/app/modules/core/mocks/services/mock-desktop-window.service";
 import { MockFileService } from "@raw-apex-games-app/app/modules/core/mocks/services/mock-file.service";
 import { MockHotkeyService } from "@raw-apex-games-app/app/modules/core/mocks/services/mock-hotkey.service";
 import { MockLocalDatabaseService } from "@raw-apex-games-app/app/modules/core/mocks/services/mock-local-database.service";
-import { MockMainWindowService } from "@raw-apex-games-app/app/modules/core/mocks/services/mock-main-window.service";
 import { MockOverwolfProfileService } from "@raw-apex-games-app/app/modules/core/mocks/services/mock-overwolf-profile.service";
 import { MockSessionStorageService } from "@raw-apex-games-app/app/modules/core/mocks/services/mock-session-storage.service";
 import { MockSettingsService } from "@raw-apex-games-app/app/modules/core/mocks/services/mock-settings.service";
@@ -17,8 +17,8 @@ import { OverwolfProfileService } from "@raw-apex-games-app/app/modules/core/ove
 import { SessionStorageService } from "@raw-apex-games-app/app/modules/core/session-storage/session-storage.service";
 import { SettingsService } from "@raw-apex-games-app/app/modules/core/settings.service";
 import { IconComponent } from "@shared/components/icon/icon.component";
-import { MainDesktopWindowService } from "../../windows/main-desktop-window.service";
-import { MainInGameWindowService } from "../../windows/main-ingame-window.service";
+import { MainDesktopWindowService } from "../../windows/desktop-window.service";
+import { MainInGameWindowService } from "../../windows/main-in-game-window.service";
 import { SettingsPageComponent } from "./settings-page.component";
 
 describe("SettingsPageComponent", () => {

@@ -15,6 +15,7 @@ import { OverwolfProfileService } from "@raw-apex-games-app/app/modules/core/ove
 import { SessionStorageKeys } from "@raw-apex-games-app/app/modules/core/session-storage/session-storage-keys";
 import { SessionStorageService } from "@raw-apex-games-app/app/modules/core/session-storage/session-storage.service";
 import { SettingsService } from "@raw-apex-games-app/app/modules/core/settings.service";
+import { InGameWindowService } from "@raw-apex-games-app/app/modules/in-game/windows/in-game-window.service";
 import { Configuration } from "@raw-apex-games-app/configs/config.interface";
 import { environment } from "@raw-apex-games-app/environments/environment";
 import { isEmpty } from "common/utilities";
@@ -23,15 +24,13 @@ import "dexie-export-import";
 import { ImportOptions, importInto } from "dexie-export-import";
 import { Subject, from, merge, of } from "rxjs";
 import { debounceTime, filter, finalize, map, switchMap, take, takeUntil } from "rxjs/operators";
-import { MainDesktopWindowService } from "../../windows/main-desktop-window.service";
-import { MainInGameWindowService } from "../../windows/main-ingame-window.service";
+import { DesktopWindowService } from "../../windows/desktop-window.service";
 import { MainPage } from "../main-page";
 
 const SAVE_SETTINGS_DEBOUNCETIME = 1000;
 
 enum SettingPreview {
     MinimizeToTray = "minimizetotray",
-    MatchTimer = "matchtimer",
     MiniInventory = "miniinventory",
 }
 
@@ -54,7 +53,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         [SettingKey.MinimizeToTray]: false,
         [SettingKey.EnableAllInGameHUD]: false,
         inGameHUDFormGroup: this.formBuilder.group({
-            [SettingKey.EnableInGameMatchTimerHUD]: [false],
             [SettingKey.EnableInGameMiniInventoryHUD]: [false],
         }),
     });
@@ -117,8 +115,8 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         private readonly formBuilder: FormBuilder,
         private readonly hotkey: HotkeyService,
         private readonly localDatabase: LocalDatabaseService,
-        private readonly mainDesktopWindow: MainDesktopWindowService,
-        private readonly mainInGameWindow: MainInGameWindowService,
+        private readonly desktopWindow: DesktopWindowService,
+        private readonly inGameWindow: InGameWindowService,
         private readonly overwolfProfile: OverwolfProfileService,
         private readonly sessionStorage: SessionStorageService,
         private readonly settings: SettingsService,
@@ -151,8 +149,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     }
 
     public onAboutClick(): void {
-        this.mainDesktopWindow.goToPage(MainPage.About);
-        this.mainInGameWindow.goToPage(MainPage.About);
+        this.desktopWindow.goToPage(MainPage.About);
     }
 
     public exportGameLog(): void {

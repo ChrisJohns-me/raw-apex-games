@@ -52,7 +52,7 @@
                     "height": 250
                 }
             },
-            "main-desktop": {
+            "desktop": {
                 "file": "index.html",
                 "desktop_only": true,
                 "native_window": true,
@@ -75,7 +75,7 @@
                     "height": 600
                 }
             },
-            "main-ingame": {
+            "ingame": {
                 "file": "index.html",
                 "desktop_only": false,
                 "native_window": false,
@@ -103,36 +103,6 @@
                 "max_size": {
                     "width": 850,
                     "height": 675
-                }
-            },
-            "lobby-status": {
-                "file": "index.html",
-                "in_game_only": true,
-                "resizable": false,
-                "transparent": true,
-                "show_in_taskbar": false,
-                "clickthrough": true,
-                "mute": true,
-                "popup_blocker": true,
-                "allow_local_file_access": true,
-                "size": {
-                    "width": 1,
-                    "height": 1
-                }
-            },
-            "hud-match-timer": {
-                "file": "index.html",
-                "in_game_only": true,
-                "resizable": false,
-                "transparent": true,
-                "show_in_taskbar": false,
-                "clickthrough": true,
-                "mute": true,
-                "popup_blocker": true,
-                "allow_local_file_access": true,
-                "size": {
-                    "width": 1,
-                    "height": 1
                 }
             },
             "hud-mini-inventory": {
@@ -194,7 +164,7 @@
             "toggle_main_ingame": {
                 "title": "Show/Hide In-Game Window",
                 "action-type": "custom",
-                "default": "Alt+F",
+                "default": "Alt+R",
                 "passthrough": false
             }
         },

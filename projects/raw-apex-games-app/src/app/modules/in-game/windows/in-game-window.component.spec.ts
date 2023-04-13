@@ -1,33 +1,30 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { HotkeyService } from "../../background/hotkey.service";
 import { ConfigurationService } from "../../core/configuration.service";
-import { MapRotationService } from "../../core/map-rotation/map-rotation.service";
 import { MatchService } from "../../core/match/match.service";
 import { MockUIContainerComponent } from "../../core/mocks/components/mock-ui-container.component";
 import { MockConfigurationService } from "../../core/mocks/services/mock-configuration.service";
 import { MockHotkeyService } from "../../core/mocks/services/mock-hotkey.service";
-import { MockMapRotationService } from "../../core/mocks/services/mock-map-rotation.service";
 import { MockMatchService } from "../../core/mocks/services/mock-match.service";
-import { LobbyStatusWindowComponent } from "./lobby-status-window.component";
+import { InGameWindowComponent } from "./ingame-window.component";
 
-describe("LobbyStatusWindowComponent", () => {
-    let sut: LobbyStatusWindowComponent;
-    let fixture: ComponentFixture<LobbyStatusWindowComponent>;
+describe("InGameWindowComponent", () => {
+    let sut: InGameWindowComponent;
+    let fixture: ComponentFixture<InGameWindowComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [LobbyStatusWindowComponent, MockUIContainerComponent],
+            declarations: [InGameWindowComponent, MockUIContainerComponent],
             providers: [
                 { provide: ConfigurationService, useClass: MockConfigurationService },
                 { provide: HotkeyService, useClass: MockHotkeyService },
-                { provide: MapRotationService, useClass: MockMapRotationService },
                 { provide: MatchService, useClass: MockMatchService },
             ],
         }).compileComponents();
     });
 
     beforeEach(async () => {
-        fixture = TestBed.createComponent(LobbyStatusWindowComponent);
+        fixture = TestBed.createComponent(InGameWindowComponent);
         sut = fixture.componentInstance;
         fixture.detectChanges(); // ngOnInit
     });

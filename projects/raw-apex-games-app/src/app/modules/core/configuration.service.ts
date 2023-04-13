@@ -68,7 +68,7 @@ export class ConfigurationService implements OnDestroy {
                 return of(this.defaultConfig);
             }),
             map((configData) => {
-                if (!isEmpty(configData) && !isEmpty(configData.common)) {
+                if (!isEmpty(configData)) {
                     console.info(`Using hosted configuration`);
                     this.config$.next(configData);
                     this.config$.complete();

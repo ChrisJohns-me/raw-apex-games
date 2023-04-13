@@ -1,18 +1,18 @@
 <app-ui-container
-    [overwolfWindowName]="OverwolfWindowName.LobbyStatus"
+    [overwolfWindowName]="OverwolfWindowName.InGame"
     [isDesktopWindow]="false"
     [isContentDraggable]="false"
-    primaryTitle="Lobby Status"
+    primaryTitle="InGame"
     [position]="{ xPercent: 0, yPercent: 0, xAnchor: 'left', yAnchor: 'bottom' }"
     [size]="{ widthPercent: 0.216, heightPercent: 0.338 }"
 >
-    <div class="lobby-status-container">
-        <div class="lobby-status-header" *ngIf="gameMode?.gameModeName && isGameModeSupported && isMapSupported">
-            <div class="lobby-status-text">
+    <div class="in-game-container">
+        <div class="in-game-header" *ngIf="gameMode?.gameModeName && isGameModeSupported && isMapSupported">
+            <div class="in-game-text">
                 <div>{{ gameMode?.gameModeName }}{{ matchMap?.mapName ? " &nbsp; | &nbsp; " + matchMap?.mapName : "" }}</div>
                 <div *ngIf="mainHotkey?.friendlyBinding">{{ mainHotkey?.friendlyBinding }}</div>
             </div>
-            <img class="lobby-status-badge-logo" src="../../../../assets/images/allfather_badge_logo_sm.webp" alt="" />
+            <img class="in-game-badge-logo" src="../../../../assets/images/allfather_badge_logo_sm.webp" alt="" />
         </div>
     </div>
 </app-ui-container>

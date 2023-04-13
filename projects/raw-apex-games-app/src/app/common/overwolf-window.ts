@@ -22,11 +22,9 @@ export enum OverwolfWindowState {
 export enum OverwolfWindowName {
     Background = "background",
     DevelopmentTools = "development-tools",
-    HUDMatchTimer = "hud-match-timer",
     HUDMiniInventory = "hud-mini-inventory",
-    LobbyStatus = "lobby-status",
-    MainDesktop = "main-desktop",
-    MainInGame = "main-ingame",
+    Desktop = "desktop",
+    InGame = "ingame",
     MatchSummary = "match-summary",
 }
 

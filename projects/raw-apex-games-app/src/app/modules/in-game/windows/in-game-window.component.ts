@@ -10,12 +10,12 @@ import { MatchService } from "../../core/match/match.service";
 const MAIN_HOTKEY_NAME = HotkeyEnum.ToggleMainInGame;
 
 @Component({
-    selector: "app-lobby-status-window",
-    templateUrl: "./lobby-status-window.component.html",
-    styleUrls: ["./lobby-status-window.component.scss"],
+    selector: "app-in-game-window",
+    templateUrl: "./in-game-window.component.html",
+    styleUrls: ["./in-game-window.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LobbyStatusWindowComponent implements OnInit, OnDestroy {
+export class InGameWindowComponent implements OnInit, OnDestroy {
     public get isGameModeSupported(): boolean {
         return !!this.gameMode?.isReportable && !this.gameMode.isSandboxGameMode;
     }

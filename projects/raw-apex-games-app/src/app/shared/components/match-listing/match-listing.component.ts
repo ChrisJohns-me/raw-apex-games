@@ -66,13 +66,11 @@ export class MatchListingComponent implements OnInit, OnDestroy {
     /** Tipping point to show date played in different formats. */
     public relativeTime = 6 * 60 * 60 * 1000;
 
-    private maxSquadSize = 3;
+    private readonly maxSquadSize = 3;
     private _matches: MatchDataStore[] = [];
     private destroy$ = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef, private readonly configuration: ConfigurationService) {
-        this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => (this.maxSquadSize = config.brFacts.maxSquadSize));
-    }
+    constructor(private readonly cdr: ChangeDetectorRef, private readonly configuration: ConfigurationService) {}
 
     public isFunction = (value: unknown): boolean => typeof value === "function";
     public matchTrackBy: TrackByFunction<MatchDataStore> = (_, item) => item.matchId;

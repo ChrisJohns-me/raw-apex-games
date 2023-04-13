@@ -18,13 +18,13 @@ import { MatchService } from "../../core/match/match.service";
 import { MockUIContainerComponent } from "../../core/mocks/components/mock-ui-container.component";
 import { MockFullHeightDirective } from "../../core/mocks/directives/mock-full-height.directive";
 import { MockConfigurationService } from "../../core/mocks/services/mock-configuration.service";
+import { MockDesktopWindowService } from "../../core/mocks/services/mock-desktop-window.service";
 import { MockFileService } from "../../core/mocks/services/mock-file.service";
 import { MockGameProcessService } from "../../core/mocks/services/mock-game-process.service";
 import { MockGoogleAnalyticsService } from "../../core/mocks/services/mock-google-analytics.service";
 import { MockHotkeyService } from "../../core/mocks/services/mock-hotkey.service";
 import { MockLocalDatabaseService } from "../../core/mocks/services/mock-local-database.service";
 import { MockLocalStorageService } from "../../core/mocks/services/mock-local-storage.service";
-import { MockMainWindowService } from "../../core/mocks/services/mock-main-window.service";
 import { MockMatchRosterService } from "../../core/mocks/services/mock-match-roster.service";
 import { MockMatchService } from "../../core/mocks/services/mock-match.service";
 import { MockOverwolfFeatureStatusService } from "../../core/mocks/services/mock-overwolf-feature-status.service";
@@ -49,13 +49,12 @@ import { LegendIconsBoardComponent } from "../pages/dashboard/components/legend-
 import { DashboardPageComponent } from "../pages/dashboard/dashboard-page.component";
 import { MatchExplorerPageComponent } from "../pages/match-explorer/match-explorer-page.component";
 import { SettingsPageComponent } from "../pages/settings/settings-page.component";
-import { MainDesktopWindowService } from "./main-desktop-window.service";
-import { MainInGameWindowService } from "./main-ingame-window.service";
-import { MainWindowComponent } from "./main-window.component";
+import { DesktopWindowComponent } from "./desktop-window.component";
+import { DesktopWindowService } from "./desktop-window.service";
 
 describe("MainWindowComponent", () => {
-    let component: MainWindowComponent;
-    let fixture: ComponentFixture<MainWindowComponent>;
+    let component: DesktopWindowComponent;
+    let fixture: ComponentFixture<DesktopWindowComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
@@ -67,7 +66,7 @@ describe("MainWindowComponent", () => {
                 GameEventsStatusIndicatorComponent,
                 IconComponent,
                 LegendIconsBoardComponent,
-                MainWindowComponent,
+                DesktopWindowComponent,
                 MatchExplorerPageComponent,
                 MockFullHeightDirective,
                 MockUIContainerComponent,
@@ -84,8 +83,7 @@ describe("MainWindowComponent", () => {
                 { provide: HotkeyService, useClass: MockHotkeyService },
                 { provide: LocalDatabaseService, useClass: MockLocalDatabaseService },
                 { provide: LocalStorageService, useClass: MockLocalStorageService },
-                { provide: MainDesktopWindowService, useClass: MockMainWindowService },
-                { provide: MainInGameWindowService, useClass: MockMainWindowService },
+                { provide: DesktopWindowService, useClass: MockDesktopWindowService },
                 { provide: MatchRosterService, useClass: MockMatchRosterService },
                 { provide: MatchService, useClass: MockMatchService },
                 { provide: OverwolfFeatureStatusService, useClass: MockOverwolfFeatureStatusService },
@@ -101,7 +99,7 @@ describe("MainWindowComponent", () => {
 
     beforeEach(() => {
         supressConsoleLog();
-        fixture = TestBed.createComponent(MainWindowComponent);
+        fixture = TestBed.createComponent(DesktopWindowComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

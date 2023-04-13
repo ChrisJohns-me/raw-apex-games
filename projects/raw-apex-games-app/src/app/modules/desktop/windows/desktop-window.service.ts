@@ -1,13 +1,17 @@
-import { Injectable, OnDestroy } from "@angular/core";
-import { OverwolfWindow } from "@raw-apex-games-app/app/common/overwolf-window";
+import { Injectable } from "@angular/core";
+import { OverwolfWindow, OverwolfWindowName } from "@raw-apex-games-app/app/common/overwolf-window";
+import { SingletonServiceProviderFactory } from "@raw-apex-games-app/app/singleton-service.provider.factory";
 import { BehaviorSubject, Observable, Subject, from } from "rxjs";
 import { concatAll, map, takeUntil, tap } from "rxjs/operators";
 import { MainPage } from "../pages/main-page";
 
-@Injectable()
-export abstract class MainWindowService implements OnDestroy {
-    /** Needs to be defined by the inheriting class */
-    protected overwolfWindow!: OverwolfWindow;
+@Injectable({
+    providedIn: "root",
+    deps: [],
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("DesktopWindowService", DesktopWindowService, deps),
+})
+export class DesktopWindowService {
+    public readonly overwolfWindow = new OverwolfWindow(OverwolfWindowName.Desktop);
 
     public mainPage = new BehaviorSubject<MainPage>(MainPage.Dashboard);
     /** App is still initializing; ie. booting up the app */

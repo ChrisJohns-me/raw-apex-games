@@ -2,121 +2,9 @@
     "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
     "properties": {
-        "assumptions": {
-            "type": "object",
-            "properties": {
-                "opponentShieldDefault": {
-                    "type": "integer"
-                },
-                "opponentHealthDefault": {
-                    "type": "integer"
-                },
-                "isRosterNullPlayerDisconnect": {
-                    "type": "boolean"
-                },
-                "knockdownExpireTime": {
-                    "type": "number"
-                },
-                "eliminationExpireTime": {
-                    "type": "number"
-                }
-            },
-            "required": [
-                "opponentShieldDefault",
-                "opponentHealthDefault",
-                "isRosterNullPlayerDisconnect",
-                "knockdownExpireTime",
-                "eliminationExpireTime"
-            ]
-        },
-        "common": {
-            "type": "object",
-            "properties": {
-                "playerDeathHUDTimeout": {
-                    "type": "integer"
-                },
-                "matchEndHUDTimeout": {
-                    "type": "integer"
-                }
-            },
-            "required": [
-                "playerDeathHUDTimeout",
-                "matchEndHUDTimeout"
-            ]
-        },
-        "brFacts": {
-            "type": "object",
-            "properties": {
-                "respawnBannerExpireTime": {
-                    "type": "integer"
-                },
-                "maxUltimateCooldownTime": {
-                    "type": "integer"
-                },
-                "maxSquadSize": {
-                    "type": "integer"
-                },
-                "ringDamageTickRate": {
-                    "type": "integer"
-                },
-                "rings": {
-                    "type": "array",
-                    "items": [
-                        {
-                            "type": "object",
-                            "properties": {
-                                "ringNumber": {
-                                    "type": "number"
-                                },
-                                "startTimeSec": {
-                                    "type": "number"
-                                },
-                                "endTimeSec": {
-                                    "type": "number"
-                                },
-                                "damagePerTick": {
-                                    "type": "number"
-                                }
-                            },
-                            "required": [
-                                "ringNumber",
-                                "startTimeSec",
-                                "endTimeSec",
-                                "damagePerTick"
-                            ]
-                        }
-                    ]
-                }
-            },
-            "required": [
-                "respawnBannerExpireTime",
-                "maxUltimateCooldownTime",
-                "maxSquadSize",
-                "ringDamageTickRate",
-                "rings"
-            ]
-        },
-        "facts": {
-            "type": "object",
-            "properties": {
-                "maxShield": {
-                    "type": "integer"
-                },
-                "maxHealth": {
-                    "type": "integer"
-                }
-            },
-            "required": [
-                "maxShield",
-                "maxHealth"
-            ]
-        },
         "featureFlags": {
             "type": "object",
             "properties": {
-                "enableMatchTimerWindow": {
-                    "type": "boolean"
-                },
                 "enableMiniInventoryWindow": {
                     "type": "boolean"
                 },
@@ -128,9 +16,9 @@
                 }
             },
             "required": [
-                "enableMatchTimerWindow",
                 "enableMiniInventoryWindow",
-                "enableMatchSummaryWindow"
+                "enableMatchSummaryWindow",
+                "enableVideoCapture"
             ]
         },
         "featureConfigs": {

@@ -3,16 +3,17 @@ import { Title } from "@angular/platform-browser";
 import { GameProcessService } from "../core/game-process.service";
 import { MockBackgroundService } from "../core/mocks/services/mock-background.service";
 import { MockCaptureControllerService } from "../core/mocks/services/mock-capture-controller.service";
+import { MockDesktopWindowService } from "../core/mocks/services/mock-desktop-window.service";
 import { MockGameProcessService } from "../core/mocks/services/mock-game-process.service";
 import { MockHotkeyService } from "../core/mocks/services/mock-hotkey.service";
-import { MockMainWindowService } from "../core/mocks/services/mock-main-window.service";
+import { MockInGameWindowService } from "../core/mocks/services/mock-in-game-window.service";
 import { MockOverwolfExtensionsService } from "../core/mocks/services/mock-overwolf-extensions.service";
 import { MockSettingsService } from "../core/mocks/services/mock-settings.service";
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
 import { SettingsService } from "../core/settings.service";
+import { DesktopWindowService } from "../desktop/windows/desktop-window.service";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
-import { MainDesktopWindowService } from "../main/windows/main-desktop-window.service";
-import { MainInGameWindowService } from "../main/windows/main-ingame-window.service";
+import { InGameWindowService } from "../in-game/windows/in-game-window.service";
 import { BackgroundComponent } from "./background.component";
 import { BackgroundService } from "./background.service";
 import { CaptureControllerService } from "./capture-controller.service";
@@ -43,8 +44,8 @@ describe("BackgroundComponent", () => {
                 { provide: GameProcessService, useClass: MockGameProcessService },
                 { provide: HotkeyService, useClass: MockHotkeyService },
                 { provide: HUDWindowControllerService, useClass: MockHUDWindowControllerService },
-                { provide: MainDesktopWindowService, useClass: MockMainWindowService },
-                { provide: MainInGameWindowService, useClass: MockMainWindowService },
+                { provide: DesktopWindowService, useClass: MockDesktopWindowService },
+                { provide: InGameWindowService, useClass: MockInGameWindowService },
                 { provide: OverwolfExtensionsService, useClass: MockOverwolfExtensionsService },
                 { provide: SystemTrayService, useClass: MockSystemTrayService },
                 { provide: SettingsService, useClass: MockSettingsService },

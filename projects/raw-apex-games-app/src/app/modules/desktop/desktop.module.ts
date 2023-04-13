@@ -7,18 +7,16 @@ import { NavbarComponent } from "./components/navbar.component";
 import { AboutPageModule } from "./pages/about/about-page.module";
 import { ChartingPageModule } from "./pages/charting/charting-page.module";
 import { DashboardPageModule } from "./pages/dashboard/dashboard-page.module";
-import { DatasheetPageModule } from "./pages/datasheet/datasheet-page.module";
 import { FirstRunPageModule } from "./pages/first-run/first-run-page.module";
 import { MapExplorerPageModule } from "./pages/map-explorer/map-explorer-page.module";
 import { MatchExplorerPageModule } from "./pages/match-explorer/match-explorer-page.module";
 import { SettingsPageModule } from "./pages/settings/settings-page.module";
-import { MainWindowComponent } from "./windows/main-window.component";
+import { DesktopWindowComponent } from "./windows/desktop-window.component";
 
 const PAGES = [
     AboutPageModule,
     ChartingPageModule,
     DashboardPageModule,
-    DatasheetPageModule,
     FirstRunPageModule,
     MapExplorerPageModule,
     MatchExplorerPageModule,
@@ -26,9 +24,9 @@ const PAGES = [
 ];
 
 @NgModule({
-    declarations: [MainWindowComponent, NavbarComponent],
+    declarations: [DesktopWindowComponent, NavbarComponent],
     imports: [...PAGES, CommonModule, ReactiveFormsModule, RawApexGamesSharedModule, SharedModule],
     providers: [],
-    exports: [MainWindowComponent],
+    exports: [DesktopWindowComponent],
 })
-export class MainModule {}
+export class DesktopModule {}

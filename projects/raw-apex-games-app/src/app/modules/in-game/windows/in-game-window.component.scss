@@ -1,11 +1,11 @@
 @import "hud-styles";
 
-.lobby-status-container {
+.in-game-container {
     height: 100%;
     width: 100%;
 }
 
-.lobby-status-header {
+.in-game-header {
     width: 10vw;
     max-width: 2rem;
     height: 100%;
@@ -23,12 +23,12 @@
     align-items: center;
     margin-left: 4vw;
 
-    .lobby-status-badge-logo {
+    .in-game-badge-logo {
         transform: rotate(-90deg);
         max-height: 1rem;
     }
 
-    .lobby-status-text {
+    .in-game-text {
         writing-mode: vertical-rl;
         transform: rotate(180deg);
         font-family: "Quantico", sans-serif;

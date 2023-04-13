@@ -17,9 +17,9 @@ import { SettingKey } from "@raw-apex-games-app/app/common/settings";
 import { GoogleAnalyticsService } from "@raw-apex-games-app/app/modules/core/google-analytics.service";
 import { OverwolfGameDataService } from "@raw-apex-games-app/app/modules/core/overwolf";
 import { SettingsService } from "@raw-apex-games-app/app/modules/core/settings.service";
-import { MainPage } from "@raw-apex-games-app/app/modules/main/pages/main-page";
-import { MainDesktopWindowService } from "@raw-apex-games-app/app/modules/main/windows/main-desktop-window.service";
-import { MainInGameWindowService } from "@raw-apex-games-app/app/modules/main/windows/main-ingame-window.service";
+import { MainPage } from "@raw-apex-games-app/app/modules/desktop/pages/main-page";
+import { DesktopWindowService } from "@raw-apex-games-app/app/modules/desktop/windows/desktop-window.service";
+import { InGameWindowService } from "@raw-apex-games-app/app/modules/in-game/windows/in-game-window.service";
 import { environment } from "@raw-apex-games-app/environments/environment";
 import { isEmpty, mathClamp } from "common/utilities/";
 import { Observable, Subject } from "rxjs";
@@ -97,8 +97,8 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly googleAnalytics: GoogleAnalyticsService,
-        private readonly mainDesktopWindow: MainDesktopWindowService,
-        private readonly mainInGameWindow: MainInGameWindowService,
+        private readonly desktopWindow: DesktopWindowService,
+        private readonly inGameWindow: InGameWindowService,
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly settings: SettingsService,
         private readonly titleService: Title
@@ -140,8 +140,7 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     public onSettingsButtonClick(): void {
-        this.mainDesktopWindow.goToPage(MainPage.Settings);
-        this.mainInGameWindow.goToPage(MainPage.Settings);
+        this.desktopWindow.goToPage(MainPage.Settings);
     }
 
     public onMinimizeButtonClick(): void {

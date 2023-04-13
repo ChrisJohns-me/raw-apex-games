@@ -1,66 +1,6 @@
 {
     "$schema": "./config.schema.json",
-    "assumptions": {
-        "opponentShieldDefault": 75,
-        "opponentHealthDefault": 100,
-        "isRosterNullPlayerDisconnect": true,
-        "knockdownExpireTime": 10000,
-        "eliminationExpireTime": 300000
-    },
-    "common": {
-        "playerDeathHUDTimeout": 30000,
-        "matchEndHUDTimeout": 15000
-    },
-    "brFacts": {
-        "respawnBannerExpireTime": 60000,
-        "maxUltimateCooldownTime": 360000,
-        "maxSquadSize": 3,
-        "ringDamageTickRate": 1500,
-        "rings": [
-            {
-                "ringNumber": 1,
-                "startTimeSec": 65,
-                "endTimeSec": 680,
-                "damagePerTick": 2
-            },
-            {
-                "ringNumber": 2,
-                "startTimeSec": 680,
-                "endTimeSec": 895,
-                "damagePerTick": 3
-            },
-            {
-                "ringNumber": 3,
-                "startTimeSec": 895,
-                "endTimeSec": 1045,
-                "damagePerTick": 10
-            },
-            {
-                "ringNumber": 4,
-                "startTimeSec": 1045,
-                "endTimeSec": 1185,
-                "damagePerTick": 20
-            },
-            {
-                "ringNumber": 5,
-                "startTimeSec": 1185,
-                "endTimeSec": 1295,
-                "damagePerTick": 20
-            },
-            {
-                "ringNumber": 6,
-                "startTimeSec": 1295,
-                "endTimeSec": 9999,
-                "damagePerTick": 25
-            }
-        ]
-    },
-    "facts": {
-        "maxShield": 125,
-        "maxHealth": 100
-    },
     "featureFlags": {
-        "enableMatchTimerWindow": true,
         "enableMiniInventoryWindow": true,
         "enableMatchSummaryWindow": true,
         "enableVideoCapture": true

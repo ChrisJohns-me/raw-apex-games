@@ -7,10 +7,10 @@ import { map } from "rxjs/operators";
 @Injectable({
     providedIn: "root",
     deps: [],
-    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("LobbyStatusWindowService", LobbyStatusWindowService, deps),
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("InGameWindowService", InGameWindowService, deps),
 })
-export class LobbyStatusWindowService {
-    private readonly overwolfWindow = new OverwolfWindow(OverwolfWindowName.LobbyStatus);
+export class InGameWindowService {
+    private readonly overwolfWindow = new OverwolfWindow(OverwolfWindowName.InGame);
 
     public isOpen(): Observable<boolean> {
         return this.overwolfWindow
