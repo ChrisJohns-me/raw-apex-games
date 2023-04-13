@@ -1,12 +1,14 @@
 import { Injectable } from "@angular/core";
 import { OverwolfFeatureDep } from "@raw-apex-games-app/app/common/feature-status";
 import { GamePhase } from "@raw-apex-games-app/app/common/game-phase";
+import { MatchGameModeGenericId } from "@raw-apex-games-app/app/common/match/game-mode/game-mode.enum";
 import { MatchLocationPhase } from "@raw-apex-games-app/app/common/match/location";
 import { SingletonServiceProviderFactory } from "@raw-apex-games-app/app/singleton-service.provider.factory";
 import { exhaustiveEnumSwitch } from "common/utilities/switch";
 import { BehaviorSubject } from "rxjs";
-import { filter, map, takeUntil } from "rxjs/operators";
+import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { BaseService } from "./base-service.abstract";
+import { MatchService } from "./match/match.service";
 import { OverwolfGameDataService } from "./overwolf";
 import { OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status.service";
 
@@ -15,7 +17,7 @@ import { OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status
  */
 @Injectable({
     providedIn: "root",
-    deps: [OverwolfGameDataService, OverwolfFeatureStatusService],
+    deps: [MatchService, OverwolfGameDataService, OverwolfFeatureStatusService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("GameService", GameService, deps),
 })
 export class GameService extends BaseService {
@@ -24,6 +26,7 @@ export class GameService extends BaseService {
     public readonly phase$ = new BehaviorSubject<GamePhase>(GamePhase.Lobby);
 
     constructor(
+        private readonly match: MatchService,
         private readonly overwolfGameData: OverwolfGameDataService,
         public readonly overwolfGameDataStatus: OverwolfFeatureStatusService
     ) {
@@ -57,5 +60,18 @@ export class GameService extends BaseService {
                         exhaustiveEnumSwitch(newPhase);
                 }
             });
+
+        // On training or firingrange modes, emit InGame phase
+        this.match.startedEvent$
+            .pipe(
+                takeUntil(this.destroy$),
+                switchMap(() => this.match.gameMode$),
+                filter(
+                    (gm) =>
+                        gm?.gameModeGenericId === MatchGameModeGenericId.Training ||
+                        gm?.gameModeGenericId === MatchGameModeGenericId.FiringRange
+                )
+            )
+            .subscribe(() => this.phase$.next(GamePhase.InGame));
     }
 }

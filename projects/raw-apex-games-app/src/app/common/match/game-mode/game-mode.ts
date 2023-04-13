@@ -10,8 +10,9 @@ interface MatchGameModeConstructor {
     isReportable?: boolean;
     /** FiringRange or Training game modes */
     isSandboxGameMode?: boolean;
-    isBattleRoyaleGameMode: boolean;
-    isControlGameMode: boolean;
+    isBattleRoyaleGameMode?: boolean;
+    isControlGameMode?: boolean;
+    isGunGameGameMode?: boolean;
     isRanked?: boolean;
 }
 export class MatchGameMode {
@@ -23,6 +24,7 @@ export class MatchGameMode {
     public isSandboxGameMode: boolean;
     public isBattleRoyaleGameMode: boolean;
     public isControlGameMode: boolean;
+    public isGunGameGameMode: boolean;
 
     constructor(ctor: MatchGameModeConstructor) {
         this.gameModeId = ctor.gameModeId;
@@ -31,8 +33,9 @@ export class MatchGameMode {
         this.gameModeGenericId = ctor.gameModeGenericId;
         this.isReportable = ctor.isReportable ?? true;
         this.isSandboxGameMode = ctor.isSandboxGameMode ?? false;
-        this.isBattleRoyaleGameMode = ctor.isBattleRoyaleGameMode;
-        this.isControlGameMode = ctor.isControlGameMode;
+        this.isBattleRoyaleGameMode = ctor.isBattleRoyaleGameMode ?? false;
+        this.isControlGameMode = ctor.isControlGameMode ?? false;
+        this.isGunGameGameMode = ctor.isGunGameGameMode ?? false;
     }
 
     //#region Static Methods

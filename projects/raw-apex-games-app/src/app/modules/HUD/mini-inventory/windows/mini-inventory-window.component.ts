@@ -13,6 +13,8 @@ import { MatchService } from "@raw-apex-games-app/app/modules/core/match/match.s
 import { Observable, Subject, combineLatest } from "rxjs";
 import { distinctUntilChanged, map, takeUntil } from "rxjs/operators";
 
+// TODO: Make mini-inventory only visible in RAW APEX GAMES matches
+
 // Item IDs from items.json
 // Also is a reference for sorting.
 const VISIBLEITEMIDS: string[] = [

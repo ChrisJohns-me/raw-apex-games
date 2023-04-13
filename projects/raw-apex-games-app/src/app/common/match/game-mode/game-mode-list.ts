@@ -10,8 +10,6 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeIdRegExPattern: "training",
         isReportable: false,
         isSandboxGameMode: true,
-        isBattleRoyaleGameMode: false,
-        isControlGameMode: false,
     }),
     new MatchGameMode({
         gameModeId: "#PL_FIRINGRANGE",
@@ -20,8 +18,6 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeIdRegExPattern: "firingrange",
         isReportable: false,
         isSandboxGameMode: true,
-        isBattleRoyaleGameMode: false,
-        isControlGameMode: false,
     }),
     new MatchGameMode({
         gameModeId: "#PL_TRIO",
@@ -29,7 +25,6 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeName: MatchGameModeFriendlyName.BattleRoyale_Trios,
         gameModeIdRegExPattern: "trio",
         isBattleRoyaleGameMode: true,
-        isControlGameMode: false,
     }),
     new MatchGameMode({
         gameModeId: "#PL_DUO",
@@ -37,7 +32,6 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeName: MatchGameModeFriendlyName.BattleRoyale_Duos,
         gameModeIdRegExPattern: "duo",
         isBattleRoyaleGameMode: true,
-        isControlGameMode: false,
     }),
     new MatchGameMode({
         gameModeId: "#PL_Ranked_Leagues",
@@ -45,7 +39,6 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeName: MatchGameModeFriendlyName.BattleRoyale_Ranked,
         gameModeIdRegExPattern: "ranked_leagues",
         isBattleRoyaleGameMode: true,
-        isControlGameMode: false,
         isRanked: true,
     }),
     new MatchGameMode({
@@ -54,8 +47,15 @@ export const MatchGameModeList: MatchGameMode[] = [
         gameModeName: MatchGameModeFriendlyName.Control,
         gameModeIdRegExPattern: "control",
         isReportable: false,
-        isBattleRoyaleGameMode: false,
         isControlGameMode: true,
+    }),
+    new MatchGameMode({
+        gameModeId: "#GAME_MODE_GUNGAME",
+        gameModeGenericId: MatchGameModeGenericId.GunGame,
+        gameModeName: MatchGameModeFriendlyName.GunGame,
+        gameModeIdRegExPattern: "gungame",
+        isReportable: false,
+        isGunGameGameMode: true,
     }),
 ];
 

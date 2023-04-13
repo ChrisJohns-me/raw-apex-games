@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { MatchGameModeGenericId } from "@raw-apex-games-app/app/common/match/game-mode/game-mode.enum";
 import { MatchLocationPhase } from "@raw-apex-games-app/app/common/match/location";
 import { MatchMapCoordinates } from "@raw-apex-games-app/app/common/match/map/map-coordinates";
 import { PlayerState } from "@raw-apex-games-app/app/common/player-state";
@@ -89,6 +90,19 @@ export class MatchPlayerLocationService extends BaseService {
                         exhaustiveEnumSwitch(newPhase);
                 }
             });
+
+        // On training or firingrange modes, emit Landed phase
+        this.match.startedEvent$
+            .pipe(
+                takeUntil(this.destroy$),
+                switchMap(() => this.match.gameMode$),
+                filter(
+                    (gm) =>
+                        gm?.gameModeGenericId === MatchGameModeGenericId.Training ||
+                        gm?.gameModeGenericId === MatchGameModeGenericId.FiringRange
+                )
+            )
+            .subscribe(() => this.myLocationPhase$.next(MatchLocationPhase.Landed));
     }
 
     private setupMyCoordinates(): void {

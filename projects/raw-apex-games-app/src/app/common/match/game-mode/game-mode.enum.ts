@@ -5,6 +5,7 @@ export enum MatchGameModeFriendlyName {
     BattleRoyale_Duos = "Duos",
     BattleRoyale_Ranked = "Ranked",
     Control = "Control",
+    GunGame = "Gun Game",
 }
 
 export enum MatchGameModeGenericId {
@@ -14,4 +15,5 @@ export enum MatchGameModeGenericId {
     BattleRoyale_Duos = "br_duos",
     BattleRoyale_Ranked = "br_ranked",
     Control = "control",
+    GunGame = "gun_game",
 }
