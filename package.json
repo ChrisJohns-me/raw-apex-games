@@ -1,5 +1,5 @@
 {
-    "name": "raw-apex-games",
+    "name": "raw-apex-games-app",
     "version": "0.13.1",
     "engines": {
         "node": ">= 14.0.0"
@@ -16,9 +16,9 @@
         "rawapp:compose-opk": "",
         "rawapp:stats": "ng build --project=rawApexGamesApp --stats-json",
         "rawapp:analyze-dev": "webpack-bundle-analyzer dist/rawApexGamesApp_dev/stats.json",
-        "rawfunc:serve-dev": "cd projects/raw-apex-games-func/functions && npm run serve",
-        "rawfunc:deploy-dev": "",
-        "rawfunc:deploy-prod": "",
+        "rawapi:serve-dev": "cd projects/raw-apex-games-api && npm run serve",
+        "rawapi:deploy-dev": "",
+        "rawapi:deploy-prod": "",
         "rawweb:test": "ng test --project=rawApexGamesWeb",
         "rawweb:e2e": "ng e2e --project=rawApexGamesWeb",
         "rawweb:serve-dev": "ng serve --project=rawApexGamesWeb",

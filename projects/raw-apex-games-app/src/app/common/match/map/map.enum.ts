@@ -14,7 +14,7 @@ export enum MatchMapFriendlyName {
 }
 
 export enum MatchMapGenericId {
-    FiringRange = "firingrange",
+    FiringRange = "firing_range",
 
     // Battle Royale Maps
     KingsCanyon = "kingscanyon",

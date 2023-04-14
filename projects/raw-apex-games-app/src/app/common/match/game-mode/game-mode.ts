@@ -1,4 +1,5 @@
 import { wordsToUpperCase } from "common/utilities/";
+import { MatchGameModePlaylist } from "../game-mode-playlist";
 import { MatchGameModeFriendlyName, MatchGameModeGenericId } from "./game-mode.enum";
 
 interface MatchGameModeConstructor {
@@ -7,6 +8,7 @@ interface MatchGameModeConstructor {
     gameModeIdRegExPattern?: string;
     gameModeName: MatchGameModeFriendlyName;
     gameModeGenericId: MatchGameModeGenericId;
+    gamePlaylist: MatchGameModePlaylist;
     isReportable?: boolean;
     /** FiringRange or Training game modes */
     isSandboxGameMode?: boolean;
@@ -20,6 +22,7 @@ export class MatchGameMode {
     public gameModeIdRegExPattern?: string;
     public gameModeName: MatchGameModeFriendlyName;
     public gameModeGenericId: MatchGameModeGenericId;
+    public gamePlaylist: MatchGameModePlaylist;
     public isReportable: boolean;
     public isSandboxGameMode: boolean;
     public isBattleRoyaleGameMode: boolean;
@@ -31,6 +34,7 @@ export class MatchGameMode {
         this.gameModeIdRegExPattern = ctor.gameModeIdRegExPattern;
         this.gameModeName = ctor.gameModeName;
         this.gameModeGenericId = ctor.gameModeGenericId;
+        this.gamePlaylist = ctor.gamePlaylist;
         this.isReportable = ctor.isReportable ?? true;
         this.isSandboxGameMode = ctor.isSandboxGameMode ?? false;
         this.isBattleRoyaleGameMode = ctor.isBattleRoyaleGameMode ?? false;
@@ -60,19 +64,39 @@ export class MatchGameMode {
         gameModeName = gameModeName.replace("#pl_", "");
         gameModeName = gameModeName.replace("gamemode", "");
         gameModeName = gameModeName.replace("mode", "");
+        gameModeName = gameModeName.replace("name", "");
         gameModeName = gameModeName.replace(/[_\W]+/gi, "");
         gameModeName = wordsToUpperCase(gameModeName);
         if (!gameModeName) gameModeName = "Unknown";
-        const gameModeGenericId = gameModeId;
-        const isBattleRoyaleGameMode = new RegExp("trios|duos|ranked_leagues", "i").test(gameModeId);
-        const isControlGameMode = !isBattleRoyaleGameMode && new RegExp("control", "i").test(gameModeId);
+
+        let gamePlaylist = MatchGameModePlaylist.Sandbox;
+        let isSandboxGameMode = false;
+        let isBattleRoyaleGameMode = false;
+        let isControlGameMode = false;
+        let isGunGameGameMode = false;
+        let isRanked = false;
+        if (new RegExp("training|firingrange", "i").test(gameModeId)) {
+            isSandboxGameMode = true;
+            gamePlaylist = MatchGameModePlaylist.Sandbox;
+        } else if (new RegExp("trios|duos|ranked_leagues", "i").test(gameModeId)) {
+            isRanked = new RegExp("ranked_leagues", "i").test(gameModeId);
+            isBattleRoyaleGameMode = true;
+        } else if (new RegExp("control", "i").test(gameModeId)) {
+            isControlGameMode = true;
+        } else if (new RegExp("gungame", "i").test(gameModeId)) {
+            isGunGameGameMode = true;
+        }
 
         return new MatchGameMode({
             gameModeId,
-            gameModeGenericId: gameModeGenericId as MatchGameModeGenericId,
+            gameModeGenericId: gameModeId as MatchGameModeGenericId,
             gameModeName: gameModeName as MatchGameModeFriendlyName,
+            gamePlaylist,
+            isSandboxGameMode,
             isBattleRoyaleGameMode,
             isControlGameMode,
+            isGunGameGameMode,
+            isRanked,
         });
     }
     //#endregion
