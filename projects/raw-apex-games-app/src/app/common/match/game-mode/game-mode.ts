@@ -1,5 +1,5 @@
 import { wordsToUpperCase } from "common/utilities/";
-import { MatchGameModePlaylist } from "../game-mode-playlist";
+import { MatchGameModePlaylist } from "./game-mode-playlist.enum";
 import { MatchGameModeFriendlyName, MatchGameModeGenericId } from "./game-mode.enum";
 
 interface MatchGameModeConstructor {
@@ -100,4 +100,22 @@ export class MatchGameMode {
         });
     }
     //#endregion
+}
+
+/**
+ * Sorts by:
+ *  - Battle Royale game modes first
+ *  - Control game modes third
+ *  - Alphabetically
+ */
+export function sortMatchGameModeList(matchGameModeList: MatchGameMode[]): MatchGameMode[] {
+    return matchGameModeList.slice().sort((a, b) => {
+        if (a.isBattleRoyaleGameMode && !b.isBattleRoyaleGameMode) return -1;
+        if (!a.isBattleRoyaleGameMode && b.isBattleRoyaleGameMode) return 1;
+        if (a.isControlGameMode && !b.isControlGameMode) return -1;
+        if (!a.isControlGameMode && b.isControlGameMode) return 1;
+        if (a.gameModeName.toLowerCase() < b.gameModeName.toLowerCase()) return -1;
+        if (a.gameModeName.toLowerCase() > b.gameModeName.toLowerCase()) return 1;
+        return 0;
+    });
 }

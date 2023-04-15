@@ -27,6 +27,9 @@
       "node_modules/@overwolf"
     ],
     "paths": {
+      "@raw-apex-games-api/*": [
+        "projects/raw-apex-games-api/src/*"
+      ],
       "@raw-apex-games-app/*": [
         "projects/raw-apex-games-app/src/*"
       ],
