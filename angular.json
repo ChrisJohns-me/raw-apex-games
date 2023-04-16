@@ -14,8 +14,8 @@
                     "strict": true
                 }
             },
-            "root": "projects/raw-apex-games-app",
-            "sourceRoot": "projects/raw-apex-games-app/src",
+            "root": "projects/app",
+            "sourceRoot": "projects/app/src",
             "prefix": "app",
             "architect": {
                 "build": {
@@ -25,25 +25,25 @@
                             "zone.js/dist/zone-error"
                         ],
                         "outputPath": "dist/rawApexGamesApp_dev",
-                        "index": "projects/raw-apex-games-app/src/index.html",
-                        "main": "projects/raw-apex-games-app/src/main.ts",
-                        "polyfills": "projects/raw-apex-games-app/src/polyfills.ts",
-                        "tsConfig": "projects/raw-apex-games-app/tsconfig.app.json",
+                        "index": "projects/app/src/index.html",
+                        "main": "projects/app/src/main.ts",
+                        "polyfills": "projects/app/src/polyfills.ts",
+                        "tsConfig": "projects/app/tsconfig.app.json",
                         "aot": true,
                         "assets": [
                             {
                                 "glob": "**/*",
-                                "input": "projects/raw-apex-games-app/src/overwolf/dev/",
+                                "input": "projects/app/src/overwolf/dev/",
                                 "output": "/"
                             },
                             {
                                 "glob": "config.json",
-                                "input": "projects/raw-apex-games-app/src/configs/",
+                                "input": "projects/app/src/configs/",
                                 "output": "/"
                             },
-                            "projects/raw-apex-games-app/src/assets/images",
-                            "projects/raw-apex-games-app/src/assets/svgs",
-                            "projects/raw-apex-games-app/src/assets/fonts"
+                            "projects/app/src/assets/images",
+                            "projects/app/src/assets/svgs",
+                            "projects/app/src/assets/fonts"
                         ],
                         "optimization": true,
                         "sourceMap": true,
@@ -51,15 +51,15 @@
                         "vendorChunk": true,
                         "buildOptimizer": false,
                         "styles": [
-                            "projects/raw-apex-games-app/src/styles.scss"
+                            "projects/app/src/styles.scss"
                         ],
                         "stylePreprocessorOptions": {
                             "includePaths": [
-                                "projects/raw-apex-games-app/src/assets/styles/"
+                                "projects/app/src/assets/styles/"
                             ]
                         },
                         "scripts": [
-                            "projects/raw-apex-games-app/src/ga.js"
+                            "projects/app/src/ga.js"
                         ]
                     },
                     "configurations": {
@@ -67,23 +67,23 @@
                             "outputPath": "dist/rawApexGamesApp",
                             "fileReplacements": [
                                 {
-                                    "replace": "projects/raw-apex-games-app/src/environments/environment.ts",
-                                    "with": "projects/raw-apex-games-app/src/environments/environment.prod.ts"
+                                    "replace": "projects/app/src/environments/environment.ts",
+                                    "with": "projects/app/src/environments/environment.prod.ts"
                                 },
                                 {
-                                    "replace": "projects/raw-apex-games-app/src/configs/config.json",
-                                    "with": "projects/raw-apex-games-app/src/configs/config.prod.json"
+                                    "replace": "projects/app/src/configs/config.json",
+                                    "with": "projects/app/src/configs/config.prod.json"
                                 }
                             ],
                             "assets": [
                                 {
                                     "glob": "**/*",
-                                    "input": "projects/raw-apex-games-app/src/overwolf/prod/",
+                                    "input": "projects/app/src/overwolf/prod/",
                                     "output": "/"
                                 },
-                                "projects/raw-apex-games-app/src/assets/images",
-                                "projects/raw-apex-games-app/src/assets/svgs",
-                                "projects/raw-apex-games-app/src/assets/fonts"
+                                "projects/app/src/assets/images",
+                                "projects/app/src/assets/svgs",
+                                "projects/app/src/assets/fonts"
                             ],
                             "optimization": true,
                             "outputHashing": "all",
@@ -110,21 +110,21 @@
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
-                        "main": "projects/raw-apex-games-app/test.ts",
-                        "polyfills": "projects/raw-apex-games-app/src/polyfills.ts",
-                        "tsConfig": "projects/raw-apex-games-app/tsconfig.spec.json",
-                        "karmaConfig": "projects/raw-apex-games-app/karma.conf.js",
+                        "main": "projects/app/test.ts",
+                        "polyfills": "projects/app/src/polyfills.ts",
+                        "tsConfig": "projects/app/tsconfig.spec.json",
+                        "karmaConfig": "projects/app/karma.conf.js",
                         "assets": [
-                            "projects/raw-apex-games-app/src/assets/images",
-                            "projects/raw-apex-games-app/src/assets/svgs",
-                            "projects/raw-apex-games-app/src/assets/fonts"
+                            "projects/app/src/assets/images",
+                            "projects/app/src/assets/svgs",
+                            "projects/app/src/assets/fonts"
                         ],
                         "styles": [
-                            "projects/raw-apex-games-app/src/styles.scss"
+                            "projects/app/src/styles.scss"
                         ],
                         "stylePreprocessorOptions": {
                             "includePaths": [
-                                "projects/raw-apex-games-app/src/assets/styles/"
+                                "projects/app/src/assets/styles/"
                             ]
                         },
                         "scripts": [],
@@ -135,9 +135,9 @@
                     "builder": "@angular-devkit/build-angular:tslint",
                     "options": {
                         "tsConfig": [
-                            "projects/raw-apex-games-app/tsconfig.app.json",
-                            "projects/raw-apex-games-app/tsconfig.spec.json",
-                            "projects/raw-apex-games-app/e2e/tsconfig.json"
+                            "projects/app/tsconfig.app.json",
+                            "projects/app/tsconfig.spec.json",
+                            "projects/app/e2e/tsconfig.json"
                         ],
                         "exclude": [
                             "**/node_modules/**"
@@ -147,7 +147,7 @@
                 "e2e": {
                     "builder": "@angular-devkit/build-angular:protractor",
                     "options": {
-                        "protractorConfig": "projects/raw-apex-games-app/e2e/protractor.conf.js",
+                        "protractorConfig": "projects/app/e2e/protractor.conf.js",
                         "devServerTarget": "rawApexGamesApp:serve"
                     },
                     "configurations": {
@@ -168,25 +168,25 @@
                     "strict": true
                 }
             },
-            "root": "projects/raw-apex-games-web",
-            "sourceRoot": "projects/raw-apex-games-web/src",
+            "root": "projects/web",
+            "sourceRoot": "projects/web/src",
             "prefix": "app",
             "architect": {
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
                         "outputPath": "dist/rawApexGamesWeb_dev",
-                        "index": "projects/raw-apex-games-web/src/index.html",
-                        "main": "projects/raw-apex-games-web/src/main.ts",
-                        "polyfills": "projects/raw-apex-games-web/src/polyfills.ts",
-                        "tsConfig": "projects/raw-apex-games-web/tsconfig.app.json",
+                        "index": "projects/web/src/index.html",
+                        "main": "projects/web/src/main.ts",
+                        "polyfills": "projects/web/src/polyfills.ts",
+                        "tsConfig": "projects/web/tsconfig.app.json",
                         "aot": true,
                         "assets": [
-                            "projects/raw-apex-games-web/src/assets/images",
-                            "projects/raw-apex-games-web/src/assets/fonts"
+                            "projects/web/src/assets/images",
+                            "projects/web/src/assets/fonts"
                         ],
                         "styles": [
-                            "projects/raw-apex-games-web/src/styles.scss"
+                            "projects/web/src/styles.scss"
                         ],
                         "scripts": []
                     },
@@ -195,8 +195,8 @@
                             "outputPath": "dist/rawApexGamesWeb",
                             "fileReplacements": [
                                 {
-                                    "replace": "projects/raw-apex-games-web/src/environments/environment.ts",
-                                    "with": "projects/raw-apex-games-web/src/environments/environment.prod.ts"
+                                    "replace": "projects/web/src/environments/environment.ts",
+                                    "with": "projects/web/src/environments/environment.prod.ts"
                                 }
                             ],
                             "optimization": true,
@@ -237,15 +237,15 @@
                 "test": {
                     "builder": "@angular-devkit/build-angular:karma",
                     "options": {
-                        "main": "projects/raw-apex-games-web/test.ts",
-                        "polyfills": "projects/raw-apex-games-web/src/polyfills.ts",
-                        "tsConfig": "projects/raw-apex-games-web/tsconfig.spec.json",
-                        "karmaConfig": "projects/raw-apex-games-web/karma.conf.js",
+                        "main": "projects/web/test.ts",
+                        "polyfills": "projects/web/src/polyfills.ts",
+                        "tsConfig": "projects/web/tsconfig.spec.json",
+                        "karmaConfig": "projects/web/karma.conf.js",
                         "assets": [
-                            "projects/raw-apex-games-web/src/assets/fonts"
+                            "projects/web/src/assets/fonts"
                         ],
                         "styles": [
-                            "projects/raw-apex-games-web/src/styles.scss"
+                            "projects/web/src/styles.scss"
                         ],
                         "scripts": []
                     }
@@ -254,9 +254,9 @@
                     "builder": "@angular-devkit/build-angular:tslint",
                     "options": {
                         "tsConfig": [
-                            "projects/raw-apex-games-web/tsconfig.app.json",
-                            "projects/raw-apex-games-web/tsconfig.spec.json",
-                            "projects/raw-apex-games-web/e2e/tsconfig.json"
+                            "projects/web/tsconfig.app.json",
+                            "projects/web/tsconfig.spec.json",
+                            "projects/web/e2e/tsconfig.json"
                         ],
                         "exclude": [
                             "**/node_modules/**"
@@ -266,7 +266,7 @@
                 "e2e": {
                     "builder": "@angular-devkit/build-angular:protractor",
                     "options": {
-                        "protractorConfig": "projects/raw-apex-games-web/e2e/protractor.conf.js",
+                        "protractorConfig": "projects/web/e2e/protractor.conf.js",
                         "devServerTarget": "rawApexGamesWeb:serve"
                     },
                     "configurations": {

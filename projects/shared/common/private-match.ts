@@ -1,5 +1,5 @@
-import { MatchGameModePlaylist } from "@raw-apex-games-app/app/common/match/game-mode/game-mode-playlist.enum";
-import { MatchGameModeGenericId } from "@raw-apex-games-app/app/common/match/game-mode/game-mode.enum";
+import { MatchGameModePlaylist } from "@app/app/common/match/game-mode/game-mode-playlist.enum";
+import { MatchGameModeGenericId } from "@app/app/common/match/game-mode/game-mode.enum";
 
 interface CustomMatchConstructor {
     gameModePlaylist: MatchGameModePlaylist;

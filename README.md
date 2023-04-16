@@ -1,6 +1,7 @@
 # RawApexGamesOverwolfApp
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.1.
+Install [Java SE Development Kit](https://www.oracle.com/java/technologies/downloads/)
+Install [gcloud CLI](https://cloud.google.com/sdk/docs/install)
 
 ## Development server
 
