@@ -13,6 +13,7 @@ import { basicInventoryQuick } from "./simulations/basic-inventory";
 import { resetToInGame } from "./simulations/reset-to-in-game";
 import { resetToLobby } from "./simulations/reset-to-lobby";
 import { s16BattleRoyale } from "./simulations/s16-battle-royale";
+import { s16SoloTrios } from "./simulations/s16-solo-trios";
 
 interface Command {
     timestamp: Date;
@@ -76,6 +77,11 @@ export class GameSimulatorComponent implements OnDestroy {
 
     public onPerformS16BattleRoyaleClick(speedAdjust?: number): void {
         const commands = this.logToCommands(s16BattleRoyale());
+        this.runCommands(commands, speedAdjust);
+    }
+
+    public onPerformS16SoloTriosClick(speedAdjust?: number): void {
+        const commands = this.logToCommands(s16SoloTrios());
         this.runCommands(commands, speedAdjust);
     }
 

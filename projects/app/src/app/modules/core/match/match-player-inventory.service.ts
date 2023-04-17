@@ -37,7 +37,6 @@ export class MatchPlayerInventoryService extends BaseService {
     public readonly myInventorySlots$ = new BehaviorSubject<InventorySlots>({});
 
     private inventoryInfoUpdates$: Observable<OWInfoUpdates2Event>;
-    private isMatchStarted = false;
 
     constructor(private readonly match: MatchService, private readonly overwolfGameData: OverwolfGameDataService) {
         super();
@@ -59,10 +58,6 @@ export class MatchPlayerInventoryService extends BaseService {
             this.myInUseItem$.next(undefined);
             this.myWeaponSlots$.next({});
             this.myInventorySlots$.next({});
-            this.isMatchStarted = true;
-        });
-        this.match.endedEvent$.pipe(takeUntil(this.destroy$)).subscribe(() => {
-            this.isMatchStarted = false;
         });
     }
 
@@ -72,7 +67,7 @@ export class MatchPlayerInventoryService extends BaseService {
     private setupMyInventorySlots(): void {
         this.inventoryInfoUpdates$
             .pipe(
-                filter(() => this.isMatchStarted),
+                filter(() => this.match.isActive),
                 map((infoUpdate) => infoUpdate.info.me)
             )
             .subscribe((me) => {
@@ -102,7 +97,7 @@ export class MatchPlayerInventoryService extends BaseService {
     private setupMyInUseItem(): void {
         this.inventoryInfoUpdates$
             .pipe(
-                filter(() => this.isMatchStarted),
+                filter(() => this.match.isActive),
                 filter((infoUpdate) => typeof infoUpdate.info.me?.inUse?.inUse === "string"),
                 map((infoUpdate) => infoUpdate.info.me?.inUse?.inUse),
                 filter((inUse) => !!inUse) // match_start defaults this to "", which we don't want
@@ -121,7 +116,7 @@ export class MatchPlayerInventoryService extends BaseService {
 
         this.inventoryInfoUpdates$
             .pipe(
-                filter(() => this.isMatchStarted),
+                filter(() => this.match.isActive),
                 filter((infoUpdate) => Object.keys(infoUpdate?.info?.me ?? {}).includes("weapons")),
                 map((infoUpdate) => (infoUpdate.info.me?.weapons ? infoUpdate.info.me?.weapons : {}) as OWMatchInfoMeWeapons)
             )

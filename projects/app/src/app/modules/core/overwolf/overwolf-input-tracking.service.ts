@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
 import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
-import { Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { BaseService } from "../base-service.abstract";
 import { InputTrackingDelegate } from "./api/games/input-tracking-delegate";
-import { OWMouseEvent } from "./types/overwolf-types";
+import { OWInputActivity, OWMouseEvent, OWMousePosition } from "./types/overwolf-types";
 
 /**
  * @classdesc Input tracking events from the Overwolf API.
@@ -33,5 +33,13 @@ export class OverwolfInputTrackingService extends BaseService {
     public ngOnDestroy(): void {
         this.inputTrackingDelegate.stopEventListeners();
         super.ngOnDestroy();
+    }
+
+    public getMousePosition(): Observable<OWMousePosition> {
+        return this.inputTrackingDelegate.getMousePosition();
+    }
+
+    public getActivityInformation(): Observable<OWInputActivity> {
+        return this.inputTrackingDelegate.getActivityInformation();
     }
 }

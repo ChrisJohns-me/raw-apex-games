@@ -9,6 +9,7 @@ import { ConfigurationService } from "../core/configuration.service";
 import { FileService } from "../core/file.service";
 import { GameProcessService } from "../core/game-process.service";
 import { GameService } from "../core/game.service";
+import { GameplayInputService } from "../core/gameplay-input.service";
 import { GoogleAnalyticsService } from "../core/google-analytics.service";
 import { LocalDatabaseService } from "../core/local-database/local-database.service";
 import { LocalStorageService } from "../core/local-storage/local-storage.service";
@@ -52,17 +53,18 @@ import { SystemTrayService } from "./system-tray.service";
     deps: [
         CaptureControllerService,
         ConfigurationService,
+        DesktopWindowService,
         DevelopmentToolsWindowService,
         FileService,
+        GameplayInputService,
         GameProcessService,
         GameService,
         GoogleAnalyticsService,
         HotkeyService,
         HUDWindowControllerService,
+        InGameWindowService,
         LocalDatabaseService,
         LocalStorageService,
-        DesktopWindowService,
-        InGameWindowService,
         MatchKillfeedService,
         MatchLegendSelectService,
         MatchMapService,
@@ -100,17 +102,18 @@ export class SingletonServiceContainerService {
     constructor(
         public readonly CaptureControllerService: CaptureControllerService,
         public readonly ConfigurationService: ConfigurationService,
+        public readonly DesktopWindowService: DesktopWindowService,
         public readonly DevelopmentToolsWindowService: DevelopmentToolsWindowService,
         public readonly FileService: FileService,
+        public readonly GameplayInputService: GameplayInputService,
         public readonly GameProcessService: GameProcessService,
         public readonly GameService: GameService,
         public readonly GoogleAnalyticsService: GoogleAnalyticsService,
         public readonly HotkeyService: HotkeyService,
         public readonly HUDWindowControllerService: HUDWindowControllerService,
+        public readonly InGameWindowService: InGameWindowService,
         public readonly LocalDatabaseService: LocalDatabaseService,
         public readonly LocalStorageService: LocalStorageService,
-        public readonly DesktopWindowService: DesktopWindowService,
-        public readonly InGameWindowService: InGameWindowService,
         public readonly MatchKillfeedService: MatchKillfeedService,
         public readonly MatchLegendSelectService: MatchLegendSelectService,
         public readonly MatchMapService: MatchMapService,

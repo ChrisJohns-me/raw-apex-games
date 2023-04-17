@@ -79,7 +79,7 @@ export class MatchPlayerLocationService extends BaseService {
                 map((infoUpdate) => infoUpdate.info.game_info?.phase as MatchLocationPhase)
             )
             .subscribe((newPhase) => {
-                if (newPhase && newPhase === this.myLocationPhase$.value) return;
+                if (!newPhase || newPhase === this.myLocationPhase$.value) return;
                 switch (newPhase) {
                     case MatchLocationPhase.Aircraft:
                     case MatchLocationPhase.Freefly:
