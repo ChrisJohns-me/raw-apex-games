@@ -189,7 +189,7 @@
             "friendlyName": "Rampage LMG",
             "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^Rampage LMG$",
-            "inGameEventNameRegExPattern": "^rampage"
+            "inGameEventNameRegExPattern": "^dragon"
         },
         {
             "id": "eva_8",
@@ -201,6 +201,7 @@
         {
             "id": "g7_scout",
             "friendlyName": "G7 Scout",
+            "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^G7 Scout$",
             "inGameEventNameRegExPattern": "^g7$"
         },
@@ -238,6 +239,13 @@
             "itemType": "weapon",
             "inGameInfoNameRegExPattern": "^L-Star$",
             "inGameEventNameRegExPattern": "^lstar$"
+        },
+        {
+            "id": "nemesis",
+            "friendlyName": "Nemesis",
+            "itemType": "weapon",
+            "inGameInfoNameRegExPattern": "^Nemesis$",
+            "inGameEventNameRegExPattern": "^nemesis$"
         },
         {
             "id": "longbow",
@@ -409,6 +417,11 @@
             "id": "crypto_heirloom",
             "friendlyName": "Crypto \"Biwon Blade\" Heirloom",
             "inGameInfoNameRegExPattern": "mp_weapon_crypto_heirloom_primary"
+        },
+        {
+            "id": "pathfinder_heirloom",
+            "friendlyName": "Pathfinder \"Boxing Gloves\" Heirloom",
+            "inGameInfoNameRegExPattern": "mp_weapon_pathfinder_gloves_primary"
         },
         {
             "id": "bangalore_creeping_barrage",

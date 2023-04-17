@@ -5,6 +5,7 @@ import { MatchMap } from "@app/app/common/match/map/match-map";
 import { OverwolfWindowName } from "@app/app/common/overwolf-window";
 import { Subject, combineLatest, filter, map, merge, takeUntil } from "rxjs";
 import { HotkeyService } from "../../background/hotkey.service";
+import { GameplayInputService } from "../../core/gameplay-input.service";
 import { MatchService } from "../../core/match/match.service";
 
 const MAIN_HOTKEY_NAME = HotkeyEnum.ToggleMainInGame;
@@ -16,6 +17,8 @@ const MAIN_HOTKEY_NAME = HotkeyEnum.ToggleMainInGame;
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InGameWindowComponent implements OnInit, OnDestroy {
+    public isControllerDetected = false;
+
     public get isGameModeSupported(): boolean {
         return !!this.gameMode?.isReportable && !this.gameMode.isSandboxGameMode;
     }
@@ -32,11 +35,26 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
 
     private destroy$ = new Subject<void>();
 
-    constructor(private readonly cdr: ChangeDetectorRef, private readonly hotkey: HotkeyService, private readonly match: MatchService) {}
+    constructor(
+        private readonly cdr: ChangeDetectorRef,
+        private readonly gameplayInput: GameplayInputService,
+        private readonly hotkey: HotkeyService,
+        private readonly match: MatchService
+    ) {}
 
     public ngOnInit(): void {
         this.setupHotkeys();
         this.setupGameMode();
+
+        this.gameplayInput.isMouseInputDetectedOnDamageBurst$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((isMouseDetected) => isMouseDetected !== undefined)
+            )
+            .subscribe((isMouseDetected) => {
+                this.isControllerDetected = !isMouseDetected;
+                this.cdr.detectChanges();
+            });
     }
 
     public ngOnDestroy(): void {

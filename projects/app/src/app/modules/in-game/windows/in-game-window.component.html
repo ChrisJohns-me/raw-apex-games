@@ -6,5 +6,8 @@
     [position]="{ xPercent: 0, yPercent: -0.125, xAnchor: 'right', yAnchor: 'bottom' }"
     [size]="{ widthPercent: 0.25, heightPercent: 0.75 }"
 >
-    <div class="in-game-container">InGame window</div>
+    <div class="in-game-container">
+        <h1 style="color: white; font-size: 25px; font-weight: bold">InGame window</h1>
+        <div class="controller-detected" *ngIf="isControllerDetected">CONTROLLER DETECTED</div>
+    </div>
 </app-ui-container>

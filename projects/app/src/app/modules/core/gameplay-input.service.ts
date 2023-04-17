@@ -7,8 +7,8 @@ import { MatchPlayerInflictionService } from "./match/match-player-infliction.se
 import { MatchService } from "./match/match.service";
 import { OverwolfInputTrackingService } from "./overwolf/overwolf-input-tracking.service";
 
-const MOUSE_MOVEMENT_THRESHOLD_PX = 10000;
-const DAMAGE_BURST_DEBOUNCE_TIME = 60000;
+const MOUSE_MOVEMENT_THRESHOLD_PX = 1000;
+const DAMAGE_BURST_DEBOUNCE_TIME = 10000;
 
 /**
  * @classdesc Service for detecting inputs from the user.
@@ -20,7 +20,10 @@ const DAMAGE_BURST_DEBOUNCE_TIME = 60000;
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("GameplayInputService", GameplayInputService, deps),
 })
 export class GameplayInputService extends BaseService {
-    /** Per every debounced damage event, checks mouse movement to verify that there has been mouse movement */
+    /**
+     * Per every debounced damage event, checks mouse movement to verify that there has been mouse movement.
+     * Emits `undefined` on match start.
+     */
     public readonly isMouseInputDetectedOnDamageBurst$ = new BehaviorSubject<Optional<boolean>>(undefined);
 
     private damageBurstStartingMouseDistance: Optional<number>;
@@ -57,11 +60,12 @@ export class GameplayInputService extends BaseService {
             .subscribe((endingMouseDist) => {
                 const damageBurstMouseDistance = endingMouseDist - this.damageBurstStartingMouseDistance!;
 
+                console.debug(`Damage burst ended with mouse distance of ${damageBurstMouseDistance}`);
                 if (damageBurstMouseDistance > MOUSE_MOVEMENT_THRESHOLD_PX) {
-                    console.info(`Damage burst window of ${DAMAGE_BURST_DEBOUNCE_TIME / 1000}seconds detected mouse movement`);
+                    console.info(`Damage burst window of ${DAMAGE_BURST_DEBOUNCE_TIME / 1000}sec detected mouse movement`);
                     this.isMouseInputDetectedOnDamageBurst$.next(true);
                 } else {
-                    console.error(`Damage burst window of ${DAMAGE_BURST_DEBOUNCE_TIME / 1000}seconds detected no mouse movement`);
+                    console.error(`Damage burst window of ${DAMAGE_BURST_DEBOUNCE_TIME / 1000}sec detected no mouse movement`);
                     this.isMouseInputDetectedOnDamageBurst$.next(false);
                 }
 

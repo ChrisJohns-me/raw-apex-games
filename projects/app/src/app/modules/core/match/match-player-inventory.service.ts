@@ -112,7 +112,7 @@ export class MatchPlayerInventoryService extends BaseService {
      * @overwolfQuirk - When all weapons are dropped, "Thermite Grenade" is returned as the weapon in use.
      */
     private setupMyWeapons(): void {
-        const blacklistedItemIds = ["grenade_arc_star", "grenade_frag", "grenade_thermite", "empty_handed"];
+        const blacklistedItemIds = ["unknown", "grenade_arc_star", "grenade_frag", "grenade_thermite", "empty_handed"];
 
         this.inventoryInfoUpdates$
             .pipe(

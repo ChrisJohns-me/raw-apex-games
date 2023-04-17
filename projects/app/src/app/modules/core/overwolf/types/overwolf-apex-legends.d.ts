@@ -152,7 +152,7 @@ declare namespace overwolf.gep.ApexLegends {
         platform_sw: number;
         state?: PlayerState;
         is_local: string; // where "1" is the local player else "0"
-        // platform_id: string; // The player Id in the current used platform; idk whut this is yet
+        platform_id: string; // The player Id in the current used platform; ie. SteamId
         origin_id: string;
     }
 

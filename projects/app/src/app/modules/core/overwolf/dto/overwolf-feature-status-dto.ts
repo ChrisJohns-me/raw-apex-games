@@ -51,12 +51,17 @@ export class OverwolfGameDataStatusDTO {
         });
     }
 
+    /** Also removes non-existent OverwolfFeatureDep keys */
     public toFeatureStates(): FeatureStates {
         return this.features.reduce((prev, curr): FeatureStates => {
             const appending: FeatureStates = {};
             curr.keys.forEach((key) => {
                 const keyName = key.name as OverwolfFeatureDep;
-                appending[keyName] = Number(key.state) as FeatureState;
+                if (Object.values(OverwolfFeatureDep).includes(keyName)) {
+                    appending[keyName] = Number(key.state) as FeatureState;
+                } else {
+                    console.warn(`Game event key "${keyName}" FeatureState does not exist, ignoring.`);
+                }
             });
             return { ...prev, ...appending };
         }, {} as FeatureStates);

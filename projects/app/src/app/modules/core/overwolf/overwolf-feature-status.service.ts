@@ -49,6 +49,7 @@ export class OverwolfFeatureStatusService implements OnDestroy {
         if (statusListArr.some((s) => s === FeatureState.Partial)) return FeatureState.Partial;
         if (statusListArr.every((s) => s === FeatureState.Unavailable)) return FeatureState.Unavailable;
         if (statusListArr.some((s) => s === FeatureState.Unavailable)) return FeatureState.Partial;
+        if (statusListArr.some((s) => s === FeatureState.Unsupported)) return FeatureState.Unsupported;
         if (statusListArr.every((s) => s === FeatureState.Unsupported)) return FeatureState.Unsupported;
         return FeatureState.Unavailable;
     }

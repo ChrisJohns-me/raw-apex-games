@@ -21,7 +21,7 @@ import { OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("GameService", GameService, deps),
 })
 export class GameService extends BaseService {
-    protected allFeatureDeps: OverwolfFeatureDep[] = [OverwolfFeatureDep.LegendSelect];
+    protected allFeatureDeps: OverwolfFeatureDep[] = [OverwolfFeatureDep.LegendSelect, OverwolfFeatureDep.Phase];
 
     public readonly phase$ = new BehaviorSubject<GamePhase>(GamePhase.Lobby);
 
@@ -39,10 +39,11 @@ export class GameService extends BaseService {
             .pipe(
                 takeUntil(this.destroy$),
                 filter((infoUpdate) => infoUpdate.feature === "game_info" && !!infoUpdate.info.game_info?.phase),
-                map((infoUpdate) => infoUpdate.info.game_info?.phase as GamePhase | MatchLocationPhase)
+                map((infoUpdate) => infoUpdate.info.game_info?.phase as GamePhase | MatchLocationPhase),
+                filter((newPhase) => !!newPhase)
             )
             .subscribe((newPhase) => {
-                if (newPhase && newPhase === this.phase$.value) return;
+                if (newPhase === this.phase$.value) return;
                 switch (newPhase) {
                     case GamePhase.Lobby:
                     case GamePhase.LoadingScreen:

@@ -1,7 +1,5 @@
 import { isEmpty } from "common/utilities/";
 import { Item, ItemType } from "./item";
-// import * as WeaponJSONData from "./weapon-list.json";
-// import WeaponJSONData from "./weapon-list.json";
 
 enum WeaponAmmo {
     Light = "light",
@@ -20,15 +18,6 @@ enum WeaponClassName {
     Shotgun = "shotgun",
 }
 
-interface WeaponStatistics {
-    rateOfFire: number;
-    bodyDamagePerSecond: number;
-    headDamagePerSecond: number;
-    bodyDamage: number;
-    headDamage: number;
-    legDamage: number;
-}
-
 // type WeaponJSONItem = typeof WeaponJSONData["weapons"][0];
 type WeaponItemConstructor = {
     fromId?: string;
@@ -37,11 +26,9 @@ type WeaponItemConstructor = {
     fromInGameInventoryId?: string;
 };
 
-// TODO: Load statistics from JSON
 export class WeaponItem extends Item {
     public ammoType?: WeaponAmmo;
     public class?: WeaponClassName;
-    public statistics?: WeaponStatistics;
 
     public static isWeaponId(itemId?: string): boolean {
         if (typeof itemId !== "string") return false;
@@ -60,10 +47,17 @@ export class WeaponItem extends Item {
      * @param {string} fromInGameInventoryId Overwolf's inventory item slot name; from the "inventory_0.name" feature.
      */
     constructor({ fromId, fromInGameEventName, fromInGameInfoName, fromInGameInventoryId }: WeaponItemConstructor) {
-        if (isEmpty(fromId) && isEmpty(fromInGameEventName) && isEmpty(fromInGameInfoName) && isEmpty(fromInGameInventoryId)) {
+        if (
+            isEmpty(fromId) &&
+            isEmpty(fromInGameEventName) &&
+            (isEmpty(fromInGameInfoName) || fromInGameInfoName === "unknown") &&
+            isEmpty(fromInGameInventoryId)
+        ) {
             fromId = "empty_handed";
         }
         super({ fromId, fromInGameEventName, fromInGameInfoName, fromInGameInventoryId });
-        if (this.itemType !== ItemType.Weapon) console.error(`Tried to create new WeaponItem; Item "${this.itemId}" is not a weapon`);
+        if (fromId !== "empty_handed" && this.itemType !== ItemType.Weapon) {
+            console.error(`Tried to create new WeaponItem; Item "${this.itemId}" is not a weapon`);
+        }
     }
 }

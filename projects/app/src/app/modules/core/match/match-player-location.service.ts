@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { MatchGameModeGenericId } from "@app/app/common/match/game-mode/game-mode.enum";
+import { GamePhase } from "@app/app/common/game-phase";
 import { MatchLocationPhase } from "@app/app/common/match/location";
 import { MatchMapCoordinates } from "@app/app/common/match/map/map-coordinates";
 import { PlayerState } from "@app/app/common/player-state";
@@ -20,7 +20,10 @@ import { MatchService } from "./match.service";
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerLocationService", MatchPlayerLocationService, deps),
 })
 export class MatchPlayerLocationService extends BaseService {
-    /** Based on internal triggers. Emits new data only when match is started. Cleared on match start. */
+    /**
+     * Based on internal triggers. Emits new data only when match is started. Cleared on match start.
+     * As of right now, Aircraft and Freefly don't work.
+     */
     public readonly myLocationPhase$ = new BehaviorSubject<Optional<MatchLocationPhase>>(undefined);
     /** Local player's match start position. Emits new data only when match is started. Cleared on match start. */
     public readonly myStartingCoordinates$ = new BehaviorSubject<Optional<MatchMapCoordinates>>(undefined);
@@ -76,33 +79,28 @@ export class MatchPlayerLocationService extends BaseService {
                 takeUntil(this.destroy$),
                 switchMap(() => this.overwolfGameData.infoUpdates$),
                 filter((infoUpdate) => infoUpdate.feature === "game_info" && !!infoUpdate.info.game_info?.phase),
-                map((infoUpdate) => infoUpdate.info.game_info?.phase as MatchLocationPhase)
+                map((infoUpdate) => infoUpdate.info.game_info?.phase as GamePhase | MatchLocationPhase),
+                filter((newPhase) => !!newPhase)
             )
             .subscribe((newPhase) => {
-                if (!newPhase || newPhase === this.myLocationPhase$.value) return;
+                if (newPhase === this.myLocationPhase$.value) return;
                 switch (newPhase) {
                     case MatchLocationPhase.Aircraft:
                     case MatchLocationPhase.Freefly:
                     case MatchLocationPhase.Landed:
                         this.myLocationPhase$.next(newPhase);
                         return;
+                    case GamePhase.Lobby:
+                    case GamePhase.LoadingScreen:
+                    case GamePhase.LegendSelection:
+                    case GamePhase.InGame: // This does not exist in Overwolf
+                    case GamePhase.MatchSummary:
+                        this.myLocationPhase$.next(undefined);
+                        return;
                     default:
                         exhaustiveEnumSwitch(newPhase);
                 }
             });
-
-        // On training or firingrange modes, emit Landed phase
-        this.match.startedEvent$
-            .pipe(
-                takeUntil(this.destroy$),
-                switchMap(() => this.match.gameMode$),
-                filter(
-                    (gm) =>
-                        gm?.gameModeGenericId === MatchGameModeGenericId.Training ||
-                        gm?.gameModeGenericId === MatchGameModeGenericId.FiringRange
-                )
-            )
-            .subscribe(() => this.myLocationPhase$.next(MatchLocationPhase.Landed));
     }
 
     private setupMyCoordinates(): void {

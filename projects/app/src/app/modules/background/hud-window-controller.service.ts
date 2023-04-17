@@ -42,7 +42,7 @@ export class HUDWindowControllerService extends BaseService {
     private HUDWindows: HUDTriggers[] = [
         {
             windowService: this.inGameWindow,
-            requiredGamePhases: [GamePhase.Lobby],
+            requiredGamePhases: [GamePhase.Lobby, GamePhase.InGame],
             requiredConfigurations: [(config) => config.featureFlags.enableInGameWindow],
             requiredSettings: [],
             requiredGameModes: [],

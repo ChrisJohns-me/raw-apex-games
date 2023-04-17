@@ -120,6 +120,7 @@ export class MatchRosterService extends BaseService {
                 state: "dead",
                 is_local: prevRosterPlayer?.isMe ? "1" : "0",
                 origin_id: prevRosterPlayer?.originId ?? "",
+                platform_id: prevRosterPlayer?.platformId ?? "",
             };
             return {
                 rosterId: rosterId,
@@ -233,6 +234,7 @@ export class MatchRosterService extends BaseService {
                     isMe: isPlayerNameEqual(rosterItem!.name, this.player.myName$.value),
                     rosterId: rosterId,
                     originId: rosterItem?.origin_id,
+                    platformId: rosterItem?.platform_id,
                     teamId: rosterItem!.team_id,
                     platformHardware: rosterItem?.platform_hw,
                     platformSoftware: rosterItem?.platform_sw,
@@ -281,6 +283,7 @@ export class MatchRosterService extends BaseService {
                     isMe: isPlayerNameEqual(rosterItem!.name, this.player.myName$.value),
                     rosterId: rosterId,
                     originId: rosterItem?.origin_id,
+                    platformId: rosterItem?.platform_id,
                     teamId: rosterItem.team_id,
                     platformHardware: rosterItem.platform_hw,
                     platformSoftware: rosterItem.platform_sw,
@@ -356,6 +359,7 @@ export class MatchRosterService extends BaseService {
                 platformSoftware: teammate.platformSoftware ?? existingTeammate.platformSoftware,
                 rosterId: teammate.rosterId ?? existingTeammate.rosterId,
                 originId: teammate.originId ?? existingTeammate.originId,
+                platformId: teammate.platformId ?? existingTeammate.platformId,
                 teamId: teammate.platformSoftware ?? existingTeammate.teamId,
             };
         }

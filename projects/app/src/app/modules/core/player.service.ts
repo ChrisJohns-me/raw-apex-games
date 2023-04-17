@@ -2,13 +2,13 @@ import { Injectable } from "@angular/core";
 import { isPlayerNameEqual } from "@app/app/common/utilities/player";
 import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
 import { isEmpty } from "common/utilities/";
-import { BehaviorSubject, defer, from, iif, Observable, of } from "rxjs";
-import { filter, map, switchMap, takeUntil } from "rxjs/operators";
+import { BehaviorSubject, defer, from, iif, merge, Observable, of } from "rxjs";
+import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { BaseService } from "./base-service.abstract";
 import { LocalDatabaseService } from "./local-database/local-database.service";
 import { LocalStorageKeys } from "./local-storage/local-storage-keys";
 import { LocalStorageService } from "./local-storage/local-storage.service";
-import { OverwolfGameDataService } from "./overwolf";
+import { OverwolfGameDataService, OWGameEventKillFeed } from "./overwolf";
 
 @Injectable({
     providedIn: "root",
@@ -34,6 +34,7 @@ export class PlayerService extends BaseService {
     private setupMyName(): void {
         const setNameFn = (name?: string): void => {
             if (!isEmpty(name) && !isPlayerNameEqual(name, this.myName$.value)) {
+                console.info("New name", name, "adding to local storage");
                 this.myName$.next(name);
                 this.localStorage.set(LocalStorageKeys.LastKnownPlayerName, name!);
             }
@@ -43,12 +44,13 @@ export class PlayerService extends BaseService {
         of(this.getPlayerNameFromLocalStorage())
             .pipe(
                 takeUntil(this.destroy$),
-                switchMap((myName) => iif(() => isEmpty(myName), this.getPlayerNameFromLastPlayedGame$(), of(myName)))
+                switchMap((myName) => iif(() => isEmpty(myName), this.getPlayerNameFromLastPlayedGame$(), of(myName))),
+                tap((myName) => console.info("Found player name from local storage", myName))
             )
             .subscribe((myName) => setNameFn(myName));
 
         // Watch in-game events
-        this.getPlayerNameFromGameInfo$()
+        merge(this.getPlayerNameFromGameInfo$(), this.getPlayerNameFromKillFeed$())
             .pipe(takeUntil(this.destroy$))
             .subscribe((myName) => setNameFn(myName));
     }
@@ -58,7 +60,17 @@ export class PlayerService extends BaseService {
             takeUntil(this.destroy$),
             filter((infoUpdate) => infoUpdate.feature === "game_info" && !!infoUpdate.info.game_info?.player?.player_name),
             map((infoUpdate) => infoUpdate.info.game_info!.player!.player_name),
+            tap((myName) => console.info("Found player name from game info", myName)),
             filter((myName) => !isEmpty(myName))
+        ) as Observable<string>;
+    }
+
+    private getPlayerNameFromKillFeed$(): Observable<string> {
+        return this.overwolfGameData.newGameEvent$.pipe(
+            takeUntil(this.destroy$),
+            filter((gameEvent) => gameEvent.name === "kill_feed"),
+            filter((gameEvent) => !!(gameEvent.data as OWGameEventKillFeed).local_player_name),
+            map((gameEvent) => (gameEvent.data as OWGameEventKillFeed).local_player_name)
         ) as Observable<string>;
     }
 
@@ -70,6 +82,7 @@ export class PlayerService extends BaseService {
         const matchObs = defer(() => from(this.localDatabase.matches.toCollection().last()));
         return matchObs.pipe(
             map((lastMatch) => lastMatch?.myName),
+            tap((myName) => console.info("Found player name from last played game", myName)),
             filter((myName) => !isEmpty(myName))
         ) as Observable<string>;
     }
