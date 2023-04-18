@@ -58,7 +58,7 @@
     "firebase-admin": "^11.6.0",
     "keycode": "^2.2.1",
     "md5": "^2.3.0",
-    "ngx-build-plus": "^13.0.1",
+    "ngx-build-plus": "^15.0.0",
     "ngx-date-fns": "^9.0.0",
     "rxjs": "^7.5.5",
     "seedrandom": "^3.0.5",
