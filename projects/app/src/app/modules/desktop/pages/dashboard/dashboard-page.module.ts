@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import { RawApexGamesSharedModule } from "@app/app/shared/raw-apex-games-shared.module";
+import { RawApexGamesSharedModule } from "@app/app/shared/app-shared.module";
 import { SharedModule } from "@shared/shared.module";
 import { AccountStatsDisplayComponent } from "./components/account-stats-display.component";
 import { LegendIconsBoardComponent } from "./components/legend-icons-board.component";
