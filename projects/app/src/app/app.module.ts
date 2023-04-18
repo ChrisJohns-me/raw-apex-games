@@ -2,6 +2,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { environment } from "@app/environments/environment";
+import { SocketIoModule } from "ngx-socket-io";
 import { AppComponent } from "./app.component";
 import { MiniInventoryWindowModule } from "./modules/HUD/mini-inventory/mini-inventory.module";
 import { BackgroundModule } from "./modules/background/background.module";
@@ -23,6 +24,7 @@ import { InGameWindowModule } from "./modules/in-game/in-game.module";
         InGameWindowModule,
         MiniInventoryWindowModule,
         OverwolfModule,
+        SocketIoModule.forRoot({ url: "", options: { autoConnect: false } }),
     ],
     providers: [WINDOW_PROVIDERS],
     bootstrap: [AppComponent],

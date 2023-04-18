@@ -8,6 +8,7 @@
     },
     "featureConfigs": {},
     "general": {
+        "wssUrl": "wss://api.overwolf.com",
         "enableMatchSummaryAd": false
     },
     "overwolfQuirks": {}

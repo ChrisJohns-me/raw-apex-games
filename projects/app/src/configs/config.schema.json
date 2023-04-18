@@ -33,11 +33,15 @@
         "general": {
             "type": "object",
             "properties": {
+                "wssUrl": {
+                    "type": "string"
+                },
                 "enableMatchSummaryAd": {
                     "type": "boolean"
                 }
             },
             "required": [
+                "wssUrl",
                 "enableMatchSummaryAd"
             ]
         },
