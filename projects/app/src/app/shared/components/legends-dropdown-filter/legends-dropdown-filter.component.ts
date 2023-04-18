@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
 import { Legend } from "@app/app/common/legend/legend";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
@@ -16,7 +16,7 @@ export class LegendsDropdownFilterComponent implements OnInit, OnChanges, OnDest
     @Input() public clearAll?: Subject<void>;
     @Output("selectedLegends") public selectedLegendsOutput = new EventEmitter<Legend[]>();
 
-    public selectedLegendsFormGroup!: FormGroup;
+    public selectedLegendsFormGroup!: UntypedFormGroup;
 
     /** Shown on the Legend Selection button */
     public get selectedLegendsText(): string {
@@ -89,13 +89,13 @@ export class LegendsDropdownFilterComponent implements OnInit, OnChanges, OnDest
     }
 
     private setupLegendsList(legendList: Legend[]): void {
-        const group: Record<string, FormControl> = {};
+        const group: Record<string, UntypedFormControl> = {};
         legendList.forEach((matchLegend) => {
             if (!matchLegend.legendId) return;
-            group[matchLegend.legendId] = new FormControl(true);
+            group[matchLegend.legendId] = new UntypedFormControl(true);
         });
 
-        this.selectedLegendsFormGroup = new FormGroup(group);
+        this.selectedLegendsFormGroup = new UntypedFormGroup(group);
     }
 
     private setupSelectedLegendsChange(): void {

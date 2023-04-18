@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { FormControl } from "@angular/forms";
+import { UntypedFormControl } from "@angular/forms";
 import { mdiFilterVariantRemove } from "@mdi/js";
 import { Legend } from "@app/app/common/legend/legend";
 import { MatchGameMode } from "@app/app/common/match/game-mode/game-mode";
@@ -55,7 +55,7 @@ export class MatchExplorerPageComponent implements OnInit, OnDestroy {
 
     public isLoadingMatchList = false;
     public numDisplayMatches = DEFAULT_NUM_ROWS;
-    public searchForm = new FormControl();
+    public searchForm = new UntypedFormControl();
     public filteredSumStats?: SumMatchStats;
     public filteredAvgStats?: AvgMatchStats;
 

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
 import { MatchMapGenericId } from "@app/app/common/match/map/map.enum";
 import { MatchMap } from "@app/app/common/match/map/match-map";
 import { Subject, Subscription } from "rxjs";
@@ -24,11 +24,11 @@ export class MapsDropdownFilterComponent implements OnInit, OnChanges, OnDestroy
         return this.genericMapList;
     }
 
-    public selectedMapsFormGroup!: FormGroup;
-    public get mapsForms(): Array<[mapGenericId: string, form: FormControl]> {
+    public selectedMapsFormGroup!: UntypedFormGroup;
+    public get mapsForms(): Array<[mapGenericId: string, form: UntypedFormControl]> {
         return Object.entries(this.selectedMapsFormGroup.controls).filter(([mapGenericId]) =>
             this.mapList.map((m) => m.mapGenericId).includes(mapGenericId as MatchMapGenericId)
-        ) as Array<[string, FormControl]>;
+        ) as Array<[string, UntypedFormControl]>;
     }
 
     /** Shown on the Map Selection button */
@@ -134,11 +134,11 @@ export class MapsDropdownFilterComponent implements OnInit, OnChanges, OnDestroy
     //#endregion
 
     private setupMapsList(mapList: MatchMap[]): void {
-        const group: Record<string, FormControl> = {};
+        const group: Record<string, UntypedFormControl> = {};
         mapList.forEach((matchMap) => {
-            group[matchMap.mapGenericId] = new FormControl(true);
+            group[matchMap.mapGenericId] = new UntypedFormControl(true);
         });
-        this.selectedMapsFormGroup = new FormGroup(group);
+        this.selectedMapsFormGroup = new UntypedFormGroup(group);
     }
 
     private setupSelectedMapsChange(): void {

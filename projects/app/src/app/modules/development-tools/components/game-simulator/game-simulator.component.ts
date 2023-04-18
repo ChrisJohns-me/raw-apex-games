@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
 import { MatchRosterPlayer } from "@app/app/common/match/roster-player";
 import { WINDOW } from "@app/app/modules/core/global-window.provider";
 import { MatchRosterService } from "@app/app/modules/core/match/match-roster.service";
@@ -28,15 +28,15 @@ interface Command {
 })
 export class GameSimulatorComponent implements OnDestroy {
     public latestCommand?: Command;
-    public fullGameForm = new FormGroup({
-        speedAdjust: new FormControl(1),
+    public fullGameForm = new UntypedFormGroup({
+        speedAdjust: new UntypedFormControl(1),
     });
     public get speedAdjust(): number | undefined {
         return this.fullGameForm.get("speedAdjust")?.value;
     }
-    public rosterActionsForm = new FormGroup({
-        playerSelected: new FormControl(),
-        damageAmount: new FormControl(20),
+    public rosterActionsForm = new UntypedFormGroup({
+        playerSelected: new UntypedFormControl(),
+        damageAmount: new UntypedFormControl(20),
     });
     public get rosterPlayerSelected(): MatchRosterPlayer | undefined {
         return this.rosterActionsForm.get("playerSelected")?.value;

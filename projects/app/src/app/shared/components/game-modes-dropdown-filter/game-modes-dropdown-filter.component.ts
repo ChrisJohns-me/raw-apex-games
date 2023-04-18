@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
+import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
 import { MatchGameMode } from "@app/app/common/match/game-mode/game-mode";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
@@ -15,7 +15,7 @@ export class GameModesDropdownFilterComponent implements OnInit, OnChanges, OnDe
     @Input() public clearAll?: Subject<void>;
     @Output("selectedGameModes") public selectedGameModesOutput = new EventEmitter<MatchGameMode[]>();
 
-    public selectedGameModesFormGroup!: FormGroup;
+    public selectedGameModesFormGroup!: UntypedFormGroup;
 
     /** Shown on the Game Mode Selection button */
     public get selectedGameModesText(): string {
@@ -92,13 +92,13 @@ export class GameModesDropdownFilterComponent implements OnInit, OnChanges, OnDe
     }
 
     private setupGameModesList(gameModeList: MatchGameMode[]): void {
-        const group: Record<string, FormControl> = {};
+        const group: Record<string, UntypedFormControl> = {};
         gameModeList.forEach((gameMode) => {
             if (!gameMode.gameModeId) return;
-            group[gameMode.gameModeId] = new FormControl(true);
+            group[gameMode.gameModeId] = new UntypedFormControl(true);
         });
 
-        this.selectedGameModesFormGroup = new FormGroup(group);
+        this.selectedGameModesFormGroup = new UntypedFormGroup(group);
     }
 
     private setupSelectedGameModesChange(): void {

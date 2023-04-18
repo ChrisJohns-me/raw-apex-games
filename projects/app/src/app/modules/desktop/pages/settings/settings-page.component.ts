@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from "@angular/core";
-import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from "@angular/forms";
 import { mdiAttachment, mdiInformationOutline } from "@mdi/js";
 import { APP_NAME } from "@app/app/common/app";
 import { Hotkey } from "@app/app/common/hotkey";
@@ -56,17 +56,17 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
             [SettingKey.EnableInGameMiniInventoryHUD]: [false],
         }),
     });
-    public get [SettingKey.MinimizeToTray](): FormControl {
-        return this.settingsForm.get([SettingKey.MinimizeToTray]) as FormControl;
+    public get [SettingKey.MinimizeToTray](): UntypedFormControl {
+        return this.settingsForm.get([SettingKey.MinimizeToTray]) as UntypedFormControl;
     }
-    public get [SettingKey.EnableAllInGameHUD](): FormControl {
-        return this.settingsForm.get([SettingKey.EnableAllInGameHUD]) as FormControl;
+    public get [SettingKey.EnableAllInGameHUD](): UntypedFormControl {
+        return this.settingsForm.get([SettingKey.EnableAllInGameHUD]) as UntypedFormControl;
     }
-    public get inGameHUDFormGroup(): FormGroup {
-        return this.settingsForm.get("inGameHUDFormGroup") as FormGroup;
+    public get inGameHUDFormGroup(): UntypedFormGroup {
+        return this.settingsForm.get("inGameHUDFormGroup") as UntypedFormGroup;
     }
-    public get [SettingKey.EnableLocalDBReporting](): FormControl {
-        return this.settingsForm.get([SettingKey.EnableLocalDBReporting]) as FormControl;
+    public get [SettingKey.EnableLocalDBReporting](): UntypedFormControl {
+        return this.settingsForm.get([SettingKey.EnableLocalDBReporting]) as UntypedFormControl;
     }
     //#endregion
     /** Which item to preview */
@@ -112,7 +112,7 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         private readonly cdr: ChangeDetectorRef,
         private readonly configuration: ConfigurationService,
         private readonly fileService: FileService,
-        private readonly formBuilder: FormBuilder,
+        private readonly formBuilder: UntypedFormBuilder,
         private readonly hotkey: HotkeyService,
         private readonly localDatabase: LocalDatabaseService,
         private readonly desktopWindow: DesktopWindowService,

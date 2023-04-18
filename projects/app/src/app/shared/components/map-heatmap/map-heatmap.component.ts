@@ -9,7 +9,7 @@ import {
     OnInit,
     ViewChild,
 } from "@angular/core";
-import { FormControl } from "@angular/forms";
+import { UntypedFormControl } from "@angular/forms";
 import { MatchMapCoordinates } from "@app/app/common/match/map/map-coordinates";
 import { MatchMap } from "@app/app/common/match/map/match-map";
 import { environment } from "@app/environments/environment";
@@ -89,14 +89,14 @@ export class MapHeatmapComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     // Debug
-    public showMapDebugToolsForm = new FormControl(false);
+    public showMapDebugToolsForm = new UntypedFormControl(false);
     public heatSizeRange;
-    public xShiftRangeForm = new FormControl(0);
-    public xStartRangeForm = new FormControl(-600);
-    public xEndRangeForm = new FormControl(600);
-    public yShiftRangeForm = new FormControl(0);
-    public yStartRangeForm = new FormControl(-600);
-    public yEndRangeForm = new FormControl(600);
+    public xShiftRangeForm = new UntypedFormControl(0);
+    public xStartRangeForm = new UntypedFormControl(-600);
+    public xEndRangeForm = new UntypedFormControl(600);
+    public yShiftRangeForm = new UntypedFormControl(0);
+    public yStartRangeForm = new UntypedFormControl(-600);
+    public yEndRangeForm = new UntypedFormControl(600);
 
     // Graph
     private graphSvgPrimary?: d3.Selection<SVGGElement, unknown, null, undefined>;
@@ -115,7 +115,7 @@ export class MapHeatmapComponent implements OnInit, AfterViewInit, OnDestroy {
     private destroy$ = new Subject<void>();
 
     constructor(private readonly cdr: ChangeDetectorRef) {
-        this.heatSizeRange = new FormControl(this.graphHeatSize);
+        this.heatSizeRange = new UntypedFormControl(this.graphHeatSize);
     }
 
     public getMapFilename = MatchMap.getLayoutFilename;
