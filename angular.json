@@ -22,7 +22,8 @@
                     "builder": "ngx-build-plus:browser",
                     "options": {
                         "allowedCommonJsDependencies": [
-                            "zone.js/dist/zone-error"
+                            "zone.js/dist/zone-error",
+                            "keycode"
                         ],
                         "outputPath": "dist/rawApexGamesApp_dev",
                         "index": "projects/app/src/index.html",
@@ -55,7 +56,8 @@
                         ],
                         "stylePreprocessorOptions": {
                             "includePaths": [
-                                "projects/app/src/assets/styles/"
+                                "projects/app/src/assets/styles/",
+                                "./node_modules"
                             ]
                         },
                         "scripts": [
@@ -124,7 +126,8 @@
                         ],
                         "stylePreprocessorOptions": {
                             "includePaths": [
-                                "projects/app/src/assets/styles/"
+                                "projects/app/src/assets/styles/",
+                                "./node_modules"
                             ]
                         },
                         "scripts": [],

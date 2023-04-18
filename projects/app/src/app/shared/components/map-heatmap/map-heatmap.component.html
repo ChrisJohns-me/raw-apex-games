@@ -34,11 +34,11 @@
 <ng-template #mapDebugTools>
     <div class="row px-3" [hidden]="!showMapDebugToolsForm.value">
         <div class="offset-9 col-3">
-            <label for="heatSize" class="form-label text-white m-0">Heat Sizing ({{ heatSizeRange?.value | number: "0.0-3" }})</label>
+            <label for="heatSize" class="form-label text-white m-0">Heat Sizing ({{ heatSizeRange.value | number: "0.0-3" }})</label>
             <input type="range" class="form-range" min="0" max="50" step="0.1" id="heatSize" [formControl]="heatSizeRange" />
         </div>
         <div class="col-4">
-            <label for="xShiftRange" class="form-label text-white m-0">X Shift ({{ xShiftRangeForm?.value | number: "0.0-3" }})</label>
+            <label for="xShiftRange" class="form-label text-white m-0">X Shift ({{ xShiftRangeForm.value | number: "0.0-3" }})</label>
             <input
                 type="range"
                 class="form-range form-control-sm"
@@ -51,7 +51,7 @@
         </div>
         <div class="col-4">
             <label for="xStartRange" class="form-label text-white m-0">
-                X Start ({{ xStartRangeForm?.value + xShiftRangeForm?.value | number: "0.0-3" }})
+                X Start ({{ xStartRangeForm.value + xShiftRangeForm.value | number: "0.0-3" }})
                 <span class="text-muted" *ngIf="xStartRangeForm?.value + xShiftRangeForm?.value != map?.chartConfig?.imageAxisScale?.xStart"
                     >was: {{ map?.chartConfig?.imageAxisScale?.xStart | number: "0.0-3" }}</span
                 >
@@ -68,7 +68,7 @@
         </div>
         <div class="col-4">
             <label for="xEndRange" class="form-label text-white m-0">
-                X End ({{ xEndRangeForm?.value + xShiftRangeForm?.value | number: "0.0-3" }})
+                X End ({{ xEndRangeForm.value + xShiftRangeForm.value | number: "0.0-3" }})
                 <span class="text-muted" *ngIf="xEndRangeForm?.value + xShiftRangeForm?.value != map?.chartConfig?.imageAxisScale?.xEnd"
                     >was: {{ map?.chartConfig?.imageAxisScale?.xEnd | number: "0.0-3" }}</span
                 >
@@ -84,7 +84,7 @@
             />
         </div>
         <div class="col-4">
-            <label for="yShiftRange" class="form-label text-white m-0">Y Shift ({{ yShiftRangeForm?.value | number: "0.0-3" }})</label>
+            <label for="yShiftRange" class="form-label text-white m-0">Y Shift ({{ yShiftRangeForm.value | number: "0.0-3" }})</label>
             <input
                 type="range"
                 class="form-range form-control-sm"
@@ -97,7 +97,7 @@
         </div>
         <div class="col-4">
             <label for="yStartRange" class="form-label text-white m-0">
-                Y Start ({{ yStartRangeForm?.value + yShiftRangeForm?.value | number: "0.0-3" }})
+                Y Start ({{ yStartRangeForm.value + yShiftRangeForm.value | number: "0.0-3" }})
                 <span class="text-muted" *ngIf="yStartRangeForm?.value + yShiftRangeForm?.value != map?.chartConfig?.imageAxisScale?.yStart"
                     >was:{{ map?.chartConfig?.imageAxisScale?.yStart | number: "0.0-3" }}</span
                 >
@@ -114,7 +114,7 @@
         </div>
         <div class="col-4">
             <label for="yEndRange" class="form-label text-white m-0">
-                Y End ({{ yEndRangeForm?.value + yShiftRangeForm?.value | number: "0.0-3" }})
+                Y End ({{ yEndRangeForm.value + yShiftRangeForm.value | number: "0.0-3" }})
                 <span class="text-muted" *ngIf="yEndRangeForm?.value + yShiftRangeForm?.value != map?.chartConfig?.imageAxisScale?.yEnd"
                     >was:{{ map?.chartConfig?.imageAxisScale?.yEnd | number: "0.0-3" }}</span
                 >
