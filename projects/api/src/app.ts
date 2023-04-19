@@ -1,27 +1,35 @@
 import bodyParser from "body-parser";
-import express from "express";
-import { FirebaseOptions, initializeApp } from "firebase/app";
-import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import express, { Application } from "express";
 import apiRoutes from "./api-routes.js";
 import corsMiddleware from "./middleware/cors.middleware.js";
+import FirebaseUtil from "./utils/firebase.util.js";
 
-const app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+class App {
+    public app: Application = express();
 
-// Middleware
-corsMiddleware(app);
+    constructor() {
+        this.initApp();
+        this.initFirestore();
+        this.initMiddleware();
+        this.initRoutes();
+    }
 
-// Routes
-app.use("/api", apiRoutes);
+    private initApp(): void {
+        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.urlencoded({ extended: true }));
+    }
 
-// TODO: Move database initialization to a separate file
-const firebaseConfig: FirebaseOptions = {
-    projectId: "dev-project",
-    databaseURL: "[::1]:8643",
-};
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getFirestore(firebaseApp);
-connectFirestoreEmulator(db, "localhost", 8080);
+    private initFirestore() {
+        FirebaseUtil;
+    }
 
-export default app;
+    private initMiddleware() {
+        corsMiddleware(this.app);
+    }
+
+    private initRoutes() {
+        this.app.use("/api", apiRoutes);
+    }
+}
+
+export default new App().app;

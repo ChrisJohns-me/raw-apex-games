@@ -1,0 +1,9 @@
+{
+    "$schema": "./config.schema.json",
+    "env": "prod",
+    "firebase": {
+        "projectId": "PROD_PROJECT",
+        "host": "",
+        "port": 8726
+    }
+}

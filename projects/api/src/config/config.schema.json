@@ -1,0 +1,37 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "env": {
+            "type": "string",
+            "enum": [
+                "dev",
+                "prod"
+            ]
+        },
+        "firebase": {
+            "type": "object",
+            "properties": {
+                "projectId": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "number"
+                }
+            },
+            "required": [
+                "projectId",
+                "host",
+                "port"
+            ]
+        }
+    },
+    "required": [
+        "env",
+        "firebase"
+    ],
+    "additionalProperties": false
+}

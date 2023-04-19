@@ -4,8 +4,9 @@ import { BehaviorSubject, Observable, ReplaySubject, Subject, of } from "rxjs";
 import { catchError, map, takeUntil, timeout } from "rxjs/operators";
 import { isEmpty } from "../../../../../../common/utilities/";
 import { SingletonServiceProviderFactory } from "../../../app/singleton-service.provider.factory";
+import ConfigJSONDataDev from "../../../configs/config.dev.json";
 import { Configuration } from "../../../configs/config.interface";
-import ConfigJSONData from "../../../configs/config.json";
+import ConfigJSONDataProd from "../../../configs/config.prod.json";
 import { environment } from "../../../environments/environment";
 
 export enum ConfigLoadStatus {
@@ -87,6 +88,8 @@ export class ConfigurationService implements OnDestroy {
 
     private loadDefaultConfig(): void {
         if (isEmpty(this.defaultConfig)) this.defaultConfig = {} as Configuration;
+
+        const ConfigJSONData = environment.DEV ? ConfigJSONDataDev : ConfigJSONDataProd;
         Object.entries(ConfigJSONData).forEach(([key, value]) => {
             (this.defaultConfig as any)[key] = value;
         });

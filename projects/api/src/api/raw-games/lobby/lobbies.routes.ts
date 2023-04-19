@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { listLobbiesController } from "./lobby.controllers.js";
+import LobbyController from "./lobby.controller.js";
 
 const lobbiesRoutes = Router();
 
-lobbiesRoutes.get("/", listLobbiesController);
+lobbiesRoutes.get("/", LobbyController.listLobbies);
 
 export default lobbiesRoutes;
