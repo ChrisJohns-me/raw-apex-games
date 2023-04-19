@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
+import { SingletonServiceProviderFactory } from "../../../../singleton-service.provider.factory";
 import { MatchKillfeedService } from "../../match/match-killfeed.service";
 import { MatchMapService } from "../../match/match-map.service";
 import { MatchPlayerInventoryService } from "../../match/match-player-inventory.service";

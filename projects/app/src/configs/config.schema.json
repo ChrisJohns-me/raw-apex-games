@@ -33,6 +33,9 @@
         "general": {
             "type": "object",
             "properties": {
+                "apiUrl": {
+                    "type": "string"
+                },
                 "wssUrl": {
                     "type": "string"
                 },
@@ -41,6 +44,7 @@
                 }
             },
             "required": [
+                "apiUrl",
                 "wssUrl",
                 "enableMatchSummaryAd"
             ]

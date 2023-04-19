@@ -1,6 +1,6 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { BehaviorSubject } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../common/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
 import { MatchPlayerInventoryService } from "../../match/match-player-inventory.service";
 
 export class MockMatchPlayerInventoryService implements MockedClass<MatchPlayerInventoryService> {

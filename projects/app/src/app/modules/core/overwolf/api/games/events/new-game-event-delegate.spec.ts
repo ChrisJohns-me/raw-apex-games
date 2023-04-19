@@ -1,5 +1,5 @@
-import { createOverwolfObj, createOverwolfSpyObj, supressConsoleLog } from "@app/app/common/testing-helpers";
 import { TestScheduler } from "rxjs/testing";
+import { createOverwolfObj, createOverwolfSpyObj, supressConsoleLog } from "../../../../../../common/testing-helpers";
 import { OWGameEvent } from "../../../types/overwolf-types";
 import { NewGameEventDelegate } from "./new-game-event-delegate";
 

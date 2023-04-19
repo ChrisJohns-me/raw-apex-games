@@ -1,8 +1,8 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { ReportingEngineId } from "@app/app/modules/core/reporting/reporting-engine/reporting-engine";
-import { ReportingService } from "@app/app/modules/core/reporting/reporting.service";
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { Subject } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../common/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { ReportingEngineId } from "../../reporting/reporting-engine/reporting-engine";
+import { ReportingService } from "../../reporting/reporting.service";
 
 export class MockReportingService implements MockedClass<ReportingService> {
     public reportingEvent$: ReportingService["reportingEvent$"] = new Subject<ExtractSubjectType<ReportingService["reportingEvent$"]>>();

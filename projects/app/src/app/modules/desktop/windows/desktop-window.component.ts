@@ -10,19 +10,19 @@ import {
     ViewChild,
 } from "@angular/core";
 import { mdiDiscord, mdiYoutube } from "@mdi/js";
-import { APP_NAME } from "@app/app/common/app";
-import { FeatureState } from "@app/app/common/feature-status";
-import { OverwolfWindowName } from "@app/app/common/overwolf-window";
-import { aXNWSVA } from "@app/app/common/vip";
-import { GoogleAnalyticsService } from "@app/app/modules/core/google-analytics.service";
-import { fadeInOutAnimation } from "@shared/animations/fade-in-out.animation";
-import { scaleInOutAnimationFactory } from "@shared/animations/scale-in-out-factory.animation";
 import { Modal } from "bootstrap";
-import { isEmpty, parseBoolean, wordsToUpperCase } from "common/utilities/";
-import { exhaustiveEnumSwitch } from "common/utilities/switch";
 import { Subject, combineLatest, interval, of } from "rxjs";
 import { delay, delayWhen, filter, map, take, takeUntil } from "rxjs/operators";
+import { isEmpty, parseBoolean, wordsToUpperCase } from "../../../../../../../common/utilities/";
+import { exhaustiveEnumSwitch } from "../../../../../../../common/utilities/switch";
+import { fadeInOutAnimation } from "../../../../../../shared/animations/fade-in-out.animation";
+import { scaleInOutAnimationFactory } from "../../../../../../shared/animations/scale-in-out-factory.animation";
+import { APP_NAME } from "../../../common/app";
+import { FeatureState } from "../../../common/feature-status";
 import { Hotkey, HotkeyEnum } from "../../../common/hotkey";
+import { OverwolfWindowName } from "../../../common/overwolf-window";
+import { aXNWSVA } from "../../../common/vip";
+import { GoogleAnalyticsService } from "../../../modules/core/google-analytics.service";
 import { BackgroundService } from "../../background/background.service";
 import { HotkeyService } from "../../background/hotkey.service";
 import { ConfigLoadStatus, ConfigurationService } from "../../core/configuration.service";

@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
-import { supressConsoleLog } from "@app/app/common/testing-helpers";
 import { TestScheduler } from "rxjs/testing";
+import { supressConsoleLog } from "../../../common/testing-helpers";
 import { MockMatchLegendSelectService } from "../mocks/services/mock-match-legend-select.service";
 import { MockMatchPlayerLocationService } from "../mocks/services/mock-match-player-location.service";
 import { MockMatchService } from "../mocks/services/mock-match.service";

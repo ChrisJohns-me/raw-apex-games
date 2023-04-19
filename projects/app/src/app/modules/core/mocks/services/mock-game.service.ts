@@ -1,9 +1,9 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { GamePhase } from "@app/app/common/game-phase";
-import { OverwolfFeatureStatusService } from "@app/app/modules/core/overwolf/overwolf-feature-status.service";
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { BehaviorSubject } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../common/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { GamePhase } from "../../../../common/game-phase";
 import { GameService } from "../../game.service";
+import { OverwolfFeatureStatusService } from "../../overwolf/overwolf-feature-status.service";
 
 export class MockGameService implements MockedClass<GameService> {
     public phase$: GameService["phase$"] = new BehaviorSubject<ExtractSubjectType<GameService["phase$"]>>(GamePhase.Lobby);

@@ -21,6 +21,7 @@ export interface FeatureFlags {
 export interface FeatureConfigs {}
 
 export interface General {
+    apiUrl: string;
     wssUrl: string;
     enableMatchSummaryAd: boolean;
 }

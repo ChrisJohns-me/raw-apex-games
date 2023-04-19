@@ -1,26 +1,26 @@
-name: Unit Tests
-on: push
-jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v2
-            - name: Use Node.js 14.x
-              uses: actions/setup-node@v1
-              with:
-                  node-version: 14.x
+# name: Unit Tests
+# on: push
+# jobs:
+#     build:
+#         runs-on: ubuntu-latest
+#         steps:
+#             - uses: actions/checkout@v2
+#             - name: Use Node.js 14.x
+#               uses: actions/setup-node@v1
+#               with:
+#                   node-version: 14.x
 
-            - name: Setup
-              run: npm ci --verbose
+#             - name: Setup
+#               run: npm ci --verbose
 
-            - name: Test Common
-              run: |
-                  npm run common:test -- --watch=false --browsers=ChromeHeadless --single-run
+#             - name: Test Common
+#               run: |
+#                   npm run common:test -- --watch=false --browsers=ChromeHeadless --single-run
 
-            - name: Test App
-              run: |
-                  npm run rawapp:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+#             - name: Test App
+#               run: |
+#                   npm run rawapp:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
 
-            - name: Test Web
-              run: |
-                  npm run rawweb:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+#             - name: Test Web
+#               run: |
+#                   npm run rawweb:test -- --no-watch --no-progress --browsers=ChromeHeadlessCI

@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
-import { InventorySlots } from "@app/app/common/inventory-slots";
-import { Item } from "@app/app/common/items/item";
-import { WeaponItem } from "@app/app/common/items/weapon-item";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
-import { cleanInt, findKeyByKeyRegEx } from "common/utilities/";
 import { BehaviorSubject, Observable } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
+import { cleanInt, findKeyByKeyRegEx } from "../../../../../../../common/utilities/";
+import { InventorySlots } from "../../../common/inventory-slots";
+import { Item } from "../../../common/items/item";
+import { WeaponItem } from "../../../common/items/weapon-item";
+import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
 import { BaseService } from "../base-service.abstract";
 import { OWInfoUpdates2Event, OWMatchInfoMeInventory, OWMatchInfoMeWeapons, OverwolfGameDataService } from "../overwolf";
 import { MatchService } from "./match.service";

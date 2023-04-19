@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
-import { isEmpty } from "common/utilities";
 import { BehaviorSubject, Observable, of, Subject, throwError } from "rxjs";
 import { takeUntil, tap, timeout } from "rxjs/operators";
+import { isEmpty } from "../../../../../../../common/utilities";
+import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
 import { BaseService } from "../base-service.abstract";
 import { OWStopStreamingResult, OWStreamResult } from "../overwolf";
 import { OverwolfStreamingService } from "../overwolf/overwolf-streaming.service";

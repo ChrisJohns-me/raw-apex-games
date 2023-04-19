@@ -1,14 +1,14 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { Legend } from "@app/app/common/legend/legend";
-import { MatchGameModeGenericId } from "@app/app/common/match/game-mode/game-mode.enum";
-import { AvgMatchStats } from "@app/app/common/utilities/match-stats";
-import { ConfigurationService } from "@app/app/modules/core/configuration.service";
-import { MatchService } from "@app/app/modules/core/match/match.service";
-import { PlayerLocalStatsService } from "@app/app/modules/core/player-local-stats.service";
-import { PlayerService } from "@app/app/modules/core/player.service";
-import { Stopwatch } from "common/utilities";
 import { Observable, OperatorFunction, Subject, Subscription, combineLatest, concat, from, of } from "rxjs";
 import { concatMap, filter, finalize, map, startWith, switchMap, take, takeUntil, tap } from "rxjs/operators";
+import { Stopwatch } from "../../../../../../../../common/utilities";
+import { Legend } from "../../../../common/legend/legend";
+import { MatchGameModeGenericId } from "../../../../common/match/game-mode/game-mode.enum";
+import { AvgMatchStats } from "../../../../common/utilities/match-stats";
+import { ConfigurationService } from "../../../../modules/core/configuration.service";
+import { MatchService } from "../../../../modules/core/match/match.service";
+import { PlayerLocalStatsService } from "../../../../modules/core/player-local-stats.service";
+import { PlayerService } from "../../../../modules/core/player.service";
 
 type LegendIdsRow = string[];
 

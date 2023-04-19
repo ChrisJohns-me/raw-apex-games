@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from "@angular/core";
-import { Legend } from "@app/app/common/legend/legend";
-import { generateLegendBGLinearColor } from "@app/app/common/legend/legend-list";
+import { Legend } from "../../../../../common/legend/legend";
+import { generateLegendBGLinearColor } from "../../../../../common/legend/legend-list";
 
 type LegendIdsRow = string[];
 

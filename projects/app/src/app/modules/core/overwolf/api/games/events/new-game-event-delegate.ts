@@ -1,3 +1,4 @@
+import { Subject } from "rxjs";
 import {
     isEmpty,
     recursiveEmptyObjectsToNull,
@@ -5,8 +6,7 @@ import {
     recursiveJSONParse,
     recursiveParseBoolean,
     recursiveParseNull,
-} from "common/utilities/";
-import { Subject } from "rxjs";
+} from "../../../../../../../../../../common/utilities/";
 import { OWGameEvent } from "../../../types/overwolf-types";
 import { OverwolfEventListenerDelegate } from "../../overwolf-delegate";
 

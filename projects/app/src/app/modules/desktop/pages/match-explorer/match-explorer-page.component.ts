@@ -1,18 +1,18 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { UntypedFormControl } from "@angular/forms";
 import { mdiFilterVariantRemove } from "@mdi/js";
-import { Legend } from "@app/app/common/legend/legend";
-import { MatchGameMode } from "@app/app/common/match/game-mode/game-mode";
-import { MatchMap } from "@app/app/common/match/map/match-map";
-import { MatchFilters } from "@app/app/common/utilities/match-filters";
-import { AvgMatchStats, avgStats, SumMatchStats, sumStats } from "@app/app/common/utilities/match-stats";
-import { GoogleAnalyticsService } from "@app/app/modules/core/google-analytics.service";
-import { MatchDataStore } from "@app/app/modules/core/local-database/match-data-store";
-import { MatchService } from "@app/app/modules/core/match/match.service";
-import { DataItem } from "@app/app/shared/components/match-listing/match-listing.component";
-import { isEmpty } from "common/utilities/";
 import { Observable, Subject } from "rxjs";
 import { debounceTime, finalize, switchMap, takeUntil } from "rxjs/operators";
+import { isEmpty } from "../../../../../../../../common/utilities/";
+import { Legend } from "../../../../common/legend/legend";
+import { MatchGameMode } from "../../../../common/match/game-mode/game-mode";
+import { MatchMap } from "../../../../common/match/map/match-map";
+import { MatchFilters } from "../../../../common/utilities/match-filters";
+import { AvgMatchStats, SumMatchStats, avgStats, sumStats } from "../../../../common/utilities/match-stats";
+import { GoogleAnalyticsService } from "../../../../modules/core/google-analytics.service";
+import { MatchDataStore } from "../../../../modules/core/local-database/match-data-store";
+import { MatchService } from "../../../../modules/core/match/match.service";
+import { DataItem } from "../../../../shared/components/match-listing/match-listing.component";
 
 type TeamRosterPlayer = NonNullable<MatchDataStore["teamRoster"]>[0];
 const DEFAULT_NUM_ROWS = 25;

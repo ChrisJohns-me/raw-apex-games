@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { WelcomeContentComponent } from "@app/app/shared/components/welcome-content/welcome-content.component";
+import { WelcomeContentComponent } from "../../../shared/components/welcome-content/welcome-content.component";
 
 describe("WelcomeContentComponent", () => {
     let component: WelcomeContentComponent;

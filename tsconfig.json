@@ -1,7 +1,6 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
@@ -13,8 +12,9 @@
     "moduleResolution": "node",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "outDir": "./dist/out-tsc",
+    "outDir": "./out-tsc",
     "resolveJsonModule": true,
+    "useDefineForClassFields": false,
     "sourceMap": true,
     "strict": true,
     "target": "ES2022",
@@ -25,25 +25,7 @@
     "typeRoots": [
       "node_modules/@types",
       "node_modules/@overwolf"
-    ],
-    "paths": {
-      "@api/*": [
-        "projects/api/src/*"
-      ],
-      "@app/*": [
-        "projects/app/src/*"
-      ],
-      "@discord-bot/*": [
-        "projects/discord-bot/src/*"
-      ],
-      "@web/*": [
-        "projects/web/src/*"
-      ],
-      "@shared/*": [
-        "projects/shared/*"
-      ]
-    },
-    "useDefineForClassFields": false
+    ]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

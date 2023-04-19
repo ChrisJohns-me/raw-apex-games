@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from "@angular/core";
 import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
-import { MatchGameMode } from "@app/app/common/match/game-mode/game-mode";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { MatchGameMode } from "../../../common/match/game-mode/game-mode";
 
 @Component({
     selector: "app-game-modes-dropdown-filter",

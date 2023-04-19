@@ -1,7 +1,7 @@
-import { MatchLocationPhase } from "@app/app/common/match/location";
-import { GoogleAnalyticsService } from "@app/app/modules/core/google-analytics.service";
 import { differenceInMinutes } from "date-fns";
 import { BehaviorSubject, Subject } from "rxjs";
+import { MatchLocationPhase } from "../../../../../common/match/location";
+import { GoogleAnalyticsService } from "../../../google-analytics.service";
 import { ReportableDataFactoryMap } from "../reportable-data";
 import { ReportingEngine, ReportingEngineId, ReportingStatus } from "../reporting-engine";
 import { RunCondition } from "../run-condition";

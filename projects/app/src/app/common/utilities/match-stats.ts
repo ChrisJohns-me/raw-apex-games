@@ -1,6 +1,6 @@
-import { MatchDataStore } from "@app/app/modules/core/local-database/match-data-store";
-import { mathClamp } from "common/utilities/";
 import isDate from "date-fns/isDate";
+import { mathClamp } from "../../../../../../common/utilities/";
+import { MatchDataStore } from "../../modules/core/local-database/match-data-store";
 
 // Safe-guards
 const MAX_PLACEMENT = 50;

@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
-import { Legend } from "@app/app/common/legend/legend";
-import { MatchState } from "@app/app/common/match/state";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
-import { findValueByKeyRegEx, isEmpty } from "common/utilities/";
 import { Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
+import { findValueByKeyRegEx, isEmpty } from "../../../../../../../common/utilities/";
+import { Legend } from "../../../common/legend/legend";
+import { MatchState } from "../../../common/match/state";
+import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
 import { BaseService } from "../base-service.abstract";
 import { OWMatchInfo, OWMatchInfoLegendSelect, OverwolfGameDataService } from "../overwolf";
 import { MatchService } from "./match.service";

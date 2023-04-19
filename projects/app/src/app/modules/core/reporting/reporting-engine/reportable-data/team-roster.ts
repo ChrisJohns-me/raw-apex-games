@@ -1,5 +1,5 @@
-import { MatchRosterTeammate } from "@app/app/common/match/roster-teammate";
 import { map } from "rxjs/operators";
+import { MatchRosterTeammate } from "../../../../../common/match/roster-teammate";
 import { MatchRosterService } from "../../../match/match-roster.service";
 import { ReportableDataSnapshot } from "../reportable-data";
 

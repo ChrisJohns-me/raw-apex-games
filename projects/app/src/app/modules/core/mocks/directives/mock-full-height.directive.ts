@@ -1,5 +1,5 @@
 import { Directive, Input } from "@angular/core";
-import { FullHeightDirective } from "@app/app/shared/directives/full-height.directive";
+import { FullHeightDirective } from "../../../../shared/directives/full-height.directive";
 
 @Directive({ selector: "[appFullHeight]" })
 export class MockFullHeightDirective implements MockedClass<FullHeightDirective> {

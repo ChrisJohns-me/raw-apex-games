@@ -1,6 +1,6 @@
-import { MatchRosterPlayer } from "@app/app/common/match/roster-player";
-import { PlatformHardware, PlatformSoftware } from "@app/app/common/platform";
 import { map } from "rxjs/operators";
+import { MatchRosterPlayer } from "../../../../../common/match/roster-player";
+import { PlatformHardware, PlatformSoftware } from "../../../../../common/platform";
 import { MatchRosterService } from "../../../match/match-roster.service";
 import { ReportableDataSnapshot } from "../reportable-data";
 

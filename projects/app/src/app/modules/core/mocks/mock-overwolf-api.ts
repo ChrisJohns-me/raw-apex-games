@@ -1,4 +1,4 @@
-import { createOverwolfObj } from "@app/app/common/testing-helpers";
+import { createOverwolfObj } from "../../../common/testing-helpers";
 import { OverwolfConfig } from "../overwolf/overwolf-config";
 
 type CallbackFn = (...args: any[]) => void;

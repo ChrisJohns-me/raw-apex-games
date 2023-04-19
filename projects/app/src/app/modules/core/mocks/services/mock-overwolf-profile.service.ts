@@ -1,6 +1,6 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { OverwolfProfileService } from "@app/app/modules/core/overwolf/overwolf-profile.service";
 import { Observable, of } from "rxjs";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { OverwolfProfileService } from "../../overwolf/overwolf-profile.service";
 
 export class MockOverwolfProfileService implements MockedClass<OverwolfProfileService> {
     public getCurrentUser(): Observable<overwolf.profile.GetCurrentUserResult> {

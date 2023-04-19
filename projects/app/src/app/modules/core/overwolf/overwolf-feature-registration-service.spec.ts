@@ -1,6 +1,6 @@
 import { TestBed, fakeAsync, tick } from "@angular/core/testing";
-import { createOverwolfSpyObj, supressConsoleLog } from "@app/app/common/testing-helpers";
 import { TestScheduler } from "rxjs/testing";
+import { createOverwolfSpyObj, supressConsoleLog } from "../../../common/testing-helpers";
 import { OWConfig, OW_CONFIG } from "./overwolf-config";
 import { OWFeatureRegistrationStatus, OverwolfFeatureRegistrationService } from "./overwolf-feature-registration.service";
 

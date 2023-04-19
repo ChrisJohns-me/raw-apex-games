@@ -1,5 +1,5 @@
-import { OverwolfWindow, OverwolfWindowState } from "@app/app/common/overwolf-window";
 import { Observable, of } from "rxjs";
+import { OverwolfWindow, OverwolfWindowState } from "../../../../common/overwolf-window";
 
 export class MockOverwolfWindow implements MockedClass<OverwolfWindow> {
     public name = "";

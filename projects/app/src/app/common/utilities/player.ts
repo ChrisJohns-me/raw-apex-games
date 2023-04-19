@@ -1,4 +1,4 @@
-import { isEmpty } from "common/utilities/";
+import { isEmpty } from "../../../../../../common/utilities/";
 
 /**
  * Get valid clantag from player's name.

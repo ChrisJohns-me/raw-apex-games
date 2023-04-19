@@ -1,12 +1,12 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
-import { Configuration } from "@app/configs/config.interface";
-import ConfigJSONData from "@app/configs/config.json";
-import { environment } from "@app/environments/environment";
-import { isEmpty } from "common/utilities/";
 import { BehaviorSubject, Observable, ReplaySubject, Subject, of } from "rxjs";
 import { catchError, map, takeUntil, timeout } from "rxjs/operators";
+import { isEmpty } from "../../../../../../common/utilities/";
+import { SingletonServiceProviderFactory } from "../../../app/singleton-service.provider.factory";
+import { Configuration } from "../../../configs/config.interface";
+import ConfigJSONData from "../../../configs/config.json";
+import { environment } from "../../../environments/environment";
 
 export enum ConfigLoadStatus {
     NotStarted,
@@ -17,7 +17,7 @@ export enum ConfigLoadStatus {
     LoadedFallback,
 }
 
-const CONFIG_URL = environment.DEV ? `https://TODO.com/config.prod.json` : `https://TODO.com/config.prod.json`;
+const CONFIG_URL = environment.DEV ? `https://TODO.com/config.json` : `https://TODO.com/config.prod.json`;
 
 @Injectable({
     providedIn: "root",
@@ -60,7 +60,7 @@ export class ConfigurationService implements OnDestroy {
         }
 
         let isFallbackConfig = false;
-        return this.getAPIConfig().pipe(
+        return this.getRemoteConfig().pipe(
             takeUntil(this.destroy$),
             catchError((err) => {
                 console.warn(`Error while trying to load configuration from API; ${err}`);
@@ -81,7 +81,7 @@ export class ConfigurationService implements OnDestroy {
         );
     }
 
-    private getAPIConfig(): Observable<Configuration> {
+    private getRemoteConfig(): Observable<Configuration> {
         return this.http.get<Configuration>(CONFIG_URL).pipe(timeout(30000));
     }
 

@@ -1,8 +1,8 @@
 import { Inject, Injectable } from "@angular/core";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
 import { Observable, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { Hotkey, HotkeyEnum } from "../../common/hotkey";
+import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
 import { BaseService } from "../core/base-service.abstract";
 import { OWConfig, OW_CONFIG } from "../core/overwolf/overwolf-config";
 import { OverwolfHotKeyService } from "../core/overwolf/overwolf-hotkey.service";

@@ -1,10 +1,5 @@
 import { Injectable } from "@angular/core";
-import { MatchKillfeedService } from "@app/app/modules/core/match/match-killfeed.service";
-import { MatchPlayerService } from "@app/app/modules/core/match/match-player.service";
-import { MatchRosterService } from "@app/app/modules/core/match/match-roster.service";
-import { MatchService } from "@app/app/modules/core/match/match.service";
-import { SettingsService } from "@app/app/modules/core/settings.service";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
+import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
 import { ConfigurationService } from "../core/configuration.service";
 import { FileService } from "../core/file.service";
 import { GameProcessService } from "../core/game-process.service";
@@ -13,6 +8,7 @@ import { GameplayInputService } from "../core/gameplay-input.service";
 import { GoogleAnalyticsService } from "../core/google-analytics.service";
 import { LocalDatabaseService } from "../core/local-database/local-database.service";
 import { LocalStorageService } from "../core/local-storage/local-storage.service";
+import { MatchKillfeedService } from "../core/match/match-killfeed.service";
 import { MatchLegendSelectService } from "../core/match/match-legend-select.service";
 import { MatchMapService } from "../core/match/match-map.service";
 import { MatchPlayerInflictionService } from "../core/match/match-player-infliction.service";
@@ -20,7 +16,10 @@ import { MatchPlayerInventoryService } from "../core/match/match-player-inventor
 import { MatchPlayerLegendService } from "../core/match/match-player-legend.service";
 import { MatchPlayerLocationService } from "../core/match/match-player-location.service";
 import { MatchPlayerStatsService } from "../core/match/match-player-stats.service";
+import { MatchPlayerService } from "../core/match/match-player.service";
 import { MatchRingService } from "../core/match/match-ring.service";
+import { MatchRosterService } from "../core/match/match-roster.service";
+import { MatchService } from "../core/match/match.service";
 import { OverwolfGameDataService } from "../core/overwolf";
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
 import { OverwolfFeatureStatusService } from "../core/overwolf/overwolf-feature-status.service";
@@ -31,9 +30,12 @@ import { OverwolfStreamingService } from "../core/overwolf/overwolf-streaming.se
 import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service";
 import { PlayerLocalStatsService } from "../core/player-local-stats.service";
 import { PlayerService } from "../core/player.service";
+import { RawGamesOrganizerService } from "../core/raw-games/organizer.service";
+import { RawGamesPlayerService } from "../core/raw-games/player.service";
 import { ReportableDataManagerService } from "../core/reporting/reporting-engine/reportable-data-manager";
 import { ReportingService } from "../core/reporting/reporting.service";
 import { SessionStorageService } from "../core/session-storage/session-storage.service";
+import { SettingsService } from "../core/settings.service";
 import { VersionService } from "../core/version.service";
 import { VideoRecordingService } from "../core/video-recording/video-recording.service";
 import { DesktopWindowService } from "../desktop/windows/desktop-window.service";
@@ -87,6 +89,8 @@ import { SystemTrayService } from "./system-tray.service";
         OverwolfSystemTrayService,
         PlayerLocalStatsService,
         PlayerService,
+        RawGamesOrganizerService,
+        RawGamesPlayerService,
         ReportableDataManagerService,
         ReportingService,
         SessionStorageService,
@@ -136,6 +140,8 @@ export class SingletonServiceContainerService {
         public readonly OverwolfSystemTrayService: OverwolfSystemTrayService,
         public readonly PlayerLocalStatsService: PlayerLocalStatsService,
         public readonly PlayerService: PlayerService,
+        public readonly RawGamesOrganizerService: RawGamesOrganizerService,
+        public readonly RawGamesPlayerService: RawGamesPlayerService,
         public readonly ReportableDataManagerService: ReportableDataManagerService,
         public readonly ReportingService: ReportingService,
         public readonly SessionStorageService: SessionStorageService,

@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from "@angular/core";
-import { MatchService } from "@app/app/modules/core/match/match.service";
-import { OWGameEvent, OWInfoUpdates2Event } from "@app/app/modules/core/overwolf";
-import { cleanInt } from "common/utilities/";
 import { Observable, Subject, merge } from "rxjs";
 import { delay, filter, takeUntil } from "rxjs/operators";
+import { cleanInt } from "../../../../../../../../common/utilities/";
+import { MatchService } from "../../../../modules/core/match/match.service";
+import { OWGameEvent, OWInfoUpdates2Event } from "../../../../modules/core/overwolf";
 
 interface GameLog {
     timestamp: Date;

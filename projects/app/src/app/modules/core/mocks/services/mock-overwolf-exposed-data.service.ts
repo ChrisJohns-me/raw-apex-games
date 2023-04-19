@@ -1,7 +1,7 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { ExposedOverwolfGameDataService } from "@app/app/modules/core/overwolf-exposed-data.service";
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { BehaviorSubject, Subject } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../common/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { ExposedOverwolfGameDataService } from "../../overwolf-exposed-data.service";
 
 export class MockExposedOverwolfGameDataService implements MockedClass<ExposedOverwolfGameDataService> {
     public rawGameInfo$: ExposedOverwolfGameDataService["rawGameInfo$"] = new BehaviorSubject<

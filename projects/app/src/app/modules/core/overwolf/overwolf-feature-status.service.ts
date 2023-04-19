@@ -1,9 +1,9 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable, OnDestroy } from "@angular/core";
-import { FeatureState, FeatureStates, OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
 import { BehaviorSubject, Observable, Subject, of, throwError, timer } from "rxjs";
 import { catchError, delay, map, mergeMap, retryWhen, switchMap, takeUntil, tap } from "rxjs/operators";
+import { FeatureState, FeatureStates, OverwolfFeatureDep } from "../../../common/feature-status";
+import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
 import { OverwolfGameDataStatusDTO } from "./dto/overwolf-feature-status-dto";
 import { OWConfig, OW_CONFIG } from "./overwolf-config";
 

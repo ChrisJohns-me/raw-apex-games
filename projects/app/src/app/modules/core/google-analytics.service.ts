@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
-import { aXNWSVA } from "@app/app/common/vip";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
-import { environment } from "@app/environments/environment";
-import { isEmpty } from "common/utilities/";
 import { filter, map, take, takeUntil } from "rxjs/operators";
+import { isEmpty } from "../../../../../../common/utilities/";
+import { environment } from "../../../environments/environment";
+import { aXNWSVA } from "../../common/vip";
+import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
 import { BaseService } from "./base-service.abstract";
 import { OverwolfProfileService } from "./overwolf/overwolf-profile.service";
 

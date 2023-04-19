@@ -1,8 +1,8 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { OverwolfWindow, OverwolfWindowName } from "@app/app/common/overwolf-window";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
 import { Observable, Subject, from, of } from "rxjs";
 import { catchError, concatAll, delay, map, mergeMap, switchMap, takeUntil, tap } from "rxjs/operators";
+import { OverwolfWindow, OverwolfWindowName } from "../../common/overwolf-window";
+import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
 import { SingletonServiceContainerService } from "./singleton-service-container.service";
 
 const BACKGROUND_EXIT_DELAY = 1000;

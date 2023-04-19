@@ -1,4 +1,4 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
 import { LocalStorageService } from "../../local-storage/local-storage.service";
 
 export class MockLocalStorageService implements MockedClass<LocalStorageService> {

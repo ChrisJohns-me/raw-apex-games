@@ -1,6 +1,6 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { PlayerLocalStatsService } from "@app/app/modules/core/player-local-stats.service";
 import { of } from "rxjs";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { PlayerLocalStatsService } from "../../player-local-stats.service";
 
 export class MockPlayerStatsService implements MockedClass<PlayerLocalStatsService> {
     public clearPlayerCache(): void {}

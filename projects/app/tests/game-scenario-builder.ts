@@ -1,8 +1,8 @@
-import { MockOverwolfAPI } from "@app/app/modules/core/mocks/mock-overwolf-api";
-import { unique } from "common/utilities/primitives/array";
 import { addMilliseconds, addMinutes, subMilliseconds } from "date-fns";
 import seedrandom from "seedrandom";
 import { NIL, v5 as uuid } from "uuid";
+import { unique } from "../../../common/utilities/primitives/array";
+import { MockOverwolfAPI } from "../src/app/modules/core/mocks/mock-overwolf-api";
 import { GameScenario } from "./game-scenario";
 
 type Timestamp<T> = { timestamp: Date; value: T };

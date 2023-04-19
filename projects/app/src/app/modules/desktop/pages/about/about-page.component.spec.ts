@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { MockFullHeightDirective } from "@app/app/modules/core/mocks/directives/mock-full-height.directive";
-import { WelcomeContentComponent } from "@app/app/shared/components/welcome-content/welcome-content.component";
+import { WelcomeContentComponent } from "../../../../shared/components/welcome-content/welcome-content.component";
+import { MockFullHeightDirective } from "../../../core/mocks/directives/mock-full-height.directive";
 import { AboutPageComponent } from "./about-page.component";
 
 describe("AboutPageComponent", () => {

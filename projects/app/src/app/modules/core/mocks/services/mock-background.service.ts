@@ -1,6 +1,6 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { BackgroundService } from "@app/app/modules/background/background.service";
-import { SingletonServiceContainerService } from "@app/app/modules/background/singleton-service-container.service";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { BackgroundService } from "../../../background/background.service";
+import { SingletonServiceContainerService } from "../../../background/singleton-service-container.service";
 
 export class MockBackgroundService implements MockedClass<BackgroundService> {
     public exitApp(): void {}

@@ -6,7 +6,7 @@ import { MockUIContainerComponent } from "../../core/mocks/components/mock-ui-co
 import { MockConfigurationService } from "../../core/mocks/services/mock-configuration.service";
 import { MockHotkeyService } from "../../core/mocks/services/mock-hotkey.service";
 import { MockMatchService } from "../../core/mocks/services/mock-match.service";
-import { InGameWindowComponent } from "./ingame-window.component";
+import { InGameWindowComponent } from "./in-game-window.component";
 
 describe("InGameWindowComponent", () => {
     let sut: InGameWindowComponent;

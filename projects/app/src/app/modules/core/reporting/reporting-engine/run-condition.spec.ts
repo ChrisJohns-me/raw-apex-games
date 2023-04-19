@@ -1,4 +1,4 @@
-import { supressConsoleLog } from "@app/app/common/testing-helpers";
+import { supressConsoleLog } from "../../../../common/testing-helpers";
 import { RunCondition } from "./run-condition";
 
 describe("RunCondition Class", () => {

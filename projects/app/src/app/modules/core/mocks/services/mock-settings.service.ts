@@ -1,6 +1,6 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { SettingKey, SettingValue } from "@app/app/common/settings";
 import { Observable, of } from "rxjs";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { SettingKey, SettingValue } from "../../../../common/settings";
 import { SettingsDataStore } from "../../local-database/settings-data-store";
 import { SettingsService } from "../../settings.service";
 

@@ -1,7 +1,7 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { GameProcessService } from "@app/app/modules/core/game-process.service";
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { BehaviorSubject } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../common/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { GameProcessService } from "../../game-process.service";
 
 export class MockGameProcessService implements MockedClass<GameProcessService> {
     public isRunning$: GameProcessService["isRunning$"] = new BehaviorSubject<ExtractSubjectType<GameProcessService["isRunning$"]>>(false);

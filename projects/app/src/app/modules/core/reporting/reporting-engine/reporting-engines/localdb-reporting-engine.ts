@@ -1,7 +1,7 @@
-import { MatchLocationPhase } from "@app/app/common/match/location";
-import { isEmpty } from "common/utilities/";
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { delay, map, mergeMap, retryWhen, takeUntil } from "rxjs/operators";
+import { isEmpty } from "../../../../../../../../../common/utilities/";
+import { MatchLocationPhase } from "../../../../../common/match/location";
 import { MatchDataStore } from "../../../local-database/match-data-store";
 import { MatchService } from "../../../match/match.service";
 import { ReportableDataFactoryMap } from "../reportable-data";

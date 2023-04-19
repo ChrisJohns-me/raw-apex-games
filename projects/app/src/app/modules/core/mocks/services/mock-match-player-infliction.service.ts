@@ -1,9 +1,9 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { WeaponItem } from "@app/app/common/items/weapon-item";
-import { MatchInflictionEvent } from "@app/app/common/match/infliction-event";
-import { MatchRosterPlayer } from "@app/app/common/match/roster-player";
-import { MatchPlayerInflictionService } from "@app/app/modules/core/match/match-player-infliction.service";
 import { Subject } from "rxjs";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { WeaponItem } from "../../../../common/items/weapon-item";
+import { MatchInflictionEvent } from "../../../../common/match/infliction-event";
+import { MatchRosterPlayer } from "../../../../common/match/roster-player";
+import { MatchPlayerInflictionService } from "../../match/match-player-infliction.service";
 
 export class MockMatchPlayerInflictionService implements MockedClass<MatchPlayerInflictionService> {
     public myUniqueDamageEvent$: MatchPlayerInflictionService["myUniqueDamageEvent$"] = new Subject();

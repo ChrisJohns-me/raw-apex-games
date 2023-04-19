@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { GamePhase } from "@app/app/common/game-phase";
-import { MatchGameModeGenericId } from "@app/app/common/match/game-mode/game-mode.enum";
-import { MatchLocationPhase } from "@app/app/common/match/location";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
-import { exhaustiveEnumSwitch } from "common/utilities/switch";
 import { BehaviorSubject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
+import { exhaustiveEnumSwitch } from "../../../../../../common/utilities/switch";
+import { OverwolfFeatureDep } from "../../common/feature-status";
+import { GamePhase } from "../../common/game-phase";
+import { MatchGameModeGenericId } from "../../common/match/game-mode/game-mode.enum";
+import { MatchLocationPhase } from "../../common/match/location";
+import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
 import { BaseService } from "./base-service.abstract";
 import { MatchService } from "./match/match.service";
 import { OverwolfGameDataService } from "./overwolf";

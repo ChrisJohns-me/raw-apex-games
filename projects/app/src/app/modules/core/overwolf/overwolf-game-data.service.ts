@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
 import { BehaviorSubject, Subject, interval, merge } from "rxjs";
 import { delay, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
+import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
 import { BaseService } from "../base-service.abstract";
 import { InfoUpdatesDelegate } from "./api/games/events/info-updates-delegate";
 import { NewGameEventDelegate } from "./api/games/events/new-game-event-delegate";

@@ -1,5 +1,5 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
 import { of } from "rxjs";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
 import { FileService } from "../../file.service";
 
 export class MockFileService implements MockedClass<FileService> {

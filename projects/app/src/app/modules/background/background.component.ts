@@ -1,11 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
-import { APP_NAME } from "@app/app/common/app";
-import { SettingKey } from "@app/app/common/settings";
-import { environment } from "@app/environments/environment";
 import { Subject } from "rxjs";
 import { map, switchMap, takeUntil } from "rxjs/operators";
+import { environment } from "../../../environments/environment.prod";
+import { APP_NAME } from "../../common/app";
 import { HotkeyEnum } from "../../common/hotkey";
+import { SettingKey } from "../../common/settings";
 import { GameProcessService } from "../core/game-process.service";
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
 import { SettingsService } from "../core/settings.service";

@@ -1,5 +1,5 @@
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { filter, OperatorFunction } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../../common/types/rxjs-utilities";
 import { MatchPlayerLocationService } from "../../../match/match-player-location.service";
 import { ReportableDataTimestampedStream } from "../reportable-data";
 

@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { Hotkey, HotkeyEnum } from "@app/app/common/hotkey";
-import { MatchGameMode } from "@app/app/common/match/game-mode/game-mode";
-import { MatchMap } from "@app/app/common/match/map/match-map";
-import { OverwolfWindowName } from "@app/app/common/overwolf-window";
 import { Subject, combineLatest, filter, map, merge, takeUntil } from "rxjs";
+import { Hotkey, HotkeyEnum } from "../../../common/hotkey";
+import { MatchGameMode } from "../../../common/match/game-mode/game-mode";
+import { MatchMap } from "../../../common/match/map/match-map";
+import { OverwolfWindowName } from "../../../common/overwolf-window";
 import { HotkeyService } from "../../background/hotkey.service";
 import { GameplayInputService } from "../../core/gameplay-input.service";
 import { MatchService } from "../../core/match/match.service";
+import { RawGamesOrganizerService } from "../../core/raw-games/organizer.service";
 
 const MAIN_HOTKEY_NAME = HotkeyEnum.ToggleMainInGame;
 
@@ -39,7 +40,8 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
         private readonly cdr: ChangeDetectorRef,
         private readonly gameplayInput: GameplayInputService,
         private readonly hotkey: HotkeyService,
-        private readonly match: MatchService
+        private readonly match: MatchService,
+        private readonly rawGamesOrganizer: RawGamesOrganizerService
     ) {}
 
     public ngOnInit(): void {

@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from "@angular/core";
 import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
-import { Legend } from "@app/app/common/legend/legend";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { Legend } from "../../../common/legend/legend";
 
 @Component({
     selector: "app-legends-dropdown-filter",

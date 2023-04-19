@@ -1,10 +1,7 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import {
-    OverwolfFeatureRegistrationService,
-    OWFeatureRegistrationStatus,
-} from "@app/app/modules/core/overwolf/overwolf-feature-registration.service";
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { BehaviorSubject, of } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../common/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { OverwolfFeatureRegistrationService, OWFeatureRegistrationStatus } from "../../overwolf/overwolf-feature-registration.service";
 
 export class MockOverwolfFeatureRegistrationService implements MockedClass<OverwolfFeatureRegistrationService> {
     public registrationStatus$: OverwolfFeatureRegistrationService["registrationStatus$"] = new BehaviorSubject<

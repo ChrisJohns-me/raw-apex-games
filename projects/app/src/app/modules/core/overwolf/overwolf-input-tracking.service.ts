@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
 import { Observable, Subject } from "rxjs";
+import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
 import { BaseService } from "../base-service.abstract";
 import { InputTrackingDelegate } from "./api/games/input-tracking-delegate";
 import { OWInputActivity, OWMouseEvent, OWMousePosition } from "./types/overwolf-types";

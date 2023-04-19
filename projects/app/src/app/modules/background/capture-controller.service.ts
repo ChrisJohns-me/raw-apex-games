@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
+import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
 import { BaseService } from "../core/base-service.abstract";
 
 export enum VideoCaptureMode {

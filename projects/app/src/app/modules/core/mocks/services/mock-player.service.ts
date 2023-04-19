@@ -1,7 +1,7 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { PlayerService } from "@app/app/modules/core/player.service";
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { BehaviorSubject } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../common/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { PlayerService } from "../../player.service";
 
 export class MockPlayerService implements MockedClass<PlayerService> {
     public myName$: PlayerService["myName$"] = new BehaviorSubject<ExtractSubjectType<PlayerService["myName$"]>>(undefined);

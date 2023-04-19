@@ -1,5 +1,5 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
 import { Subject } from "rxjs";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
 import { MatchLegendSelectService } from "../../match/match-legend-select.service";
 
 export class MockMatchLegendSelectService implements MockedClass<MatchLegendSelectService> {

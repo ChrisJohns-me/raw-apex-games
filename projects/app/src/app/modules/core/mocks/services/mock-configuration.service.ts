@@ -1,8 +1,8 @@
-import { ConfigLoadStatus, ConfigurationService } from "@app/app/modules/core/configuration.service";
-import { Configuration } from "@app/configs/config.interface";
-import ConfigJSONData from "@app/configs/config.json";
-import { isEmpty } from "common/utilities/";
 import { BehaviorSubject, Observable, ReplaySubject } from "rxjs";
+import { isEmpty } from "../../../../../../../../common/utilities/";
+import { Configuration } from "../../../../../configs/config.interface";
+import ConfigJSONData from "../../../../../configs/config.json";
+import { ConfigLoadStatus, ConfigurationService } from "../../configuration.service";
 
 /**
  * Loads default config (from config.json) on instantiation.

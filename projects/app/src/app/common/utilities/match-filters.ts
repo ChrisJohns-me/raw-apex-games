@@ -1,6 +1,6 @@
-import { MatchDataStore } from "@app/app/modules/core/local-database/match-data-store";
-import { cleanInt, isEmpty } from "common/utilities";
-import { unique } from "common/utilities/primitives/array";
+import { cleanInt, isEmpty } from "../../../../../../common/utilities";
+import { unique } from "../../../../../../common/utilities/primitives/array";
+import { MatchDataStore } from "../../modules/core/local-database/match-data-store";
 import { Legend } from "../legend/legend";
 import { LegendList, sortLegendList } from "../legend/legend-list";
 import { MatchGameMode, sortMatchGameModeList } from "../match/game-mode/game-mode";

@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
-import { MatchMapList } from "@app/app/common/match/map/map-list";
-import { MatchMap } from "@app/app/common/match/map/match-map";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
-import { isEmpty } from "common/utilities";
 import { BehaviorSubject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
+import { isEmpty } from "../../../../../../../common/utilities";
+import { MatchMapList } from "../../../common/match/map/map-list";
+import { MatchMap } from "../../../common/match/map/match-map";
+import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
 import { BaseService } from "../base-service.abstract";
 import { OverwolfGameDataService } from "../overwolf";
 import { MatchService } from "./match.service";

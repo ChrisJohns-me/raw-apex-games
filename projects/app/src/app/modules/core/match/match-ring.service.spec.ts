@@ -1,9 +1,9 @@
 import { TestBed } from "@angular/core/testing";
-import { MatchRing } from "@app/app/common/match/ring";
-import { MatchState, MatchStateChangedEvent } from "@app/app/common/match/state";
-import { Configuration } from "@app/configs/config.interface";
 import { addMilliseconds } from "date-fns";
 import { TestScheduler } from "rxjs/testing";
+import { Configuration } from "../../../../configs/config.interface";
+import { MatchRing } from "../../../common/match/ring";
+import { MatchState, MatchStateChangedEvent } from "../../../common/match/state";
 import { ConfigurationService } from "../configuration.service";
 import { MockConfigurationService } from "../mocks/services/mock-configuration.service";
 import { MockMatchService } from "../mocks/services/mock-match.service";

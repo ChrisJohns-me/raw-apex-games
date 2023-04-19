@@ -1,4 +1,4 @@
-import { isEmpty } from "common/utilities/";
+import { isEmpty } from "../../../../../../common/utilities/";
 import { isPlayerNameEqual } from "../utilities/player";
 import { MatchRosterPlayer } from "./roster-player";
 import { MatchRosterTeam } from "./roster-team";

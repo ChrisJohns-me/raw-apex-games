@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import { RawApexGamesSharedModule } from "@app/app/shared/app-shared.module";
+import { RawApexGamesSharedModule } from "../../shared/app-shared.module";
 import { InGameWindowComponent } from "./windows/in-game-window.component";
 
 @NgModule({

@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { APP_NAME } from "@app/app/common/app";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
 import Dexie from "dexie";
 import { exportDB } from "dexie-export-import";
+import { APP_NAME } from "../../../common/app";
+import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
 /** @see https://dexie.org/docs/Observable/Dexie.Observable */
 import "dexie-observable";
 import { IDatabaseChange } from "dexie-observable/api";

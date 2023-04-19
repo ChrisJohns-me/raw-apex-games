@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
-import { MatchGameMode } from "@app/app/common/match/game-mode/game-mode";
-import { MatchGameModeList } from "@app/app/common/match/game-mode/game-mode-list";
-import { MatchGameModeGenericId } from "@app/app/common/match/game-mode/game-mode.enum";
-import { AvgMatchStats, avgStats, legendAvgStats } from "@app/app/common/utilities/match-stats";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
-import { Stopwatch } from "common/utilities/";
 import { Observable, of } from "rxjs";
 import { filter, map, tap } from "rxjs/operators";
+import { Stopwatch } from "../../../../../../common/utilities/";
+import { MatchGameMode } from "../../common/match/game-mode/game-mode";
+import { MatchGameModeList } from "../../common/match/game-mode/game-mode-list";
+import { MatchGameModeGenericId } from "../../common/match/game-mode/game-mode.enum";
+import { AvgMatchStats, avgStats, legendAvgStats } from "../../common/utilities/match-stats";
+import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
 import { BaseService } from "./base-service.abstract";
 import { ConfigurationService } from "./configuration.service";
 import { MatchDataStore } from "./local-database/match-data-store";

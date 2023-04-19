@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { supressConsoleLog } from "@app/app/common/testing-helpers";
+import { supressConsoleLog } from "../../../../common/testing-helpers";
 import { BootstrapCSSInjectorComponent } from "./bootstrap-css-injector.component";
 
 describe("BootstrapCSSInjectorComponent", () => {

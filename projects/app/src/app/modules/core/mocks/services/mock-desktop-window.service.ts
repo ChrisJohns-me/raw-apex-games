@@ -1,6 +1,6 @@
-import { MainPage } from "@app/app/modules/desktop/pages/main-page";
-import { DesktopWindowService } from "@app/app/modules/desktop/windows/desktop-window.service";
 import { BehaviorSubject, of } from "rxjs";
+import { MainPage } from "../../../desktop/pages/main-page";
+import { DesktopWindowService } from "../../../desktop/windows/desktop-window.service";
 
 export class MockDesktopWindowService implements MockedClass<DesktopWindowService> {
     public isRequestingExit$: DesktopWindowService["isRequestingExit$"] = new BehaviorSubject<boolean>(false);

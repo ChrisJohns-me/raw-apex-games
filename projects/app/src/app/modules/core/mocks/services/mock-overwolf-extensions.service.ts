@@ -1,7 +1,7 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { OverwolfExtensionsService } from "@app/app/modules/core/overwolf/overwolf-extensions.service";
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { of, Subject } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../common/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { OverwolfExtensionsService } from "../../overwolf/overwolf-extensions.service";
 
 export class MockOverwolfExtensionsService implements MockedClass<OverwolfExtensionsService> {
     public appLaunchTriggeredEvent$: OverwolfExtensionsService["appLaunchTriggeredEvent$"] = new Subject<

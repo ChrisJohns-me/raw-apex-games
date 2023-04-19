@@ -1,5 +1,4 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, ViewChild } from "@angular/core";
-import { MatchDataStore } from "@app/app/modules/core/local-database/match-data-store";
 import {
     CategoryScale,
     Chart,
@@ -14,7 +13,8 @@ import {
     TooltipItem,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
-import { isEmpty } from "common/utilities/";
+import { isEmpty } from "../../../../../../../../../common/utilities/";
+import { MatchDataStore } from "../../../../../modules/core/local-database/match-data-store";
 
 @Component({
     selector: "app-ranked-chart",

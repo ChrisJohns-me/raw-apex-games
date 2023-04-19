@@ -1,7 +1,7 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { MatchKillfeedService } from "@app/app/modules/core/match/match-killfeed.service";
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { BehaviorSubject, Subject } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../common/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { MatchKillfeedService } from "../../match/match-killfeed.service";
 
 export class MockMatchKillfeedService implements MockedClass<MatchKillfeedService> {
     public killfeedEvent$: MatchKillfeedService["killfeedEvent$"] = new Subject();

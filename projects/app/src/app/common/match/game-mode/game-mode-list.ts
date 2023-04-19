@@ -65,4 +65,13 @@ export const MatchGameModeList: MatchGameMode[] = [
         isReportable: false,
         isGunGameGameMode: true,
     }),
+    new MatchGameMode({
+        gameModeId: "#TDM_NAME",
+        gameModeGenericId: MatchGameModeGenericId.TeamDeathmatch,
+        gameModeName: MatchGameModeFriendlyName.TeamDeathmatch,
+        gamePlaylist: MatchGameModePlaylist.Mixtape,
+        gameModeIdRegExPattern: "tdm",
+        isReportable: false,
+        isTeamDeathmatchGameMode: true,
+    }),
 ];

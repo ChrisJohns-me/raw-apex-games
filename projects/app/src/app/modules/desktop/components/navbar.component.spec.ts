@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { HrefDirective } from "@app/app/shared/directives/href.directive";
-import { IconComponent } from "@shared/components/icon/icon.component";
+import { IconComponent } from "../../../../../../shared/components/icon/icon.component";
+import { HrefDirective } from "../../../shared/directives/href.directive";
 import { NavbarComponent } from "./navbar.component";
 
 describe("NavbarComponent", () => {

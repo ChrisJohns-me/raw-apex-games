@@ -1,7 +1,7 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { MatchPlayerLegendService } from "@app/app/modules/core/match/match-player-legend.service";
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { BehaviorSubject, Subject } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../common/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { MatchPlayerLegendService } from "../../match/match-player-legend.service";
 
 export class MockMatchPlayerLegendService implements MockedClass<MatchPlayerLegendService> {
     public myLegend$: MatchPlayerLegendService["myLegend$"] = new BehaviorSubject<

@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { mdiCogOutline, mdiWindowClose, mdiWindowMaximize, mdiWindowMinimize, mdiWindowRestore } from "@mdi/js";
-import { APP_NAME } from "@app/app/common/app";
-import { OverwolfWindowName, OverwolfWindowState } from "@app/app/common/overwolf-window";
+import { APP_NAME } from "../../../../common/app";
+import { OverwolfWindowName, OverwolfWindowState } from "../../../../common/overwolf-window";
 import {
     ConfigPositionXAnchor,
     ConfigPositionYAnchor,
     UIContainerComponent,
-} from "@app/app/shared/components/ui-container/ui-container.component";
+} from "../../../../shared/components/ui-container/ui-container.component";
 
 type WindowPositionInput = {
     // x, y: percent

@@ -1,7 +1,7 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { MatchPlayerStatsService } from "@app/app/modules/core/match/match-player-stats.service";
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { BehaviorSubject } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../common/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { MatchPlayerStatsService } from "../../match/match-player-stats.service";
 
 export class MockMatchPlayerStatsService implements MockedClass<MatchPlayerStatsService> {
     public myEliminations$: MatchPlayerStatsService["myEliminations$"] = new BehaviorSubject<

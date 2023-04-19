@@ -1,7 +1,7 @@
-import { isEmpty } from "common/utilities";
 import { format } from "date-fns";
 import { BehaviorSubject, merge, Observable, of, Subject } from "rxjs";
 import { delay, filter, takeUntil, tap } from "rxjs/operators";
+import { isEmpty } from "../../../../../../../../../common/utilities";
 import { OWGameEvent, OWInfoUpdates2Event } from "../../../overwolf";
 import { SessionStorageKeys } from "../../../session-storage/session-storage-keys";
 import { SessionStorageService } from "../../../session-storage/session-storage.service";

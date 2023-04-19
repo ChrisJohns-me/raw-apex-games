@@ -1,9 +1,9 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { MatchState } from "@app/app/common/match/state";
-import { MatchDataStore } from "@app/app/modules/core/local-database/match-data-store";
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { IndexableType } from "dexie";
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../common/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { MatchState } from "../../../../common/match/state";
+import { MatchDataStore } from "../../local-database/match-data-store";
 import { MatchService } from "../../match/match.service";
 
 export class MockMatchService implements MockedClass<MatchService> {

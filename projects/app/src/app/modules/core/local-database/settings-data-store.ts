@@ -1,4 +1,4 @@
-import { SettingKey, SettingValue } from "@app/app/common/settings";
+import { SettingKey, SettingValue } from "../../../common/settings";
 
 /*
  * To prevent object stores from becoming stale,

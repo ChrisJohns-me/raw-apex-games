@@ -1,4 +1,4 @@
-import { wordsToUpperCase } from "common/utilities/";
+import { wordsToUpperCase } from "../../../../../../../common/utilities/";
 import { MatchGameModePlaylist } from "./game-mode-playlist.enum";
 import { MatchGameModeFriendlyName, MatchGameModeGenericId } from "./game-mode.enum";
 
@@ -15,6 +15,7 @@ interface MatchGameModeConstructor {
     isBattleRoyaleGameMode?: boolean;
     isControlGameMode?: boolean;
     isGunGameGameMode?: boolean;
+    isTeamDeathmatchGameMode?: boolean;
     isRanked?: boolean;
 }
 export class MatchGameMode {
@@ -28,6 +29,8 @@ export class MatchGameMode {
     public isBattleRoyaleGameMode: boolean;
     public isControlGameMode: boolean;
     public isGunGameGameMode: boolean;
+    public isTeamDeathmatchGameMode: boolean;
+    public isRanked: boolean;
 
     constructor(ctor: MatchGameModeConstructor) {
         this.gameModeId = ctor.gameModeId;
@@ -40,6 +43,8 @@ export class MatchGameMode {
         this.isBattleRoyaleGameMode = ctor.isBattleRoyaleGameMode ?? false;
         this.isControlGameMode = ctor.isControlGameMode ?? false;
         this.isGunGameGameMode = ctor.isGunGameGameMode ?? false;
+        this.isTeamDeathmatchGameMode = ctor.isTeamDeathmatchGameMode ?? false;
+        this.isRanked = ctor.isRanked ?? false;
     }
 
     //#region Static Methods
@@ -74,6 +79,7 @@ export class MatchGameMode {
         let isBattleRoyaleGameMode = false;
         let isControlGameMode = false;
         let isGunGameGameMode = false;
+        let isTeamDeathmatchGameMode = false;
         let isRanked = false;
         if (new RegExp("training|firingrange", "i").test(gameModeId)) {
             isSandboxGameMode = true;
@@ -85,6 +91,8 @@ export class MatchGameMode {
             isControlGameMode = true;
         } else if (new RegExp("gungame", "i").test(gameModeId)) {
             isGunGameGameMode = true;
+        } else if (new RegExp("tdm", "i").test(gameModeId)) {
+            isTeamDeathmatchGameMode = true;
         }
 
         return new MatchGameMode({
@@ -96,6 +104,7 @@ export class MatchGameMode {
             isBattleRoyaleGameMode,
             isControlGameMode,
             isGunGameGameMode,
+            isTeamDeathmatchGameMode,
             isRanked,
         });
     }

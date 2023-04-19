@@ -1,5 +1,5 @@
-import { isEmpty, mathClamp } from "common/utilities/";
-import { hexToRgb, hslToHex, rgbToHsl } from "common/utilities/color";
+import { isEmpty, mathClamp } from "../../../../../../common/utilities/";
+import { hexToRgb, hslToHex, rgbToHsl } from "../../../../../../common/utilities/color";
 import { Legend } from "./legend";
 
 export const LegendList: Legend[] = [

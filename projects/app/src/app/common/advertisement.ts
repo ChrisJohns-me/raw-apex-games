@@ -1,6 +1,6 @@
 import { OwAd } from "@overwolf/types/owads";
-import { environment } from "@app/environments/environment";
 import { BehaviorSubject, Observable, Subject } from "rxjs";
+import { environment } from "../../environments/environment";
 import { OverwolfWindowName } from "./overwolf-window";
 
 const OVERWOLF_SCRIPT = "https://content.overwolf.com/libs/ads/latest/owads.min.js";

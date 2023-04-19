@@ -1,11 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "../../out-tsc/api",
-    "module": "commonjs",
-    "esModuleInterop": true
-  },
-  "files": [
-    "src/index.ts",
-  ]
+    "extends": "../../tsconfig.api.json",
+    "compilerOptions": {
+        "outDir": "../../out-tsc/api"
+    },
+    "files": [
+        "./src/index.ts"
+    ]
 }

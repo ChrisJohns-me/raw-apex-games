@@ -1,5 +1,5 @@
 import { Inject, Injectable } from "@angular/core";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
+import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
 import { BaseService } from "../base-service.abstract";
 import { WINDOW } from "../global-window.provider";
 import { SessionStorageKeys } from "./session-storage-keys";

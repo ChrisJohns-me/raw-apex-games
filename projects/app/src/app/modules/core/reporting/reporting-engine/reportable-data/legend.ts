@@ -1,4 +1,4 @@
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
+import { ExtractSubjectType } from "../../../../../../../../../common/types/rxjs-utilities";
 import { MatchPlayerLegendService } from "../../../match/match-player-legend.service";
 import { ReportableDataSnapshot } from "../reportable-data";
 

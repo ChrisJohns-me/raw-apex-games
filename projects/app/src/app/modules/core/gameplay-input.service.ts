@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
-import { cleanInt } from "common/utilities";
 import { BehaviorSubject, debounceTime, filter, map, switchMap, takeUntil, tap } from "rxjs";
+import { cleanInt } from "../../../../../../common/utilities";
+import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
 import { BaseService } from "./base-service.abstract";
 import { MatchPlayerInflictionService } from "./match/match-player-infliction.service";
 import { MatchService } from "./match/match.service";

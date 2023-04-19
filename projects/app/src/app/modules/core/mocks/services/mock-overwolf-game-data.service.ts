@@ -1,7 +1,7 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
-import { OverwolfGameDataService } from "@app/app/modules/core/overwolf";
-import { ExtractSubjectType } from "common/types/rxjs-utilities";
 import { BehaviorSubject, Subject } from "rxjs";
+import { ExtractSubjectType } from "../../../../../../../../common/types/rxjs-utilities";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
+import { OverwolfGameDataService } from "../../overwolf";
 
 export class MockOverwolfGameDataService implements MockedClass<OverwolfGameDataService> {
     public gameInfo$: OverwolfGameDataService["gameInfo$"] = new BehaviorSubject<ExtractSubjectType<OverwolfGameDataService["gameInfo$"]>>(

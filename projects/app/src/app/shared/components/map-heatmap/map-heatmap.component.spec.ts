@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ReactiveFormsModule } from "@angular/forms";
-import { supressConsoleLog } from "@app/app/common/testing-helpers";
+import { supressConsoleLog } from "../../../common/testing-helpers";
 import { MapHeatmapComponent } from "./map-heatmap.component";
 
 describe("MapHeatmapComponent", () => {

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
-import { OverwolfWindow, OverwolfWindowName } from "@app/app/common/overwolf-window";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
 import { Observable } from "rxjs";
+import { OverwolfWindow, OverwolfWindowName } from "../../../common/overwolf-window";
+import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
 
 @Injectable({
     providedIn: "root",

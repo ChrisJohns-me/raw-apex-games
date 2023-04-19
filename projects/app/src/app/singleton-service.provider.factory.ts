@@ -6,8 +6,8 @@
  * the Background service. Non-registered services may cause memory leaks.
  */
 import { Provider } from "@angular/core";
-import { environment } from "@app/environments/environment";
 import { take } from "rxjs/operators";
+import { environment } from "../environments/environment";
 import { OverwolfWindow, OverwolfWindowName } from "./common/overwolf-window";
 
 export const INSTANTIATIONS_KEY = "$__singletonInstantiations";

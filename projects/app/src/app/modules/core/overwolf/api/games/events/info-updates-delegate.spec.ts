@@ -1,5 +1,5 @@
-import { createOverwolfObj, supressConsoleLog } from "@app/app/common/testing-helpers";
 import { TestScheduler } from "rxjs/testing";
+import { createOverwolfObj, supressConsoleLog } from "../../../../../../common/testing-helpers";
 import { InfoUpdatesDelegate } from "./info-updates-delegate";
 
 type InfoUpdates2Event = overwolf.games.events.InfoUpdates2Event;

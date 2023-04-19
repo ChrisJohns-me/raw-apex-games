@@ -1,7 +1,4 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, ViewChild } from "@angular/core";
-import { MatchGameMode } from "@app/app/common/match/game-mode/game-mode";
-import { matchListAvgStatsGroupedBy } from "@app/app/common/utilities/match-stats";
-import { MatchDataStore } from "@app/app/modules/core/local-database/match-data-store";
 import {
     ArcElement,
     CategoryScale,
@@ -15,7 +12,10 @@ import {
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import { isEmpty } from "common/utilities/";
+import { isEmpty } from "../../../../../../../../../common/utilities/";
+import { MatchGameMode } from "../../../../../common/match/game-mode/game-mode";
+import { matchListAvgStatsGroupedBy } from "../../../../../common/utilities/match-stats";
+import { MatchDataStore } from "../../../../../modules/core/local-database/match-data-store";
 
 @Component({
     selector: "app-game-mode-playrate-chart",

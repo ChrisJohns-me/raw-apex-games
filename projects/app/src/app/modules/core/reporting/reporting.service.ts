@@ -1,11 +1,11 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { SettingKey } from "@app/app/common/settings";
-import { BaseService } from "@app/app/modules/core/base-service.abstract";
-import { GoogleAnalyticsService } from "@app/app/modules/core/google-analytics.service";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
-import { isEmpty } from "common/utilities/";
 import { Subject, combineLatest, of } from "rxjs";
 import { catchError, filter, switchMap, takeUntil } from "rxjs/operators";
+import { isEmpty } from "../../../../../../../common/utilities/";
+import { SettingKey } from "../../../common/settings";
+import { BaseService } from "../../../modules/core/base-service.abstract";
+import { GoogleAnalyticsService } from "../../../modules/core/google-analytics.service";
+import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
 import { MatchService } from "../match/match.service";
 import { OverwolfGameDataService } from "../overwolf";
 import { SessionStorageService } from "../session-storage/session-storage.service";

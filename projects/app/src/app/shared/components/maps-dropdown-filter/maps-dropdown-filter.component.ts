@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from "@angular/core";
 import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
-import { MatchMapGenericId } from "@app/app/common/match/map/map.enum";
-import { MatchMap } from "@app/app/common/match/map/match-map";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
+import { MatchMapGenericId } from "../../../common/match/map/map.enum";
+import { MatchMap } from "../../../common/match/map/match-map";
 
 /**
  * Utilizes Map's GenericId for determining selection

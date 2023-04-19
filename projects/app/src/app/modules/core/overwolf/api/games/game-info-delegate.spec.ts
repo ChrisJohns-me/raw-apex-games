@@ -1,5 +1,5 @@
-import { createOverwolfObj } from "@app/app/common/testing-helpers";
 import { TestScheduler } from "rxjs/testing";
+import { createOverwolfObj } from "../../../../../common/testing-helpers";
 import { GameInfoDelegate } from "./game-info-delegate";
 
 describe("GameInfoDelegate", () => {

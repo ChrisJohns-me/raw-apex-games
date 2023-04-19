@@ -1,21 +1,21 @@
 import { ChangeDetectorRef } from "@angular/core";
 import { ComponentFixture, TestBed, discardPeriodicTasks, fakeAsync, tick } from "@angular/core/testing";
-import { MatchLocationPhase } from "@app/app/common/match/location";
-import { MatchState, MatchStateChangedEvent } from "@app/app/common/match/state";
-import { PlayerState } from "@app/app/common/player-state";
-import { supressConsoleLog } from "@app/app/common/testing-helpers";
-import { MatchPlayerInventoryService } from "@app/app/modules/core/match/match-player-inventory.service";
-import { MatchPlayerLocationService } from "@app/app/modules/core/match/match-player-location.service";
-import { MatchPlayerStatsService } from "@app/app/modules/core/match/match-player-stats.service";
-import { MatchPlayerService } from "@app/app/modules/core/match/match-player.service";
-import { MatchService } from "@app/app/modules/core/match/match.service";
-import { MockUIContainerComponent } from "@app/app/modules/core/mocks/components/mock-ui-container.component";
-import { MockMatchPlayerInventoryService } from "@app/app/modules/core/mocks/services/mock-match-player-inventory.service";
-import { MockMatchPlayerLocationService } from "@app/app/modules/core/mocks/services/mock-match-player-location.service";
-import { MockMatchPlayerStatsService } from "@app/app/modules/core/mocks/services/mock-match-player-stats.service";
-import { MockMatchPlayerService } from "@app/app/modules/core/mocks/services/mock-match-player.service";
-import { MockMatchService } from "@app/app/modules/core/mocks/services/mock-match.service";
 import { TestScheduler } from "rxjs/testing";
+import { MatchLocationPhase } from "../../../../common/match/location";
+import { MatchState, MatchStateChangedEvent } from "../../../../common/match/state";
+import { PlayerState } from "../../../../common/player-state";
+import { supressConsoleLog } from "../../../../common/testing-helpers";
+import { MatchPlayerInventoryService } from "../../../core/match/match-player-inventory.service";
+import { MatchPlayerLocationService } from "../../../core/match/match-player-location.service";
+import { MatchPlayerStatsService } from "../../../core/match/match-player-stats.service";
+import { MatchPlayerService } from "../../../core/match/match-player.service";
+import { MatchService } from "../../../core/match/match.service";
+import { MockUIContainerComponent } from "../../../core/mocks/components/mock-ui-container.component";
+import { MockMatchPlayerInventoryService } from "../../../core/mocks/services/mock-match-player-inventory.service";
+import { MockMatchPlayerLocationService } from "../../../core/mocks/services/mock-match-player-location.service";
+import { MockMatchPlayerStatsService } from "../../../core/mocks/services/mock-match-player-stats.service";
+import { MockMatchPlayerService } from "../../../core/mocks/services/mock-match-player.service";
+import { MockMatchService } from "../../../core/mocks/services/mock-match.service";
 import { MiniInventoryWindowComponent } from "./mini-inventory-window.component";
 
 describe("MiniInventoryWindowComponent", () => {

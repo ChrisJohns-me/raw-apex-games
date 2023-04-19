@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from "@angular/core";
-import { Hotkey } from "@app/app/common/hotkey";
+import { Hotkey } from "../../../../../common/hotkey";
 
 @Component({
     selector: "app-hotkey-editor",

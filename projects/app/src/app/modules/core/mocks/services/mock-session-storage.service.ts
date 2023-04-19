@@ -1,4 +1,4 @@
-import { OverwolfFeatureDep } from "@app/app/common/feature-status";
+import { OverwolfFeatureDep } from "../../../../common/feature-status";
 import { SessionStorageService } from "../../session-storage/session-storage.service";
 
 export class MockSessionStorageService implements MockedClass<SessionStorageService> {

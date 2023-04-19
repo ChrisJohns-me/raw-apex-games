@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { MatchRing } from "@app/app/common/match/ring";
-import { MatchStateChangedEvent } from "@app/app/common/match/state";
-import { SingletonServiceProviderFactory } from "@app/app/singleton-service.provider.factory";
 import { BehaviorSubject } from "rxjs";
+import { MatchRing } from "../../../common/match/ring";
+import { MatchStateChangedEvent } from "../../../common/match/state";
+import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
 import { BaseService } from "../base-service.abstract";
 import { ConfigurationService } from "../configuration.service";
 import { MatchService } from "./match.service";

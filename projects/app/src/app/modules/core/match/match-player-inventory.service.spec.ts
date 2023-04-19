@@ -1,10 +1,10 @@
 import { TestBed } from "@angular/core/testing";
-import { InventorySlot, InventorySlots } from "@app/app/common/inventory-slots";
-import { Item } from "@app/app/common/items/item";
-import { WeaponItem } from "@app/app/common/items/weapon-item";
-import { MatchState, MatchStateChangedEvent } from "@app/app/common/match/state";
-import { supressConsoleLog } from "@app/app/common/testing-helpers";
 import { TestScheduler } from "rxjs/testing";
+import { InventorySlot, InventorySlots } from "../../../common/inventory-slots";
+import { Item } from "../../../common/items/item";
+import { WeaponItem } from "../../../common/items/weapon-item";
+import { MatchState, MatchStateChangedEvent } from "../../../common/match/state";
+import { supressConsoleLog } from "../../../common/testing-helpers";
 import { MockMatchService } from "../mocks/services/mock-match.service";
 import { MockOverwolfGameDataService } from "../mocks/services/mock-overwolf-game-data.service";
 import { OWInfoUpdates2Event, OverwolfGameDataService } from "../overwolf";
