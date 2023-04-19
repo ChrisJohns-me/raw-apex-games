@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
-import { Observable, fromEvent, map, of, takeUntil, throwError } from "rxjs";
+import { Observable, fromEvent, map, of, switchMap, takeUntil, throwError } from "rxjs";
 import { Socket, io } from "socket.io-client";
 import { RawGameLobby } from "../../../../../../shared/common/raw-games/raw-game-lobby";
 import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
@@ -24,13 +24,19 @@ export class RawGamesOrganizerService extends BaseService implements OnDestroy {
     }
 
     public getLobbies(): Observable<RawGameLobby[]> {
-        return this.http
-            .get("/raw-games/lobbies")
-            .pipe(map((lobbies) => (Array.isArray(lobbies) ? lobbies.map((l) => new RawGameLobby(l)) : [])));
+        return this.configuration.config$.pipe(
+            takeUntil(this.destroy$),
+            switchMap((config) => this.http.get<RawGameLobby>(`${config.general.apiUrl}/raw-games/lobbies`)),
+            map((lobbies) => (Array.isArray(lobbies) ? lobbies.map((l) => new RawGameLobby(l)) : []))
+        );
     }
 
     public createLobby(lobby: RawGameLobby): Observable<RawGameLobby> {
-        return this.http.post<RawGameLobby>("/raw-games/lobby", lobby).pipe(map((l) => new RawGameLobby(l)));
+        return this.configuration.config$.pipe(
+            takeUntil(this.destroy$),
+            switchMap((config) => this.http.post<RawGameLobby>(`${config.general.apiUrl}/raw-games/lobby`, lobby)),
+            map((l) => new RawGameLobby(l))
+        );
     }
 
     public joinLobby(): Observable<null> {

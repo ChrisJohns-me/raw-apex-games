@@ -8,8 +8,8 @@
     },
     "featureConfigs": {},
     "general": {
-        "apiUrl": "https://localhost",
-        "wssUrl": "wss://localhost",
+        "apiUrl": "http://localhost:8080",
+        "wssUrl": "wss://localhost:4444",
         "enableMatchSummaryAd": true
     },
     "overwolfQuirks": {}

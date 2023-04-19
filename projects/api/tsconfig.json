@@ -4,6 +4,6 @@
         "outDir": "../../out-tsc/api"
     },
     "files": [
-        "./src/index.ts"
+        "src/server.ts",
     ]
 }

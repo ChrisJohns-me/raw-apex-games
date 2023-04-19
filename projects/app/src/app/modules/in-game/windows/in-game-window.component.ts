@@ -42,7 +42,14 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
         private readonly hotkey: HotkeyService,
         private readonly match: MatchService,
         private readonly rawGamesOrganizer: RawGamesOrganizerService
-    ) {}
+    ) {
+        this.rawGamesOrganizer
+            .getLobbies()
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((lobbies) => {
+                console.log(lobbies);
+            });
+    }
 
     public ngOnInit(): void {
         this.setupHotkeys();
