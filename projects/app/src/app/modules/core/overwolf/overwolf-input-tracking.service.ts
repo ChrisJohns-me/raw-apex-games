@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { Observable, Subject } from "rxjs";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { InputTrackingDelegate } from "./api/games/input-tracking-delegate";
-import { OWInputActivity, OWMouseEvent, OWMousePosition } from "./types/overwolf-types";
+import { InputTrackingDelegate } from "./api/games/input-tracking-delegate.js";
+import { OWInputActivity, OWMouseEvent, OWMousePosition } from "./index.js";
 
 /**
  * @classdesc Input tracking events from the Overwolf API.

@@ -1,9 +1,12 @@
 {
-    "extends": "../../tsconfig.api.json",
+    "extends": "../../tsconfig.json",
     "compilerOptions": {
         "outDir": "../../out-tsc/api"
     },
     "files": [
-        "src/server.ts",
-    ]
+        "./src/server.ts",
+    ],
+    "include": [
+        "../../**/*.d.ts"
+    ],
 }

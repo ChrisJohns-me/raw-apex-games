@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
+import { Legend } from "@app/models/legend/legend.js";
+import { MatchState } from "@app/models/match/state.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { findValueByKeyRegEx, isEmpty } from "@shared/utilities/index.js";
 import { Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
-import { findValueByKeyRegEx, isEmpty } from "../../../../../../../common/utilities/";
-import { Legend } from "../../../common/legend/legend";
-import { MatchState } from "../../../common/match/state";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { OWMatchInfo, OWMatchInfoLegendSelect, OverwolfGameDataService } from "../overwolf";
-import { MatchService } from "./match.service";
+import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoLegendSelect } from "../overwolf/index.js";
 
 /**
  * @classdesc Provides events when a teammate selects a legend; only when match is inactive

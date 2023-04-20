@@ -1,14 +1,15 @@
 import { Injectable } from "@angular/core";
+import { isPlayerNameEqual } from "@app/models/utilities/player.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { LocalDatabaseService } from "@app/modules/core/local-database/local-database.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import { BehaviorSubject, defer, from, iif, merge, Observable, of } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
-import { isEmpty } from "../../../../../../common/utilities/";
-import { isPlayerNameEqual } from "../../common/utilities/player";
-import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
-import { BaseService } from "./base-service.abstract";
-import { LocalDatabaseService } from "./local-database/local-database.service";
-import { LocalStorageKeys } from "./local-storage/local-storage-keys";
-import { LocalStorageService } from "./local-storage/local-storage.service";
-import { OverwolfGameDataService, OWGameEventKillFeed } from "./overwolf";
+import { LocalStorageKeys } from "./local-storage/local-storage-keys.js";
+import { LocalStorageService } from "./local-storage/local-storage.service.js";
+import { OWGameEventKillFeed } from "./overwolf/index.js";
+import { OverwolfGameDataService } from "./overwolf/overwolf-game-data.service.js";
 
 @Injectable({
     providedIn: "root",

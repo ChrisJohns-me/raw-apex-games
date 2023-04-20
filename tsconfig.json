@@ -1,6 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": ".",
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
@@ -8,8 +9,8 @@
     "importHelpers": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "module": "es2020",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "nodenext",
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "outDir": "./out-tsc",
@@ -17,16 +18,32 @@
     "useDefineForClassFields": false,
     "sourceMap": true,
     "strict": true,
-    "target": "ES2022",
+    "target": "ESNext",
+    "noEmit": true,
     "lib": [
-      "es2019",
+      "ES2019",
+      "ES2020",
       "dom"
     ],
     "typeRoots": [
-      "node_modules/@types",
-      "node_modules/@overwolf"
-    ]
+      "./node_modules/@types",
+      "./node_modules/@overwolf"
+    ],
+    "paths": {
+      "@api/*": [
+        "./projects/api/src/*"
+      ],
+      "@app/*": [
+        "./projects/app/src/app/*"
+      ],
+      "@shared/*": [
+        "./projects/shared/*"
+      ]
+    }
   },
+  "include": [
+    "./**/*.d.ts"
+  ],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

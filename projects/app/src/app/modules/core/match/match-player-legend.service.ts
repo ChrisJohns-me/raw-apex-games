@@ -1,15 +1,15 @@
 import { Injectable } from "@angular/core";
+import { Legend } from "@app/models/legend/legend.js";
+import { isPlayerNameEqual } from "@app/models/utilities/player.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { mathClamp } from "@shared/utilities/index.js";
 import { BehaviorSubject, combineLatest, of, Subject } from "rxjs";
 import { distinctUntilChanged, filter, map, pairwise, switchMap, takeUntil, tap } from "rxjs/operators";
-import { mathClamp } from "../../../../../../../common/utilities/";
-import { Legend } from "../../../common/legend/legend";
-import { isPlayerNameEqual } from "../../../common/utilities/player";
-import { MatchService } from "../../../modules/core/match/match.service";
-import { PlayerService } from "../../../modules/core/player.service";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { OverwolfGameDataService } from "../overwolf";
-import { MatchLegendSelectService } from "./match-legend-select.service";
+import { OverwolfGameDataService } from "../overwolf/index.js";
+import { PlayerService } from "../player.service.js";
+import { MatchLegendSelectService } from "./match-legend-select.service.js";
 
 @Injectable({
     providedIn: "root",

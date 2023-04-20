@@ -1,20 +1,20 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, ViewChild } from "@angular/core";
+import { MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import {
     CategoryScale,
     Chart,
     ChartDataset,
     ChartOptions,
     Legend,
+    LinearScale,
     LineController,
     LineElement,
-    LinearScale,
     PointElement,
     Tooltip,
     TooltipItem,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
-import { isEmpty } from "../../../../../../../../../common/utilities/";
-import { MatchDataStore } from "../../../../../modules/core/local-database/match-data-store";
 
 @Component({
     selector: "app-ranked-chart",

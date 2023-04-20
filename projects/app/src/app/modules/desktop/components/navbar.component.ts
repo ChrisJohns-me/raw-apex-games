@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from "@angular/core";
 import { mdiChartAreaspline, mdiFencing, mdiMap, mdiViewDashboard } from "@mdi/js";
-import { MainPage } from "../pages/main-page";
+import { MainPage } from "../pages/main-page.js";
 
 @Component({
     selector: "app-navbar",

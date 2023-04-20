@@ -1,4 +1,3 @@
-import { Subject } from "rxjs";
 import {
     isEmpty,
     recursiveEmptyObjectsToNull,
@@ -6,9 +5,10 @@ import {
     recursiveJSONParse,
     recursiveParseBoolean,
     recursiveParseNull,
-} from "../../../../../../../../../../common/utilities/";
-import { OWGameEvent } from "../../../types/overwolf-types";
-import { OverwolfEventListenerDelegate } from "../../overwolf-delegate";
+} from "@shared/utilities/index.js";
+import { Subject } from "rxjs";
+import { OWGameEvent } from "../../../types/overwolf-types.js";
+import { OverwolfEventListenerDelegate } from "../../overwolf-delegate.js";
 
 export class NewGameEventDelegate implements OverwolfEventListenerDelegate {
     public eventListeners = {

@@ -1,11 +1,11 @@
 import { Inject, Injectable } from "@angular/core";
+import { Hotkey, HotkeyEnum } from "@app/models/hotkey.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { Observable, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
-import { Hotkey, HotkeyEnum } from "../../common/hotkey";
-import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
-import { BaseService } from "../core/base-service.abstract";
-import { OWConfig, OW_CONFIG } from "../core/overwolf/overwolf-config";
-import { OverwolfHotKeyService } from "../core/overwolf/overwolf-hotkey.service";
+import { OWConfig, OW_CONFIG } from "../core/overwolf/overwolf-config.js";
+import { OverwolfHotKeyService } from "../core/overwolf/overwolf-hotkey.service.js";
 
 @Injectable({
     providedIn: "root",

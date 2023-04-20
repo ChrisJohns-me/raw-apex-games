@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
-import { FeatureState } from "../../../common/feature-status";
+import { FeatureState } from "@app/models/feature-status.js";
 
 @Component({
     selector: "app-game-events-status-indicator",

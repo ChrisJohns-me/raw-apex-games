@@ -1,22 +1,22 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
+import { environment } from "@app/../environments/environment.js";
+import { APP_NAME } from "@app/models/app.js";
+import { HotkeyEnum } from "@app/models/hotkey.js";
+import { SettingKey } from "@app/models/settings.js";
+import { SettingsService } from "@app/modules/core/settings.service.js";
+import { InGameWindowService } from "@app/modules/in-game/windows/in-game-window.service.js";
 import { Subject } from "rxjs";
 import { map, switchMap, takeUntil } from "rxjs/operators";
-import { environment } from "../../../environments/environment.prod";
-import { APP_NAME } from "../../common/app";
-import { HotkeyEnum } from "../../common/hotkey";
-import { SettingKey } from "../../common/settings";
-import { GameProcessService } from "../core/game-process.service";
-import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
-import { SettingsService } from "../core/settings.service";
-import { DesktopWindowService } from "../desktop/windows/desktop-window.service";
-import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
-import { InGameWindowService } from "../in-game/windows/in-game-window.service";
-import { BackgroundService } from "./background.service";
-import { CaptureControllerService } from "./capture-controller.service";
-import { HotkeyService } from "./hotkey.service";
-import { HUDWindowControllerService } from "./hud-window-controller.service";
-import { SystemTrayService } from "./system-tray.service";
+import { GameProcessService } from "../core/game-process.service.js";
+import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service.js";
+import { DesktopWindowService } from "../desktop/windows/desktop-window.service.js";
+import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service.js";
+import { BackgroundService } from "./background.service.js";
+import { CaptureControllerService } from "./capture-controller.service.js";
+import { HotkeyService } from "./hotkey.service.js";
+import { HUDWindowControllerService } from "./hud-window-controller.service.js";
+import { SystemTrayService } from "./system-tray.service.js";
 
 const AUTOOPEN_DEV_TOOLS = false;
 

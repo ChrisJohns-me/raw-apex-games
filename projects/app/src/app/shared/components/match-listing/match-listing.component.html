@@ -57,17 +57,19 @@
                                     match.endDate.getTime() > now - relativeTime
                                 "
                             >
-                                {{
+                                <!-- {{
                                     durationSinceNow(match.endDate)
                                         | dfnsFormatDurationPure: { format: ["years", "months", "weeks", "days", "hours", "minutes"] }
-                                }}
+                                }}-->
+                                <!-- Removed ngx-date-fns -->
                                 ago
                             </small>
                             <small
                                 class="text-muted"
                                 *ngIf="!match.endDate || !isFunction(match.endDate) || match.endDate.getTime() < now - relativeTime"
                             >
-                                {{ match.endDate | dfnsFormatRelative: now }}
+                                <!-- {{ match.endDate | dfnsFormatRelative: now }} -->
+                                <!-- Removed ngx-date-fns -->
                             </small>
                         </ng-container>
                     </div>

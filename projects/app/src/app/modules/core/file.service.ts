@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { iif, Observable, of } from "rxjs";
 import { map, switchMap } from "rxjs/operators";
-import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
-import { OverwolfExtensionsService } from "./overwolf/overwolf-extensions.service";
+import { OverwolfExtensionsService } from "./overwolf/overwolf-extensions.service.js";
 
 const appDataStorageSpace = overwolf.extensions.io.enums.StorageSpace.appData;
 

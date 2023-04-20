@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import { BehaviorSubject, Observable, of, Subject, throwError } from "rxjs";
 import { takeUntil, tap, timeout } from "rxjs/operators";
-import { isEmpty } from "../../../../../../../common/utilities";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { OWStopStreamingResult, OWStreamResult } from "../overwolf";
-import { OverwolfStreamingService } from "../overwolf/overwolf-streaming.service";
-import { VideoRecordingSettings } from "./video-recording-settings";
+import { OWStopStreamingResult, OWStreamResult } from "../overwolf/index.js";
+import { OverwolfStreamingService } from "../overwolf/overwolf-streaming.service.js";
+import { VideoRecordingSettings } from "./video-recording-settings.js";
 
 export enum VideoRecordingStatus {
     WAITING = "waiting",

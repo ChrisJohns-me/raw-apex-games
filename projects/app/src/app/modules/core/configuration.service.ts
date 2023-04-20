@@ -1,13 +1,13 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
-import { BehaviorSubject, Observable, ReplaySubject, Subject, of } from "rxjs";
+import ConfigJSONDataDev from "@app/../configs/config.dev.json";
+import { Configuration } from "@app/../configs/config.interface.js";
+import ConfigJSONDataProd from "@app/../configs/config.prod.json";
+import { environment } from "@app/../environments/environment.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
+import { BehaviorSubject, Observable, of, ReplaySubject, Subject } from "rxjs";
 import { catchError, map, takeUntil, timeout } from "rxjs/operators";
-import { isEmpty } from "../../../../../../common/utilities/";
-import { SingletonServiceProviderFactory } from "../../../app/singleton-service.provider.factory";
-import ConfigJSONDataDev from "../../../configs/config.dev.json";
-import { Configuration } from "../../../configs/config.interface";
-import ConfigJSONDataProd from "../../../configs/config.prod.json";
-import { environment } from "../../../environments/environment";
 
 export enum ConfigLoadStatus {
     NotStarted,

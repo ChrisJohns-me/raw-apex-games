@@ -10,20 +10,21 @@ import {
     SimpleChanges,
 } from "@angular/core";
 import { Title } from "@angular/platform-browser";
+import { environment } from "@app/../environments/environment.js";
+import { APP_NAME } from "@app/models/app.js";
+import { OverwolfWindow, OverwolfWindowName, OverwolfWindowState } from "@app/models/overwolf-window.js";
+import { SettingKey } from "@app/models/settings.js";
+import { GoogleAnalyticsService } from "@app/modules/core/google-analytics.service.js";
+import { OverwolfGameDataService } from "@app/modules/core/overwolf/index.js";
+import { SettingsService } from "@app/modules/core/settings.service.js";
+import { MainPage } from "@app/modules/desktop/pages/main-page.js";
+import { DesktopWindowService } from "@app/modules/desktop/windows/desktop-window.service.js";
+import { InGameWindowService } from "@app/modules/in-game/windows/in-game-window.service.js";
 import { mdiCogOutline, mdiWindowClose, mdiWindowMaximize, mdiWindowMinimize, mdiWindowRestore } from "@mdi/js";
+import { mathClamp } from "@shared/utilities/index.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import { Observable, Subject } from "rxjs";
 import { filter, finalize, map, shareReplay, switchMap, take, takeUntil, tap } from "rxjs/operators";
-import { isEmpty, mathClamp } from "../../../../../../../common/utilities/";
-import { environment } from "../../../../environments/environment";
-import { APP_NAME } from "../../../common/app";
-import { OverwolfWindow, OverwolfWindowName, OverwolfWindowState } from "../../../common/overwolf-window";
-import { SettingKey } from "../../../common/settings";
-import { GoogleAnalyticsService } from "../../../modules/core/google-analytics.service";
-import { OverwolfGameDataService } from "../../../modules/core/overwolf";
-import { SettingsService } from "../../../modules/core/settings.service";
-import { MainPage } from "../../../modules/desktop/pages/main-page";
-import { DesktopWindowService } from "../../../modules/desktop/windows/desktop-window.service";
-import { InGameWindowService } from "../../../modules/in-game/windows/in-game-window.service";
 
 export type ConfigPositionXAnchor = "left" | "center" | "right";
 export type ConfigPositionYAnchor = "top" | "middle" | "bottom";

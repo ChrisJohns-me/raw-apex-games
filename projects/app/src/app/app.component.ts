@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { Observable } from "rxjs";
-import { OverwolfWindow, OverwolfWindowName } from "./common/overwolf-window";
-import { OWWindowInfo } from "./modules/core/overwolf";
+import { OverwolfWindow, OverwolfWindowName } from "./models/overwolf-window.js";
+import { OWWindowInfo } from "./modules/core/overwolf/types/overwolf-types.js";
 
 @Component({
     selector: "app-root",

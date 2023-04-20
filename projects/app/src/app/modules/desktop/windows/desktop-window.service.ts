@@ -1,9 +1,9 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable, Subject, from } from "rxjs";
+import { OverwolfWindow, OverwolfWindowName } from "@app/models/overwolf-window.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { BehaviorSubject, from, Observable, Subject } from "rxjs";
 import { concatAll, map, takeUntil, tap } from "rxjs/operators";
-import { OverwolfWindow, OverwolfWindowName } from "../../../common/overwolf-window";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { MainPage } from "../pages/main-page";
+import { MainPage } from "../pages/main-page.js";
 
 @Injectable({
     providedIn: "root",

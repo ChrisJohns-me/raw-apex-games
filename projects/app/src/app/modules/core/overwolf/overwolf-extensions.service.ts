@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { Observable, Subject } from "rxjs";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { ExtensionsDelegate } from "./api/extensions-delegate";
-import { CurrentDelegate } from "./api/extensions/current-delegate";
-import { IODelegate } from "./api/extensions/io-delegate";
-import { OWAppLaunchTriggeredEvent, OWGetManifestResult } from "./types/overwolf-types";
+import { ExtensionsDelegate } from "./api/extensions-delegate.js";
+import { CurrentDelegate } from "./api/extensions/current-delegate.js";
+import { IODelegate } from "./api/extensions/io-delegate.js";
+import { OWAppLaunchTriggeredEvent, OWGetManifestResult } from "./types/overwolf-types.js";
 
 /**
  * @class OverwolfExtensionsService

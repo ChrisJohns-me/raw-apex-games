@@ -1,6 +1,6 @@
-import { ExtractSubjectType } from "../../../../../../../../../common/types/rxjs-utilities";
-import { PlayerService } from "../../../player.service";
-import { ReportableDataSnapshot } from "../reportable-data";
+import { PlayerService } from "@app/modules/core/player.service.js";
+import { ExtractSubjectType } from "@shared/types/rxjs-utilities.js";
+import { ReportableDataSnapshot } from "../reportable-data.js";
 
 type NameDataOutput = ExtractSubjectType<PlayerService["myName$"]>;
 export function NameDataFactory(myNameObs: PlayerService["myName$"]): ReportableDataSnapshot<NameDataOutput> {

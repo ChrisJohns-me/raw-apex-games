@@ -1,12 +1,12 @@
+import { MatchLocationPhase } from "@app/models/match/location.js";
+import { MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import { BehaviorSubject, Observable, of, Subject } from "rxjs";
 import { delay, map, mergeMap, retryWhen, takeUntil } from "rxjs/operators";
-import { isEmpty } from "../../../../../../../../../common/utilities/";
-import { MatchLocationPhase } from "../../../../../common/match/location";
-import { MatchDataStore } from "../../../local-database/match-data-store";
-import { MatchService } from "../../../match/match.service";
-import { ReportableDataFactoryMap } from "../reportable-data";
-import { ReportingEngine, ReportingEngineId, ReportingStatus } from "../reporting-engine";
-import { RunCondition } from "../run-condition";
+import { ReportableDataFactoryMap } from "../reportable-data.js";
+import { ReportingEngine, ReportingEngineId, ReportingStatus } from "../reporting-engine.js";
+import { RunCondition } from "../run-condition.js";
 
 const RETRY_COUNT = 5;
 const RETRY_DELAY_MULTIPLIER = 12 * 1000;

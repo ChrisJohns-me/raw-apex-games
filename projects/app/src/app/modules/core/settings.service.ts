@@ -1,12 +1,12 @@
 import { Injectable } from "@angular/core";
+import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@app/models/settings.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { LocalDatabaseService } from "@app/modules/core/local-database/local-database.service.js";
+import { SettingsDataStore } from "@app/modules/core/local-database/settings-data-store.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { IndexableType } from "dexie";
-import { Observable, defer, from, merge, of, throwError } from "rxjs";
+import { defer, from, merge, Observable, of, throwError } from "rxjs";
 import { filter, map, switchMap } from "rxjs/operators";
-import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "../../common/settings";
-import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
-import { BaseService } from "./base-service.abstract";
-import { LocalDatabaseService } from "./local-database/local-database.service";
-import { SettingsDataStore } from "./local-database/settings-data-store";
 
 @Injectable({
     providedIn: "root",

@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
-import { OWAppLaunchTriggeredEvent } from "../types/overwolf-types";
-import { OverwolfEventListenerDelegate } from "./overwolf-delegate";
+import { OWAppLaunchTriggeredEvent } from "../types/overwolf-types.js";
+import { OverwolfEventListenerDelegate } from "./overwolf-delegate.js";
 
 export class ExtensionsDelegate implements OverwolfEventListenerDelegate {
     /**

@@ -1,14 +1,14 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { Legend } from "@app/models/legend/legend.js";
+import { MatchGameMode } from "@app/models/match/game-mode/game-mode.js";
+import { MatchMap } from "@app/models/match/map/match-map.js";
+import { MatchFilters } from "@app/models/utilities/match-filters.js";
+import { MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { ReportingService } from "@app/modules/core/reporting/reporting.service.js";
 import { mdiFilterVariantRemove } from "@mdi/js";
 import { Observable, Subject } from "rxjs";
 import { finalize, switchMap, takeUntil } from "rxjs/operators";
-import { Legend } from "../../../../common/legend/legend";
-import { MatchGameMode } from "../../../../common/match/game-mode/game-mode";
-import { MatchMap } from "../../../../common/match/map/match-map";
-import { MatchFilters } from "../../../../common/utilities/match-filters";
-import { MatchDataStore } from "../../../../modules/core/local-database/match-data-store";
-import { MatchService } from "../../../../modules/core/match/match.service";
-import { ReportingService } from "../../../../modules/core/reporting/reporting.service";
 
 enum StatsType {
     Hourly = "Hourly",

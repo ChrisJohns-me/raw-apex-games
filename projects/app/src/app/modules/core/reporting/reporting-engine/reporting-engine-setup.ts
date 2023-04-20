@@ -1,6 +1,6 @@
-import { ReportableDataFactoryMap } from "./reportable-data";
-import { ReportingEngineId } from "./reporting-engine";
-import { RunCondition } from "./run-condition";
+import { ReportableDataFactoryMap } from "./reportable-data.js";
+import { ReportingEngineId } from "./reporting-engine.js";
+import { RunCondition } from "./run-condition.js";
 
 /**
  * @summary Player's implementation of the conditions and settings of the engine.

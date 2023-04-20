@@ -1,19 +1,19 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from "@angular/core";
 import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
+import { MatchRosterPlayer } from "@app/models/match/roster-player.js";
+import { WINDOW } from "@app/modules/core/global-window.provider.js";
+import { MatchRosterService } from "@app/modules/core/match/match-roster.service.js";
+import { ExposedOverwolfGameDataService } from "@app/modules/core/overwolf-exposed-data.service.js";
+import { OWGameEvent } from "@app/modules/core/overwolf/types/overwolf-types.js";
+import { PlayerService } from "@app/modules/core/player.service.js";
+import { JSONTryParse } from "@shared/utilities/index.js";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
 import { Subject } from "rxjs";
-import { JSONTryParse } from "../../../../../../../../common/utilities/";
-import { MatchRosterPlayer } from "../../../../common/match/roster-player";
-import { WINDOW } from "../../../../modules/core/global-window.provider";
-import { MatchRosterService } from "../../../../modules/core/match/match-roster.service";
-import { OWGameEvent } from "../../../../modules/core/overwolf";
-import { ExposedOverwolfGameDataService } from "../../../../modules/core/overwolf-exposed-data.service";
-import { PlayerService } from "../../../../modules/core/player.service";
-import { basicInventoryQuick } from "./simulations/basic-inventory";
-import { resetToInGame } from "./simulations/reset-to-in-game";
-import { resetToLobby } from "./simulations/reset-to-lobby";
-import { s16BattleRoyale } from "./simulations/s16-battle-royale";
-import { s16SoloTrios } from "./simulations/s16-solo-trios";
+import { basicInventoryQuick } from "./simulations/basic-inventory.js";
+import { resetToInGame } from "./simulations/reset-to-in-game.js";
+import { resetToLobby } from "./simulations/reset-to-lobby.js";
+import { s16BattleRoyale } from "./simulations/s16-battle-royale.js";
+import { s16SoloTrios } from "./simulations/s16-solo-trios.js";
 
 interface Command {
     timestamp: Date;

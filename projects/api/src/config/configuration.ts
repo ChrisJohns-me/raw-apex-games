@@ -3,9 +3,12 @@ import ConfigJSONDataProd from "./config.prod.json" assert { type: "json" };
 
 interface Config {
     firebase: {
+        apiKey: string;
+        authDomain: string;
         projectId: string;
-        host: string;
-        port: number;
+        storageBucket: string;
+        messagingSenderId: string;
+        appId: string;
     };
 }
 
@@ -20,8 +23,10 @@ class Configuration {
 
     private getConfig(): Config {
         if (this.isDevelopment) {
+            console.info("Using development configuration...");
             return ConfigJSONDataDev;
         } else if (this.isProduction) {
+            console.info("Using production configuration...");
             return ConfigJSONDataProd;
         } else {
             throw new Error("Unknown environment");

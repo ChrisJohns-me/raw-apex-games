@@ -1,5 +1,5 @@
 import { NgModule } from "@angular/core";
-import { OverwolfConfig, OW_CONFIG } from "./overwolf-config";
+import { OverwolfConfig, OW_CONFIG } from "./overwolf-config.js";
 
 @NgModule({
     providers: [{ provide: OW_CONFIG, useValue: OverwolfConfig }],

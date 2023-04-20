@@ -1,18 +1,18 @@
 import { Injectable } from "@angular/core";
+import { GamePhase } from "@app/models/game-phase.js";
+import { MatchLocationPhase } from "@app/models/match/location.js";
+import { MatchMapCoordinates } from "@app/models/match/map/map-coordinates.js";
+import { PlayerState } from "@app/models/player-state.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { cleanInt } from "@shared/utilities/index.js";
+import { exhaustiveEnumSwitch } from "@shared/utilities/switch.js";
 import { BehaviorSubject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
-import { cleanInt } from "../../../../../../../common/utilities/";
-import { exhaustiveEnumSwitch } from "../../../../../../../common/utilities/switch";
-import { GamePhase } from "../../../common/game-phase";
-import { MatchLocationPhase } from "../../../common/match/location";
-import { MatchMapCoordinates } from "../../../common/match/map/map-coordinates";
-import { PlayerState } from "../../../common/player-state";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { OverwolfGameDataService } from "../overwolf";
-import { MatchPlayerInflictionService } from "./match-player-infliction.service";
-import { MatchPlayerService } from "./match-player.service";
-import { MatchService } from "./match.service";
+import { OverwolfGameDataService } from "../overwolf/index.js";
+import { MatchPlayerInflictionService } from "./match-player-infliction.service.js";
+import { MatchPlayerService } from "./match-player.service.js";
 
 @Injectable({
     providedIn: "root",

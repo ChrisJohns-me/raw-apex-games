@@ -1,8 +1,8 @@
+import { MatchPlayerStatsService } from "@app/modules/core/match/match-player-stats.service.js";
+import { MatchRosterService } from "@app/modules/core/match/match-roster.service.js";
 import { combineLatest } from "rxjs";
 import { map } from "rxjs/operators";
-import { MatchPlayerStatsService } from "../../../match/match-player-stats.service";
-import { MatchRosterService } from "../../../match/match-roster.service";
-import { ReportableDataSnapshot } from "../reportable-data";
+import { ReportableDataSnapshot } from "../reportable-data.js";
 
 type MatchSummaryDataOutput = {
     assists: number;

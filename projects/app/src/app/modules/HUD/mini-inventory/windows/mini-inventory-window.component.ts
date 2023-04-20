@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { Observable, Subject, combineLatest } from "rxjs";
+import { InventorySlot, InventorySlots } from "@app/models/inventory-slots.js";
+import { Item } from "@app/models/items/item.js";
+import { MatchLocationPhase } from "@app/models/match/location.js";
+import { MatchState, MatchStateChangedEvent } from "@app/models/match/state.js";
+import { OverwolfWindowName } from "@app/models/overwolf-window.js";
+import { PlayerState } from "@app/models/player-state.js";
+import { MatchPlayerInventoryService } from "@app/modules/core/match/match-player-inventory.service.js";
+import { MatchPlayerLocationService } from "@app/modules/core/match/match-player-location.service.js";
+import { MatchPlayerStatsService } from "@app/modules/core/match/match-player-stats.service.js";
+import { MatchPlayerService } from "@app/modules/core/match/match-player.service.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { combineLatest, Observable, Subject } from "rxjs";
 import { distinctUntilChanged, map, takeUntil } from "rxjs/operators";
-import { InventorySlot, InventorySlots } from "../../../../common/inventory-slots";
-import { Item } from "../../../../common/items/item";
-import { MatchLocationPhase } from "../../../../common/match/location";
-import { MatchState, MatchStateChangedEvent } from "../../../../common/match/state";
-import { OverwolfWindowName } from "../../../../common/overwolf-window";
-import { PlayerState } from "../../../../common/player-state";
-import { MatchPlayerInventoryService } from "../../../core/match/match-player-inventory.service";
-import { MatchPlayerLocationService } from "../../../core/match/match-player-location.service";
-import { MatchPlayerStatsService } from "../../../core/match/match-player-stats.service";
-import { MatchPlayerService } from "../../../core/match/match-player.service";
-import { MatchService } from "../../../core/match/match.service";
 
 // TODO: Make mini-inventory only visible in RAW APEX GAMES matches
 

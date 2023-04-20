@@ -1,14 +1,18 @@
 import { Inject, Injectable } from "@angular/core";
-import { BehaviorSubject, Subject, interval, merge } from "rxjs";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { BehaviorSubject, interval, merge, Subject } from "rxjs";
 import { delay, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { InfoUpdatesDelegate } from "./api/games/events/info-updates-delegate";
-import { NewGameEventDelegate } from "./api/games/events/new-game-event-delegate";
-import { GameInfoDelegate } from "./api/games/game-info-delegate";
-import { OWConfig, OW_CONFIG } from "./overwolf-config";
-import { OWFeatureRegistrationStatus, OverwolfFeatureRegistrationService } from "./overwolf-feature-registration.service";
-import { OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./types/overwolf-types";
+import {
+    GameInfoDelegate,
+    InfoUpdatesDelegate,
+    NewGameEventDelegate,
+    OWGameEvent,
+    OWInfoUpdates2Event,
+    OWRunningGameInfo,
+} from "./index.js";
+import { OWConfig, OW_CONFIG } from "./overwolf-config.js";
+import { OverwolfFeatureRegistrationService, OWFeatureRegistrationStatus } from "./overwolf-feature-registration.service.js";
 
 /**
  * @summary On any first run of the app or game, re-register the required features by unregistering before registering

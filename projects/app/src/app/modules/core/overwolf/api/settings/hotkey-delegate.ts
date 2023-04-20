@@ -6,7 +6,7 @@ import {
     OWHotKeyOnChangedEvent,
     OWHotKeyOnPressedEvent,
     OWHotKeyUnassignHotkeyObject,
-} from "../../types/overwolf-types";
+} from "../../types/overwolf-types.js";
 
 export class HotKeyDelegate {
     public readonly onPressed$ = new Subject<OWHotKeyOnPressedEvent>();

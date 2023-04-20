@@ -1,8 +1,8 @@
+import { MatchPlayerLocationService } from "@app/modules/core/match/match-player-location.service.js";
+import { ExtractSubjectType } from "@shared/types/rxjs-utilities.js";
 import { OperatorFunction } from "rxjs";
 import { filter, map, throttleTime, withLatestFrom } from "rxjs/operators";
-import { ExtractSubjectType } from "../../../../../../../../../common/types/rxjs-utilities";
-import { MatchPlayerLocationService } from "../../../match/match-player-location.service";
-import { ReportableDataTimestampedStream } from "../reportable-data";
+import { ReportableDataTimestampedStream } from "../reportable-data.js";
 
 /** Time in ms to throttle recorded location data. Changing this affects past heatmap graphs. */
 const LOCATION_DATA_THROTTLE = 5000;

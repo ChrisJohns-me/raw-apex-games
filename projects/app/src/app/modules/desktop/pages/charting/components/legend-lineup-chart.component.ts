@@ -1,21 +1,21 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, ViewChild } from "@angular/core";
+import { Legend } from "@app/models/legend/legend.js";
+import { matchListAvgStatsGroupedBy } from "@app/models/utilities/match-stats.js";
+import { MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import {
     BarController,
     BarElement,
     CategoryScale,
     Chart,
     ChartDataset,
-    Legend as ChartLegend,
     ChartOptions,
+    Legend as ChartLegend,
     LinearScale,
     Tooltip,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
-import { isEmpty } from "../../../../../../../../../common/utilities/";
-import { Legend } from "../../../../../common/legend/legend";
-import { matchListAvgStatsGroupedBy } from "../../../../../common/utilities/match-stats";
-import { MatchDataStore } from "../../../../../modules/core/local-database/match-data-store";
-import { ChartDamageCSSPropertyVar, ChartKillsCSSPropertyVar, ChartPlacementCSSPropertyVar } from "./chart";
+import { ChartDamageCSSPropertyVar, ChartKillsCSSPropertyVar, ChartPlacementCSSPropertyVar } from "./chart.js";
 
 @Component({
     selector: "app-legend-lineup-chart",

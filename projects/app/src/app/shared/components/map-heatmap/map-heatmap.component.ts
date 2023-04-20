@@ -10,12 +10,12 @@ import {
     ViewChild,
 } from "@angular/core";
 import { UntypedFormControl } from "@angular/forms";
+import { environment } from "@app/../environments/environment.js";
+import { MatchMapCoordinates } from "@app/models/match/map/map-coordinates.js";
+import { MatchMap } from "@app/models/match/map/match-map.js";
 import * as d3 from "d3";
-import { Subject, combineLatest } from "rxjs";
+import { combineLatest, Subject } from "rxjs";
 import { takeUntil, throttleTime } from "rxjs/operators";
-import { environment } from "../../../../environments/environment";
-import { MatchMapCoordinates } from "../../../common/match/map/map-coordinates";
-import { MatchMap } from "../../../common/match/map/match-map";
 
 type MatchMapImageAxisScale = NonNullable<MatchMap["chartConfig"]>["imageAxisScale"];
 

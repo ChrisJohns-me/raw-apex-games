@@ -1,7 +1,13 @@
 # RawApexGamesOverwolfApp
 
+## Setup GCloud / Firebase / Firestore
+
 Install [Java SE Development Kit](https://www.oracle.com/java/technologies/downloads/)
 Install [gcloud CLI](https://cloud.google.com/sdk/docs/install)
+
+Login to GCloud + Firebase
+`gcloud auth login`
+`firebase login`
 
 ## Development server
 

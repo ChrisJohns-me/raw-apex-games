@@ -1,20 +1,20 @@
 import { isObservable, Observable, Subscription, Timestamp } from "rxjs";
-import { AssistsDataFactory } from "./reportable-data/assists";
-import { DamageDataFactory } from "./reportable-data/damage";
-import { DeathLocationHistoryDataFactory } from "./reportable-data/death-location-history";
-import { EliminationLocationHistoryDataFactory } from "./reportable-data/elimination-location-history";
-import { EliminationsDataFactory } from "./reportable-data/eliminations";
-import { GameModeDataFactory } from "./reportable-data/game-mode";
-import { KnockdownsDataFactory } from "./reportable-data/knockdowns";
-import { LegendDataFactory } from "./reportable-data/legend";
-import { LocationHistoryDataFactory } from "./reportable-data/location-history";
-import { MapDataFactory } from "./reportable-data/map";
-import { MatchMetaDataFactory } from "./reportable-data/match-meta";
-import { MatchRosterDataFactory } from "./reportable-data/match-roster";
-import { MatchSummaryDataFactory } from "./reportable-data/match-summary";
-import { NameDataFactory } from "./reportable-data/name";
-import { PlacementDataFactory } from "./reportable-data/placement";
-import { TeamRosterDataFactory } from "./reportable-data/team-roster";
+import { AssistsDataFactory } from "./reportable-data/assists.js";
+import { DamageDataFactory } from "./reportable-data/damage.js";
+import { DeathLocationHistoryDataFactory } from "./reportable-data/death-location-history.js";
+import { EliminationLocationHistoryDataFactory } from "./reportable-data/elimination-location-history.js";
+import { EliminationsDataFactory } from "./reportable-data/eliminations.js";
+import { GameModeDataFactory } from "./reportable-data/game-mode.js";
+import { KnockdownsDataFactory } from "./reportable-data/knockdowns.js";
+import { LegendDataFactory } from "./reportable-data/legend.js";
+import { LocationHistoryDataFactory } from "./reportable-data/location-history.js";
+import { MapDataFactory } from "./reportable-data/map.js";
+import { MatchMetaDataFactory } from "./reportable-data/match-meta.js";
+import { MatchRosterDataFactory } from "./reportable-data/match-roster.js";
+import { MatchSummaryDataFactory } from "./reportable-data/match-summary.js";
+import { NameDataFactory } from "./reportable-data/name.js";
+import { PlacementDataFactory } from "./reportable-data/placement.js";
+import { TeamRosterDataFactory } from "./reportable-data/team-roster.js";
 
 /**
  * Helper to map DataItem types

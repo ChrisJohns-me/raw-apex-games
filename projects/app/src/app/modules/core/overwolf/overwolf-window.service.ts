@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { Subject } from "rxjs";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { InstancesDelegate } from "./api/windows/instances-delegate";
-import { SettingsDelegate } from "./api/windows/settings-delegate";
-import { SizeDelegate } from "./api/windows/size-delegate";
-import { StateDelegate } from "./api/windows/state-delegate";
-import { VisibilityDelegate } from "./api/windows/visibility-delegate";
+import { InstancesDelegate } from "./api/windows/instances-delegate.js";
+import { SettingsDelegate } from "./api/windows/settings-delegate.js";
+import { SizeDelegate } from "./api/windows/size-delegate.js";
+import { StateDelegate } from "./api/windows/state-delegate.js";
+import { VisibilityDelegate } from "./api/windows/visibility-delegate.js";
 
 /**
  * @classdesc

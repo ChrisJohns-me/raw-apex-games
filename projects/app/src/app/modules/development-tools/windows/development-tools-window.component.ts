@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
+import { OverwolfWindowName } from "@app/models/overwolf-window.js";
+import { ExposedOverwolfGameDataService } from "@app/modules/core/overwolf-exposed-data.service.js";
+import { OWGameEvent, OWInfoUpdates2Event } from "@app/modules/core/overwolf/index.js";
+import { OverwolfExtensionsService } from "@app/modules/core/overwolf/overwolf-extensions.service.js";
 import { Subject } from "rxjs";
-import { OverwolfWindowName } from "../../../common/overwolf-window";
-import { OWGameEvent, OWInfoUpdates2Event } from "../../../modules/core/overwolf";
-import { ExposedOverwolfGameDataService } from "../../../modules/core/overwolf-exposed-data.service";
-import { OverwolfExtensionsService } from "../../../modules/core/overwolf/overwolf-extensions.service";
 
 type MainTab = "simulate" | "logs";
 

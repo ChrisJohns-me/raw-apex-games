@@ -2,18 +2,23 @@ import { FirebaseOptions, getApp, getApps, initializeApp } from "firebase/app";
 import { Firestore, PartialWithFieldValue, QueryDocumentSnapshot, connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import Configuration from "../config/configuration.js";
 
+const EMULATOR_PORT = 5001; // Found in `firebase.json` file
+
 export const converter = <T>() => ({
-    toFirestore: (data: PartialWithFieldValue<T>) => data,
+    toFirestore: (data: PartialWithFieldValue<T>) => {
+        console.log("toFirestore");
+        return data;
+    },
     fromFirestore: (snap: QueryDocumentSnapshot) => snap.data() as T,
 });
 
 class FirebaseUtil {
     public firestore!: Firestore;
 
-    private firebaseOptions: FirebaseOptions;
+    private firebaseOptions: FirebaseOptions = Configuration.config.firebase;
 
     constructor() {
-        this.firebaseOptions = this.getFirebaseOptions();
+        this.firebaseOptions = Configuration.config.firebase;
         this.initFirebase();
     }
 
@@ -22,17 +27,9 @@ class FirebaseUtil {
         this.firestore = getFirestore(firebaseApp);
 
         if (Configuration.isDevelopment) {
-            const { host, port } = Configuration.config.firebase;
-            connectFirestoreEmulator(this.firestore, host, port);
+            console.info("Using Firestore Emulator...");
+            connectFirestoreEmulator(this.firestore, "localhost", EMULATOR_PORT);
         }
-    }
-
-    private getFirebaseOptions(): FirebaseOptions {
-        const { projectId, host, port } = Configuration.config.firebase;
-        return {
-            projectId,
-            databaseURL: `${host}:${port}`,
-        };
     }
 }
 

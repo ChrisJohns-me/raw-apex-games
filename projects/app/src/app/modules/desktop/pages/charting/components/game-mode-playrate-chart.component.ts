@@ -1,21 +1,20 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, ViewChild } from "@angular/core";
+import { MatchGameMode } from "@app/models/match/game-mode/game-mode.js";
+import { matchListAvgStatsGroupedBy } from "@app/models/utilities/match-stats.js";
+import { MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import {
     ArcElement,
     CategoryScale,
     Chart,
     ChartDataset,
-    Legend as ChartLegend,
     ChartOptions,
+    Legend as ChartLegend,
     LinearScale,
     PieController,
     Tooltip,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
-import ChartDataLabels from "chartjs-plugin-datalabels";
-import { isEmpty } from "../../../../../../../../../common/utilities/";
-import { MatchGameMode } from "../../../../../common/match/game-mode/game-mode";
-import { matchListAvgStatsGroupedBy } from "../../../../../common/utilities/match-stats";
-import { MatchDataStore } from "../../../../../modules/core/local-database/match-data-store";
 
 @Component({
     selector: "app-game-mode-playrate-chart",
@@ -57,16 +56,16 @@ export class GameModePlayrateChartComponent implements AfterViewInit, OnChanges 
                     xAlign: "center",
                     yAlign: "center",
                 },
-                datalabels: {
-                    display: "auto",
-                    color: getCSSVar("--bs-white"),
-                    anchor: "end",
-                    align: "end",
-                    formatter: (value, context) => {
-                        const labels = context.chart.data.labels ?? [];
-                        return `${labels[context.dataIndex]}: ${value}%`;
-                    },
-                },
+                // datalabels: {
+                //     display: "auto",
+                //     color: getCSSVar("--bs-white"),
+                //     anchor: "end",
+                //     align: "end",
+                //     formatter: (value, context) => {
+                //         const labels = context.chart.data.labels ?? [];
+                //         return `${labels[context.dataIndex]}: ${value}%`;
+                //     },
+                // },
             },
             maintainAspectRatio: false,
         };
@@ -97,7 +96,7 @@ export class GameModePlayrateChartComponent implements AfterViewInit, OnChanges 
         if (this.chart) this.chart.destroy();
         this.chart = new Chart(this.chartRef.nativeElement, {
             type: "pie",
-            plugins: [ChartDataLabels],
+            // plugins: [ChartDataLabels],
             data: {
                 labels: this.dataLabels,
                 datasets: this.datasets,

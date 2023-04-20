@@ -1,21 +1,21 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { Subject, combineLatest, of } from "rxjs";
+import { SettingKey } from "@app/models/settings.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { SessionStorageService } from "@app/modules/core/session-storage/session-storage.service.js";
+import { SettingsService } from "@app/modules/core/settings.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
+import { combineLatest, of, Subject } from "rxjs";
 import { catchError, filter, switchMap, takeUntil } from "rxjs/operators";
-import { isEmpty } from "../../../../../../../common/utilities/";
-import { SettingKey } from "../../../common/settings";
-import { BaseService } from "../../../modules/core/base-service.abstract";
-import { GoogleAnalyticsService } from "../../../modules/core/google-analytics.service";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { MatchService } from "../match/match.service";
-import { OverwolfGameDataService } from "../overwolf";
-import { SessionStorageService } from "../session-storage/session-storage.service";
-import { SettingsService } from "../settings.service";
-import { ReportableDataManagerService } from "./reporting-engine/reportable-data-manager";
-import { ReportingEngine, ReportingEngineId, ReportingStatus } from "./reporting-engine/reporting-engine";
-import { GameLogReportingEngine } from "./reporting-engine/reporting-engines/game-log-reporting-engine";
-import { GoogleAnalyticsReportingEngine } from "./reporting-engine/reporting-engines/google-analytics-reporting-engine";
-import { LocalDBReportingEngine } from "./reporting-engine/reporting-engines/localdb-reporting-engine";
-import { RunCondition } from "./reporting-engine/run-condition";
+import { GoogleAnalyticsService } from "../google-analytics.service.js";
+import { OverwolfGameDataService } from "../overwolf/overwolf-game-data.service.js";
+import { ReportableDataManagerService } from "./reporting-engine/reportable-data-manager.js";
+import { ReportingEngine, ReportingEngineId, ReportingStatus } from "./reporting-engine/reporting-engine.js";
+import { GameLogReportingEngine } from "./reporting-engine/reporting-engines/game-log-reporting-engine.js";
+import { GoogleAnalyticsReportingEngine } from "./reporting-engine/reporting-engines/google-analytics-reporting-engine.js";
+import { LocalDBReportingEngine } from "./reporting-engine/reporting-engines/localdb-reporting-engine.js";
+import { RunCondition } from "./reporting-engine/run-condition.js";
 
 export interface ReportingEvent {
     engine: ReportingEngine;

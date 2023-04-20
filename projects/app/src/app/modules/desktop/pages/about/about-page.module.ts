@@ -1,8 +1,8 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
-import { SharedModule } from "../../../../../../../shared/shared.module";
-import { RawApexGamesSharedModule } from "../../../../shared/app-shared.module";
-import { AboutPageComponent } from "./about-page.component";
+import { RawApexGamesSharedModule } from "@app/shared/app-shared.module.js";
+import { SharedModule } from "@shared/angular/shared.module.js";
+import { AboutPageComponent } from "./about-page.component.js";
 
 @NgModule({
     declarations: [AboutPageComponent],

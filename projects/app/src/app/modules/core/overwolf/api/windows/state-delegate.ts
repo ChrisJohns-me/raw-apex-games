@@ -1,6 +1,6 @@
 import { bindCallback, Observable, Subject } from "rxjs";
 import { map } from "rxjs/operators";
-import { OverwolfEventListenerDelegate } from "../overwolf-delegate";
+import { OverwolfEventListenerDelegate } from "../overwolf-delegate.js";
 
 /**
  * @classdesc Minimizing, maximizing, closing, restoring, Overwolf windows.

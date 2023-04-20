@@ -1,16 +1,16 @@
 import { Injectable } from "@angular/core";
+import { OverwolfFeatureDep } from "@app/models/feature-status.js";
+import { GamePhase } from "@app/models/game-phase.js";
+import { MatchGameModeGenericId } from "@app/models/match/game-mode/game-mode.enum.js";
+import { MatchLocationPhase } from "@app/models/match/location.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { exhaustiveEnumSwitch } from "@shared/utilities/switch.js";
 import { BehaviorSubject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
-import { exhaustiveEnumSwitch } from "../../../../../../common/utilities/switch";
-import { OverwolfFeatureDep } from "../../common/feature-status";
-import { GamePhase } from "../../common/game-phase";
-import { MatchGameModeGenericId } from "../../common/match/game-mode/game-mode.enum";
-import { MatchLocationPhase } from "../../common/match/location";
-import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
-import { BaseService } from "./base-service.abstract";
-import { MatchService } from "./match/match.service";
-import { OverwolfGameDataService } from "./overwolf";
-import { OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status.service";
+import { OverwolfGameDataService } from "./overwolf/index.js";
+import { OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status.service.js";
 
 /**
  * @classdesc Provides general information about the game and it's meta state

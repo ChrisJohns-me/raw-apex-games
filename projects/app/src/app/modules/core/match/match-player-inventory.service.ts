@@ -1,14 +1,14 @@
 import { Injectable } from "@angular/core";
+import { InventorySlots } from "@app/models/inventory-slots.js";
+import { Item } from "@app/models/items/item.js";
+import { WeaponItem } from "@app/models/items/weapon-item.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { cleanInt, findKeyByKeyRegEx } from "@shared/utilities/index.js";
 import { BehaviorSubject, Observable } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
-import { cleanInt, findKeyByKeyRegEx } from "../../../../../../../common/utilities/";
-import { InventorySlots } from "../../../common/inventory-slots";
-import { Item } from "../../../common/items/item";
-import { WeaponItem } from "../../../common/items/weapon-item";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { OWInfoUpdates2Event, OWMatchInfoMeInventory, OWMatchInfoMeWeapons, OverwolfGameDataService } from "../overwolf";
-import { MatchService } from "./match.service";
+import { OverwolfGameDataService, OWInfoUpdates2Event, OWMatchInfoMeInventory, OWMatchInfoMeWeapons } from "../overwolf/index.js";
 
 /**
  * @classdesc Provides general inventory, weapon, and in-use information about the local player.

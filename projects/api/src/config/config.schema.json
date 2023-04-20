@@ -12,20 +12,32 @@
         "firebase": {
             "type": "object",
             "properties": {
+                "apiKey": {
+                    "type": "string"
+                },
+                "authDomain": {
+                    "type": "string"
+                },
                 "projectId": {
                     "type": "string"
                 },
-                "host": {
+                "storageBucket": {
                     "type": "string"
                 },
-                "port": {
-                    "type": "number"
+                "messagingSenderId": {
+                    "type": "string"
+                },
+                "appId": {
+                    "type": "string"
                 }
             },
             "required": [
+                "apiKey",
+                "authDomain",
                 "projectId",
-                "host",
-                "port"
+                "storageBucket",
+                "messagingSenderId",
+                "appId"
             ]
         }
     },

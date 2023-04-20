@@ -8,7 +8,7 @@
     },
     "featureConfigs": {},
     "general": {
-        "apiUrl": "https://api.overwolf.com",
+        "apiUrl": "https://api.overwolf.com/api/",
         "wssUrl": "wss://api.overwolf.com",
         "enableMatchSummaryAd": false
     },

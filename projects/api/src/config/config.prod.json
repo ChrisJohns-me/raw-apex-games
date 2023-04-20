@@ -2,8 +2,11 @@
     "$schema": "./config.schema.json",
     "env": "prod",
     "firebase": {
-        "projectId": "PROD_PROJECT",
-        "host": "",
-        "port": 8726
+        "apiKey": "AIzaSyBJRGPkv_FmpoQCO5B3jnzANY6CIqOWJ_M",
+        "authDomain": "raw-apex-games.firebaseapp.com",
+        "projectId": "raw-apex-games",
+        "storageBucket": "raw-apex-games.appspot.com",
+        "messagingSenderId": "896481118271",
+        "appId": "1:896481118271:web:2d69c2cb971c294f40108a"
     }
 }

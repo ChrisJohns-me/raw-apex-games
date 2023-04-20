@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { BehaviorSubject, Subject } from "rxjs";
-import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
-import { BaseService } from "./base-service.abstract";
-import { OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo, OverwolfGameDataService } from "./overwolf";
+import { OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./overwolf/index.js";
+import { OverwolfGameDataService } from "./overwolf/overwolf-game-data.service.js";
 
 /**
  * Avoid directly using this service, or the OverwolfGameDataService

@@ -1,5 +1,5 @@
 import { bindCallback, map, Observable } from "rxjs";
-import { OWGetManifestResult } from "../../types/overwolf-types";
+import { OWGetManifestResult } from "../../types/overwolf-types.js";
 
 export class CurrentDelegate {
     /**

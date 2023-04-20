@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
+import { environment } from "@app/../environments/environment.js";
+import { aXNWSVA } from "@app/models/vip.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { OverwolfProfileService } from "@app/modules/core/overwolf/overwolf-profile.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import { filter, map, take, takeUntil } from "rxjs/operators";
-import { isEmpty } from "../../../../../../common/utilities/";
-import { environment } from "../../../environments/environment";
-import { aXNWSVA } from "../../common/vip";
-import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
-import { BaseService } from "./base-service.abstract";
-import { OverwolfProfileService } from "./overwolf/overwolf-profile.service";
 
 declare let ga: (...args: any[]) => void;
 

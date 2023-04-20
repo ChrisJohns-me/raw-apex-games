@@ -1,4 +1,4 @@
-import { OWStreamSettings } from "../overwolf";
+import { OWStreamSettings } from "../overwolf/index.js";
 
 interface VideoRecordingSettingsConstructor {
     autoCalcKBPS?: boolean;

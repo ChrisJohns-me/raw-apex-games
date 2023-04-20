@@ -1,18 +1,18 @@
 import { Injectable } from "@angular/core";
+import { environment } from "@app/../environments/environment.js";
+import { APP_NAME } from "@app/models/app.js";
+import { OverwolfWindowName } from "@app/models/overwolf-window.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { exhaustiveEnumSwitch } from "@shared/utilities/switch.js";
 import { of } from "rxjs";
 import { catchError, takeUntil } from "rxjs/operators";
-import { exhaustiveEnumSwitch } from "../../../../../../common/utilities/switch";
-import { environment } from "../../../environments/environment";
-import { APP_NAME } from "../../common/app";
-import { OverwolfWindowName } from "../../common/overwolf-window";
-import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
-import { BaseService } from "../core/base-service.abstract";
-import { OWSystemTrayMenuItem } from "../core/overwolf";
-import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service";
-import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service";
-import { MainPage } from "../desktop/pages/main-page";
-import { DesktopWindowService } from "../desktop/windows/desktop-window.service";
-import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service";
+import { OWSystemTrayMenuItem } from "../core/overwolf/index.js";
+import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service.js";
+import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service.js";
+import { MainPage } from "../desktop/pages/main-page.js";
+import { DesktopWindowService } from "../desktop/windows/desktop-window.service.js";
+import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service.js";
 
 export enum SystemTrayItemKey {
     Main = "main",

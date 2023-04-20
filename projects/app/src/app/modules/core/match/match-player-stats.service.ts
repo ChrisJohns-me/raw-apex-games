@@ -1,15 +1,15 @@
 import { Injectable } from "@angular/core";
+import { MatchState } from "@app/models/match/state.js";
+import { PlayerState } from "@app/models/player-state.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { cleanInt, isEmpty, parseBoolean } from "@shared/utilities/index.js";
 import { BehaviorSubject } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
-import { cleanInt, isEmpty, parseBoolean } from "../../../../../../../common/utilities/";
-import { MatchState } from "../../../common/match/state";
-import { PlayerState } from "../../../common/player-state";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { OverwolfGameDataService } from "../overwolf";
-import { MatchPlayerInflictionService } from "./match-player-infliction.service";
-import { MatchPlayerService } from "./match-player.service";
-import { MatchService } from "./match.service";
+import { OverwolfGameDataService } from "../overwolf/index.js";
+import { MatchPlayerInflictionService } from "./match-player-infliction.service.js";
+import { MatchPlayerService } from "./match-player.service.js";
 
 /**
  * @classdesc Provides damage/deaths/knockdown/kill, etc. count updates

@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from "@angular/core";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 
 /**
  * @classdesc Service for the Raw Apex Games Player.

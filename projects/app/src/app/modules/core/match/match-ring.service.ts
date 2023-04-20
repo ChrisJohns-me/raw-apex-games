@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
+import { MatchRing } from "@app/models/match/ring.js";
+import { MatchStateChangedEvent } from "@app/models/match/state.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { ConfigurationService } from "@app/modules/core/configuration.service.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { BehaviorSubject } from "rxjs";
-import { MatchRing } from "../../../common/match/ring";
-import { MatchStateChangedEvent } from "../../../common/match/state";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { ConfigurationService } from "../configuration.service";
-import { MatchService } from "./match.service";
 
 const REFRESH_INTERVAL = 1000;
 

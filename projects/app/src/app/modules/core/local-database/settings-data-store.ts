@@ -1,4 +1,4 @@
-import { SettingKey, SettingValue } from "../../../common/settings";
+import { SettingKey, SettingValue } from "../../../models/settings";
 
 /*
  * To prevent object stores from becoming stale,

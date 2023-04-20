@@ -29,7 +29,7 @@
                         "index": "projects/app/src/index.html",
                         "main": "projects/app/src/main.ts",
                         "polyfills": "projects/app/src/polyfills.ts",
-                        "tsConfig": "projects/app/tsconfig.app.json",
+                        "tsConfig": "projects/app/tsconfig.json",
                         "aot": true,
                         "assets": [
                             {
@@ -108,56 +108,6 @@
                             ]
                         }
                     }
-                },
-                "test": {
-                    "builder": "@angular-devkit/build-angular:karma",
-                    "options": {
-                        "main": "projects/app/test.ts",
-                        "polyfills": "projects/app/src/polyfills.ts",
-                        "tsConfig": "projects/app/tsconfig.spec.json",
-                        "karmaConfig": "projects/app/karma.conf.js",
-                        "assets": [
-                            "projects/app/src/assets/images",
-                            "projects/app/src/assets/svgs",
-                            "projects/app/src/assets/fonts"
-                        ],
-                        "styles": [
-                            "projects/app/src/styles.scss"
-                        ],
-                        "stylePreprocessorOptions": {
-                            "includePaths": [
-                                "projects/app/src/assets/styles/",
-                                "./node_modules"
-                            ]
-                        },
-                        "scripts": [],
-                        "codeCoverage": true
-                    }
-                },
-                "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": [
-                            "projects/app/tsconfig.app.json",
-                            "projects/app/tsconfig.spec.json",
-                            "projects/app/e2e/tsconfig.json"
-                        ],
-                        "exclude": [
-                            "**/node_modules/**"
-                        ]
-                    }
-                },
-                "e2e": {
-                    "builder": "@angular-devkit/build-angular:protractor",
-                    "options": {
-                        "protractorConfig": "projects/app/e2e/protractor.conf.js",
-                        "devServerTarget": "rawApexGamesApp:serve"
-                    },
-                    "configurations": {
-                        "production": {
-                            "devServerTarget": "rawApexGamesApp:serve:production"
-                        }
-                    }
                 }
             }
         },
@@ -182,7 +132,7 @@
                         "index": "projects/web/src/index.html",
                         "main": "projects/web/src/main.ts",
                         "polyfills": "projects/web/src/polyfills.ts",
-                        "tsConfig": "projects/web/tsconfig.app.json",
+                        "tsConfig": "projects/web/tsconfig.json",
                         "aot": true,
                         "assets": [
                             "projects/web/src/assets/images",
@@ -234,47 +184,6 @@
                     "configurations": {
                         "production": {
                             "browserTarget": "rawApexGamesWeb:build:production"
-                        }
-                    }
-                },
-                "test": {
-                    "builder": "@angular-devkit/build-angular:karma",
-                    "options": {
-                        "main": "projects/web/test.ts",
-                        "polyfills": "projects/web/src/polyfills.ts",
-                        "tsConfig": "projects/web/tsconfig.spec.json",
-                        "karmaConfig": "projects/web/karma.conf.js",
-                        "assets": [
-                            "projects/web/src/assets/fonts"
-                        ],
-                        "styles": [
-                            "projects/web/src/styles.scss"
-                        ],
-                        "scripts": []
-                    }
-                },
-                "lint": {
-                    "builder": "@angular-devkit/build-angular:tslint",
-                    "options": {
-                        "tsConfig": [
-                            "projects/web/tsconfig.app.json",
-                            "projects/web/tsconfig.spec.json",
-                            "projects/web/e2e/tsconfig.json"
-                        ],
-                        "exclude": [
-                            "**/node_modules/**"
-                        ]
-                    }
-                },
-                "e2e": {
-                    "builder": "@angular-devkit/build-angular:protractor",
-                    "options": {
-                        "protractorConfig": "projects/web/e2e/protractor.conf.js",
-                        "devServerTarget": "rawApexGamesWeb:serve"
-                    },
-                    "configurations": {
-                        "production": {
-                            "devServerTarget": "rawApexGamesWeb:serve:production"
                         }
                     }
                 }

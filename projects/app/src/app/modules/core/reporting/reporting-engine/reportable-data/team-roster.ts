@@ -1,7 +1,7 @@
+import { MatchRosterTeammate } from "@app/models/match/roster-teammate.js";
+import { MatchRosterService } from "@app/modules/core/match/match-roster.service.js";
 import { map } from "rxjs/operators";
-import { MatchRosterTeammate } from "../../../../../common/match/roster-teammate";
-import { MatchRosterService } from "../../../match/match-roster.service";
-import { ReportableDataSnapshot } from "../reportable-data";
+import { ReportableDataSnapshot } from "../reportable-data.js";
 
 type TeamRoster = {
     isMe: boolean;

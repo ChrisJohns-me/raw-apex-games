@@ -2,8 +2,11 @@
     "$schema": "./config.schema.json",
     "env": "dev",
     "firebase": {
-        "projectId": "dev-project",
-        "host": "localhost",
-        "port": 8726
+        "apiKey": "",
+        "authDomain": "localhost",
+        "projectId": "raw-apex-games",
+        "storageBucket": "",
+        "messagingSenderId": "",
+        "appId": ""
     }
 }

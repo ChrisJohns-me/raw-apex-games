@@ -1,16 +1,16 @@
 import { Injectable } from "@angular/core";
+import { MatchGameModeList } from "@app/models/match/game-mode/game-mode-list.js";
+import { MatchGameModeGenericId } from "@app/models/match/game-mode/game-mode.enum.js";
+import { MatchGameMode } from "@app/models/match/game-mode/game-mode.js";
+import { AvgMatchStats, avgStats, legendAvgStats } from "@app/models/utilities/match-stats.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { ConfigurationService } from "@app/modules/core/configuration.service.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { Stopwatch } from "@shared/utilities/stopwatch.js";
 import { Observable, of } from "rxjs";
 import { filter, map, tap } from "rxjs/operators";
-import { Stopwatch } from "../../../../../../common/utilities/";
-import { MatchGameMode } from "../../common/match/game-mode/game-mode";
-import { MatchGameModeList } from "../../common/match/game-mode/game-mode-list";
-import { MatchGameModeGenericId } from "../../common/match/game-mode/game-mode.enum";
-import { AvgMatchStats, avgStats, legendAvgStats } from "../../common/utilities/match-stats";
-import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
-import { BaseService } from "./base-service.abstract";
-import { ConfigurationService } from "./configuration.service";
-import { MatchDataStore } from "./local-database/match-data-store";
-import { MatchService } from "./match/match.service";
+import { MatchDataStore } from "./local-database/match-data-store.js";
 
 type LegendId = string;
 type LegendIdAndGameModeGenericId = string;

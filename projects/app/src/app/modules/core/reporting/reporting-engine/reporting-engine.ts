@@ -1,5 +1,5 @@
 import { BehaviorSubject } from "rxjs";
-import { RunCondition } from "./run-condition";
+import { RunCondition } from "./run-condition.js";
 
 export enum ReportingEngineId {
     GameLog = "gamelog",

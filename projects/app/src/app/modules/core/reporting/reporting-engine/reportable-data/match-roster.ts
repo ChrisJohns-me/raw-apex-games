@@ -1,8 +1,8 @@
+import { MatchRosterPlayer } from "@app/models/match/roster-player.js";
+import { PlatformHardware, PlatformSoftware } from "@app/models/platform.js";
+import { MatchRosterService } from "@app/modules/core/match/match-roster.service.js";
 import { map } from "rxjs/operators";
-import { MatchRosterPlayer } from "../../../../../common/match/roster-player";
-import { PlatformHardware, PlatformSoftware } from "../../../../../common/platform";
-import { MatchRosterService } from "../../../match/match-roster.service";
-import { ReportableDataSnapshot } from "../reportable-data";
+import { ReportableDataSnapshot } from "../reportable-data.js";
 
 type MatchRoster = {
     isMe: boolean;

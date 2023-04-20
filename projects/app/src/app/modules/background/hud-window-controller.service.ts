@@ -1,21 +1,21 @@
 import { Injectable } from "@angular/core";
-import { Observable, Subscription, combineLatest, merge } from "rxjs";
+import { Configuration } from "@app/../configs/config.interface.js";
+import { GamePhase } from "@app/models/game-phase.js";
+import { MatchGameModeGenericId } from "@app/models/match/game-mode/game-mode.enum.js";
+import { SettingKey, SettingValue } from "@app/models/settings.js";
+import { aXNWSVA } from "@app/models/vip.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { ConfigurationService } from "@app/modules/core/configuration.service.js";
+import { GameService } from "@app/modules/core/game.service.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { OverwolfProfileService } from "@app/modules/core/overwolf/overwolf-profile.service.js";
+import { SettingsService } from "@app/modules/core/settings.service.js";
+import { MiniInventoryWindowService } from "@app/modules/HUD/mini-inventory/windows/mini-inventory-window.service.js";
+import { InGameWindowService } from "@app/modules/in-game/windows/in-game-window.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
+import { combineLatest, merge, Observable, Subscription } from "rxjs";
 import { filter, map, switchMap, take, takeUntil } from "rxjs/operators";
-import { isEmpty } from "../../../../../../common/utilities";
-import { Configuration } from "../../../configs/config.interface";
-import { GamePhase } from "../../common/game-phase";
-import { MatchGameModeGenericId } from "../../common/match/game-mode/game-mode.enum";
-import { SettingKey, SettingValue } from "../../common/settings";
-import { aXNWSVA } from "../../common/vip";
-import { SettingsService } from "../../modules/core/settings.service";
-import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
-import { MiniInventoryWindowService } from "../HUD/mini-inventory/windows/mini-inventory-window.service";
-import { BaseService } from "../core/base-service.abstract";
-import { ConfigurationService } from "../core/configuration.service";
-import { GameService } from "../core/game.service";
-import { MatchService } from "../core/match/match.service";
-import { OverwolfProfileService } from "../core/overwolf/overwolf-profile.service";
-import { InGameWindowService } from "../in-game/windows/in-game-window.service";
 
 type HUDTriggers = {
     windowService: { open: () => Observable<void>; close: () => Observable<void> };

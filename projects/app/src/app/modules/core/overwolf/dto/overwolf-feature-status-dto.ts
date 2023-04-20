@@ -1,4 +1,4 @@
-import { FeatureState, FeatureStates, OverwolfFeatureDep } from "../../../../common/feature-status";
+import { FeatureState, FeatureStates, OverwolfFeatureDep } from "@app/models/feature-status.js";
 
 enum FeatureStateDTO {
     Unsupported = 0,

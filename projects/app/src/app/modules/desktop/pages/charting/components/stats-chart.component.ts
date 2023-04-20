@@ -1,22 +1,22 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, ViewChild } from "@angular/core";
+import { matchListAvgStatsGroupedBy } from "@app/models/utilities/match-stats.js";
+import { MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import {
     CategoryScale,
     Chart,
     ChartDataset,
     ChartOptions,
     Legend,
+    LinearScale,
     LineController,
     LineElement,
-    LinearScale,
     PointElement,
     Tooltip,
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { format, getDaysInYear, subDays } from "date-fns";
-import { isEmpty } from "../../../../../../../../../common/utilities/";
-import { matchListAvgStatsGroupedBy } from "../../../../../common/utilities/match-stats";
-import { MatchDataStore } from "../../../../../modules/core/local-database/match-data-store";
-import { ChartDamageCSSPropertyVar, ChartKillsCSSPropertyVar, ChartPlacementCSSPropertyVar } from "./chart";
+import { ChartDamageCSSPropertyVar, ChartKillsCSSPropertyVar, ChartPlacementCSSPropertyVar } from "./chart.js";
 
 @Component({
     selector: "app-stats-chart",

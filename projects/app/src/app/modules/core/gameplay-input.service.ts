@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { cleanInt } from "@shared/utilities/index.js";
 import { BehaviorSubject, debounceTime, filter, map, switchMap, takeUntil, tap } from "rxjs";
-import { cleanInt } from "../../../../../../common/utilities";
-import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
-import { BaseService } from "./base-service.abstract";
-import { MatchPlayerInflictionService } from "./match/match-player-infliction.service";
-import { MatchService } from "./match/match.service";
-import { OverwolfInputTrackingService } from "./overwolf/overwolf-input-tracking.service";
+import { MatchPlayerInflictionService } from "./match/match-player-infliction.service.js";
+import { OverwolfInputTrackingService } from "./overwolf/overwolf-input-tracking.service.js";
 
 const MOUSE_MOVEMENT_THRESHOLD_PX = 1000;
 const DAMAGE_BURST_DEBOUNCE_TIME = 10000;

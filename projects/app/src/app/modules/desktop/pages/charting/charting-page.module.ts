@@ -1,14 +1,14 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
-import { SharedModule } from "../../../../../../../shared/shared.module";
-import { RawApexGamesSharedModule } from "../../../../shared/app-shared.module";
-import { ChartingPageComponent } from "./charting-page.component";
-import { GameModeLineupChartComponent } from "./components/game-mode-lineup-chart.component";
-import { GameModePlayrateChartComponent } from "./components/game-mode-playrate-chart.component";
-import { LegendLineupChartComponent } from "./components/legend-lineup-chart.component";
-import { LegendPickrateChartComponent } from "./components/legend-pickrate-chart.component";
-import { RankedChartComponent } from "./components/ranked-chart.component";
-import { StatsChartComponent } from "./components/stats-chart.component";
+import { RawApexGamesSharedModule } from "@app/shared/app-shared.module.js";
+import { SharedModule } from "@shared/angular/shared.module.js";
+import { ChartingPageComponent } from "./charting-page.component.js";
+import { GameModeLineupChartComponent } from "./components/game-mode-lineup-chart.component.js";
+import { GameModePlayrateChartComponent } from "./components/game-mode-playrate-chart.component.js";
+import { LegendLineupChartComponent } from "./components/legend-lineup-chart.component.js";
+import { LegendPickrateChartComponent } from "./components/legend-pickrate-chart.component.js";
+import { RankedChartComponent } from "./components/ranked-chart.component.js";
+import { StatsChartComponent } from "./components/stats-chart.component.js";
 
 @NgModule({
     declarations: [

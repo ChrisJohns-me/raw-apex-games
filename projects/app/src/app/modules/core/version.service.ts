@@ -1,8 +1,8 @@
 import { Injectable, OnDestroy } from "@angular/core";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { BehaviorSubject, Subject, takeUntil } from "rxjs";
 import packageJson from "../../../../../../package.json";
-import { SingletonServiceProviderFactory } from "../../singleton-service.provider.factory";
-import { OverwolfExtensionsService } from "./overwolf/overwolf-extensions.service";
+import { OverwolfExtensionsService } from "./overwolf/overwolf-extensions.service.js";
 
 @Injectable({
     providedIn: "root",

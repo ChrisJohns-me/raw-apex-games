@@ -1,17 +1,17 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
+import { Legend } from "@app/models/legend/legend.js";
+import { MatchGameMode } from "@app/models/match/game-mode/game-mode.js";
+import { MatchMapCoordinates } from "@app/models/match/map/map-coordinates.js";
+import { MatchMap } from "@app/models/match/map/match-map.js";
+import { MatchFilters } from "@app/models/utilities/match-filters.js";
+import { LocationPhaseNum, MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { ReportingService } from "@app/modules/core/reporting/reporting.service.js";
+import { DataItem } from "@app/shared/components/match-listing/match-listing.component.js";
 import { mdiFilterVariantRemove } from "@mdi/js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import { Observable, Subject } from "rxjs";
 import { finalize, map, switchMap, takeUntil } from "rxjs/operators";
-import { isEmpty } from "../../../../../../../../common/utilities";
-import { Legend } from "../../../../common/legend/legend";
-import { MatchGameMode } from "../../../../common/match/game-mode/game-mode";
-import { MatchMapCoordinates } from "../../../../common/match/map/map-coordinates";
-import { MatchMap } from "../../../../common/match/map/match-map";
-import { MatchFilters } from "../../../../common/utilities/match-filters";
-import { LocationPhaseNum, MatchDataStore } from "../../../../modules/core/local-database/match-data-store";
-import { MatchService } from "../../../../modules/core/match/match.service";
-import { ReportingService } from "../../../../modules/core/reporting/reporting.service";
-import { DataItem } from "../../../../shared/components/match-listing/match-listing.component";
 
 const DEFAULT_NUM_ROWS = 25;
 

@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { Observable, Subject } from "rxjs";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { StreamingDelegate } from "./api/streaming/streaming-delegate";
+import { StreamingDelegate } from "./api/streaming/streaming-delegate.js";
 import {
     OWStopStreamingEvent,
     OWStopStreamingResult,
@@ -10,7 +10,7 @@ import {
     OWStreamResult,
     OWStreamSettings,
     OWVideoSplitedEvent,
-} from "./types/overwolf-types";
+} from "./index.js";
 
 /**
  * @class OverwolfStreamingService

@@ -1,20 +1,20 @@
 import { Injectable } from "@angular/core";
+import { MatchGameModeList } from "@app/models/match/game-mode/game-mode-list.js";
+import { MatchGameMode } from "@app/models/match/game-mode/game-mode.js";
+import { MatchState, MatchStateChangedEvent } from "@app/models/match/state.js";
+import { TriggerConditions } from "@app/models/utilities/trigger-conditions.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { LocalDatabaseService } from "@app/modules/core/local-database/local-database.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import { differenceInMilliseconds, isDate } from "date-fns";
 import { IndexableType } from "dexie";
-import { ICreateChange, IUpdateChange } from "dexie-observable/api";
-import { BehaviorSubject, Observable, OperatorFunction, Subject, defer, from, merge, of, throwError } from "rxjs";
+import { ICreateChange, IUpdateChange } from "dexie-observable/api.js";
+import { BehaviorSubject, defer, from, merge, Observable, of, OperatorFunction, Subject, throwError } from "rxjs";
 import { filter, map, take, takeUntil, tap, timeoutWith } from "rxjs/operators";
 import { v4 as uuid, validate as uuidValidate } from "uuid";
-import { isEmpty } from "../../../../../../../common/utilities";
-import { MatchGameMode } from "../../../common/match/game-mode/game-mode";
-import { MatchGameModeList } from "../../../common/match/game-mode/game-mode-list";
-import { MatchState, MatchStateChangedEvent } from "../../../common/match/state";
-import { TriggerConditions } from "../../../common/utilities/trigger-conditions";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { LocalDatabaseService } from "../local-database/local-database.service";
-import { MatchDataStore } from "../local-database/match-data-store";
-import { OWGameEvent, OWInfoUpdates2Event, OverwolfGameDataService } from "../overwolf";
+import { MatchDataStore } from "../local-database/match-data-store.js";
+import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "../overwolf/index.js";
 
 /** Time allowed to wait for Overwolf's "psuedo_match_id", before generating our own */
 const MATCHID_TIMEOUT = 5000;

@@ -1,6 +1,6 @@
 import { BehaviorSubject } from "rxjs";
-import { OWRunningGameInfo } from "../..";
-import { OverwolfEventListenerDelegate } from "../overwolf-delegate";
+import { OWRunningGameInfo } from "../../types/overwolf-types.js";
+import { OverwolfEventListenerDelegate } from "../overwolf-delegate.js";
 
 export class GameInfoDelegate implements OverwolfEventListenerDelegate {
     public readonly gameInfo$ = new BehaviorSubject<Optional<OWRunningGameInfo>>(undefined);

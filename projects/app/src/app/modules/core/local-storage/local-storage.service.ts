@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { WINDOW } from "../global-window.provider";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { WINDOW } from "@app/modules/core/global-window.provider.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { LocalStorageKeys } from "./local-storage-keys";
 
 /**

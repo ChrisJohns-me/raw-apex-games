@@ -1,17 +1,17 @@
 import { Injectable } from "@angular/core";
+import { WeaponItem } from "@app/models/items/weapon-item.js";
+import { MatchInflictionEvent } from "@app/models/match/infliction-event.js";
+import { MatchRosterPlayer } from "@app/models/match/roster-player.js";
+import { PlayerState } from "@app/models/player-state.js";
+import { isPlayerNameEqual } from "@app/models/utilities/player.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import { BehaviorSubject, Subject } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
-import { isEmpty } from "../../../../../../../common/utilities/";
-import { WeaponItem } from "../../../common/items/weapon-item";
-import { MatchInflictionEvent } from "../../../common/match/infliction-event";
-import { MatchRosterPlayer } from "../../../common/match/roster-player";
-import { PlayerState } from "../../../common/player-state";
-import { isPlayerNameEqual } from "../../../common/utilities/player";
-import { SingletonServiceProviderFactory } from "../../../singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { OWGameEventKillFeed, OverwolfGameDataService } from "../overwolf";
-import { MatchRosterService } from "./match-roster.service";
-import { MatchService } from "./match.service";
+import { OverwolfGameDataService, OWGameEventKillFeed } from "../overwolf/index.js";
+import { MatchRosterService } from "./match-roster.service.js";
 
 /**
  * @classdesc Provides all killfeed events.

@@ -1,26 +1,26 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { Subject, Subscription, interval, timer } from "rxjs";
+import { FeatureState, FeatureStates } from "@app/models/feature-status.js";
+import { GamePhase } from "@app/models/game-phase.js";
+import { MatchLocationPhase } from "@app/models/match/location.js";
+import { MatchState } from "@app/models/match/state.js";
+import { PlayerState } from "@app/models/player-state.js";
+import { GameProcessService } from "@app/modules/core/game-process.service.js";
+import { GameService } from "@app/modules/core/game.service.js";
+import { MatchMapService } from "@app/modules/core/match/match-map.service.js";
+import { MatchPlayerInventoryService } from "@app/modules/core/match/match-player-inventory.service.js";
+import { MatchPlayerLegendService } from "@app/modules/core/match/match-player-legend.service.js";
+import { MatchPlayerLocationService } from "@app/modules/core/match/match-player-location.service.js";
+import { MatchPlayerStatsService } from "@app/modules/core/match/match-player-stats.service.js";
+import { MatchPlayerService } from "@app/modules/core/match/match-player.service.js";
+import { MatchRingService } from "@app/modules/core/match/match-ring.service.js";
+import { MatchRosterService } from "@app/modules/core/match/match-roster.service.js";
+import { MatchService } from "@app/modules/core/match/match.service.js";
+import { ExposedOverwolfGameDataService } from "@app/modules/core/overwolf-exposed-data.service.js";
+import { OverwolfFeatureStatusService } from "@app/modules/core/overwolf/overwolf-feature-status.service.js";
+import { PlayerService } from "@app/modules/core/player.service.js";
+import { interval, Subject, Subscription, timer } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { v4 as uuid } from "uuid";
-import { FeatureState, FeatureStates } from "../../../../common/feature-status";
-import { GamePhase } from "../../../../common/game-phase";
-import { MatchLocationPhase } from "../../../../common/match/location";
-import { MatchState } from "../../../../common/match/state";
-import { PlayerState } from "../../../../common/player-state";
-import { GameProcessService } from "../../../../modules/core/game-process.service";
-import { GameService } from "../../../../modules/core/game.service";
-import { MatchMapService } from "../../../../modules/core/match/match-map.service";
-import { MatchPlayerInventoryService } from "../../../../modules/core/match/match-player-inventory.service";
-import { MatchPlayerLegendService } from "../../../../modules/core/match/match-player-legend.service";
-import { MatchPlayerLocationService } from "../../../../modules/core/match/match-player-location.service";
-import { MatchPlayerStatsService } from "../../../../modules/core/match/match-player-stats.service";
-import { MatchPlayerService } from "../../../../modules/core/match/match-player.service";
-import { MatchRingService } from "../../../../modules/core/match/match-ring.service";
-import { MatchRosterService } from "../../../../modules/core/match/match-roster.service";
-import { MatchService } from "../../../../modules/core/match/match.service";
-import { ExposedOverwolfGameDataService } from "../../../../modules/core/overwolf-exposed-data.service";
-import { OverwolfFeatureStatusService } from "../../../../modules/core/overwolf/overwolf-feature-status.service";
-import { PlayerService } from "../../../../modules/core/player.service";
 
 @Component({
     selector: "app-game-data-pane",

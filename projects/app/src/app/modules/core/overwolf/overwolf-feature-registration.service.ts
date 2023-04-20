@@ -1,8 +1,8 @@
 import { Inject, Injectable } from "@angular/core";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
 import { BehaviorSubject, bindCallback, defer, Observable, of, throwError } from "rxjs";
 import { catchError, delay, map, mergeMap, retryWhen, takeUntil, tap } from "rxjs/operators";
-import { BaseService } from "../base-service.abstract";
-import { OWConfig, OW_CONFIG } from "./overwolf-config";
+import { OWConfig, OW_CONFIG } from "./overwolf-config.js";
 
 export enum OWFeatureRegistrationStatus {
     NOT_REGISTERED = "not_registered",

@@ -9,17 +9,17 @@ import {
     Output,
     TrackByFunction,
 } from "@angular/core";
+import { Legend } from "@app/models/legend/legend.js";
+import { MatchGameModeList } from "@app/models/match/game-mode/game-mode-list.js";
+import { MatchGameMode } from "@app/models/match/game-mode/game-mode.js";
+import { MatchMapList } from "@app/models/match/map/map-list.js";
+import { ConfigurationService } from "@app/modules/core/configuration.service.js";
+import { MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
+import { unique } from "@shared/utilities/primitives/array.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import { differenceInMilliseconds, intervalToDuration } from "date-fns";
-import { Subject, interval } from "rxjs";
+import { interval, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import { isEmpty } from "../../../../../../../common/utilities/";
-import { unique } from "../../../../../../../common/utilities/primitives/array";
-import { Legend } from "../../../common/legend/legend";
-import { MatchGameMode } from "../../../common/match/game-mode/game-mode";
-import { MatchGameModeList } from "../../../common/match/game-mode/game-mode-list";
-import { MatchMapList } from "../../../common/match/map/map-list";
-import { ConfigurationService } from "../../../modules/core/configuration.service";
-import { MatchDataStore } from "../../../modules/core/local-database/match-data-store";
 
 const REFRESH_TIME = 1 * 60 * 1000;
 const MATCH_RECENT_TIME = 3 * 60 * 1000;

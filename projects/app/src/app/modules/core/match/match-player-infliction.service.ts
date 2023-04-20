@@ -1,20 +1,20 @@
 import { Injectable } from "@angular/core";
-import { Observable, Subject, merge, partition } from "rxjs";
+import { WeaponItem } from "@app/models/items/weapon-item.js";
+import { MatchInflictionEvent } from "@app/models/match/infliction-event.js";
+import { MatchRosterPlayer } from "@app/models/match/roster-player.js";
+import { PlayerState } from "@app/models/player-state.js";
+import { isPlayerNameEqual } from "@app/models/utilities/player.js";
+import { BaseService } from "@app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
+import { cleanInt, isEmpty, parseBoolean } from "@shared/utilities/index.js";
+import { merge, Observable, partition, Subject } from "rxjs";
 import { delay, filter, map, takeUntil, tap } from "rxjs/operators";
-import { cleanInt, isEmpty, parseBoolean } from "../../../../../../../common/utilities";
-import { WeaponItem } from "../../../../app/common/items/weapon-item";
-import { MatchInflictionEvent } from "../../../../app/common/match/infliction-event";
-import { MatchRosterPlayer } from "../../../../app/common/match/roster-player";
-import { PlayerState } from "../../../../app/common/player-state";
-import { isPlayerNameEqual } from "../../../../app/common/utilities/player";
-import { MatchKillfeedService } from "../../../../app/modules/core/match/match-killfeed.service";
-import { MatchRosterService } from "../../../../app/modules/core/match/match-roster.service";
-import { PlayerService } from "../../../../app/modules/core/player.service";
-import { SingletonServiceProviderFactory } from "../../../../app/singleton-service.provider.factory";
-import { BaseService } from "../base-service.abstract";
-import { OverwolfGameDataService } from "../overwolf";
-import { MatchPlayerInventoryService } from "./match-player-inventory.service";
-import { MatchPlayerService } from "./match-player.service";
+import { OverwolfGameDataService } from "../overwolf/index.js";
+import { PlayerService } from "../player.service.js";
+import { MatchKillfeedService } from "./match-killfeed.service.js";
+import { MatchPlayerInventoryService } from "./match-player-inventory.service.js";
+import { MatchPlayerService } from "./match-player.service.js";
+import { MatchRosterService } from "./match-roster.service.js";
 
 /**
  * @classdesc Provides local player damage/knockdown/kill/damage events

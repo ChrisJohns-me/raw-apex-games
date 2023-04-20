@@ -1,5 +1,5 @@
-import { Observable, Subject, bindCallback, filter, map } from "rxjs";
-import { OWInputActivity, OWMouseEvent, OWMousePosition } from "../../types/overwolf-types";
+import { bindCallback, filter, map, Observable, Subject } from "rxjs";
+import { OWInputActivity, OWMouseEvent, OWMousePosition } from "../../types/overwolf-types.js";
 
 export class InputTrackingDelegate {
     public readonly mouseDown$ = new Subject<OWMouseEvent>();

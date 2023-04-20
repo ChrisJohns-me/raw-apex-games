@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from "@angular/core";
+import { FeatureState, OverwolfFeatureDep } from "@app/models/feature-status.js";
 import { Subject } from "rxjs";
-import { FeatureState, OverwolfFeatureDep } from "../../common/feature-status";
-import { OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status.service";
+import { OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status.service.js";
 
 @Injectable()
 export abstract class BaseService implements OnDestroy {

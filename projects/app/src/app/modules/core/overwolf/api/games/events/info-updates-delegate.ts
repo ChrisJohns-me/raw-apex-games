@@ -1,14 +1,14 @@
-import { Subject, Subscription, bindCallback, from } from "rxjs";
-import { filter, map, switchMap } from "rxjs/operators";
 import {
     recursiveEmptyObjectsToNull,
     recursiveEmptyStringsToNull,
     recursiveJSONParse,
     recursiveParseBoolean,
     recursiveParseNull,
-} from "../../../../../../../../../../common/utilities/";
-import { OWInfoUpdates2Event } from "../../../types/overwolf-types";
-import { OverwolfEventListenerDelegate } from "../../overwolf-delegate";
+} from "@shared/utilities/index.js";
+import { bindCallback, from, Subject, Subscription } from "rxjs";
+import { filter, map, switchMap } from "rxjs/operators";
+import { OWInfoUpdates2Event } from "../../../types/overwolf-types.js";
+import { OverwolfEventListenerDelegate } from "../../overwolf-delegate.js";
 
 export class InfoUpdatesDelegate implements OverwolfEventListenerDelegate {
     public readonly infoUpdates$ = new Subject<OWInfoUpdates2Event>();
