@@ -23,6 +23,7 @@
     "lib": [
       "ES2019",
       "ES2020",
+      "ESNext",
       "dom"
     ],
     "typeRoots": [
@@ -38,6 +39,9 @@
       ],
       "@shared/*": [
         "./projects/shared/*"
+      ],
+      "@web/*": [
+        "./projects/web/src/app/*"
       ]
     }
   },

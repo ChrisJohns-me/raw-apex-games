@@ -1,11 +1,11 @@
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import {
-    isEmpty,
     recursiveEmptyObjectsToNull,
     recursiveEmptyStringsToNull,
     recursiveJSONParse,
     recursiveParseBoolean,
     recursiveParseNull,
-} from "@shared/utilities/index.js";
+} from "@shared/utilities/primitives/object.js";
 import { Subject } from "rxjs";
 import { OWGameEvent } from "../../../types/overwolf-types.js";
 import { OverwolfEventListenerDelegate } from "../../overwolf-delegate.js";

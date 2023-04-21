@@ -1,5 +1,5 @@
 import http from "http";
-import { Server } from "socket.io";
+// import { Server } from "socket.io";
 import app from "./app.js";
 
 // HTTP server
@@ -15,31 +15,31 @@ app.listen(port);
 
 // Socket.io server
 const httpServer = http.createServer(app);
-const io = new Server(httpServer);
+// const io = new Server(httpServer);
 
-const documents: { [key: string]: string } = {};
-io.on("connection", (socket) => {
-    let previousId: string;
+// const documents: { [key: string]: string } = {};
+// io.on("connection", (socket) => {
+//     let previousId: string;
 
-    const safeJoin = (currentId: string) => {
-        socket.leave(previousId);
-        socket.join(currentId);
-        previousId = currentId;
-    };
+//     const safeJoin = (currentId: string) => {
+//         socket.leave(previousId);
+//         socket.join(currentId);
+//         previousId = currentId;
+//     };
 
-    socket.on("getDoc", (docId) => {
-        safeJoin(docId);
-        socket.emit("document", documents[docId]);
-    });
+//     socket.on("getDoc", (docId) => {
+//         safeJoin(docId);
+//         socket.emit("document", documents[docId]);
+//     });
 
-    socket.on("addDoc", (doc) => {
-        documents[doc.id] = doc;
-        safeJoin(doc.id);
-        io.emit("documents", Object.keys(documents));
-        socket.emit("document", doc);
-    });
-});
+//     socket.on("addDoc", (doc) => {
+//         documents[doc.id] = doc;
+//         safeJoin(doc.id);
+//         io.emit("documents", Object.keys(documents));
+//         socket.emit("document", doc);
+//     });
+// });
 
-httpServer.listen(4444, () => {
-    console.log("Listening on port 4444");
-});
+// httpServer.listen(4444, () => {
+//     console.log("Listening on port 4444");
+// });

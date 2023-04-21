@@ -6,7 +6,7 @@ import { PlayerState } from "@app/models/player-state.js";
 import { BaseService } from "@app/modules/core/base-service.abstract.js";
 import { MatchService } from "@app/modules/core/match/match.service.js";
 import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
-import { cleanInt } from "@shared/utilities/index.js";
+import { cleanInt } from "@shared/utilities/primitives/number.js";
 import { exhaustiveEnumSwitch } from "@shared/utilities/switch.js";
 import { BehaviorSubject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";

@@ -1,4 +1,4 @@
-import { mathAverage, mathAverageRate, mathAverageVariance, mathClamp } from "./math";
+import { mathAverage, mathAverageRate, mathAverageVariance, mathClamp } from "./math.js";
 
 describe("MathUtilities", () => {
     describe("mathClamp", () => {

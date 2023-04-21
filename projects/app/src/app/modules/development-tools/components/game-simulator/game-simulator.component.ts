@@ -6,7 +6,7 @@ import { MatchRosterService } from "@app/modules/core/match/match-roster.service
 import { ExposedOverwolfGameDataService } from "@app/modules/core/overwolf-exposed-data.service.js";
 import { OWGameEvent } from "@app/modules/core/overwolf/types/overwolf-types.js";
 import { PlayerService } from "@app/modules/core/player.service.js";
-import { JSONTryParse } from "@shared/utilities/index.js";
+import { JSONTryParse } from "@shared/utilities/primitives/json.js";
 import { differenceInMilliseconds, format, isDate } from "date-fns";
 import { Subject } from "rxjs";
 import { basicInventoryQuick } from "./simulations/basic-inventory.js";

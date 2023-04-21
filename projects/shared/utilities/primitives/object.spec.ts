@@ -8,7 +8,7 @@ import {
     recursiveJSONParse,
     recursiveParseBoolean,
     recursiveParseNull,
-} from "./object";
+} from "./object.js";
 
 describe("ObjectUtilities", () => {
     describe("findKeyByKeyRegEx", () => {

@@ -1,4 +1,4 @@
-import { cleanFloat, cleanInt } from "./number";
+import { cleanFloat, cleanInt } from "./number.js";
 
 describe("NumberUtilities", () => {
     describe("cleanInt", () => {

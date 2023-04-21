@@ -1,4 +1,4 @@
-import { isEmpty, parseBoolean } from "./boolean";
+import { isEmpty, parseBoolean } from "./boolean.js";
 
 describe("BooleanUtilities", () => {
     describe("parseBoolean", () => {

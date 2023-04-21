@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/shared"
+  },
+  "files": [],
+  "include": [
+    "**/*.ts",
+    "./**/*.d.ts",
+  ],
+  "exclude": []
+}

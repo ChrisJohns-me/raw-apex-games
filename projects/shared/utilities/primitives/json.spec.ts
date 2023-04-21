@@ -1,4 +1,4 @@
-import { JSONTryParse } from "./json";
+import { JSONTryParse } from "./json.js";
 
 describe("JSONUtilities", () => {
     describe("JSONTryParse", () => {

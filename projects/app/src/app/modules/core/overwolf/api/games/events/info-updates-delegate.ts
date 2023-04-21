@@ -4,7 +4,7 @@ import {
     recursiveJSONParse,
     recursiveParseBoolean,
     recursiveParseNull,
-} from "@shared/utilities/index.js";
+} from "@shared/utilities/primitives/object.js";
 import { bindCallback, from, Subject, Subscription } from "rxjs";
 import { filter, map, switchMap } from "rxjs/operators";
 import { OWInfoUpdates2Event } from "../../../types/overwolf-types.js";

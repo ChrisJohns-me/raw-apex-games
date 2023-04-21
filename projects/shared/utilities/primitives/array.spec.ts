@@ -1,4 +1,4 @@
-import { unique } from "./array";
+import { unique } from "./array.js";
 
 describe("ArrayUtilities", () => {
     describe("unique", () => {

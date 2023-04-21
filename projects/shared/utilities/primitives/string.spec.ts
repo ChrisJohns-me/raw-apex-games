@@ -1,4 +1,4 @@
-import { wordsToUpperCase } from "./string";
+import { wordsToUpperCase } from "./string.js";
 
 describe("StringUtilities", () => {
     describe("wordsToUpperCase", () => {

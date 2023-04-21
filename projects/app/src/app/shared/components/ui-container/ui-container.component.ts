@@ -21,8 +21,8 @@ import { MainPage } from "@app/modules/desktop/pages/main-page.js";
 import { DesktopWindowService } from "@app/modules/desktop/windows/desktop-window.service.js";
 import { InGameWindowService } from "@app/modules/in-game/windows/in-game-window.service.js";
 import { mdiCogOutline, mdiWindowClose, mdiWindowMaximize, mdiWindowMinimize, mdiWindowRestore } from "@mdi/js";
-import { mathClamp } from "@shared/utilities/index.js";
 import { isEmpty } from "@shared/utilities/primitives/boolean.js";
+import { mathClamp } from "@shared/utilities/primitives/math.js";
 import { Observable, Subject } from "rxjs";
 import { filter, finalize, map, shareReplay, switchMap, take, takeUntil, tap } from "rxjs/operators";
 

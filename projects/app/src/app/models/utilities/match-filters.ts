@@ -1,8 +1,9 @@
 import { Legend } from "@app/models/legend/legend.js";
 import { MatchGameModeGenericId } from "@app/models/match/game-mode/game-mode.enum.js";
 import { MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
-import { cleanInt, isEmpty } from "@shared/utilities/index.js";
 import { unique } from "@shared/utilities/primitives/array.js";
+import { isEmpty } from "@shared/utilities/primitives/boolean.js";
+import { cleanInt } from "@shared/utilities/primitives/number.js";
 import { LegendList, sortLegendList } from "../legend/legend-list.js";
 import { MatchGameModeList } from "../match/game-mode/game-mode-list.js";
 import { MatchGameMode, sortMatchGameModeList } from "../match/game-mode/game-mode.js";

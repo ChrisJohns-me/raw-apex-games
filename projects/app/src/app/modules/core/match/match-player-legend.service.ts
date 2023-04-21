@@ -4,7 +4,7 @@ import { isPlayerNameEqual } from "@app/models/utilities/player.js";
 import { BaseService } from "@app/modules/core/base-service.abstract.js";
 import { MatchService } from "@app/modules/core/match/match.service.js";
 import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
-import { mathClamp } from "@shared/utilities/index.js";
+import { mathClamp } from "@shared/utilities/primitives/math.js";
 import { BehaviorSubject, combineLatest, of, Subject } from "rxjs";
 import { distinctUntilChanged, filter, map, pairwise, switchMap, takeUntil, tap } from "rxjs/operators";
 import { OverwolfGameDataService } from "../overwolf/index.js";

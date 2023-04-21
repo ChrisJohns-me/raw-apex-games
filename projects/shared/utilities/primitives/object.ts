@@ -1,5 +1,5 @@
-import { parseBoolean } from "./boolean";
-import { JSONTryParse } from "./json";
+import { parseBoolean } from "./boolean.js";
+import { JSONTryParse } from "./json.js";
 
 /**
  * @description Uses .find() with RegExp.
