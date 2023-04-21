@@ -1,11 +1,11 @@
+import { environment } from "#app/../environments/environment.js";
+import { APP_NAME } from "#app/models/app.js";
+import { HotkeyEnum } from "#app/models/hotkey.js";
+import { SettingKey } from "#app/models/settings.js";
+import { SettingsService } from "#app/modules/core/settings.service.js";
+import { InGameWindowService } from "#app/modules/in-game/windows/in-game-window.service.js";
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
-import { environment } from "@app/../environments/environment.js";
-import { APP_NAME } from "@app/models/app.js";
-import { HotkeyEnum } from "@app/models/hotkey.js";
-import { SettingKey } from "@app/models/settings.js";
-import { SettingsService } from "@app/modules/core/settings.service.js";
-import { InGameWindowService } from "@app/modules/in-game/windows/in-game-window.service.js";
 import { Subject } from "rxjs";
 import { map, switchMap, takeUntil } from "rxjs/operators";
 import { GameProcessService } from "../core/game-process.service.js";

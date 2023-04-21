@@ -1,7 +1,7 @@
+import { Hotkey, HotkeyEnum } from "#app/models/hotkey.js";
+import { BaseService } from "#app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
 import { Inject, Injectable } from "@angular/core";
-import { Hotkey, HotkeyEnum } from "@app/models/hotkey.js";
-import { BaseService } from "@app/modules/core/base-service.abstract.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { Observable, Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { OWConfig, OW_CONFIG } from "../core/overwolf/overwolf-config.js";

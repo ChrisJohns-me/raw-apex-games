@@ -1,9 +1,9 @@
+import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "#app/models/settings.js";
+import { BaseService } from "#app/modules/core/base-service.abstract.js";
+import { LocalDatabaseService } from "#app/modules/core/local-database/local-database.service.js";
+import { SettingsDataStore } from "#app/modules/core/local-database/settings-data-store.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
 import { Injectable } from "@angular/core";
-import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "@app/models/settings.js";
-import { BaseService } from "@app/modules/core/base-service.abstract.js";
-import { LocalDatabaseService } from "@app/modules/core/local-database/local-database.service.js";
-import { SettingsDataStore } from "@app/modules/core/local-database/settings-data-store.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { IndexableType } from "dexie";
 import { defer, from, merge, Observable, of, throwError } from "rxjs";
 import { filter, map, switchMap } from "rxjs/operators";

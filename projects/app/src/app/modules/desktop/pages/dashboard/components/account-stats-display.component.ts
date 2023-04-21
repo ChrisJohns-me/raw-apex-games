@@ -1,5 +1,5 @@
+import { MatchService } from "#app/modules/core/match/match.service.js";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { MatchService } from "@app/modules/core/match/match.service.js";
 import { Subject } from "rxjs";
 import { switchMap, takeUntil } from "rxjs/operators";
 

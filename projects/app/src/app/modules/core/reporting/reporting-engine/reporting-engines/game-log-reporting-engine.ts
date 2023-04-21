@@ -1,7 +1,7 @@
-import { OWGameEvent, OWInfoUpdates2Event } from "@app/modules/core/overwolf/index.js";
-import { SessionStorageKeys } from "@app/modules/core/session-storage/session-storage-keys.js";
-import { SessionStorageService } from "@app/modules/core/session-storage/session-storage.service.js";
-import { isEmpty } from "@shared/utilities/primitives/boolean.js";
+import { OWGameEvent, OWInfoUpdates2Event } from "#app/modules/core/overwolf/index.js";
+import { SessionStorageKeys } from "#app/modules/core/session-storage/session-storage-keys.js";
+import { SessionStorageService } from "#app/modules/core/session-storage/session-storage.service.js";
+import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 import { format } from "date-fns";
 import { BehaviorSubject, merge, Observable, of, Subject } from "rxjs";
 import { delay, filter, takeUntil, tap } from "rxjs/operators";

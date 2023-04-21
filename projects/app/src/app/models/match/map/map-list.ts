@@ -1,4 +1,4 @@
-import { MatchGameModeGenericId } from "@app/models/match/game-mode/game-mode.enum.js";
+import { MatchGameModeGenericId } from "#app/models/match/game-mode/game-mode.enum.js";
 import { MatchMapFriendlyName, MatchMapGenericId } from "./map.enum.js";
 import { MatchMap } from "./match-map.js";
 

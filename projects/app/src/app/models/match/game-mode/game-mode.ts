@@ -1,4 +1,4 @@
-import { wordsToUpperCase } from "@shared/utilities/primitives/string.js";
+import { wordsToUpperCase } from "#shared/utilities/primitives/string.js";
 import { MatchGameModePlaylist } from "./game-mode-playlist.enum.js";
 import { MatchGameModeFriendlyName, MatchGameModeGenericId } from "./game-mode.enum.js";
 

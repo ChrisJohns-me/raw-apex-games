@@ -1,11 +1,11 @@
+import { Legend } from "#app/models/legend/legend.js";
+import { MatchState } from "#app/models/match/state.js";
+import { BaseService } from "#app/modules/core/base-service.abstract.js";
+import { MatchService } from "#app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
+import { isEmpty } from "#shared/utilities/primitives/boolean.js";
+import { findValueByKeyRegEx } from "#shared/utilities/primitives/object.js";
 import { Injectable } from "@angular/core";
-import { Legend } from "@app/models/legend/legend.js";
-import { MatchState } from "@app/models/match/state.js";
-import { BaseService } from "@app/modules/core/base-service.abstract.js";
-import { MatchService } from "@app/modules/core/match/match.service.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
-import { isEmpty } from "@shared/utilities/primitives/boolean.js";
-import { findValueByKeyRegEx } from "@shared/utilities/primitives/object.js";
 import { Subject } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoLegendSelect } from "../overwolf/index.js";

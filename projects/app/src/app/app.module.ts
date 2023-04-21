@@ -1,7 +1,7 @@
+import { environment } from "#app/../environments/environment.js";
 import { HttpClientModule } from "@angular/common/http";
 import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
-import { environment } from "@app/../environments/environment.js";
 import { AppComponent } from "./app.component.js";
 import { BackgroundModule } from "./modules/background/background.module.js";
 import { WINDOW_PROVIDERS } from "./modules/core/global-window.provider.js";

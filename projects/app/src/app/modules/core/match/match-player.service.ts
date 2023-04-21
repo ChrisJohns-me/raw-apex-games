@@ -1,10 +1,10 @@
+import { MatchState } from "#app/models/match/state.js";
+import { PlayerState } from "#app/models/player-state.js";
+import { TriggerConditions } from "#app/models/utilities/trigger-conditions.js";
+import { BaseService } from "#app/modules/core/base-service.abstract.js";
+import { MatchService } from "#app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
 import { Injectable } from "@angular/core";
-import { MatchState } from "@app/models/match/state.js";
-import { PlayerState } from "@app/models/player-state.js";
-import { TriggerConditions } from "@app/models/utilities/trigger-conditions.js";
-import { BaseService } from "@app/modules/core/base-service.abstract.js";
-import { MatchService } from "@app/modules/core/match/match.service.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { BehaviorSubject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { OverwolfGameDataService, OWGameEvent, OWInfoUpdates2Event } from "../overwolf/index.js";

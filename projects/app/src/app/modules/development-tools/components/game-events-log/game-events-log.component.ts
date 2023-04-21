@@ -1,7 +1,7 @@
+import { MatchService } from "#app/modules/core/match/match.service.js";
+import { OWGameEvent, OWInfoUpdates2Event } from "#app/modules/core/overwolf/index.js";
+import { cleanInt } from "#shared/utilities/primitives/number.js";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from "@angular/core";
-import { MatchService } from "@app/modules/core/match/match.service.js";
-import { OWGameEvent, OWInfoUpdates2Event } from "@app/modules/core/overwolf/index.js";
-import { cleanInt } from "@shared/utilities/primitives/number.js";
 import { merge, Observable, Subject } from "rxjs";
 import { delay, filter, takeUntil } from "rxjs/operators";
 

@@ -1,4 +1,4 @@
-import { environment } from "@app/../environments/environment.js";
+import { environment } from "#app/../environments/environment.js";
 import { OwAd } from "@overwolf/types/owads.js";
 import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { OverwolfWindowName } from "./overwolf-window.js";

@@ -1,9 +1,9 @@
+import { isPlayerNameEqual } from "#app/models/utilities/player.js";
+import { BaseService } from "#app/modules/core/base-service.abstract.js";
+import { LocalDatabaseService } from "#app/modules/core/local-database/local-database.service.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
+import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 import { Injectable } from "@angular/core";
-import { isPlayerNameEqual } from "@app/models/utilities/player.js";
-import { BaseService } from "@app/modules/core/base-service.abstract.js";
-import { LocalDatabaseService } from "@app/modules/core/local-database/local-database.service.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
-import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import { BehaviorSubject, defer, from, iif, merge, Observable, of } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { LocalStorageKeys } from "./local-storage/local-storage-keys.js";

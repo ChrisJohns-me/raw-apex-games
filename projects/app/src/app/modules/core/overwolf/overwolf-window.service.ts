@@ -1,5 +1,5 @@
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
 import { Injectable } from "@angular/core";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { Subject } from "rxjs";
 import { InstancesDelegate } from "./api/windows/instances-delegate.js";
 import { SettingsDelegate } from "./api/windows/settings-delegate.js";

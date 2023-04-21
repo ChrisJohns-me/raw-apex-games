@@ -1,8 +1,8 @@
+import { SharedModule } from "#shared/angular/shared.module.js";
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { SharedModule } from "@shared/angular/shared.module.js";
 import { GameEventsStatusIndicatorComponent } from "./components/game-events-status-indicator/game-events-status-indicator.component.js";
 import { GameModesDropdownFilterComponent } from "./components/game-modes-dropdown-filter/game-modes-dropdown-filter.component.js";
 import { LegendsDropdownFilterComponent } from "./components/legends-dropdown-filter/legends-dropdown-filter.component.js";

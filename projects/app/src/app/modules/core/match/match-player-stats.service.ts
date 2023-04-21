@@ -1,11 +1,11 @@
+import { MatchState } from "#app/models/match/state.js";
+import { PlayerState } from "#app/models/player-state.js";
+import { BaseService } from "#app/modules/core/base-service.abstract.js";
+import { MatchService } from "#app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
+import { isEmpty, parseBoolean } from "#shared/utilities/primitives/boolean.js";
+import { cleanInt } from "#shared/utilities/primitives/number.js";
 import { Injectable } from "@angular/core";
-import { MatchState } from "@app/models/match/state.js";
-import { PlayerState } from "@app/models/player-state.js";
-import { BaseService } from "@app/modules/core/base-service.abstract.js";
-import { MatchService } from "@app/modules/core/match/match.service.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
-import { isEmpty, parseBoolean } from "@shared/utilities/primitives/boolean.js";
-import { cleanInt } from "@shared/utilities/primitives/number.js";
 import { BehaviorSubject } from "rxjs";
 import { filter, map, switchMap, takeUntil, tap } from "rxjs/operators";
 import { OverwolfGameDataService } from "../overwolf/index.js";

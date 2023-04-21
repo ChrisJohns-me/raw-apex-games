@@ -1,3 +1,11 @@
+import { Legend } from "#app/models/legend/legend.js";
+import { MatchGameModeList } from "#app/models/match/game-mode/game-mode-list.js";
+import { MatchGameMode } from "#app/models/match/game-mode/game-mode.js";
+import { MatchMapList } from "#app/models/match/map/map-list.js";
+import { ConfigurationService } from "#app/modules/core/configuration.service.js";
+import { MatchDataStore } from "#app/modules/core/local-database/match-data-store.js";
+import { unique } from "#shared/utilities/primitives/array.js";
+import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -9,14 +17,6 @@ import {
     Output,
     TrackByFunction,
 } from "@angular/core";
-import { Legend } from "@app/models/legend/legend.js";
-import { MatchGameModeList } from "@app/models/match/game-mode/game-mode-list.js";
-import { MatchGameMode } from "@app/models/match/game-mode/game-mode.js";
-import { MatchMapList } from "@app/models/match/map/map-list.js";
-import { ConfigurationService } from "@app/modules/core/configuration.service.js";
-import { MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
-import { unique } from "@shared/utilities/primitives/array.js";
-import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import { differenceInMilliseconds, intervalToDuration } from "date-fns";
 import { interval, Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";

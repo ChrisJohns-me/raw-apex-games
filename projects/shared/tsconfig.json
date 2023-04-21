@@ -1,12 +1,14 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "../../out-tsc/shared"
-  },
-  "files": [],
-  "include": [
-    "**/*.ts",
-    "./**/*.d.ts",
-  ],
-  "exclude": []
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "composite": true,
+        "declaration": true,
+        "noEmit": false
+    },
+    "files": [],
+    "include": [
+        "**/*.ts",
+        "./**/*.d.ts"
+    ],
+    "exclude": []
 }

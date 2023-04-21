@@ -1,5 +1,5 @@
+import { FeatureState, OverwolfFeatureDep } from "#app/models/feature-status.js";
 import { Injectable, OnDestroy } from "@angular/core";
-import { FeatureState, OverwolfFeatureDep } from "@app/models/feature-status.js";
 import { Subject } from "rxjs";
 import { OverwolfFeatureStatusService } from "./overwolf/overwolf-feature-status.service.js";
 

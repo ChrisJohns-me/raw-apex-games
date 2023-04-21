@@ -1,8 +1,8 @@
+import { Legend } from "#app/models/legend/legend.js";
+import { matchListAvgStatsGroupedBy } from "#app/models/utilities/match-stats.js";
+import { MatchDataStore } from "#app/modules/core/local-database/match-data-store.js";
+import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, ViewChild } from "@angular/core";
-import { Legend } from "@app/models/legend/legend.js";
-import { matchListAvgStatsGroupedBy } from "@app/models/utilities/match-stats.js";
-import { MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
-import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import {
     ArcElement,
     CategoryScale,

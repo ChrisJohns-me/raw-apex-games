@@ -1,6 +1,6 @@
+import { WINDOW } from "#app/modules/core/global-window.provider.js";
 import { AfterViewChecked, AfterViewInit, Directive, ElementRef, Inject, Input, OnChanges, OnDestroy } from "@angular/core";
-import { WINDOW } from "@app/modules/core/global-window.provider.js";
-import { Subject, fromEvent, takeUntil } from "rxjs";
+import { fromEvent, Subject, takeUntil } from "rxjs";
 
 /**
  * Dynamically sets the height of an element to reach the bottom of the window

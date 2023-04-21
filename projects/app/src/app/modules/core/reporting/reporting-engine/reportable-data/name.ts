@@ -1,5 +1,5 @@
-import { PlayerService } from "@app/modules/core/player.service.js";
-import { ExtractSubjectType } from "@shared/types/rxjs-utilities.js";
+import { PlayerService } from "#app/modules/core/player.service.js";
+import { ExtractSubjectType } from "#shared/types/rxjs-utilities.js";
 import { ReportableDataSnapshot } from "../reportable-data.js";
 
 type NameDataOutput = ExtractSubjectType<PlayerService["myName$"]>;

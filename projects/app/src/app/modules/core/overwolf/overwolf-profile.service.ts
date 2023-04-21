@@ -1,6 +1,6 @@
+import { BaseService } from "#app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
 import { Injectable } from "@angular/core";
-import { BaseService } from "@app/modules/core/base-service.abstract.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { Observable } from "rxjs";
 import { ProfileDelegate } from "./api/profile/profile-delegate.js";
 

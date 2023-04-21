@@ -1,9 +1,9 @@
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
 import { Injectable } from "@angular/core";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { exportDB } from "dexie-export-import";
 import { APP_NAME } from "../../../models/app.js";
 /** @see https://dexie.org/docs/Observable/Dexie.Observable */
-import { SettingsDataStore } from "@app/modules/core/local-database/settings-data-store.js";
+import { SettingsDataStore } from "#app/modules/core/local-database/settings-data-store.js";
 import { Dexie } from "dexie";
 import "dexie-observable";
 import { IDatabaseChange } from "dexie-observable/api.js";

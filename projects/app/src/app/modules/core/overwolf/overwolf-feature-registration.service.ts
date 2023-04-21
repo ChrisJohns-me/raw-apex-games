@@ -1,5 +1,5 @@
+import { BaseService } from "#app/modules/core/base-service.abstract.js";
 import { Inject, Injectable } from "@angular/core";
-import { BaseService } from "@app/modules/core/base-service.abstract.js";
 import { BehaviorSubject, bindCallback, defer, Observable, of, throwError } from "rxjs";
 import { catchError, delay, map, mergeMap, retryWhen, takeUntil, tap } from "rxjs/operators";
 import { OWConfig, OW_CONFIG } from "./overwolf-config.js";

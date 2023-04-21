@@ -1,4 +1,4 @@
-import { OWHotKey, OWHotKeyAssignHotkeyObject } from "@app/modules/core/overwolf/types/overwolf-types.js";
+import { OWHotKey, OWHotKeyAssignHotkeyObject } from "#app/modules/core/overwolf/types/overwolf-types.js";
 import keycode from "keycode";
 
 export enum HotkeyEnum {

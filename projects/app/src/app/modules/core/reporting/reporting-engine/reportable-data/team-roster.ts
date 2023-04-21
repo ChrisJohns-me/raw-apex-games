@@ -1,5 +1,5 @@
-import { MatchRosterTeammate } from "@app/models/match/roster-teammate.js";
-import { MatchRosterService } from "@app/modules/core/match/match-roster.service.js";
+import { MatchRosterTeammate } from "#app/models/match/roster-teammate.js";
+import { MatchRosterService } from "#app/modules/core/match/match-roster.service.js";
 import { map } from "rxjs/operators";
 import { ReportableDataSnapshot } from "../reportable-data.js";
 

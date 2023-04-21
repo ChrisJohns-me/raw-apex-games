@@ -5,8 +5,8 @@
  * Singleton services should be typically be registered with
  * the Background service. Non-registered services may cause memory leaks.
  */
+import { environment } from "#app/../environments/environment.js";
 import { Provider } from "@angular/core";
-import { environment } from "@app/../environments/environment.js";
 import { take } from "rxjs/operators";
 import { OverwolfWindow, OverwolfWindowName } from "./models/overwolf-window.js";
 

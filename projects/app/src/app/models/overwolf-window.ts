@@ -1,4 +1,4 @@
-import { OWDisplay, OWWindowInfo } from "@app/modules/core/overwolf/types/overwolf-types.js";
+import { OWDisplay, OWWindowInfo } from "#app/modules/core/overwolf/types/overwolf-types.js";
 import { combineLatest, from, Observable, of } from "rxjs";
 import { filter, map, mergeMap, switchMap } from "rxjs/operators";
 

@@ -1,6 +1,6 @@
+import { Legend } from "#app/models/legend/legend.js";
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from "@angular/core";
 import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
-import { Legend } from "@app/models/legend/legend.js";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 

@@ -1,5 +1,5 @@
-import { MatchLocationPhase } from "@app/models/match/location.js";
-import { GoogleAnalyticsService } from "@app/modules/core/google-analytics.service.js";
+import { MatchLocationPhase } from "#app/models/match/location.js";
+import { GoogleAnalyticsService } from "#app/modules/core/google-analytics.service.js";
 import { differenceInMinutes } from "date-fns";
 import { BehaviorSubject, Subject } from "rxjs";
 import { ReportableDataFactoryMap } from "../reportable-data.js";

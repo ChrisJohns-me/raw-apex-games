@@ -1,6 +1,6 @@
+import { OverwolfWindow, OverwolfWindowName, OverwolfWindowState } from "#app/models/overwolf-window.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
 import { Injectable } from "@angular/core";
-import { OverwolfWindow, OverwolfWindowName, OverwolfWindowState } from "@app/models/overwolf-window.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 

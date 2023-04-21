@@ -1,5 +1,5 @@
+import { Hotkey } from "#app/models/hotkey.js";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, Output } from "@angular/core";
-import { Hotkey } from "@app/models/hotkey.js";
 
 @Component({
     selector: "app-hotkey-editor",

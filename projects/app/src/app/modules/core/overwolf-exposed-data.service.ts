@@ -1,6 +1,6 @@
+import { BaseService } from "#app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
 import { Injectable } from "@angular/core";
-import { BaseService } from "@app/modules/core/base-service.abstract.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { BehaviorSubject, Subject } from "rxjs";
 import { OWGameEvent, OWInfoUpdates2Event, OWRunningGameInfo } from "./overwolf/index.js";
 import { OverwolfGameDataService } from "./overwolf/overwolf-game-data.service.js";

@@ -1,6 +1,6 @@
-import { RawGameLobby } from "@shared/models/raw-games/raw-game-lobby.js";
+import FirebaseUtil from "#api/utils/firebase.util.js";
+import { RawGameLobby } from "#shared/models/raw-games/raw-game-lobby.js";
 import { collection, doc, getDocs, setDoc } from "firebase/firestore";
-import FirebaseUtil from "../../../utils/firebase.util.js";
 
 // const mockLobbies = [
 //     new RawGameLobby({

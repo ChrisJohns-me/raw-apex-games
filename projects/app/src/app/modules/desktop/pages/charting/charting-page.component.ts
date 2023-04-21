@@ -1,11 +1,11 @@
+import { Legend } from "#app/models/legend/legend.js";
+import { MatchGameMode } from "#app/models/match/game-mode/game-mode.js";
+import { MatchMap } from "#app/models/match/map/match-map.js";
+import { MatchFilters } from "#app/models/utilities/match-filters.js";
+import { MatchDataStore } from "#app/modules/core/local-database/match-data-store.js";
+import { MatchService } from "#app/modules/core/match/match.service.js";
+import { ReportingService } from "#app/modules/core/reporting/reporting.service.js";
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { Legend } from "@app/models/legend/legend.js";
-import { MatchGameMode } from "@app/models/match/game-mode/game-mode.js";
-import { MatchMap } from "@app/models/match/map/match-map.js";
-import { MatchFilters } from "@app/models/utilities/match-filters.js";
-import { MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
-import { MatchService } from "@app/modules/core/match/match.service.js";
-import { ReportingService } from "@app/modules/core/reporting/reporting.service.js";
 import { mdiFilterVariantRemove } from "@mdi/js";
 import { Observable, Subject } from "rxjs";
 import { finalize, switchMap, takeUntil } from "rxjs/operators";

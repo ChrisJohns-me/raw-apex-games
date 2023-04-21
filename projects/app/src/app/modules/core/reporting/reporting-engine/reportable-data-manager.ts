@@ -1,6 +1,6 @@
+import { MatchService } from "#app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
 import { Injectable } from "@angular/core";
-import { MatchService } from "@app/modules/core/match/match.service.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { MatchKillfeedService } from "../../match/match-killfeed.service.js";
 import { MatchMapService } from "../../match/match-map.service.js";
 import { MatchPlayerInventoryService } from "../../match/match-player-inventory.service.js";

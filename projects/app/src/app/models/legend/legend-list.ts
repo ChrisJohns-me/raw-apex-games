@@ -1,6 +1,6 @@
-import { hexToRgb, hslToHex, rgbToHsl } from "@shared/utilities/color.js";
-import { isEmpty } from "@shared/utilities/primitives/boolean.js";
-import { mathClamp } from "@shared/utilities/primitives/math.js";
+import { hexToRgb, hslToHex, rgbToHsl } from "#shared/utilities/color.js";
+import { isEmpty } from "#shared/utilities/primitives/boolean.js";
+import { mathClamp } from "#shared/utilities/primitives/math.js";
 import { Legend } from "./legend.js";
 
 export const LegendList: Legend[] = [

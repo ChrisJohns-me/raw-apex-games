@@ -1,6 +1,6 @@
+import { generateLegendBGLinearColor } from "#app/models/legend/legend-list.js";
+import { Legend } from "#app/models/legend/legend.js";
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from "@angular/core";
-import { generateLegendBGLinearColor } from "@app/models/legend/legend-list.js";
-import { Legend } from "@app/models/legend/legend.js";
 
 type LegendIdsRow = string[];
 

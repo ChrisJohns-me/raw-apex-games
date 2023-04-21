@@ -1,5 +1,5 @@
-import { MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
-import { mathClamp } from "@shared/utilities/primitives/math.js";
+import { MatchDataStore } from "#app/modules/core/local-database/match-data-store.js";
+import { mathClamp } from "#shared/utilities/primitives/math.js";
 import isDate from "date-fns/isDate";
 
 // Safe-guards

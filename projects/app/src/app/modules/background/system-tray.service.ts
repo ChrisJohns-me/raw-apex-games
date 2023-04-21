@@ -1,10 +1,10 @@
+import { environment } from "#app/../environments/environment.js";
+import { APP_NAME } from "#app/models/app.js";
+import { OverwolfWindowName } from "#app/models/overwolf-window.js";
+import { BaseService } from "#app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
+import { exhaustiveEnumSwitch } from "#shared/utilities/switch.js";
 import { Injectable } from "@angular/core";
-import { environment } from "@app/../environments/environment.js";
-import { APP_NAME } from "@app/models/app.js";
-import { OverwolfWindowName } from "@app/models/overwolf-window.js";
-import { BaseService } from "@app/modules/core/base-service.abstract.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
-import { exhaustiveEnumSwitch } from "@shared/utilities/switch.js";
 import { of } from "rxjs";
 import { catchError, takeUntil } from "rxjs/operators";
 import { OWSystemTrayMenuItem } from "../core/overwolf/index.js";

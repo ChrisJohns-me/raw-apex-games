@@ -1,12 +1,12 @@
+import { Legend } from "#app/models/legend/legend.js";
+import { MatchGameModeGenericId } from "#app/models/match/game-mode/game-mode.enum.js";
+import { AvgMatchStats } from "#app/models/utilities/match-stats.js";
+import { ConfigurationService } from "#app/modules/core/configuration.service.js";
+import { MatchService } from "#app/modules/core/match/match.service.js";
+import { PlayerLocalStatsService } from "#app/modules/core/player-local-stats.service.js";
+import { PlayerService } from "#app/modules/core/player.service.js";
+import { Stopwatch } from "#shared/utilities/stopwatch.js";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { Legend } from "@app/models/legend/legend.js";
-import { MatchGameModeGenericId } from "@app/models/match/game-mode/game-mode.enum.js";
-import { AvgMatchStats } from "@app/models/utilities/match-stats.js";
-import { ConfigurationService } from "@app/modules/core/configuration.service.js";
-import { MatchService } from "@app/modules/core/match/match.service.js";
-import { PlayerLocalStatsService } from "@app/modules/core/player-local-stats.service.js";
-import { PlayerService } from "@app/modules/core/player.service.js";
-import { Stopwatch } from "@shared/utilities/stopwatch.js";
 import { combineLatest, concat, from, Observable, of, OperatorFunction, Subject, Subscription } from "rxjs";
 import { concatMap, filter, finalize, map, startWith, switchMap, take, takeUntil, tap } from "rxjs/operators";
 

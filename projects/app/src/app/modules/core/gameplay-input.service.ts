@@ -1,8 +1,8 @@
+import { BaseService } from "#app/modules/core/base-service.abstract.js";
+import { MatchService } from "#app/modules/core/match/match.service.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
+import { cleanInt } from "#shared/utilities/primitives/number.js";
 import { Injectable } from "@angular/core";
-import { BaseService } from "@app/modules/core/base-service.abstract.js";
-import { MatchService } from "@app/modules/core/match/match.service.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
-import { cleanInt } from "@shared/utilities/primitives/number.js";
 import { BehaviorSubject, debounceTime, filter, map, switchMap, takeUntil, tap } from "rxjs";
 import { MatchPlayerInflictionService } from "./match/match-player-infliction.service.js";
 import { OverwolfInputTrackingService } from "./overwolf/overwolf-input-tracking.service.js";

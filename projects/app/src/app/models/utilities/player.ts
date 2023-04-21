@@ -1,4 +1,4 @@
-import { isEmpty } from "@shared/utilities/primitives/boolean.js";
+import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 
 /**
  * Get valid clantag from player's name.

@@ -1,28 +1,35 @@
 {
     "name": "raw-apex-games",
     "version": "0.13.1",
+    "private": true,
     "engines": {
         "node": ">= 18.0.0"
     },
+    "browserslist": [
+        "chrome >= 83"
+    ],
     "type": "module",
     "scripts": {
-        "preinstall": "npm i -g firebase-tools @angular/cli",
+        "preinstall": "npm i -w -g firebase-tools @angular/cli",
+        "api:serve-db": "firebase emulators:start --debug --export-on-exit ./emulator-data",
+        "api:serve-dev": "cross-env NODE_ENV=DEV concurrently \"npx tsc -p ./projects/api/tsconfig.json -w\" \"npx nodemon ./dist/api-out-tsc/projects/api/src/main.js\"",
+        "api:deploy-dev": "",
+        "api:deploy-prod": "",
         "app:serve-dev": "ng build --project=rawApexGamesApp --watch --plugin ~./projects/app/webpack.partial.dev.cjs --optimization false",
         "app:build-prod": "ng build --project=rawApexGamesApp --configuration production",
         "app:compose-opk": "",
         "app:stats": "ng build --project=rawApexGamesApp --stats-json",
         "app:analyze-dev": "webpack-bundle-analyzer dist/rawApexGamesApp_dev/stats.json",
-        "api:serve-db": "firebase emulators:start --debug --export-on-exit ./emulator-data",
-        "api:serve-dev": "cross-env NODE_ENV=DEV concurrently \"npx tsc -p ./projects/api/tsconfig.json -w\" \"npx nodemon ./out-tsc/api/projects/api/src/server.js\"",
-        "api:deploy-dev": "",
-        "api:deploy-prod": "",
         "web:serve-dev": "ng serve --project=rawApexGamesWeb",
         "web:build-prod": "ng build --project=rawApexGamesWeb --configuration production"
     },
-    "browserslist": [
-        "chrome >= 83"
-    ],
-    "private": true,
+    "imports": {
+        "#######": "### Path Import Aliases for API Project ###",
+        "#api/*": "./dist/api-out-tsc/projects/api/src/*",
+        "#app/*": "./dist/api-out-tsc/projects/app/src/app/*",
+        "#shared/*": "./dist/api-out-tsc/projects/shared/*",
+        "#web/*": "./dist/api-out-tsc/projects/web/src/app/*"
+    },
     "dependencies": {
         "@angular/animations": "^15.2.7",
         "@angular/common": "^15.2.7",

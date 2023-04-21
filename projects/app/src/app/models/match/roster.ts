@@ -1,4 +1,4 @@
-import { isEmpty } from "@shared/utilities/primitives/boolean.js";
+import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 import { isPlayerNameEqual } from "../utilities/player.js";
 import { MatchRosterPlayer } from "./roster-player.js";
 import { MatchRosterTeam } from "./roster-team.js";

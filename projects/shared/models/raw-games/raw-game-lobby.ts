@@ -1,7 +1,7 @@
-import { MatchGameModePlaylist } from "@app/models/match/game-mode/game-mode-playlist.enum.js";
-import { MatchGameModeGenericId } from "@app/models/match/game-mode/game-mode.enum.js";
-import { parseBoolean } from "@shared/utilities/primitives/boolean.js";
-import { removeNonAlphaNumeric } from "@shared/utilities/primitives/string.js";
+import { MatchGameModePlaylist } from "#app/models/match/game-mode/game-mode-playlist.enum.js";
+import { MatchGameModeGenericId } from "#app/models/match/game-mode/game-mode.enum.js";
+import { parseBoolean } from "#shared/utilities/primitives/boolean.js";
+import { removeNonAlphaNumeric } from "#shared/utilities/primitives/string.js";
 import { DocumentData, FirestoreDataConverter, PartialWithFieldValue, QueryDocumentSnapshot } from "firebase/firestore";
 import { $enum } from "ts-enum-util";
 

@@ -1,8 +1,8 @@
+import { MatchGameMode } from "#app/models/match/game-mode/game-mode.js";
+import { matchListAvgStatsGroupedBy } from "#app/models/utilities/match-stats.js";
+import { MatchDataStore } from "#app/modules/core/local-database/match-data-store.js";
+import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 import { AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Input, OnChanges, ViewChild } from "@angular/core";
-import { MatchGameMode } from "@app/models/match/game-mode/game-mode.js";
-import { matchListAvgStatsGroupedBy } from "@app/models/utilities/match-stats.js";
-import { MatchDataStore } from "@app/modules/core/local-database/match-data-store.js";
-import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import {
     BarController,
     BarElement,

@@ -1,3 +1,22 @@
+import { APP_NAME } from "#app/models/app.js";
+import { FeatureState } from "#app/models/feature-status.js";
+import { Hotkey, HotkeyEnum } from "#app/models/hotkey.js";
+import { OverwolfWindowName } from "#app/models/overwolf-window.js";
+import { aXNWSVA } from "#app/models/vip.js";
+import { BackgroundService } from "#app/modules/background/background.service.js";
+import { HotkeyService } from "#app/modules/background/hotkey.service.js";
+import { ConfigLoadStatus, ConfigurationService } from "#app/modules/core/configuration.service.js";
+import { GoogleAnalyticsService } from "#app/modules/core/google-analytics.service.js";
+import { LocalStorageKeys } from "#app/modules/core/local-storage/local-storage-keys.js";
+import { LocalStorageService } from "#app/modules/core/local-storage/local-storage.service.js";
+import { OverwolfFeatureStatusService } from "#app/modules/core/overwolf/overwolf-feature-status.service.js";
+import { OverwolfProfileService } from "#app/modules/core/overwolf/overwolf-profile.service.js";
+import { VersionService } from "#app/modules/core/version.service.js";
+import { fadeInOutAnimation } from "#shared/angular/animations/fade-in-out.animation.js";
+import { scaleInOutAnimationFactory } from "#shared/angular/animations/scale-in-out-factory.animation.js";
+import { isEmpty, parseBoolean } from "#shared/utilities/primitives/boolean.js";
+import { wordsToUpperCase } from "#shared/utilities/primitives/string.js";
+import { exhaustiveEnumSwitch } from "#shared/utilities/switch.js";
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -9,26 +28,7 @@ import {
     OnInit,
     ViewChild,
 } from "@angular/core";
-import { APP_NAME } from "@app/models/app.js";
-import { FeatureState } from "@app/models/feature-status.js";
-import { Hotkey, HotkeyEnum } from "@app/models/hotkey.js";
-import { OverwolfWindowName } from "@app/models/overwolf-window.js";
-import { aXNWSVA } from "@app/models/vip.js";
-import { BackgroundService } from "@app/modules/background/background.service.js";
-import { HotkeyService } from "@app/modules/background/hotkey.service.js";
-import { ConfigLoadStatus, ConfigurationService } from "@app/modules/core/configuration.service.js";
-import { GoogleAnalyticsService } from "@app/modules/core/google-analytics.service.js";
-import { LocalStorageKeys } from "@app/modules/core/local-storage/local-storage-keys.js";
-import { LocalStorageService } from "@app/modules/core/local-storage/local-storage.service.js";
-import { OverwolfFeatureStatusService } from "@app/modules/core/overwolf/overwolf-feature-status.service.js";
-import { OverwolfProfileService } from "@app/modules/core/overwolf/overwolf-profile.service.js";
-import { VersionService } from "@app/modules/core/version.service.js";
 import { mdiDiscord, mdiYoutube } from "@mdi/js";
-import { fadeInOutAnimation } from "@shared/angular/animations/fade-in-out.animation.js";
-import { scaleInOutAnimationFactory } from "@shared/angular/animations/scale-in-out-factory.animation.js";
-import { isEmpty, parseBoolean } from "@shared/utilities/primitives/boolean.js";
-import { wordsToUpperCase } from "@shared/utilities/primitives/string.js";
-import { exhaustiveEnumSwitch } from "@shared/utilities/switch.js";
 import { Modal } from "bootstrap";
 import { combineLatest, interval, of, Subject } from "rxjs";
 import { delay, delayWhen, filter, map, take, takeUntil } from "rxjs/operators";

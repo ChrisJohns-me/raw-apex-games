@@ -1,5 +1,5 @@
-import { MatchPlayerStatsService } from "@app/modules/core/match/match-player-stats.service.js";
-import { MatchRosterService } from "@app/modules/core/match/match-roster.service.js";
+import { MatchPlayerStatsService } from "#app/modules/core/match/match-player-stats.service.js";
+import { MatchRosterService } from "#app/modules/core/match/match-roster.service.js";
 import { combineLatest } from "rxjs";
 import { map } from "rxjs/operators";
 import { ReportableDataSnapshot } from "../reportable-data.js";

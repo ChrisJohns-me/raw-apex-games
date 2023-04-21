@@ -10,6 +10,12 @@ exports.default = {
             // by not defining plugin options, the plugin defaults to inline-sourcemaps
             plugins: [new webpack.SourceMapDevToolPlugin()],
         });
+
+        // Allow for .js and .mjs extensions to be resolved
+        merged.resolve.extensionAlias = {
+            ".js": [".ts", ".js"],
+            ".mjs": [".mts", ".mjs"],
+        };
         return merged;
     },
 };

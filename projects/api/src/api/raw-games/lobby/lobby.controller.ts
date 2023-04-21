@@ -1,4 +1,4 @@
-import { RawGameLobby } from "@shared/models/raw-games/raw-game-lobby.js";
+import { RawGameLobby } from "#shared/models/raw-games/raw-game-lobby.js";
 import { Request, Response } from "express";
 import LobbyService from "./lobby.service.js";
 

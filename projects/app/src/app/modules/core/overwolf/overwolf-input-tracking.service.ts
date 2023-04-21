@@ -1,6 +1,6 @@
+import { BaseService } from "#app/modules/core/base-service.abstract.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
 import { Injectable } from "@angular/core";
-import { BaseService } from "@app/modules/core/base-service.abstract.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
 import { Observable, Subject } from "rxjs";
 import { InputTrackingDelegate } from "./api/games/input-tracking-delegate.js";
 import { OWInputActivity, OWMouseEvent, OWMousePosition } from "./index.js";

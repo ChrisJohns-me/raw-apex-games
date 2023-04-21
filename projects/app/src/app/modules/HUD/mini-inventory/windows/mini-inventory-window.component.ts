@@ -1,15 +1,15 @@
+import { InventorySlot, InventorySlots } from "#app/models/inventory-slots.js";
+import { Item } from "#app/models/items/item.js";
+import { MatchLocationPhase } from "#app/models/match/location.js";
+import { MatchState, MatchStateChangedEvent } from "#app/models/match/state.js";
+import { OverwolfWindowName } from "#app/models/overwolf-window.js";
+import { PlayerState } from "#app/models/player-state.js";
+import { MatchPlayerInventoryService } from "#app/modules/core/match/match-player-inventory.service.js";
+import { MatchPlayerLocationService } from "#app/modules/core/match/match-player-location.service.js";
+import { MatchPlayerStatsService } from "#app/modules/core/match/match-player-stats.service.js";
+import { MatchPlayerService } from "#app/modules/core/match/match-player.service.js";
+import { MatchService } from "#app/modules/core/match/match.service.js";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { InventorySlot, InventorySlots } from "@app/models/inventory-slots.js";
-import { Item } from "@app/models/items/item.js";
-import { MatchLocationPhase } from "@app/models/match/location.js";
-import { MatchState, MatchStateChangedEvent } from "@app/models/match/state.js";
-import { OverwolfWindowName } from "@app/models/overwolf-window.js";
-import { PlayerState } from "@app/models/player-state.js";
-import { MatchPlayerInventoryService } from "@app/modules/core/match/match-player-inventory.service.js";
-import { MatchPlayerLocationService } from "@app/modules/core/match/match-player-location.service.js";
-import { MatchPlayerStatsService } from "@app/modules/core/match/match-player-stats.service.js";
-import { MatchPlayerService } from "@app/modules/core/match/match-player.service.js";
-import { MatchService } from "@app/modules/core/match/match.service.js";
 import { combineLatest, Observable, Subject } from "rxjs";
 import { distinctUntilChanged, map, takeUntil } from "rxjs/operators";
 

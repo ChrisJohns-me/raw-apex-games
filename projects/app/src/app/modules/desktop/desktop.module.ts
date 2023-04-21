@@ -1,8 +1,8 @@
+import { RawApexGamesSharedModule } from "#app/shared/app-shared.module.js";
+import { SharedModule } from "#shared/angular/shared.module.js";
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
 import { ReactiveFormsModule } from "@angular/forms";
-import { RawApexGamesSharedModule } from "@app/shared/app-shared.module.js";
-import { SharedModule } from "@shared/angular/shared.module.js";
 import { NavbarComponent } from "./components/navbar.component.js";
 import { AboutPageModule } from "./pages/about/about-page.module.js";
 import { ChartingPageModule } from "./pages/charting/charting-page.module.js";

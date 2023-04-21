@@ -1,4 +1,4 @@
-import { isEmpty } from "@shared/utilities/primitives/boolean.js";
+import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 import { Item, ItemType } from "./item.js";
 
 enum WeaponAmmo {

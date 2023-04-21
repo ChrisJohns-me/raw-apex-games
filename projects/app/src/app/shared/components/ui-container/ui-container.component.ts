@@ -1,3 +1,15 @@
+import { environment } from "#app/../environments/environment.js";
+import { APP_NAME } from "#app/models/app.js";
+import { OverwolfWindow, OverwolfWindowName, OverwolfWindowState } from "#app/models/overwolf-window.js";
+import { SettingKey } from "#app/models/settings.js";
+import { GoogleAnalyticsService } from "#app/modules/core/google-analytics.service.js";
+import { OverwolfGameDataService } from "#app/modules/core/overwolf/index.js";
+import { SettingsService } from "#app/modules/core/settings.service.js";
+import { MainPage } from "#app/modules/desktop/pages/main-page.js";
+import { DesktopWindowService } from "#app/modules/desktop/windows/desktop-window.service.js";
+import { InGameWindowService } from "#app/modules/in-game/windows/in-game-window.service.js";
+import { isEmpty } from "#shared/utilities/primitives/boolean.js";
+import { mathClamp } from "#shared/utilities/primitives/math.js";
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -10,19 +22,7 @@ import {
     SimpleChanges,
 } from "@angular/core";
 import { Title } from "@angular/platform-browser";
-import { environment } from "@app/../environments/environment.js";
-import { APP_NAME } from "@app/models/app.js";
-import { OverwolfWindow, OverwolfWindowName, OverwolfWindowState } from "@app/models/overwolf-window.js";
-import { SettingKey } from "@app/models/settings.js";
-import { GoogleAnalyticsService } from "@app/modules/core/google-analytics.service.js";
-import { OverwolfGameDataService } from "@app/modules/core/overwolf/index.js";
-import { SettingsService } from "@app/modules/core/settings.service.js";
-import { MainPage } from "@app/modules/desktop/pages/main-page.js";
-import { DesktopWindowService } from "@app/modules/desktop/windows/desktop-window.service.js";
-import { InGameWindowService } from "@app/modules/in-game/windows/in-game-window.service.js";
 import { mdiCogOutline, mdiWindowClose, mdiWindowMaximize, mdiWindowMinimize, mdiWindowRestore } from "@mdi/js";
-import { isEmpty } from "@shared/utilities/primitives/boolean.js";
-import { mathClamp } from "@shared/utilities/primitives/math.js";
 import { Observable, Subject } from "rxjs";
 import { filter, finalize, map, shareReplay, switchMap, take, takeUntil, tap } from "rxjs/operators";
 

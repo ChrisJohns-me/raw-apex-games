@@ -1,11 +1,11 @@
+import { SettingKey } from "#app/models/settings.js";
+import { BaseService } from "#app/modules/core/base-service.abstract.js";
+import { MatchService } from "#app/modules/core/match/match.service.js";
+import { SessionStorageService } from "#app/modules/core/session-storage/session-storage.service.js";
+import { SettingsService } from "#app/modules/core/settings.service.js";
+import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
+import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 import { Injectable, OnDestroy } from "@angular/core";
-import { SettingKey } from "@app/models/settings.js";
-import { BaseService } from "@app/modules/core/base-service.abstract.js";
-import { MatchService } from "@app/modules/core/match/match.service.js";
-import { SessionStorageService } from "@app/modules/core/session-storage/session-storage.service.js";
-import { SettingsService } from "@app/modules/core/settings.service.js";
-import { SingletonServiceProviderFactory } from "@app/singleton-service.provider.factory.js";
-import { isEmpty } from "@shared/utilities/primitives/boolean.js";
 import { combineLatest, of, Subject } from "rxjs";
 import { catchError, filter, switchMap, takeUntil } from "rxjs/operators";
 import { GoogleAnalyticsService } from "../google-analytics.service.js";

@@ -1,3 +1,6 @@
+import { environment } from "#app/../environments/environment.js";
+import { MatchMapCoordinates } from "#app/models/match/map/map-coordinates.js";
+import { MatchMap } from "#app/models/match/map/match-map.js";
 import {
     AfterViewInit,
     ChangeDetectionStrategy,
@@ -10,9 +13,6 @@ import {
     ViewChild,
 } from "@angular/core";
 import { UntypedFormControl } from "@angular/forms";
-import { environment } from "@app/../environments/environment.js";
-import { MatchMapCoordinates } from "@app/models/match/map/map-coordinates.js";
-import { MatchMap } from "@app/models/match/map/match-map.js";
 import * as d3 from "d3";
 import { combineLatest, Subject } from "rxjs";
 import { takeUntil, throttleTime } from "rxjs/operators";

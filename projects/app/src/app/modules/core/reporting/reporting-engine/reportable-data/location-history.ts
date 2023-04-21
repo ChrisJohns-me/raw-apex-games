@@ -1,5 +1,5 @@
-import { MatchPlayerLocationService } from "@app/modules/core/match/match-player-location.service.js";
-import { ExtractSubjectType } from "@shared/types/rxjs-utilities.js";
+import { MatchPlayerLocationService } from "#app/modules/core/match/match-player-location.service.js";
+import { ExtractSubjectType } from "#shared/types/rxjs-utilities.js";
 import { OperatorFunction } from "rxjs";
 import { filter, map, throttleTime, withLatestFrom } from "rxjs/operators";
 import { ReportableDataTimestampedStream } from "../reportable-data.js";
