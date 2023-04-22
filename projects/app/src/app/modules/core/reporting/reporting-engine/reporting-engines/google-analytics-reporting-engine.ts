@@ -77,7 +77,8 @@ export class GoogleAnalyticsReportingEngine implements ReportingEngine {
         const map = getDataById("map")?.value;
         const locationHistory = getDataById("locationHistory")?.value ?? [];
 
-        const myName = getDataById("name")?.value ?? "";
+        const myName = getDataById("myName")?.value ?? "";
+        const myOriginId = getDataById("myOriginId")?.value ?? "";
         const duration = differenceInMinutes(matchMeta?.endDate ?? new Date(), matchMeta?.startDate ?? new Date());
         const gameModeId = getDataById("gameMode")?.value?.gameModeId ?? "";
         const mapId = map?.mapId ?? "";

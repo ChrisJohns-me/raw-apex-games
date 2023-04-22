@@ -1,4 +1,5 @@
 export enum MatchGameModeFriendlyName {
+    Unknown = "Unknown",
     Training = "Training",
     FiringRange = "Firing Range",
     BattleRoyale_Trios = "Trios",
@@ -10,6 +11,7 @@ export enum MatchGameModeFriendlyName {
 }
 
 export enum MatchGameModeGenericId {
+    Unknown = "Unknown",
     Training = "training",
     FiringRange = "firing_range",
     BattleRoyale_Trios = "br_trios",

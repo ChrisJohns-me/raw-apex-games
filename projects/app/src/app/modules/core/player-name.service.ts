@@ -11,12 +11,16 @@ import { LocalStorageService } from "./local-storage/local-storage.service.js";
 import { OWGameEventKillFeed } from "./overwolf/index.js";
 import { OverwolfGameDataService } from "./overwolf/overwolf-game-data.service.js";
 
+/**
+ * Service that provides the player's name.
+ * This is separate from other player services to avoid circular dependencies with MatchRosterService.
+ */
 @Injectable({
     providedIn: "root",
     deps: [LocalDatabaseService, LocalStorageService, OverwolfGameDataService],
-    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("PlayerService", PlayerService, deps),
+    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("PlayerNameService", PlayerNameService, deps),
 })
-export class PlayerService extends BaseService {
+export class PlayerNameService extends BaseService {
     /**
      * Data gathered from Overwolf's data or if empty during a match, attempts to infer from killfeed.
      * Distinct until changed.

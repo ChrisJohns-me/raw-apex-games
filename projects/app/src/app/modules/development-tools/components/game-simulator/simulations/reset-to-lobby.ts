@@ -162,4 +162,5 @@ export const resetToLobby = (): string => `
 [2020-01-01 00:00:03.000 AM] {"info":{"match_info":{"legendSelect_1":{}}},"feature":"team"}
 [2020-01-01 00:00:03.000 AM] {"info":{"match_info":{"legendSelect_2":{}}},"feature":"team"}
 [2020-01-01 00:00:03.000 AM] {"info":{"match_info":{"tabs":{}}},"feature":"match_info"}
+[2020-01-01 00:00:03.000 AM] {"info":{"game_info":{"phase":"lobby"}},"feature":"game_info"}
 `;

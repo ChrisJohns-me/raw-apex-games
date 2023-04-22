@@ -1,50 +1,39 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "rootDir": "./",
-    "declaration": true,
-    "downlevelIteration": true,
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true,
-    "importHelpers": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "target": "es2015",
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "resolveJsonModule": true,
-    "useDefineForClassFields": false,
-    "sourceMap": true,
-    "strict": true,
-    "noEmit": true,
-    "lib": [
-      "es2019",
-      "ES2020",
-      "DOM"
-    ],
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/@overwolf"
-    ],
-    "paths": {
-      "#api/*": [ "./projects/api/src/*" ],
-      "#app/*": [ "./projects/app/src/app/*" ],
-      "#shared/*": [ "./projects/shared/*" ],
-      "#web/*": [ "./projects/web/src/app/*" ]
+    "compileOnSave": false,
+    "compilerOptions": {
+        "rootDir": "./",
+        "declaration": true,
+        "downlevelIteration": true,
+        "experimentalDecorators": true,
+        "forceConsistentCasingInFileNames": true,
+        "importHelpers": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "target": "es2015",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitReturns": true,
+        "resolveJsonModule": true,
+        "useDefineForClassFields": false,
+        "sourceMap": true,
+        "strict": true,
+        "noEmit": true,
+        "lib": ["es2019", "ES2020", "DOM"],
+        "typeRoots": ["./node_modules/@types", "./node_modules/@overwolf"],
+        "paths": {
+            "#api/*": ["./projects/api/src/*"],
+            "#app/*": ["./projects/app/src/app/*"],
+            "#shared/*": ["./projects/shared/*"],
+            "#web/*": ["./projects/web/src/app/*"]
+        }
+    },
+    "include": ["./**/*.d.ts"],
+    "exclude": ["./dist"],
+    "angularCompilerOptions": {
+        "enableI18nLegacyMessageIdFormat": false,
+        "strictInjectionParameters": true,
+        "strictInputAccessModifiers": true,
+        "strictTemplates": true
     }
-  },
-  "include": [
-    "./**/*.d.ts"
-  ],
-  "exclude": [
-    "./dist"
-  ],
-  "angularCompilerOptions": {
-    "enableI18nLegacyMessageIdFormat": false,
-    "strictInjectionParameters": true,
-    "strictInputAccessModifiers": true,
-    "strictTemplates": true
-  }
 }

@@ -8,7 +8,8 @@ import { MatchPlayerLegendService } from "../../match/match-player-legend.servic
 import { MatchPlayerLocationService } from "../../match/match-player-location.service.js";
 import { MatchPlayerStatsService } from "../../match/match-player-stats.service.js";
 import { MatchRosterService } from "../../match/match-roster.service.js";
-import { PlayerService } from "../../player.service.js";
+import { PlayerNameService } from "../../player-name.service.js";
+import { PlayerOriginIdService } from "../../player-origin-id.service.js";
 import { ReportableDataFactoryMap } from "./reportable-data.js";
 import { AssistsDataFactory } from "./reportable-data/assists.js";
 import { DamageDataFactory } from "./reportable-data/damage.js";
@@ -23,7 +24,8 @@ import { MapDataFactory } from "./reportable-data/map.js";
 import { MatchMetaDataFactory } from "./reportable-data/match-meta.js";
 import { MatchRosterDataFactory } from "./reportable-data/match-roster.js";
 import { MatchSummaryDataFactory } from "./reportable-data/match-summary.js";
-import { NameDataFactory } from "./reportable-data/name.js";
+import { MyNameDataFactory } from "./reportable-data/my-name.js";
+import { MyOriginIdDataFactory } from "./reportable-data/my-origin-id.js";
 import { PlacementDataFactory } from "./reportable-data/placement.js";
 import { TeamRosterDataFactory } from "./reportable-data/team-roster.js";
 
@@ -46,7 +48,8 @@ import { TeamRosterDataFactory } from "./reportable-data/team-roster.js";
         MatchPlayerLocationService,
         MatchPlayerStatsService,
         MatchRosterService,
-        PlayerService,
+        PlayerNameService,
+        PlayerOriginIdService,
     ],
     useFactory: (...deps: any[]) => SingletonServiceProviderFactory("ReportableDataManagerService", ReportableDataManagerService, deps),
 })
@@ -65,7 +68,8 @@ export class ReportableDataManagerService {
         private readonly matchPlayerLocation: MatchPlayerLocationService,
         private readonly matchPlayerStats: MatchPlayerStatsService,
         private readonly matchRoster: MatchRosterService,
-        private readonly player: PlayerService
+        private readonly playerName: PlayerNameService,
+        private readonly playerOriginId: PlayerOriginIdService
     ) {
         this.instantiateReportableDataItems();
     }
@@ -100,7 +104,8 @@ export class ReportableDataManagerService {
                 myPlacementObs: this.matchPlayerStats.myPlacement$,
                 startingNumTeamsObs: this.matchRoster.startingNumTeams$,
             }),
-            NameDataFactory(this.player.myName$),
+            MyNameDataFactory(this.playerName.myName$),
+            MyOriginIdDataFactory(this.playerOriginId.myOriginId$),
             PlacementDataFactory(this.matchPlayerStats.myPlacement$),
             TeamRosterDataFactory(this.matchRoster.teammateRoster$),
         ];

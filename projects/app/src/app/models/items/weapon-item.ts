@@ -46,7 +46,7 @@ export class WeaponItem extends Item {
      * @param {string} fromInGameInfoName Create weapon from Overwolf's `"feature": "inventory"` event naming.
      * @param {string} fromInGameInventoryId Overwolf's inventory item slot name; from the "inventory_0.name" feature.
      */
-    constructor({ fromId, fromInGameEventName, fromInGameInfoName, fromInGameInventoryId }: WeaponItemConstructor) {
+    constructor({ fromId, fromInGameEventName, fromInGameInfoName, fromInGameInventoryId }: ModelCtor<WeaponItemConstructor> = {}) {
         if (
             isEmpty(fromId) &&
             isEmpty(fromInGameEventName) &&

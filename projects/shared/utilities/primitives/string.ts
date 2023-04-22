@@ -11,7 +11,7 @@ export function wordsToUpperCase(input: string): string {
         .join(" ");
 }
 
-// Random string generator
+/** Random string generator */
 export function randomString(length: number): string {
     let text = "";
     const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -21,7 +21,12 @@ export function randomString(length: number): string {
     return text;
 }
 
-// Remove non-alphanumeric characters
+/** Remove non-alphanumeric characters */
 export function removeNonAlphaNumeric(input: string): string {
     return input.replace(/[^a-zA-Z0-9]/g, "");
+}
+
+/** Remove non-alphanumeric, non-hyphen, non-underscore characters */
+export function removeNonAlphaNumericHyphenUnderscore(input: string): string {
+    return input.replace(/[^a-zA-Z0-9_-]/g, "");
 }

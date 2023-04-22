@@ -9,6 +9,8 @@
     <div class="in-game-container">
         <h1 style="color: white; font-size: 25px; font-weight: bold">InGame window</h1>
         <div class="controller-detected" *ngIf="isControllerDetected">CONTROLLER DETECTED</div>
+        <div>PlayerName: {{ myName }}</div>
+        <div>OriginId: {{ myOriginId }}</div>
         <button (click)="onCreateLobbyClick()">Create Lobby</button>
         <button (click)="onLoadLobbiesClick()">Load Lobbies</button>
         <div>

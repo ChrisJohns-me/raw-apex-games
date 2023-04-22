@@ -85,7 +85,11 @@
             <div class="accordion-body">
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
                     <div class="col-6">PlayerName</div>
-                    <div class="col-6 text-end">{{ player.myName$ | async }}</div>
+                    <div class="col-6 text-end">{{ playerName.myName$ | async }}</div>
+                </div>
+                <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
+                    <div class="col-6">PlayerOriginId</div>
+                    <div class="col-6 text-end">{{ playerOriginId.myOriginId$ | async }}</div>
                 </div>
                 <div class="row" appHighlightOnChange [highlightColor]="changedHighlightColor">
                     <div class="col-6"><a class="link-primary" (click)="onChangePlayerStateClick()">PlayerState</a></div>

@@ -2,7 +2,8 @@ import { MatchGameModePlaylist } from "#app/models/match/game-mode/game-mode-pla
 import { MatchGameModeGenericId } from "#app/models/match/game-mode/game-mode.enum.js";
 import { parseBoolean } from "#shared/utilities/primitives/boolean.js";
 import { removeNonAlphaNumeric } from "#shared/utilities/primitives/string.js";
-import { DocumentData, FirestoreDataConverter, PartialWithFieldValue, QueryDocumentSnapshot } from "firebase/firestore";
+import { isDate } from "date-fns";
+import { DocumentData, FirestoreDataConverter, PartialWithFieldValue, QueryDocumentSnapshot, Timestamp } from "firebase/firestore";
 import { $enum } from "ts-enum-util";
 
 interface RawGameLobbyConstructor {
@@ -11,8 +12,9 @@ interface RawGameLobbyConstructor {
     gameModeGenericId: MatchGameModeGenericId;
     organizerOriginId: string;
     playerOriginIds: string[];
-    isJoinable: Optional<boolean>;
-    isStarted: Optional<boolean>;
+    isJoinable?: Optional<boolean>;
+    isStarted?: Optional<boolean>;
+    createdDate?: Optional<Date>;
 }
 
 export class RawGameLobby {
@@ -21,17 +23,19 @@ export class RawGameLobby {
     public gameModeGenericId: MatchGameModeGenericId;
     public organizerOriginId: string;
     public playerOriginIds: string[];
-    public isJoinable: Optional<boolean>;
-    public isStarted: Optional<boolean>;
+    public isJoinable?: Optional<boolean>;
+    public isStarted?: Optional<boolean>;
+    public createdDate?: Optional<Date>;
 
-    constructor(ctor: RawGameLobbyConstructor) {
-        this.joinCode = ctor.joinCode;
-        this.gameModePlaylist = ctor.gameModePlaylist;
-        this.gameModeGenericId = ctor.gameModeGenericId;
-        this.organizerOriginId = ctor.organizerOriginId;
-        this.playerOriginIds = ctor.playerOriginIds ?? [];
-        this.isJoinable = ctor.isJoinable;
-        this.isStarted = ctor.isStarted;
+    constructor(ctor?: ModelCtor<RawGameLobbyConstructor>) {
+        this.joinCode = ctor?.joinCode ?? "";
+        this.gameModePlaylist = ctor?.gameModePlaylist ?? MatchGameModePlaylist.Sandbox;
+        this.gameModeGenericId = ctor?.gameModeGenericId ?? MatchGameModeGenericId.FiringRange;
+        this.organizerOriginId = ctor?.organizerOriginId ?? "";
+        this.playerOriginIds = ctor?.playerOriginIds ?? [];
+        this.isJoinable = ctor?.isJoinable;
+        this.isStarted = ctor?.isStarted;
+        this.createdDate = ctor?.createdDate;
     }
 
     public static get firebaseConverter(): FirestoreDataConverter<RawGameLobby> {
@@ -42,11 +46,10 @@ export class RawGameLobby {
                 return rawGameLobby;
             },
             toFirestore: (data: PartialWithFieldValue<RawGameLobby>): DocumentData => {
-                console.log("toFirestore just got called");
                 const cleanGameModePlaylist = removeNonAlphaNumeric(data.gameModePlaylist?.toString() ?? "");
                 const cleanGameModeGenericId = removeNonAlphaNumeric(data.gameModeGenericId?.toString() ?? "");
 
-                const rawGameLobby: RawGameLobby = {
+                const rawGameLobby: PartialWithFieldValue<RawGameLobby> = {
                     joinCode: removeNonAlphaNumeric(data.joinCode?.toString() ?? ""),
                     gameModePlaylist: $enum(MatchGameModePlaylist).getValueOrDefault(cleanGameModePlaylist, MatchGameModePlaylist.Sandbox),
                     gameModeGenericId: $enum(MatchGameModeGenericId).getValueOrDefault(
@@ -59,6 +62,7 @@ export class RawGameLobby {
                     ),
                     isJoinable: parseBoolean(data.isJoinable),
                     isStarted: parseBoolean(data.isStarted),
+                    createdDate: isDate(data.createdDate) ? Timestamp.fromDate(new Date(data.createdDate as string)) : undefined,
                 };
                 return rawGameLobby;
             },

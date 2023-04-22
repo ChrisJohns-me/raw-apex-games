@@ -5,6 +5,7 @@ import { BrowserModule } from "@angular/platform-browser";
 import { AppComponent } from "./app.component.js";
 import { BackgroundModule } from "./modules/background/background.module.js";
 import { WINDOW_PROVIDERS } from "./modules/core/global-window.provider.js";
+import { httpInterceptorProviders } from "./modules/core/http-interceptors/index.js";
 import { OverwolfModule } from "./modules/core/overwolf/overwolf.module.js";
 import { DesktopModule } from "./modules/desktop/desktop.module.js";
 import { DevelopmentToolsModule } from "./modules/development-tools/development-tools.module.js";
@@ -24,7 +25,7 @@ import { InGameWindowModule } from "./modules/in-game/in-game.module.js";
         MiniInventoryWindowModule,
         OverwolfModule,
     ],
-    providers: [WINDOW_PROVIDERS],
+    providers: [...httpInterceptorProviders, WINDOW_PROVIDERS],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

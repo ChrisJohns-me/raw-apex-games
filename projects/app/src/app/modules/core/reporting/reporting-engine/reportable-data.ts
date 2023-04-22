@@ -12,7 +12,8 @@ import { MapDataFactory } from "./reportable-data/map.js";
 import { MatchMetaDataFactory } from "./reportable-data/match-meta.js";
 import { MatchRosterDataFactory } from "./reportable-data/match-roster.js";
 import { MatchSummaryDataFactory } from "./reportable-data/match-summary.js";
-import { NameDataFactory } from "./reportable-data/name.js";
+import { MyNameDataFactory } from "./reportable-data/my-name.js";
+import { MyOriginIdDataFactory } from "./reportable-data/my-origin-id.js";
 import { PlacementDataFactory } from "./reportable-data/placement.js";
 import { TeamRosterDataFactory } from "./reportable-data/team-roster.js";
 
@@ -33,7 +34,8 @@ export interface ReportableDataFactoryMap {
     matchMeta: ReturnType<typeof MatchMetaDataFactory>;
     matchRoster: ReturnType<typeof MatchRosterDataFactory>;
     matchSummary: ReturnType<typeof MatchSummaryDataFactory>;
-    name: ReturnType<typeof NameDataFactory>;
+    myName: ReturnType<typeof MyNameDataFactory>;
+    myOriginId: ReturnType<typeof MyOriginIdDataFactory>;
     placement: ReturnType<typeof PlacementDataFactory>;
     teamRoster: ReturnType<typeof TeamRosterDataFactory>;
 }

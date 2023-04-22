@@ -1,7 +1,7 @@
 import { BaseService } from "#app/modules/core/base-service.abstract.js";
 import { ConfigurationService } from "#app/modules/core/configuration.service.js";
 import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
-import { RawGameLobby } from "#shared/models/raw-games/raw-game-lobby.js";
+import { RawGameLobby } from "#shared/models/raw-games/lobby.js";
 import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
 import { map, Observable, switchMap, takeUntil } from "rxjs";

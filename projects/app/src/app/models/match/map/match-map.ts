@@ -39,14 +39,14 @@ export class MatchMap implements MatchMapConstructor {
     public static unknownLayoutId = "unknown_map_layout";
     public static unknownPreviewId = "unknown_map_preview";
 
-    constructor(ctor: MatchMapConstructor) {
-        this.mapId = ctor.mapId;
-        this.mapGenericId = ctor.mapGenericId;
-        this.mapName = ctor.mapName;
-        this.gameModeTypes = ctor.gameModeTypes;
-        this.isChartable = ctor.isChartable ?? true;
-        this.isSandboxMap = ctor.isSandboxMap ?? false;
-        this.chartConfig = ctor.chartConfig;
+    constructor(ctor?: ModelCtor<MatchMapConstructor>) {
+        this.mapId = ctor?.mapId ?? "";
+        this.mapGenericId = ctor?.mapGenericId ?? MatchMapGenericId.Unknown;
+        this.mapName = ctor?.mapName ?? MatchMapFriendlyName.Unknown;
+        this.gameModeTypes = ctor?.gameModeTypes;
+        this.isChartable = ctor?.isChartable ?? true;
+        this.isSandboxMap = ctor?.isSandboxMap ?? false;
+        this.chartConfig = ctor?.chartConfig;
     }
 
     //#region Static Methods

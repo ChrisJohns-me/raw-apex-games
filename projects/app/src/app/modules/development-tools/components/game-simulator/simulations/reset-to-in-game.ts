@@ -3,6 +3,7 @@ import { v4 as uuid } from "uuid";
 export const resetToInGame = (): string => `
 [2020-01-01 00:00:00.000 AM] {"info":{"me":{"name":"MasterKriff"}},"feature":"me"}
 [2020-01-01 00:00:00.500 AM] {"info":{"match_info":{"game_mode":"#PL_TRIO"}},"feature":"match_info"}
+[2020-01-01 00:00:00.500 AM] {"info":{"game_info":{"phase":"lobby"}},"feature":"game_info"}
 [2020-01-01 00:00:01.200 AM] {"info":{"match_info":{"teammate_0":{"name":"MasterKriff","state":"alive"}}},"feature":"team"}
 [2020-01-01 00:00:01.200 AM] {"info":{"match_info":{"teammate_1":{"name":"Strizer","state":"alive"}}},"feature":"team"}
 [2020-01-01 00:00:01.200 AM] {"info":{"match_info":{"teammate_2":{"name":"BluePlasmaa","state":"alive"}}},"feature":"team"}
@@ -52,7 +53,7 @@ export const resetToInGame = (): string => `
 [2020-01-01 00:00:01.300 AM] {"info":{"match_info":{"roster_4":{"name":"Kalh McFinnegan","isTeammate":false,"team_id":19,"platform_hw":2,"platform_sw":7}}},"feature":"roster"}
 [2020-01-01 00:00:01.300 AM] {"info":{"match_info":{"roster_12":{"name":"Daichi101","isTeammate":false,"team_id":19,"platform_hw":2,"platform_sw":7}}},"feature":"roster"}
 [2020-01-01 00:00:01.300 AM] {"info":{"match_info":{"roster_37":{"name":"stonedtestbunny","isTeammate":false,"team_id":19,"platform_hw":2,"platform_sw":7}}},"feature":"roster"}
-[2020-01-01 00:00:01.300 AM] {"info":{"match_info":{"roster_0":{"name":"MasterKriff","isTeammate":true,"team_id":20,"platform_hw":2,"platform_sw":7,"state":"alive"}}},"feature":"roster"}
+[2020-01-01 00:00:01.300 AM] {"info":{"match_info":{"roster_0":{"name":"MasterKriff","isTeammate":true,"team_id":20,"platform_hw":2,"platform_sw":7,"state":"alive","is_local":"1","platform_id":"1013120584279","origin_id":"1013120584279"}}},"feature":"roster"}
 [2020-01-01 00:00:01.300 AM] {"info":{"match_info":{"roster_31":{"name":"BluePlasmaa","isTeammate":true,"team_id":20,"platform_hw":2,"platform_sw":2,"state":"alive"}}},"feature":"roster"}
 [2020-01-01 00:00:01.300 AM] {"info":{"match_info":{"roster_7":{"name":"Strizer","isTeammate":true,"team_id":20,"platform_hw":2,"platform_sw":7,"state":"alive"}}},"feature":"roster"}
 [2020-01-01 00:00:01.300 AM] {"info":{"match_info":{"roster_42":{"name":"buccabokid2010","isTeammate":false,"team_id":21,"platform_hw":2,"platform_sw":2}}},"feature":"roster"}
@@ -74,6 +75,7 @@ export const resetToInGame = (): string => `
 [2020-01-01 00:00:08.000 AM] {"info":{"match_info":{"location":{"x":"-168","y":"578","z":"25"}}},"feature":"location"}
 [2020-01-01 00:00:08.500 AM] {"info":{"me":{"ultimate_cooldown":{"ultimate_cooldown":"0"}}},"feature":"me"}
 [2020-01-01 00:00:09.000 AM] {"info":{"me":{"inUse":{"inUse":"Melee"}}},"feature":"inventory"}
+[2020-01-01 00:00:09.000 AM] {"info":{"game_info":{"phase":"landed"}},"feature":"game_info"}
 [2020-01-01 00:00:09.100 AM] {"info":{"match_info":{"location":{"x":"-168","y":"578","z":"25"}}},"feature":"location"}
 [2020-01-01 00:00:09.150 AM] {"info":{"me":{"inventory_0":{"name":"unknown_167","amount":"2"}}},"feature":"inventory"}
 [2020-01-01 00:00:09.200 AM] {"info":{"me":{"inventory_1":{"name":"unknown_165","amount":"2"}}},"feature":"inventory"}

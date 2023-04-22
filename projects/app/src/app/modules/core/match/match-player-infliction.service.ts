@@ -11,7 +11,7 @@ import { Injectable } from "@angular/core";
 import { merge, Observable, partition, Subject } from "rxjs";
 import { delay, filter, map, takeUntil, tap } from "rxjs/operators";
 import { OverwolfGameDataService } from "../overwolf/index.js";
-import { PlayerService } from "../player.service.js";
+import { PlayerNameService } from "../player-name.service.js";
 import { MatchKillfeedService } from "./match-killfeed.service.js";
 import { MatchPlayerInventoryService } from "./match-player-inventory.service.js";
 import { MatchPlayerService } from "./match-player.service.js";
@@ -29,7 +29,7 @@ import { MatchRosterService } from "./match-roster.service.js";
         MatchPlayerInventoryService,
         MatchRosterService,
         OverwolfGameDataService,
-        PlayerService,
+        PlayerNameService,
     ],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerInflictionService", MatchPlayerInflictionService, deps),
 })
@@ -62,7 +62,7 @@ export class MatchPlayerInflictionService extends BaseService {
         private readonly matchPlayerInventory: MatchPlayerInventoryService,
         private readonly matchRoster: MatchRosterService,
         private readonly overwolfGameData: OverwolfGameDataService,
-        private readonly player: PlayerService
+        private readonly playerName: PlayerNameService
     ) {
         super();
         [this.myKillfeedEvent$, this.notMyKillfeedEvent$] = partition(
@@ -90,7 +90,7 @@ export class MatchPlayerInflictionService extends BaseService {
             )
             .subscribe((rawDamageEvent) => {
                 if (!rawDamageEvent || !rawDamageEvent.targetName) return;
-                if (!this.player.myName$.value) return;
+                if (!this.playerName.myName$.value) return;
                 const matchRoster = this.matchRoster.matchRoster$.value;
                 const rosterMe = matchRoster.allPlayers.find((p) => p.isMe);
                 let rosterVictim = matchRoster.allPlayers.find((p) => isPlayerNameEqual(p.name, rawDamageEvent.targetName));
@@ -103,7 +103,7 @@ export class MatchPlayerInflictionService extends BaseService {
                 }
                 if (!rosterMe) {
                     console.error(
-                        `Could not add damage event; local player ("${this.player.myName$.value}") couldn't be found on match roster.`
+                        `Could not add damage event; local player ("${this.playerName.myName$.value}") couldn't be found on match roster.`
                     );
                 }
                 const primaryWeapon = this.matchPlayerInventory.myWeaponSlots$.value[0]?.item;
@@ -136,7 +136,7 @@ export class MatchPlayerInflictionService extends BaseService {
                 filter((gameEvent) => !!(gameEvent.data as KillOrKnockdownData).victimName)
             )
             .subscribe((gameEvent) => {
-                if (!this.player.myName$.value) return;
+                if (!this.playerName.myName$.value) return;
                 const actionData = gameEvent.data as KillOrKnockdownData;
                 const allRosterPlayers = this.matchRoster.matchRoster$.value.allPlayers;
                 let victim = allRosterPlayers.find((p) => isPlayerNameEqual(p.name, actionData.victimName));

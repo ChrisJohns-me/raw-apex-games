@@ -31,3 +31,5 @@ type BasicPrimitive = string | number | bigint | boolean;
 
 type ClassType = new (...args: any[]) => any;
 type FunctionType = (...args: any[]) => any;
+
+type ModelCtor<T> = Optional<Partial<T>>;

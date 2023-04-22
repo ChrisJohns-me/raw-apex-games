@@ -16,7 +16,8 @@ import { MatchRosterService } from "#app/modules/core/match/match-roster.service
 import { MatchService } from "#app/modules/core/match/match.service.js";
 import { ExposedOverwolfGameDataService } from "#app/modules/core/overwolf-exposed-data.service.js";
 import { OverwolfFeatureStatusService } from "#app/modules/core/overwolf/overwolf-feature-status.service.js";
-import { PlayerService } from "#app/modules/core/player.service.js";
+import { PlayerNameService } from "#app/modules/core/player-name.service.js";
+import { PlayerOriginIdService } from "#app/modules/core/player-origin-id.service";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { interval, Subject, Subscription, timer } from "rxjs";
 import { takeUntil } from "rxjs/operators";
@@ -67,7 +68,8 @@ export class GameDataPaneComponent implements OnInit, OnDestroy {
         public readonly matchRing: MatchRingService,
         public readonly matchRoster: MatchRosterService,
         public readonly overwolfFeatureStatusService: OverwolfFeatureStatusService,
-        public readonly player: PlayerService
+        public readonly playerName: PlayerNameService,
+        public readonly playerOriginId: PlayerOriginIdService
     ) {}
 
     public ngOnInit(): void {

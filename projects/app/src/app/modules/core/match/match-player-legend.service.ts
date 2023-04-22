@@ -8,12 +8,12 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, combineLatest, of, Subject } from "rxjs";
 import { distinctUntilChanged, filter, map, pairwise, switchMap, takeUntil, tap } from "rxjs/operators";
 import { OverwolfGameDataService } from "../overwolf/index.js";
-import { PlayerService } from "../player.service.js";
+import { PlayerNameService } from "../player-name.service.js";
 import { MatchLegendSelectService } from "./match-legend-select.service.js";
 
 @Injectable({
     providedIn: "root",
-    deps: [MatchService, MatchLegendSelectService, OverwolfGameDataService, PlayerService],
+    deps: [MatchService, MatchLegendSelectService, OverwolfGameDataService, PlayerNameService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchPlayerLegendService", MatchPlayerLegendService, deps),
 })
 export class MatchPlayerLegendService extends BaseService {
@@ -32,7 +32,7 @@ export class MatchPlayerLegendService extends BaseService {
         private readonly match: MatchService,
         private readonly matchLegendSelect: MatchLegendSelectService,
         private readonly overwolfGameData: OverwolfGameDataService,
-        private readonly player: PlayerService
+        private readonly playerName: PlayerNameService
     ) {
         super();
         this.setupOnMatchEnd();
@@ -57,7 +57,7 @@ export class MatchPlayerLegendService extends BaseService {
                     this.stagingLegends.push(selection);
                 }),
                 map(() => this.stagingLegends),
-                switchMap((stageList) => combineLatest([of(stageList), this.player.myName$])),
+                switchMap((stageList) => combineLatest([of(stageList), this.playerName.myName$])),
                 map(([stageList, myName]) => stageList.find((ls) => isPlayerNameEqual(ls.playerName, myName))),
                 filter((myLegendSelected) => !!myLegendSelected),
                 distinctUntilChanged()

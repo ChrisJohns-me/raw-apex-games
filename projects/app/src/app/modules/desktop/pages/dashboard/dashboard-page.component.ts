@@ -4,7 +4,7 @@ import { AvgMatchStats } from "#app/models/utilities/match-stats.js";
 import { ConfigurationService } from "#app/modules/core/configuration.service.js";
 import { MatchService } from "#app/modules/core/match/match.service.js";
 import { PlayerLocalStatsService } from "#app/modules/core/player-local-stats.service.js";
-import { PlayerService } from "#app/modules/core/player.service.js";
+import { PlayerNameService } from "#app/modules/core/player-name.service.js";
 import { Stopwatch } from "#shared/utilities/stopwatch.js";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { combineLatest, concat, from, Observable, of, OperatorFunction, Subject, Subscription } from "rxjs";
@@ -27,7 +27,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     public get focusedLegendName(): Optional<string> {
         return this.focusedLegendId ? Legend.getName(this.focusedLegendId) : undefined;
     }
-    public playerName?: string;
+    public myName?: string;
     public emptyStats: AvgMatchStats = {
         avgDamage: 0,
         avgDuration: 0,
@@ -46,7 +46,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
         private readonly cdr: ChangeDetectorRef,
         private readonly configuration: ConfigurationService,
         private readonly match: MatchService,
-        private readonly player: PlayerService,
+        private readonly playerName: PlayerNameService,
         private readonly playerLocalStats: PlayerLocalStatsService
     ) {
         this.legendIdsRows$ = of();
@@ -98,10 +98,10 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 
     //#region Intermediate Methods
     private loadPlayerName$(): Observable<string> {
-        return this.player.myName$.pipe(
+        return this.playerName.myName$.pipe(
             filter((playerName) => !!playerName) as OperatorFunction<Optional<string>, string>,
             tap((playerName) => {
-                this.playerName = playerName;
+                this.myName = playerName;
                 this.refreshUI();
             })
         );

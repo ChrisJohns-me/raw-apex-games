@@ -32,19 +32,19 @@ export class MatchGameMode {
     public isTeamDeathmatchGameMode: boolean;
     public isRanked: boolean;
 
-    constructor(ctor: MatchGameModeConstructor) {
-        this.gameModeId = ctor.gameModeId;
-        this.gameModeIdRegExPattern = ctor.gameModeIdRegExPattern;
-        this.gameModeName = ctor.gameModeName;
-        this.gameModeGenericId = ctor.gameModeGenericId;
-        this.gamePlaylist = ctor.gamePlaylist;
-        this.isReportable = ctor.isReportable ?? true;
-        this.isSandboxGameMode = ctor.isSandboxGameMode ?? false;
-        this.isBattleRoyaleGameMode = ctor.isBattleRoyaleGameMode ?? false;
-        this.isControlGameMode = ctor.isControlGameMode ?? false;
-        this.isGunGameGameMode = ctor.isGunGameGameMode ?? false;
-        this.isTeamDeathmatchGameMode = ctor.isTeamDeathmatchGameMode ?? false;
-        this.isRanked = ctor.isRanked ?? false;
+    constructor(ctor?: ModelCtor<MatchGameModeConstructor>) {
+        this.gameModeId = ctor?.gameModeId ?? "";
+        this.gameModeIdRegExPattern = ctor?.gameModeIdRegExPattern;
+        this.gameModeName = ctor?.gameModeName ?? MatchGameModeFriendlyName.Unknown;
+        this.gameModeGenericId = ctor?.gameModeGenericId ?? MatchGameModeGenericId.Unknown;
+        this.gamePlaylist = ctor?.gamePlaylist ?? MatchGameModePlaylist.Unknown;
+        this.isReportable = ctor?.isReportable ?? true;
+        this.isSandboxGameMode = ctor?.isSandboxGameMode ?? false;
+        this.isBattleRoyaleGameMode = ctor?.isBattleRoyaleGameMode ?? false;
+        this.isControlGameMode = ctor?.isControlGameMode ?? false;
+        this.isGunGameGameMode = ctor?.isGunGameGameMode ?? false;
+        this.isTeamDeathmatchGameMode = ctor?.isTeamDeathmatchGameMode ?? false;
+        this.isRanked = ctor?.isRanked ?? false;
     }
 
     //#region Static Methods

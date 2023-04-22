@@ -10,6 +10,7 @@
         "./src/server.ts"
     ],
     "include": [
+        "./**/*.d.ts",
         "../../**/*.d.ts"
     ]
 }

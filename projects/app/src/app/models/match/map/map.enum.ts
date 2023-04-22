@@ -1,4 +1,5 @@
 export enum MatchMapFriendlyName {
+    Unknown = "Unknown",
     FiringRange = "The Firing Range",
 
     // Battle Royale Maps
@@ -14,6 +15,7 @@ export enum MatchMapFriendlyName {
 }
 
 export enum MatchMapGenericId {
+    Unknown = "unknown",
     FiringRange = "firing_range",
 
     // Battle Royale Maps

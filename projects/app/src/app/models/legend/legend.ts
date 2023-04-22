@@ -4,7 +4,7 @@ const idSuffix = `_NAME`;
 export class Legend {
     public static dummieName = "dummie";
 
-    constructor(public legendId?: string) {}
+    constructor(public legendId?: ModelCtor<string>) {}
 
     //#region Static Methods
     /**

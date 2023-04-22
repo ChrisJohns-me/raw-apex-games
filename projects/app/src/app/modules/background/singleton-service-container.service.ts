@@ -32,7 +32,8 @@ import { OverwolfInputTrackingService } from "../core/overwolf/overwolf-input-tr
 import { OverwolfStreamingService } from "../core/overwolf/overwolf-streaming.service.js";
 import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service.js";
 import { PlayerLocalStatsService } from "../core/player-local-stats.service.js";
-import { PlayerService } from "../core/player.service.js";
+import { PlayerNameService } from "../core/player-name.service.js";
+import { PlayerOriginIdService } from "../core/player-origin-id.service.js";
 import { RawGamesOrganizerService } from "../core/raw-games/organizer.service.js";
 import { RawGamesPlayerService } from "../core/raw-games/player.service.js";
 import { ReportableDataManagerService } from "../core/reporting/reporting-engine/reportable-data-manager.js";
@@ -88,7 +89,8 @@ import { SystemTrayService } from "./system-tray.service.js";
         OverwolfStreamingService,
         OverwolfSystemTrayService,
         PlayerLocalStatsService,
-        PlayerService,
+        PlayerNameService,
+        PlayerOriginIdService,
         RawGamesOrganizerService,
         RawGamesPlayerService,
         ReportableDataManagerService,
@@ -139,7 +141,8 @@ export class SingletonServiceContainerService {
         public readonly OverwolfStreamingService: OverwolfStreamingService,
         public readonly OverwolfSystemTrayService: OverwolfSystemTrayService,
         public readonly PlayerLocalStatsService: PlayerLocalStatsService,
-        public readonly PlayerService: PlayerService,
+        public readonly PlayerService: PlayerNameService,
+        public readonly PlayerOriginIdService: PlayerOriginIdService,
         public readonly RawGamesOrganizerService: RawGamesOrganizerService,
         public readonly RawGamesPlayerService: RawGamesPlayerService,
         public readonly ReportableDataManagerService: ReportableDataManagerService,

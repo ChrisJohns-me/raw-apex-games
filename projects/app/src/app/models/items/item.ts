@@ -22,7 +22,7 @@ export class Item {
      * @param {string} fromInGameInfoName Overwolf's inventory item slot name; from the "inventory.inUse" feature.
      * @param {string} fromInGameInventoryId Overwolf's inventory item slot name; from the "inventory_0.name" feature.
      */
-    constructor({ fromId, fromInGameEventName, fromInGameInfoName, fromInGameInventoryId }: ItemConstructor) {
+    constructor({ fromId, fromInGameEventName, fromInGameInfoName, fromInGameInventoryId }: ModelCtor<ItemConstructor> = {}) {
         if (fromId) this.loadById(fromId);
         else if (fromInGameEventName) this.loadByInGameEventName(fromInGameEventName);
         else if (fromInGameInfoName) this.loadByInGameInfoName(fromInGameInfoName);

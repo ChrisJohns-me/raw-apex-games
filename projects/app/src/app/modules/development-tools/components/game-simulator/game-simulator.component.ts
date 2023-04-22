@@ -3,7 +3,7 @@ import { WINDOW } from "#app/modules/core/global-window.provider.js";
 import { MatchRosterService } from "#app/modules/core/match/match-roster.service.js";
 import { ExposedOverwolfGameDataService } from "#app/modules/core/overwolf-exposed-data.service.js";
 import { OWGameEvent } from "#app/modules/core/overwolf/types/overwolf-types.js";
-import { PlayerService } from "#app/modules/core/player.service.js";
+import { PlayerNameService } from "#app/modules/core/player-name.service.js";
 import { JSONTryParse } from "#shared/utilities/primitives/json.js";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy } from "@angular/core";
 import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
@@ -50,7 +50,7 @@ export class GameSimulatorComponent implements OnDestroy {
     constructor(
         private cdr: ChangeDetectorRef,
         private readonly exposedOverwolfData: ExposedOverwolfGameDataService,
-        private readonly player: PlayerService,
+        private readonly playerName: PlayerNameService,
         public readonly matchRoster: MatchRosterService,
         @Inject(WINDOW) private readonly window: Window
     ) {}
@@ -87,12 +87,12 @@ export class GameSimulatorComponent implements OnDestroy {
 
     public onKillfeedKnockeddownClick(player?: MatchRosterPlayer, randomAttacker = false): void {
         if (!player) return;
-        const attackerName = randomAttacker ? this.getRandomPlayer()?.name : this.player.myName$.value;
+        const attackerName = randomAttacker ? this.getRandomPlayer()?.name : this.playerName.myName$.value;
 
         const killfeedEvent: OWGameEvent = {
             name: "kill_feed",
             data: `{
-                "local_player_name": "${this.player.myName$.value}",
+                "local_player_name": "${this.playerName.myName$.value}",
                 "attackerName": "${attackerName}",
                 "victimName": "${player.name}",
                 "weaponName": "energy_ar",
@@ -111,12 +111,12 @@ export class GameSimulatorComponent implements OnDestroy {
 
     public onKillfeedEliminatedClick(player?: MatchRosterPlayer, randomAttacker = false): void {
         if (!player) return;
-        const attackerName = randomAttacker ? this.getRandomPlayer()?.name : this.player.myName$.value;
+        const attackerName = randomAttacker ? this.getRandomPlayer()?.name : this.playerName.myName$.value;
 
         const killfeedEvent: OWGameEvent = {
             name: "kill_feed",
             data: `{
-                "local_player_name": "${this.player.myName$.value}",
+                "local_player_name": "${this.playerName.myName$.value}",
                 "attackerName": "${attackerName}",
                 "victimName": "${player.name}",
                 "weaponName": "energy_ar",
@@ -163,8 +163,8 @@ export class GameSimulatorComponent implements OnDestroy {
         const killfeedEvent: OWGameEvent = {
             name: "kill_feed",
             data: `{
-                "local_player_name": "${this.player.myName$.value}",
-                "attackerName": "${this.player.myName$.value}",
+                "local_player_name": "${this.playerName.myName$.value}",
+                "attackerName": "${this.playerName.myName$.value}",
                 "victimName": "${player.name}",
                 "weaponName": "energy_ar",
                 "action": "knockdown"
@@ -193,8 +193,8 @@ export class GameSimulatorComponent implements OnDestroy {
         const killfeedEvent: OWGameEvent = {
             name: "kill_feed",
             data: `{
-                "local_player_name": "${this.player.myName$.value}",
-                "attackerName": "${this.player.myName$.value}",
+                "local_player_name": "${this.playerName.myName$.value}",
+                "attackerName": "${this.playerName.myName$.value}",
                 "victimName": "${player.name}",
                 "weaponName": "energy_ar",
                 "action": "kill"

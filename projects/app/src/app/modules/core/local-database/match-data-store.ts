@@ -13,6 +13,7 @@ export interface MatchDataStore {
     startDate?: Date;
     endDate?: Date;
     myName?: string;
+    myOriginId?: string;
     gameModeId?: string;
     mapId?: string;
     legendId?: string;

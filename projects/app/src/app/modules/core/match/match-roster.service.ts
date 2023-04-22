@@ -13,7 +13,7 @@ import { Injectable } from "@angular/core";
 import { BehaviorSubject, Observable } from "rxjs";
 import { filter, map, takeUntil } from "rxjs/operators";
 import { OverwolfGameDataService, OWMatchInfo, OWMatchInfoRoster, OWMatchInfoTeammate } from "../overwolf/index.js";
-import { PlayerService } from "../player.service.js";
+import { PlayerNameService } from "../player-name.service.js";
 import { MatchLegendSelectService } from "./match-legend-select.service.js";
 
 type RosterUpdate = { rosterId: number; rosterItem: Optional<OWMatchInfoRoster>; rosterAction: "ADD" | "DEL" };
@@ -24,7 +24,7 @@ type RosterPlayerDisconnection = { timestamp: Date; rosterPlayer: OWMatchInfoRos
  */
 @Injectable({
     providedIn: "root",
-    deps: [ConfigurationService, MatchService, MatchLegendSelectService, OverwolfGameDataService, PlayerService],
+    deps: [ConfigurationService, MatchService, MatchLegendSelectService, OverwolfGameDataService, PlayerNameService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("MatchRosterService", MatchRosterService, deps),
 })
 export class MatchRosterService extends BaseService {
@@ -40,6 +40,13 @@ export class MatchRosterService extends BaseService {
      * @returns {MatchRoster<MatchRosterTeammate>}
      */
     public readonly teammateRoster$ = new BehaviorSubject<MatchRoster<MatchRosterTeammate>>(new MatchRoster<MatchRosterTeammate>());
+    /**
+     * Provides roster data of the player in the current match.
+     * Emits on each legend selection, at beginning of the match, or upon subscription.
+     * @returns {Optional<MatchRosterTeammate>}
+     */
+    public readonly playerRosterItem$ = new BehaviorSubject<Optional<MatchRosterTeammate>>(undefined);
+
     /**
      * @returns {RosterPlayerDisconnected[]} List of players in the match who may have disconnected.
      */
@@ -78,6 +85,11 @@ export class MatchRosterService extends BaseService {
      * Emitted on every roster update, including merge events, and removal of invalid teammates
      */
     public readonly stagedTeammateRoster$ = new BehaviorSubject<MatchRoster<MatchRosterPlayer>>(new MatchRoster<MatchRosterTeammate>());
+    /**
+     * Preloaded match roster data for player.
+     * Emitted on every roster update, including merge events, and removal of invalid teammates
+     */
+    public readonly stagedPlayerRosterItem$ = new BehaviorSubject<Optional<MatchRosterPlayer>>(undefined);
 
     private readonly isRosterNullPlayerDisconnect = true;
     private readonly rosterUpdate$: Observable<RosterUpdate>;
@@ -87,7 +99,7 @@ export class MatchRosterService extends BaseService {
         private readonly match: MatchService,
         private readonly matchLegendSelect: MatchLegendSelectService,
         private readonly overwolfGameData: OverwolfGameDataService,
-        private readonly player: PlayerService
+        private readonly playerName: PlayerNameService
     ) {
         super();
         this.rosterUpdate$ = this.setupRosterUpdate$();
@@ -99,6 +111,7 @@ export class MatchRosterService extends BaseService {
         this.setupTeammateRosterPrimary();
         this.setupTeammateRosterSecondary();
         this.setupTeammateLegends();
+        this.setupPlayerRosterItem();
     }
 
     /**
@@ -172,6 +185,9 @@ export class MatchRosterService extends BaseService {
             if (this.stagedTeammateRoster$.value.allPlayers.length) this.teammateRoster$.next(this.stagedTeammateRoster$.value);
             else console.error(`Could not emit team roster; staged team roster was empty!`);
 
+            if (this.stagedPlayerRosterItem$.value) this.playerRosterItem$.next(this.stagedPlayerRosterItem$.value);
+            else console.error(`Could not emit team roster; staged player roster was empty!`);
+
             this.resetStagedRosters();
         });
     }
@@ -233,7 +249,7 @@ export class MatchRosterService extends BaseService {
             .subscribe(({ rosterId, rosterItem }) => {
                 const newRosterPlayer: MatchRosterPlayer = {
                     name: rosterItem!.name,
-                    isMe: isPlayerNameEqual(rosterItem!.name, this.player.myName$.value),
+                    isMe: isPlayerNameEqual(rosterItem!.name, this.playerName.myName$.value),
                     rosterId: rosterId,
                     originId: rosterItem?.origin_id,
                     platformId: rosterItem?.platform_id,
@@ -282,7 +298,7 @@ export class MatchRosterService extends BaseService {
 
                 const newRosterTeammate: MatchRosterTeammate = {
                     name: rosterItem.name,
-                    isMe: isPlayerNameEqual(rosterItem!.name, this.player.myName$.value),
+                    isMe: isPlayerNameEqual(rosterItem!.name, this.playerName.myName$.value),
                     rosterId: rosterId,
                     originId: rosterItem?.origin_id,
                     platformId: rosterItem?.platform_id,
@@ -315,7 +331,7 @@ export class MatchRosterService extends BaseService {
             .subscribe((teammate) => {
                 const newRosterTeammate: MatchRosterTeammate = {
                     name: teammate!.name,
-                    isMe: isPlayerNameEqual(teammate!.name, this.player.myName$.value),
+                    isMe: isPlayerNameEqual(teammate!.name, this.playerName.myName$.value),
                 };
                 this.addTeammate(newRosterTeammate);
             });
@@ -334,7 +350,7 @@ export class MatchRosterService extends BaseService {
             else {
                 newRosterTeammate = {
                     name: legendSelect!.playerName,
-                    isMe: isPlayerNameEqual(legendSelect!.playerName, this.player.myName$.value),
+                    isMe: isPlayerNameEqual(legendSelect!.playerName, this.playerName.myName$.value),
                     legend: legendSelect.legend,
                 };
             }
@@ -347,6 +363,18 @@ export class MatchRosterService extends BaseService {
     }
 
     /**
+     * Listens for teammate staging roster, and picks out the player's roster.
+     */
+    private setupPlayerRosterItem(): void {
+        this.stagedTeammateRoster$
+            .pipe(
+                takeUntil(this.destroy$),
+                map((stagedTeammateRoster) => stagedTeammateRoster.allPlayers.find((p) => p.isMe))
+            )
+            .subscribe((myRosterPlayer) => this.stagedPlayerRosterItem$.next(myRosterPlayer));
+    }
+
+    /**
      * Sub-method that takes in a teammate, and adds/merges them to the Staging Teammate Roster
      */
     private addTeammate(teammate: MatchRosterTeammate): void {
@@ -355,7 +383,7 @@ export class MatchRosterService extends BaseService {
         if (existingTeammate) {
             mergedTeammate = {
                 name: teammate.name,
-                isMe: isPlayerNameEqual(teammate.name, this.player.myName$.value),
+                isMe: isPlayerNameEqual(teammate.name, this.playerName.myName$.value),
                 legend: teammate.legend ?? existingTeammate.legend,
                 platformHardware: teammate.platformHardware ?? existingTeammate.platformHardware,
                 platformSoftware: teammate.platformSoftware ?? existingTeammate.platformSoftware,
@@ -390,5 +418,6 @@ export class MatchRosterService extends BaseService {
     private resetStagedRosters(): void {
         this.stagedMatchRoster$.next(new MatchRoster());
         this.stagedTeammateRoster$.next(new MatchRoster<MatchRosterTeammate>());
+        this.stagedPlayerRosterItem$.next(undefined);
     }
 }

@@ -7,11 +7,12 @@ import { OverwolfWindowName } from "#app/models/overwolf-window.js";
 import { HotkeyService } from "#app/modules/background/hotkey.service.js";
 import { GameplayInputService } from "#app/modules/core/gameplay-input.service.js";
 import { MatchService } from "#app/modules/core/match/match.service.js";
+import { PlayerNameService } from "#app/modules/core/player-name.service";
+import { PlayerOriginIdService } from "#app/modules/core/player-origin-id.service";
 import { RawGamesOrganizerService } from "#app/modules/core/raw-games/organizer.service.js";
-import { RawGameLobby } from "#shared/models/raw-games/raw-game-lobby.js";
+import { RawGameLobby } from "#shared/models/raw-games/lobby.js";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { combineLatest, filter, map, merge, Subject, takeUntil } from "rxjs";
-import { v4 as uuid } from "uuid";
+import { combineLatest, filter, map, merge, Observable, Subject, switchMap, takeUntil, tap } from "rxjs";
 
 const MAIN_HOTKEY_NAME = HotkeyEnum.ToggleMainInGame;
 
@@ -36,6 +37,8 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
     public gameMode?: MatchGameMode;
     public matchMap?: MatchMap;
     public mainHotkey?: Hotkey;
+    public myOriginId?: Optional<string>;
+    public myName?: Optional<string>;
 
     public readonly OverwolfWindowName = OverwolfWindowName;
 
@@ -46,14 +49,18 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
         private readonly gameplayInput: GameplayInputService,
         private readonly hotkey: HotkeyService,
         private readonly match: MatchService,
+        private readonly playerName: PlayerNameService,
+        private readonly playerOriginId: PlayerOriginIdService,
         private readonly rawGamesOrganizer: RawGamesOrganizerService
     ) {
-        this.onLoadLobbiesClick();
+        this.loadLobbies().pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     public ngOnInit(): void {
         this.setupHotkeys();
         this.setupGameMode();
+        this.setupMyName();
+        this.setupMyOriginId();
 
         this.gameplayInput.isMouseInputDetectedOnDamageBurst$
             .pipe(
@@ -73,7 +80,7 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
 
     public onCreateLobbyClick(): void {
         const lobby = new RawGameLobby({
-            joinCode: uuid(),
+            joinCode: "123456",
             gameModeGenericId: MatchGameModeGenericId.FiringRange,
             gameModePlaylist: MatchGameModePlaylist.Sandbox,
             organizerOriginId: "MasterKriff",
@@ -84,24 +91,16 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
 
         this.rawGamesOrganizer
             .createLobby(lobby)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-                next: () => {
-                    console.log("Lobby was created", lobby);
-                },
-                error: (error) => {
-                    console.error("LOBBY WAS NOT CREATED!", error);
-                },
-            });
+            .pipe(
+                takeUntil(this.destroy$),
+                tap(() => console.log("Lobby was created", lobby)),
+                switchMap(() => this.loadLobbies())
+            )
+            .subscribe();
     }
 
     public onLoadLobbiesClick(): void {
-        this.rawGamesOrganizer
-            .getLobbies()
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((lobbies) => {
-                console.log(lobbies);
-            });
+        this.loadLobbies().pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     private setupHotkeys(): void {
@@ -126,5 +125,23 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
                 // this.matchMap = gameMode ? this.mapRotation.getCurrentMapFromGameMode(gameMode?.gameModeGenericId) : undefined;
                 this.cdr.detectChanges();
             });
+    }
+
+    private loadLobbies(): Observable<RawGameLobby[]> {
+        return this.rawGamesOrganizer.getLobbies().pipe(tap((lobbies) => (this.lobbies = lobbies)));
+    }
+
+    private setupMyName(): void {
+        this.playerName.myName$.pipe(takeUntil(this.destroy$)).subscribe((playerName) => {
+            this.myName = playerName;
+            this.cdr.detectChanges();
+        });
+    }
+
+    private setupMyOriginId(): void {
+        this.playerOriginId.myOriginId$.pipe(takeUntil(this.destroy$)).subscribe((playerOriginId) => {
+            this.myOriginId = playerOriginId;
+            this.cdr.detectChanges();
+        });
     }
 }

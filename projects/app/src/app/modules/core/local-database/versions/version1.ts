@@ -5,6 +5,6 @@ export function version1(db: Dexie): void {
 }
 
 const stores = {
-    matches: `++id, &matchId, startDate, endDate, myName, gameModeId, mapId, legendId, assists, damage, eliminations, knockdowns, maxPlacement, placement, deaths, deathLocationHistory, eliminationLocationHistory`,
+    matches: `++id, &matchId, startDate, endDate, myName, myOriginId, gameModeId, mapId, legendId, assists, damage, eliminations, knockdowns, maxPlacement, placement, deaths, deathLocationHistory, eliminationLocationHistory`,
     settings: `&key`,
 };
