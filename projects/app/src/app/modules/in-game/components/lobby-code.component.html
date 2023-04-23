@@ -1,0 +1,18 @@
+<div class="lobby-code-container px-4">
+    <button class="btn btn-outline" type="button" (click)="copyLobbyCode()">
+        <icon [path]="mdiClipboardOutline" size="1rem"></icon>
+    </button>
+    <input
+        class="form-control lobby-code"
+        onclick="this.select()"
+        [type]="showLobbyCode ? 'text' : 'password'"
+        [value]="lobbyCode ? lobbyCode : ''"
+        [readonly]="showLobbyCode"
+        [disabled]="!showLobbyCode"
+    />
+    <button class="btn btn-outline" type="button" (click)="showLobbyCode = !showLobbyCode">
+        <icon [path]="mdiEye" size="1rem" *ngIf="!showLobbyCode"></icon>
+        <icon [path]="mdiEyeOff" size="1rem" *ngIf="showLobbyCode"></icon>
+    </button>
+</div>
+<div class="text-center">{{ lobbyCodeMessage }}</div>

@@ -1,24 +1,34 @@
 import { BaseService } from "#app/modules/core/base-service.abstract.js";
 import { ConfigurationService } from "#app/modules/core/configuration.service.js";
 import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
+import { organizerOriginIds } from "#shared/models/organizer-list.js";
 import { RawGameLobby } from "#shared/models/raw-games/lobby.js";
 import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
-import { map, Observable, switchMap, takeUntil } from "rxjs";
+import { BehaviorSubject, filter, map, Observable, switchMap, takeUntil } from "rxjs";
+import { PlayerOriginIdService } from "../player-origin-id.service.js";
 
 /**
  * @classdesc Service for the Raw Apex Games Organizer.
  */
 @Injectable({
     providedIn: "root",
-    deps: [ConfigurationService, HttpClient],
+    deps: [ConfigurationService, HttpClient, PlayerOriginIdService],
     useFactory: (...deps: any[]) => SingletonServiceProviderFactory("RawGamesOrganizerService", RawGamesOrganizerService, deps),
 })
 export class RawGamesOrganizerService extends BaseService implements OnDestroy {
+    /** Is the current user one of the designated organizers */
+    public isUserOrganizer$ = new BehaviorSubject<boolean>(false);
+
     // private socket: Optional<Socket>; // Recheck Socket.io dependencies
 
-    constructor(private readonly configuration: ConfigurationService, private readonly http: HttpClient) {
+    constructor(
+        private readonly configuration: ConfigurationService,
+        private readonly http: HttpClient,
+        private readonly playerOriginId: PlayerOriginIdService
+    ) {
         super();
+        this.setupOrganizer();
         // this.setupSocket();
     }
 
@@ -30,10 +40,20 @@ export class RawGamesOrganizerService extends BaseService implements OnDestroy {
         );
     }
 
-    public createLobby(lobby: RawGameLobby): Observable<null> {
+    public createLobby(lobby: RawGameLobby): Observable<RawGameLobby> {
+        const lobbyId = lobby.lobbyId;
         return this.configuration.config$.pipe(
             takeUntil(this.destroy$),
-            switchMap((config) => this.http.post<null>(`${config.general.apiUrl}raw-games/lobby`, lobby))
+            switchMap((config) => this.http.post(`${config.general.apiUrl}raw-games/lobby/${lobbyId}`, lobby)),
+            switchMap(() => this.getLobby(lobbyId))
+        );
+    }
+
+    public getLobby(lobbyId: string): Observable<RawGameLobby> {
+        return this.configuration.config$.pipe(
+            takeUntil(this.destroy$),
+            switchMap((config) => this.http.get<RawGameLobby>(`${config.general.apiUrl}raw-games/lobby/${lobbyId}`)),
+            map((lobbyJson) => new RawGameLobby(lobbyJson))
         );
     }
 
@@ -69,4 +89,15 @@ export class RawGamesOrganizerService extends BaseService implements OnDestroy {
     //         this.socket = io(config.general.wssUrl, { autoConnect: false, retries: 3 });
     //     });
     // }
+
+    private setupOrganizer(): void {
+        this.playerOriginId.myOriginId$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((myOriginId): myOriginId is string => !!myOriginId?.length)
+            )
+            .subscribe((myOriginId) => {
+                this.isUserOrganizer$.next(organizerOriginIds.includes(myOriginId));
+            });
+    }
 }

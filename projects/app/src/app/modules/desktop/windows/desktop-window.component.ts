@@ -2,7 +2,6 @@ import { APP_NAME } from "#app/models/app.js";
 import { FeatureState } from "#app/models/feature-status.js";
 import { Hotkey, HotkeyEnum } from "#app/models/hotkey.js";
 import { OverwolfWindowName } from "#app/models/overwolf-window.js";
-import { aXNWSVA } from "#app/models/vip.js";
 import { BackgroundService } from "#app/modules/background/background.service.js";
 import { HotkeyService } from "#app/modules/background/hotkey.service.js";
 import { ConfigLoadStatus, ConfigurationService } from "#app/modules/core/configuration.service.js";
@@ -46,11 +45,7 @@ const CAPTION_DISPLAY_CHANCE = 0.1;
     animations: [fadeInOutAnimation, scaleInOutAnimationFactory(0, 0.925)],
 })
 export class DesktopWindowComponent implements OnInit, AfterViewInit, OnDestroy {
-    @Input()
-    public overwolfWindowName?: OverwolfWindowName;
-
-    /** isVIP text */
-    public aXNWSVA = "";
+    @Input() public overwolfWindowName?: OverwolfWindowName;
     @ViewChild("confirmExitModal") private confirmExitModal?: ElementRef;
     public get activePage(): MainPage {
         return this._activePage;
@@ -98,16 +93,6 @@ export class DesktopWindowComponent implements OnInit, AfterViewInit, OnDestroy 
         this.setupOverwolfGameEventStatus();
         this.setupHotkeys();
         this.setupFirstRunRouting();
-        // Setup VIP
-        this.overwolfProfile
-            .getCurrentUser()
-            .pipe(
-                takeUntil(this.destroy$),
-                filter((userData) => !isEmpty(userData?.username)),
-                map((userData) => userData.username),
-                take(1)
-            )
-            .subscribe((un) => (this.aXNWSVA = aXNWSVA(un!) ? window.atob("VklQ") : ""));
 
         this.desktopWindow.isStarting$.pipe(takeUntil(this.destroy$)).subscribe((isStarting) => {
             this.isAppStarting = isStarting;

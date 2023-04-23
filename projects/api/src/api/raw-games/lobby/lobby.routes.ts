@@ -3,7 +3,10 @@ import LobbyController from "./lobby.controller.js";
 
 const lobbyRoutes = Router();
 
+lobbyRoutes.get("/", LobbyController.getLobby);
 lobbyRoutes.get("/:lobbyId", LobbyController.getLobby);
-lobbyRoutes.post("/", LobbyController.createLobby);
+lobbyRoutes.post("/:lobbyId", LobbyController.createLobby);
+lobbyRoutes.put("/:lobbyId", LobbyController.createLobby);
+lobbyRoutes.delete("/:lobbyId", LobbyController.deleteLobby);
 
 export default lobbyRoutes;

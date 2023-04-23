@@ -1,8 +1,8 @@
 import { Legend } from "#app/models/legend/legend.js";
-import { isPlayerNameEqual } from "#app/models/utilities/player.js";
 import { BaseService } from "#app/modules/core/base-service.abstract.js";
 import { MatchService } from "#app/modules/core/match/match.service.js";
 import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
+import { isPlayerNameEqual } from "#shared/utilities/player.js";
 import { mathClamp } from "#shared/utilities/primitives/math.js";
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, combineLatest, of, Subject } from "rxjs";

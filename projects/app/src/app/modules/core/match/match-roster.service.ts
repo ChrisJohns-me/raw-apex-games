@@ -1,11 +1,11 @@
 import { MatchRosterPlayer } from "#app/models/match/roster-player.js";
 import { MatchRosterTeammate } from "#app/models/match/roster-teammate.js";
 import { MatchRoster } from "#app/models/match/roster.js";
-import { isPlayerNameEqual } from "#app/models/utilities/player.js";
 import { BaseService } from "#app/modules/core/base-service.abstract.js";
 import { ConfigurationService } from "#app/modules/core/configuration.service.js";
 import { MatchService } from "#app/modules/core/match/match.service.js";
 import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
+import { isPlayerNameEqual } from "#shared/utilities/player.js";
 import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 import { cleanInt } from "#shared/utilities/primitives/number.js";
 import { findKeyByKeyRegEx, findValueByKeyRegEx } from "#shared/utilities/primitives/object.js";

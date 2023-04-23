@@ -11,16 +11,18 @@
     "type": "module",
     "scripts": {
         "preinstall": "npm i -w -g firebase-tools @angular/cli",
-        "api:serve-db": "firebase emulators:start --debug --export-on-exit ./emulator-data",
-        "api:serve-dev": "cross-env NODE_ENV=DEV concurrently \"npx tsc -p ./projects/api/tsconfig.json -w\" \"npx nodemon ./dist/api-out-tsc/projects/api/src/main.js\"",
+        "db:start-dev": "firebase emulators:start --export-on-exit ./emulator-data",
+        "api:compile-dev": "npx tsc -p ./projects/api/tsconfig.json -w",
+        "api:server-dev": "cross-env NODE_ENV=DEV npx nodemon ./dist/api-out-tsc/projects/api/src/main.js",
+        "api:start-dev": "concurrently \"npx db:start-dev\" \"npx api:compile-dev\" \"npx api:server-dev\"",
         "api:deploy-dev": "",
         "api:deploy-prod": "",
-        "app:serve-dev": "ng build --project=rawApexGamesApp --watch --plugin ~./projects/app/webpack.partial.dev.cjs --optimization false",
+        "app:start-dev": "ng build --project=rawApexGamesApp --watch --plugin ~./projects/app/webpack.partial.dev.cjs --optimization false",
         "app:build-prod": "ng build --project=rawApexGamesApp --configuration production",
         "app:compose-opk": "",
         "app:stats": "ng build --project=rawApexGamesApp --stats-json",
         "app:analyze-dev": "webpack-bundle-analyzer dist/rawApexGamesApp_dev/stats.json",
-        "web:serve-dev": "ng serve --project=rawApexGamesWeb",
+        "web:start-dev": "ng serve --project=rawApexGamesWeb",
         "web:build-prod": "ng build --project=rawApexGamesWeb --configuration production"
     },
     "imports": {

@@ -31,6 +31,7 @@ import { OverwolfHotKeyService } from "../core/overwolf/overwolf-hotkey.service.
 import { OverwolfInputTrackingService } from "../core/overwolf/overwolf-input-tracking.service.js";
 import { OverwolfStreamingService } from "../core/overwolf/overwolf-streaming.service.js";
 import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service.js";
+import { OverwolfUtilsService } from "../core/overwolf/overwolf-utils.service.js";
 import { PlayerLocalStatsService } from "../core/player-local-stats.service.js";
 import { PlayerNameService } from "../core/player-name.service.js";
 import { PlayerOriginIdService } from "../core/player-origin-id.service.js";
@@ -46,7 +47,6 @@ import { CaptureControllerService } from "./capture-controller.service.js";
 import { HotkeyService } from "./hotkey.service.js";
 import { HUDWindowControllerService } from "./hud-window-controller.service.js";
 import { SystemTrayService } from "./system-tray.service.js";
-
 /**
  * Keep a reference of Singleton services that need
  *  to persist throughout the lifetime of the app.
@@ -88,6 +88,7 @@ import { SystemTrayService } from "./system-tray.service.js";
         OverwolfProfileService,
         OverwolfStreamingService,
         OverwolfSystemTrayService,
+        OverwolfUtilsService,
         PlayerLocalStatsService,
         PlayerNameService,
         PlayerOriginIdService,
@@ -140,9 +141,10 @@ export class SingletonServiceContainerService {
         public readonly OverwolfProfileService: OverwolfProfileService,
         public readonly OverwolfStreamingService: OverwolfStreamingService,
         public readonly OverwolfSystemTrayService: OverwolfSystemTrayService,
+        public readonly OverwolfUtilsService: OverwolfUtilsService,
         public readonly PlayerLocalStatsService: PlayerLocalStatsService,
-        public readonly PlayerService: PlayerNameService,
         public readonly PlayerOriginIdService: PlayerOriginIdService,
+        public readonly PlayerService: PlayerNameService,
         public readonly RawGamesOrganizerService: RawGamesOrganizerService,
         public readonly RawGamesPlayerService: RawGamesPlayerService,
         public readonly ReportableDataManagerService: ReportableDataManagerService,

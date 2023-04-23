@@ -1,41 +1,61 @@
 import { MatchGameModePlaylist } from "#app/models/match/game-mode/game-mode-playlist.enum.js";
 import { MatchGameModeGenericId } from "#app/models/match/game-mode/game-mode.enum.js";
+import { sanitizePlayerName } from "#shared/utilities/player.js";
 import { parseBoolean } from "#shared/utilities/primitives/boolean.js";
-import { removeNonAlphaNumeric } from "#shared/utilities/primitives/string.js";
+import { removeNonAlphaNumeric, removeNonAlphaNumericHyphenUnderscore, removeNonNumeric } from "#shared/utilities/primitives/string.js";
 import { isDate } from "date-fns";
 import { DocumentData, FirestoreDataConverter, PartialWithFieldValue, QueryDocumentSnapshot, Timestamp } from "firebase/firestore";
 import { $enum } from "ts-enum-util";
+import { v4 as uuid } from "uuid";
 
 interface RawGameLobbyConstructor {
-    joinCode: string; // Serves as an ID
+    lobbyId: string; // UUID
+    lobbyCode: string;
     gameModePlaylist: MatchGameModePlaylist;
     gameModeGenericId: MatchGameModeGenericId;
     organizerOriginId: string;
+    organizerPlayerName: string;
     playerOriginIds: string[];
-    isJoinable?: Optional<boolean>;
-    isStarted?: Optional<boolean>;
-    createdDate?: Optional<Date>;
+    isJoinable: boolean;
+    isStarted: boolean;
+    startDate?: Optional<Date>;
+    endDate?: Optional<Date>;
 }
 
+/**
+ * Represents an Apex Legends Custom/Private Lobby for Raw Apex Games.
+ */
 export class RawGameLobby {
-    public joinCode: string;
+    /** Main identifier for the lobby; Auto-generated if one isn't provided */
+    public lobbyId: string;
+    public lobbyCode: string;
     public gameModePlaylist: MatchGameModePlaylist;
     public gameModeGenericId: MatchGameModeGenericId;
     public organizerOriginId: string;
+    public organizerPlayerName: string;
     public playerOriginIds: string[];
-    public isJoinable?: Optional<boolean>;
-    public isStarted?: Optional<boolean>;
-    public createdDate?: Optional<Date>;
+    public isJoinable: boolean;
+    public isStarted: boolean;
+    public startDate?: Optional<Date>;
+    public endDate?: Optional<Date>;
 
     constructor(ctor?: ModelCtor<RawGameLobbyConstructor>) {
-        this.joinCode = ctor?.joinCode ?? "";
-        this.gameModePlaylist = ctor?.gameModePlaylist ?? MatchGameModePlaylist.Sandbox;
-        this.gameModeGenericId = ctor?.gameModeGenericId ?? MatchGameModeGenericId.FiringRange;
-        this.organizerOriginId = ctor?.organizerOriginId ?? "";
-        this.playerOriginIds = ctor?.playerOriginIds ?? [];
-        this.isJoinable = ctor?.isJoinable;
-        this.isStarted = ctor?.isStarted;
-        this.createdDate = ctor?.createdDate;
+        this.lobbyId = removeNonAlphaNumericHyphenUnderscore(ctor?.lobbyId ?? uuid());
+        this.lobbyCode = removeNonAlphaNumeric(ctor?.lobbyCode ?? "");
+        this.gameModePlaylist = $enum(MatchGameModePlaylist).getValueOrDefault(ctor?.gameModePlaylist, MatchGameModePlaylist.Sandbox);
+        this.gameModeGenericId = $enum(MatchGameModeGenericId).getValueOrDefault(
+            ctor?.gameModeGenericId,
+            MatchGameModeGenericId.FiringRange
+        );
+        this.organizerOriginId = removeNonNumeric(ctor?.organizerOriginId ?? "");
+        this.organizerPlayerName = sanitizePlayerName(ctor?.organizerPlayerName ?? "");
+        this.playerOriginIds = (ctor?.playerOriginIds && Array.isArray(ctor.playerOriginIds) ? ctor.playerOriginIds : []).map(
+            (playerOriginId) => removeNonNumeric(playerOriginId?.toString() ?? "")
+        );
+        this.isJoinable = parseBoolean(ctor?.isJoinable);
+        this.isStarted = parseBoolean(ctor?.isStarted);
+        this.startDate = ctor?.startDate && isDate(ctor.startDate) ? new Date(ctor.startDate) : undefined;
+        this.endDate = ctor?.endDate && isDate(ctor.endDate) ? new Date(ctor.endDate) : undefined;
     }
 
     public static get firebaseConverter(): FirestoreDataConverter<RawGameLobby> {
@@ -46,23 +66,23 @@ export class RawGameLobby {
                 return rawGameLobby;
             },
             toFirestore: (data: PartialWithFieldValue<RawGameLobby>): DocumentData => {
-                const cleanGameModePlaylist = removeNonAlphaNumeric(data.gameModePlaylist?.toString() ?? "");
-                const cleanGameModeGenericId = removeNonAlphaNumeric(data.gameModeGenericId?.toString() ?? "");
-
                 const rawGameLobby: PartialWithFieldValue<RawGameLobby> = {
-                    joinCode: removeNonAlphaNumeric(data.joinCode?.toString() ?? ""),
-                    gameModePlaylist: $enum(MatchGameModePlaylist).getValueOrDefault(cleanGameModePlaylist, MatchGameModePlaylist.Sandbox),
+                    lobbyCode: data.lobbyCode?.toString() ?? "",
+                    gameModePlaylist: $enum(MatchGameModePlaylist).getValueOrDefault(
+                        data.gameModePlaylist?.toString(),
+                        MatchGameModePlaylist.Sandbox
+                    ),
                     gameModeGenericId: $enum(MatchGameModeGenericId).getValueOrDefault(
-                        cleanGameModeGenericId,
+                        data.gameModeGenericId?.toString(),
                         MatchGameModeGenericId.FiringRange
                     ),
-                    organizerOriginId: removeNonAlphaNumeric(data.organizerOriginId?.toString() ?? ""),
-                    playerOriginIds: (Array.isArray(data.playerOriginIds) ? data.playerOriginIds : []).map((playerOriginId) =>
-                        removeNonAlphaNumeric(playerOriginId?.toString() ?? "")
-                    ),
+                    organizerOriginId: data.organizerOriginId?.toString() ?? "",
+                    organizerPlayerName: data.organizerPlayerName?.toString() ?? "",
+                    playerOriginIds: Array.isArray(data.playerOriginIds) ? data.playerOriginIds : [],
                     isJoinable: parseBoolean(data.isJoinable),
                     isStarted: parseBoolean(data.isStarted),
-                    createdDate: isDate(data.createdDate) ? Timestamp.fromDate(new Date(data.createdDate as string)) : undefined,
+                    startDate: isDate(data.startDate) ? Timestamp.fromDate(new Date(data.startDate as string)) : Timestamp.now(),
+                    endDate: isDate(data.endDate) ? Timestamp.fromDate(new Date(data.endDate as string)) : Timestamp.now(),
                 };
                 return rawGameLobby;
             },

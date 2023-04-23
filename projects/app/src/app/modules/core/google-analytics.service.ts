@@ -1,5 +1,4 @@
 import { environment } from "#app/../environments/environment.js";
-import { aXNWSVA } from "#app/models/vip.js";
 import { BaseService } from "#app/modules/core/base-service.abstract.js";
 import { OverwolfProfileService } from "#app/modules/core/overwolf/overwolf-profile.service.js";
 import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
@@ -9,19 +8,12 @@ import { filter, map, take, takeUntil } from "rxjs/operators";
 
 declare let ga: (...args: any[]) => void;
 
-const TRACK_VIP = environment.DEV;
-
 @Injectable({
     providedIn: "root",
     deps: [OverwolfProfileService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("GoogleAnalyticsService", GoogleAnalyticsService, deps),
 })
 export class GoogleAnalyticsService extends BaseService {
-    /** isVIP */
-    private aXNWSVA = false;
-    /** username */
-    private un?: string;
-
     constructor(private readonly overwolfProfile: OverwolfProfileService) {
         super();
         if (!this.checkIsInstalled()) return;
@@ -30,7 +22,6 @@ export class GoogleAnalyticsService extends BaseService {
         ga("set", "checkProtocolTask", function () {});
         ga("require", "displayfeatures");
 
-        // Setup VIP
         this.overwolfProfile
             .getCurrentUser()
             .pipe(
@@ -40,19 +31,12 @@ export class GoogleAnalyticsService extends BaseService {
                 take(1)
             )
             .subscribe((un) => {
-                this.aXNWSVA = aXNWSVA(un!);
-                this.un = un;
-                if (this.aXNWSVA) console.error(`${atob("V2VsY29tZQ==")} ${this.un}`);
                 ga("set", "userId", un);
             });
     }
 
     public sendEvent(eventCategory: string, eventAction: string, eventLabel?: string, eventValue?: number): void {
         if (!this.checkIsInstalled()) return;
-        if (this.aXNWSVA && !TRACK_VIP) {
-            console.info(`${atob("R0EgU3VwcHJlc3NlZA==")} event; "${eventCategory}", "${eventAction}", "${eventLabel}", "${eventValue}"`);
-            return;
-        }
         ga("send", "event", eventCategory, eventAction, eventLabel, eventValue);
     }
 
@@ -62,10 +46,6 @@ export class GoogleAnalyticsService extends BaseService {
      */
     public sendPageview(title: string, page: string): void {
         if (!this.checkIsInstalled()) return;
-        if (this.aXNWSVA && !TRACK_VIP) {
-            console.info(`${atob("R0EgU3VwcHJlc3NlZA==")} pageview; title: "${title}", page: "${page}"`);
-            return;
-        }
         ga("send", { hitType: "pageview", title: title, page: page });
     }
 

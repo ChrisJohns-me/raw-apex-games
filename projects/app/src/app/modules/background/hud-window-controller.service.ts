@@ -2,7 +2,6 @@ import { Configuration } from "#app/../configs/config.interface.js";
 import { GamePhase } from "#app/models/game-phase.js";
 import { MatchGameModeGenericId } from "#app/models/match/game-mode/game-mode.enum.js";
 import { SettingKey, SettingValue } from "#app/models/settings.js";
-import { aXNWSVA } from "#app/models/vip.js";
 import { BaseService } from "#app/modules/core/base-service.abstract.js";
 import { ConfigurationService } from "#app/modules/core/configuration.service.js";
 import { GameService } from "#app/modules/core/game.service.js";
@@ -15,7 +14,7 @@ import { SingletonServiceProviderFactory } from "#app/singleton-service.provider
 import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 import { Injectable } from "@angular/core";
 import { combineLatest, merge, Observable, Subscription } from "rxjs";
-import { filter, map, switchMap, take, takeUntil } from "rxjs/operators";
+import { filter, map, switchMap, takeUntil } from "rxjs/operators";
 
 type HUDTriggers = {
     windowService: { open: () => Observable<void>; close: () => Observable<void> };
@@ -63,8 +62,6 @@ export class HUDWindowControllerService extends BaseService {
         },
     ];
 
-    /** isVIP */
-    private aXNWSVA = false;
     private watchEventsSubscription?: Subscription;
 
     constructor(
@@ -77,17 +74,6 @@ export class HUDWindowControllerService extends BaseService {
         private readonly settings: SettingsService
     ) {
         super();
-
-        // Setup VIP
-        this.overwolfProfile
-            .getCurrentUser()
-            .pipe(
-                takeUntil(this.destroy$),
-                filter((userData) => !isEmpty(userData?.username)),
-                map((userData) => userData.username),
-                take(1)
-            )
-            .subscribe((un) => (this.aXNWSVA = aXNWSVA(un!)));
     }
 
     public startWatchEvents(): void {
@@ -112,7 +98,6 @@ export class HUDWindowControllerService extends BaseService {
 
     /**
      * Performs an action (open or close) for each HUD windows (based on the window's requirements)
-     * VIPs are exempt from configuration flag checks
      */
     private fireHUDRequirements(
         configuration: Configuration,
@@ -123,7 +108,7 @@ export class HUDWindowControllerService extends BaseService {
         return this.HUDWindows.map((hud) => {
             const meetsGameMode = isEmpty(hud.requiredGameModes) || hud.requiredGameModes.includes(genericGameModeId);
             const meetsGamePhase = isEmpty(hud.requiredGamePhases) || hud.requiredGamePhases.includes(gamePhase);
-            const meetsConfigurations = this.aXNWSVA || hud.requiredConfigurations.every((reqConfigFn) => reqConfigFn(configuration));
+            const meetsConfigurations = hud.requiredConfigurations.every((reqConfigFn) => reqConfigFn(configuration));
             const meetsSettings = hud.requiredSettings.every((reqSetting) => {
                 const keyExists = reqSetting.key in settings;
                 const savedValue = settings[reqSetting.key];

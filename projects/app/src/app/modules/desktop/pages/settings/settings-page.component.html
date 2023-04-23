@@ -59,7 +59,7 @@
                 </thead>
                 <tbody [formGroup]="inGameHUDFormGroup">
                     <tr
-                        *ngIf="config?.featureFlags?.enableMiniInventoryWindow || aXNWSVA"
+                        *ngIf="config?.featureFlags?.enableMiniInventoryWindow"
                         (mouseover)="selectedPreviewSetting = SettingPreview.MiniInventory"
                     >
                         <td class="ps-4 ps-lg-5">Mini Inventory</td>

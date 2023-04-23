@@ -3,7 +3,6 @@ import { environment } from "#app/../environments/environment.js";
 import { APP_NAME } from "#app/models/app.js";
 import { Hotkey } from "#app/models/hotkey.js";
 import { AllSettings, DefaultSetting, SettingKey, SettingValue } from "#app/models/settings.js";
-import { aXNWSVA } from "#app/models/vip.js";
 import { HotkeyService } from "#app/modules/background/hotkey.service.js";
 import { ConfigurationService } from "#app/modules/core/configuration.service.js";
 import { FileService } from "#app/modules/core/file.service.js";
@@ -24,7 +23,7 @@ import format from "date-fns/format";
 import "dexie-export-import";
 import { importInto, ImportOptions } from "dexie-export-import";
 import { from, merge, of, Subject } from "rxjs";
-import { debounceTime, filter, finalize, map, switchMap, take, takeUntil } from "rxjs/operators";
+import { debounceTime, finalize, map, switchMap, takeUntil } from "rxjs/operators";
 import { MainPage } from "../main-page.js";
 
 const SAVE_SETTINGS_DEBOUNCETIME = 1000;
@@ -41,8 +40,6 @@ enum SettingPreview {
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsPageComponent implements OnInit, OnDestroy {
-    /** isVIP: has access to all configuration/settings */
-    public aXNWSVA = false;
     public config?: Configuration;
     public hotkeysList?: Hotkey[] = [];
     public editingHotkey: Hotkey | undefined;
@@ -123,16 +120,6 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         @Inject(WINDOW) private window: Window
     ) {
         this.configuration.config$.pipe(takeUntil(this.destroy$)).subscribe((config) => (this.config = config));
-        // Setup VIP
-        this.overwolfProfile
-            .getCurrentUser()
-            .pipe(
-                takeUntil(this.destroy$),
-                filter((userData) => !isEmpty(userData?.username)),
-                map((userData) => userData.username),
-                take(1)
-            )
-            .subscribe((un) => (this.aXNWSVA = aXNWSVA(un!)));
     }
 
     public ngOnInit(): void {

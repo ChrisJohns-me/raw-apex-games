@@ -21,6 +21,11 @@ export function randomString(length: number): string {
     return text;
 }
 
+/** Remove non-numeric characters */
+export function removeNonNumeric(input: string): string {
+    return input.replace(/[^0-9]/g, "");
+}
+
 /** Remove non-alphanumeric characters */
 export function removeNonAlphaNumeric(input: string): string {
     return input.replace(/[^a-zA-Z0-9]/g, "");

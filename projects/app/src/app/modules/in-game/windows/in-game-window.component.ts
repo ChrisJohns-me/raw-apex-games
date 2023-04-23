@@ -1,20 +1,18 @@
-import { Hotkey, HotkeyEnum } from "#app/models/hotkey.js";
+import { Hotkey } from "#app/models/hotkey.js";
 import { MatchGameModePlaylist } from "#app/models/match/game-mode/game-mode-playlist.enum.js";
 import { MatchGameModeGenericId } from "#app/models/match/game-mode/game-mode.enum.js";
-import { MatchGameMode } from "#app/models/match/game-mode/game-mode.js";
-import { MatchMap } from "#app/models/match/map/match-map.js";
 import { OverwolfWindowName } from "#app/models/overwolf-window.js";
-import { HotkeyService } from "#app/modules/background/hotkey.service.js";
 import { GameplayInputService } from "#app/modules/core/gameplay-input.service.js";
-import { MatchService } from "#app/modules/core/match/match.service.js";
+import { OverwolfUtilsService } from "#app/modules/core/overwolf/overwolf-utils.service";
 import { PlayerNameService } from "#app/modules/core/player-name.service";
 import { PlayerOriginIdService } from "#app/modules/core/player-origin-id.service";
 import { RawGamesOrganizerService } from "#app/modules/core/raw-games/organizer.service.js";
 import { RawGameLobby } from "#shared/models/raw-games/lobby.js";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { combineLatest, filter, map, merge, Observable, Subject, switchMap, takeUntil, tap } from "rxjs";
-
-const MAIN_HOTKEY_NAME = HotkeyEnum.ToggleMainInGame;
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { mdiClipboardOutline, mdiEye, mdiEyeOff } from "@mdi/js";
+import { Modal } from "bootstrap";
+import { addDays } from "date-fns";
+import { filter, Observable, Subject, switchMap, takeUntil, tap } from "rxjs";
 
 @Component({
     selector: "app-in-game-window",
@@ -23,23 +21,21 @@ const MAIN_HOTKEY_NAME = HotkeyEnum.ToggleMainInGame;
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InGameWindowComponent implements OnInit, OnDestroy {
-    public isControllerDetected = false;
-    public lobbies: RawGameLobby[] = [];
+    @ViewChild("controllerWarningModal") private controllerWarningModal?: ElementRef;
 
-    public get isGameModeSupported(): boolean {
-        return !!this.gameMode?.isReportable && !this.gameMode.isSandboxGameMode;
-    }
+    /** Is the window full size? */
+    public isHUDExpanded = false;
 
-    public get isMapSupported(): boolean {
-        return !!this.matchMap?.isChartable && !this.matchMap?.isSandboxMap;
-    }
+    public lobby?: Optional<RawGameLobby>;
 
-    public gameMode?: MatchGameMode;
-    public matchMap?: MatchMap;
     public mainHotkey?: Hotkey;
     public myOriginId?: Optional<string>;
     public myName?: Optional<string>;
+    public isOrganizer = false;
 
+    public readonly mdiEye = mdiEye;
+    public readonly mdiEyeOff = mdiEyeOff;
+    public readonly mdiClipboardOutline = mdiClipboardOutline;
     public readonly OverwolfWindowName = OverwolfWindowName;
 
     private destroy$ = new Subject<void>();
@@ -47,30 +43,27 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly gameplayInput: GameplayInputService,
-        private readonly hotkey: HotkeyService,
-        private readonly match: MatchService,
+        private readonly overwolfUtils: OverwolfUtilsService,
         private readonly playerName: PlayerNameService,
         private readonly playerOriginId: PlayerOriginIdService,
         private readonly rawGamesOrganizer: RawGamesOrganizerService
     ) {
         this.loadLobbies().pipe(takeUntil(this.destroy$)).subscribe();
+        this.rawGamesOrganizer.isUserOrganizer$.pipe(takeUntil(this.destroy$)).subscribe((isUserOrganizer) => {
+            this.isOrganizer = isUserOrganizer; // Might be getting an assertion error here
+            this.cdr.detectChanges();
+        });
     }
 
     public ngOnInit(): void {
-        this.setupHotkeys();
-        this.setupGameMode();
         this.setupMyName();
         this.setupMyOriginId();
+        this.watchForController();
+    }
 
-        this.gameplayInput.isMouseInputDetectedOnDamageBurst$
-            .pipe(
-                takeUntil(this.destroy$),
-                filter((isMouseDetected) => isMouseDetected !== undefined)
-            )
-            .subscribe((isMouseDetected) => {
-                this.isControllerDetected = !isMouseDetected;
-                this.cdr.detectChanges();
-            });
+    // TODO: Remove this
+    public onTempControllerClick(): void {
+        this.showControllerWarningModal(); // TODO: MOVE
     }
 
     public ngOnDestroy(): void {
@@ -79,14 +72,21 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
     }
 
     public onCreateLobbyClick(): void {
+        const myName = this.playerName.myName$.value;
+        const myOriginId = this.playerOriginId.myOriginId$.value;
+        const joinCode = "123456"; // TODO: Get from input
+        if (!myName || !myOriginId) throw new Error("Missing player name or origin ID; play a Trios BR game first");
         const lobby = new RawGameLobby({
-            joinCode: "123456",
+            lobbyCode: joinCode,
             gameModeGenericId: MatchGameModeGenericId.FiringRange,
             gameModePlaylist: MatchGameModePlaylist.Sandbox,
-            organizerOriginId: "MasterKriff",
-            playerOriginIds: ["MasterKriff"],
+            organizerOriginId: myOriginId,
+            organizerPlayerName: myName,
+            playerOriginIds: [myOriginId],
             isJoinable: true,
             isStarted: false,
+            startDate: new Date(),
+            endDate: addDays(new Date(), 1),
         });
 
         this.rawGamesOrganizer
@@ -99,36 +99,22 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
             .subscribe();
     }
 
+    public onLobbyCodeChange(lobbyCode: string): void {
+        // TODO: Update lobby code
+    }
+
     public onLoadLobbiesClick(): void {
         this.loadLobbies().pipe(takeUntil(this.destroy$)).subscribe();
     }
 
-    private setupHotkeys(): void {
-        const onChanged$ = this.hotkey.onHotkeyChanged$.pipe(filter((hotkey) => hotkey.hotkeyName === MAIN_HOTKEY_NAME));
-
-        merge(this.hotkey.getGameHotkeyByName(MAIN_HOTKEY_NAME), onChanged$)
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((mainHotkey) => {
-                this.mainHotkey = mainHotkey;
-                this.cdr.detectChanges();
-            });
-    }
-
-    private setupGameMode(): void {
-        combineLatest([this.match.gameMode$])
-            .pipe(
-                takeUntil(this.destroy$),
-                map(([gameMode]) => gameMode)
-            )
-            .subscribe((gameMode) => {
-                this.gameMode = gameMode;
-                // this.matchMap = gameMode ? this.mapRotation.getCurrentMapFromGameMode(gameMode?.gameModeGenericId) : undefined;
-                this.cdr.detectChanges();
-            });
-    }
-
     private loadLobbies(): Observable<RawGameLobby[]> {
-        return this.rawGamesOrganizer.getLobbies().pipe(tap((lobbies) => (this.lobbies = lobbies)));
+        return this.rawGamesOrganizer.getLobbies().pipe(
+            tap((lobbies) => {
+                // this.lobbies = lobbies;
+                this.lobby = lobbies[0]; // Grab the first lobby for now; TODO: Allow user to see all lobbies
+                this.cdr.detectChanges();
+            })
+        );
     }
 
     private setupMyName(): void {
@@ -144,4 +130,27 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
             this.cdr.detectChanges();
         });
     }
+
+    // #region Controller
+    private watchForController(): void {
+        this.gameplayInput.isMouseInputDetectedOnDamageBurst$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((isMouseDetected) => isMouseDetected !== undefined)
+            )
+            .subscribe(() => this.showControllerWarningModal());
+    }
+
+    private showControllerWarningModal(): void {
+        const showBackdrop = this.isHUDExpanded; // Show backdrop only when HUD is expanded
+        const getConfirmModal = () => new Modal(this.controllerWarningModal?.nativeElement, { backdrop: showBackdrop });
+        this.controllerWarningModal?.nativeElement.addEventListener("hidden.bs.modal", () => {
+            // Modal was closed
+        });
+        let confirmModal = getConfirmModal();
+
+        if (!confirmModal) confirmModal = getConfirmModal();
+        if (confirmModal) confirmModal.show();
+    }
+    // #endregion
 }
