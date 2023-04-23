@@ -1,7 +1,6 @@
 {
     "$schema": "./config.schema.json",
     "featureFlags": {
-        "enableInGameWindow": true,
         "enableMiniInventoryWindow": true,
         "enableMatchSummaryWindow": true,
         "enableVideoCapture": true

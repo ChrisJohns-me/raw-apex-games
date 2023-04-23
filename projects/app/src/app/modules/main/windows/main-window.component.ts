@@ -2,15 +2,7 @@ import { APP_NAME } from "#app/models/app.js";
 import { FeatureState } from "#app/models/feature-status.js";
 import { Hotkey, HotkeyEnum } from "#app/models/hotkey.js";
 import { OverwolfWindowName } from "#app/models/overwolf-window.js";
-import { BackgroundService } from "#app/modules/background/background.service.js";
-import { HotkeyService } from "#app/modules/background/hotkey.service.js";
-import { ConfigLoadStatus, ConfigurationService } from "#app/modules/core/configuration.service.js";
 import { GoogleAnalyticsService } from "#app/modules/core/google-analytics.service.js";
-import { LocalStorageKeys } from "#app/modules/core/local-storage/local-storage-keys.js";
-import { LocalStorageService } from "#app/modules/core/local-storage/local-storage.service.js";
-import { OverwolfFeatureStatusService } from "#app/modules/core/overwolf/overwolf-feature-status.service.js";
-import { OverwolfProfileService } from "#app/modules/core/overwolf/overwolf-profile.service.js";
-import { VersionService } from "#app/modules/core/version.service.js";
 import { fadeInOutAnimation } from "#shared/angular/animations/fade-in-out.animation.js";
 import { scaleInOutAnimationFactory } from "#shared/angular/animations/scale-in-out-factory.animation.js";
 import { isEmpty, parseBoolean } from "#shared/utilities/primitives/boolean.js";
@@ -29,22 +21,30 @@ import {
 } from "@angular/core";
 import { mdiDiscord, mdiYoutube } from "@mdi/js";
 import { Modal } from "bootstrap";
-import { combineLatest, interval, of, Subject } from "rxjs";
+import { combineLatest, interval, merge, of, Subject } from "rxjs";
 import { delay, delayWhen, filter, map, take, takeUntil } from "rxjs/operators";
+import { BackgroundService } from "../../background/background.service.js";
+import { HotkeyService } from "../../background/hotkey.service.js";
+import { ConfigLoadStatus, ConfigurationService } from "../../core/configuration.service.js";
+import { LocalStorageKeys } from "../../core/local-storage/local-storage-keys.js";
+import { LocalStorageService } from "../../core/local-storage/local-storage.service.js";
+import { OverwolfFeatureStatusService } from "../../core/overwolf/overwolf-feature-status.service.js";
+import { VersionService } from "../../core/version.service.js";
 import { MainPage } from "../pages/main-page.js";
-import { DesktopWindowService } from "./desktop-window.service.js";
+import { MainDesktopWindowService } from "./main-desktop-window.service.js";
+import { MainInGameWindowService } from "./main-ingame-window.service.js";
 
 const STARTING_LOAD_DELAY = 2000;
 const CAPTION_DISPLAY_CHANCE = 0.1;
 
 @Component({
-    selector: "app-desktop-window",
-    templateUrl: "./desktop-window.component.html",
-    styleUrls: ["./desktop-window.component.scss"],
+    selector: "app-main-window",
+    templateUrl: "./main-window.component.html",
+    styleUrls: ["./main-window.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
     animations: [fadeInOutAnimation, scaleInOutAnimationFactory(0, 0.925)],
 })
-export class DesktopWindowComponent implements OnInit, AfterViewInit, OnDestroy {
+export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() public overwolfWindowName?: OverwolfWindowName;
     @ViewChild("confirmExitModal") private confirmExitModal?: ElementRef;
     public get activePage(): MainPage {
@@ -69,7 +69,7 @@ export class DesktopWindowComponent implements OnInit, AfterViewInit, OnDestroy 
     public mdiYoutube = mdiYoutube;
     //#endregion
 
-    private _activePage: MainPage = MainPage.Dashboard;
+    private _activePage: MainPage = MainPage.RawApexGames;
     private destroy$ = new Subject<void>();
 
     constructor(
@@ -79,9 +79,9 @@ export class DesktopWindowComponent implements OnInit, AfterViewInit, OnDestroy 
         private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly hotkey: HotkeyService,
         private readonly localStorage: LocalStorageService,
-        private readonly desktopWindow: DesktopWindowService,
+        private readonly mainDesktopWindow: MainDesktopWindowService,
+        private readonly mainInGameWindow: MainInGameWindowService,
         private readonly overwolfFeatureStatus: OverwolfFeatureStatusService,
-        private readonly overwolfProfile: OverwolfProfileService,
         private readonly version: VersionService
     ) {
         const hasSeenFirstRunValue = this.localStorage.get(LocalStorageKeys.HasSeenFirstRun);
@@ -94,10 +94,12 @@ export class DesktopWindowComponent implements OnInit, AfterViewInit, OnDestroy 
         this.setupHotkeys();
         this.setupFirstRunRouting();
 
-        this.desktopWindow.isStarting$.pipe(takeUntil(this.destroy$)).subscribe((isStarting) => {
-            this.isAppStarting = isStarting;
-            this.cdr.detectChanges();
-        });
+        merge(this.mainDesktopWindow.isStarting$, this.mainInGameWindow.isStarting$)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((isStarting) => {
+                this.isAppStarting = isStarting;
+                this.cdr.detectChanges();
+            });
     }
 
     public ngAfterViewInit(): void {
@@ -114,11 +116,12 @@ export class DesktopWindowComponent implements OnInit, AfterViewInit, OnDestroy 
     public onFinishFirstRunClick(): void {
         this.hasSeenFirstRun = true;
         this.localStorage.set(LocalStorageKeys.HasSeenFirstRun, `${this.hasSeenFirstRun}`);
-        this.goToPage(MainPage.Dashboard);
+        this.goToPage(MainPage.RawApexGames);
     }
 
     public goToPage(page: MainPage): void {
-        this.desktopWindow.goToPage(page);
+        this.mainDesktopWindow.goToPage(page);
+        this.mainInGameWindow.goToPage(page);
     }
 
     public onExitAppClick(): void {
@@ -126,12 +129,12 @@ export class DesktopWindowComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     public onCloseButtonClick(): void {
-        this.desktopWindow.isRequestingExit$.next(true);
+        this.mainDesktopWindow.isRequestingExit$.next(true);
+        this.mainInGameWindow.isRequestingExit$.next(true);
     }
 
     private trackPageChange(newPage: MainPage): void {
-        this.desktopWindow.overwolfWindow
-            .windowInfo()
+        merge(this.mainDesktopWindow.overwolfWindow.windowInfo(), this.mainInGameWindow.overwolfWindow.windowInfo())
             .pipe(
                 takeUntil(this.destroy$),
                 map((winInfo) => winInfo.name),
@@ -147,7 +150,7 @@ export class DesktopWindowComponent implements OnInit, AfterViewInit, OnDestroy 
         this.config.loadStatus$
             .pipe(
                 takeUntil(this.destroy$),
-                delayWhen(() => interval(this.desktopWindow.isStarting$ ? STARTING_LOAD_DELAY : 0))
+                delayWhen(() => interval(this.mainDesktopWindow.isStarting$ || this.mainInGameWindow.isStarting$ ? STARTING_LOAD_DELAY : 0))
             )
             .subscribe((configLoadStatus) => {
                 switch (configLoadStatus) {
@@ -164,7 +167,8 @@ export class DesktopWindowComponent implements OnInit, AfterViewInit, OnDestroy 
                     default:
                         exhaustiveEnumSwitch(configLoadStatus);
                 }
-                this.desktopWindow.setIsStarting(false);
+                this.mainDesktopWindow.setIsStarting(false);
+                this.mainInGameWindow.setIsStarting(false);
                 this.cdr.detectChanges();
             });
     }
@@ -180,19 +184,22 @@ export class DesktopWindowComponent implements OnInit, AfterViewInit, OnDestroy 
     }
 
     private setupPageRouting(): void {
-        this.desktopWindow.mainPage.pipe(takeUntil(this.destroy$)).subscribe((page) => {
-            this.activePage = page;
-            this.cdr.detectChanges();
-        });
+        merge(this.mainDesktopWindow.mainPage, this.mainInGameWindow.mainPage)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((page) => {
+                this.activePage = page;
+                this.cdr.detectChanges();
+            });
     }
 
     private setupRequestingExit(): void {
         const getConfirmModal = () => new Modal(this.confirmExitModal?.nativeElement);
         this.confirmExitModal?.nativeElement.addEventListener("hidden.bs.modal", () => {
-            this.desktopWindow.cancelExit();
+            this.mainDesktopWindow.cancelExit();
+            this.mainInGameWindow.cancelExit();
         });
         let confirmModal = getConfirmModal();
-        this.desktopWindow.isRequestingExit$
+        merge(this.mainDesktopWindow.isRequestingExit$, this.mainInGameWindow.isRequestingExit$)
             .pipe(
                 takeUntil(this.destroy$),
                 filter((isRequestingExit) => !!isRequestingExit)
@@ -252,7 +259,6 @@ export class DesktopWindowComponent implements OnInit, AfterViewInit, OnDestroy 
         const shouldShowNum = Math.random();
         const captionPickNum = Math.random();
 
-        // TODO: Need to come up with new captions
         const captions = [
             "The Allfather guides you now",
             "Allfather give me sight",

@@ -2,7 +2,7 @@
 
 ## Left-off
 
-- Working on `in-game-window.component.ts` to connect to the websocket server
+- Reworking Raw Apex Games "in-game" window, moving to "main-in-game" window
 
 ## Lingering Questions
 

@@ -5,5 +5,6 @@ export enum MainPage {
     FirstRun = "firstrun",
     MapExplorer = "mapexplorer",
     MatchExplorer = "matchexplorer",
+    RawApexGames = "rawapexgames",
     Settings = "settings",
 }

@@ -52,7 +52,7 @@
                     "height": 250
                 }
             },
-            "desktop": {
+            "main-desktop": {
                 "file": "index.html",
                 "desktop_only": true,
                 "native_window": true,
@@ -75,7 +75,7 @@
                     "height": 600
                 }
             },
-            "ingame": {
+            "main-ingame": {
                 "file": "index.html",
                 "desktop_only": false,
                 "native_window": false,
@@ -92,6 +92,29 @@
                 "focus_game_takeover_release_hotkey": "toggle_main_ingame",
                 "topmost": true,
                 "popup_blocker": true,
+                "size": {
+                    "width": 850,
+                    "height": 675
+                },
+                "min_size": {
+                    "width": 850,
+                    "height": 675
+                },
+                "max_size": {
+                    "width": 850,
+                    "height": 675
+                }
+            },
+            "lobby-status": {
+                "file": "index.html",
+                "in_game_only": true,
+                "resizable": false,
+                "transparent": true,
+                "show_in_taskbar": false,
+                "clickthrough": true,
+                "mute": true,
+                "popup_blocker": true,
+                "allow_local_file_access": true,
                 "size": {
                     "width": 1,
                     "height": 1

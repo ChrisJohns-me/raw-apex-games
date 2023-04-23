@@ -5,7 +5,6 @@ import { MatchService } from "#app/modules/core/match/match.service.js";
 import { OverwolfProfileService } from "#app/modules/core/overwolf/overwolf-profile.service.js";
 import { SessionStorageService } from "#app/modules/core/session-storage/session-storage.service.js";
 import { SettingsService } from "#app/modules/core/settings.service.js";
-import { InGameWindowService } from "#app/modules/in-game/windows/in-game-window.service.js";
 import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
 import { Injectable } from "@angular/core";
 import { FileService } from "../core/file.service.js";
@@ -41,8 +40,9 @@ import { ReportableDataManagerService } from "../core/reporting/reporting-engine
 import { ReportingService } from "../core/reporting/reporting.service.js";
 import { VersionService } from "../core/version.service.js";
 import { VideoRecordingService } from "../core/video-recording/video-recording.service.js";
-import { DesktopWindowService } from "../desktop/windows/desktop-window.service.js";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service.js";
+import { MainDesktopWindowService } from "../main/windows/main-desktop-window.service.js";
+import { MainInGameWindowService } from "../main/windows/main-ingame-window.service.js";
 import { CaptureControllerService } from "./capture-controller.service.js";
 import { HotkeyService } from "./hotkey.service.js";
 import { HUDWindowControllerService } from "./hud-window-controller.service.js";
@@ -56,7 +56,6 @@ import { SystemTrayService } from "./system-tray.service.js";
     deps: [
         CaptureControllerService,
         ConfigurationService,
-        DesktopWindowService,
         DevelopmentToolsWindowService,
         FileService,
         GameplayInputService,
@@ -65,9 +64,10 @@ import { SystemTrayService } from "./system-tray.service.js";
         GoogleAnalyticsService,
         HotkeyService,
         HUDWindowControllerService,
-        InGameWindowService,
         LocalDatabaseService,
         LocalStorageService,
+        MainDesktopWindowService,
+        MainInGameWindowService,
         MatchKillfeedService,
         MatchLegendSelectService,
         MatchMapService,
@@ -109,7 +109,6 @@ export class SingletonServiceContainerService {
     constructor(
         public readonly CaptureControllerService: CaptureControllerService,
         public readonly ConfigurationService: ConfigurationService,
-        public readonly DesktopWindowService: DesktopWindowService,
         public readonly DevelopmentToolsWindowService: DevelopmentToolsWindowService,
         public readonly FileService: FileService,
         public readonly GameplayInputService: GameplayInputService,
@@ -118,9 +117,10 @@ export class SingletonServiceContainerService {
         public readonly GoogleAnalyticsService: GoogleAnalyticsService,
         public readonly HotkeyService: HotkeyService,
         public readonly HUDWindowControllerService: HUDWindowControllerService,
-        public readonly InGameWindowService: InGameWindowService,
         public readonly LocalDatabaseService: LocalDatabaseService,
         public readonly LocalStorageService: LocalStorageService,
+        public readonly MainDesktopWindowService: MainDesktopWindowService,
+        public readonly MainInGameWindowService: MainInGameWindowService,
         public readonly MatchKillfeedService: MatchKillfeedService,
         public readonly MatchLegendSelectService: MatchLegendSelectService,
         public readonly MatchMapService: MatchMapService,

@@ -9,7 +9,6 @@ export interface Configuration {
  * Features / mini-features that can be enabled or disabled.
  */
 export interface FeatureFlags {
-    enableInGameWindow: boolean;
     enableMiniInventoryWindow: boolean;
     enableMatchSummaryWindow: boolean;
     enableVideoCapture: boolean;

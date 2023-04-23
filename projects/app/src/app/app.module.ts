@@ -7,21 +7,21 @@ import { BackgroundModule } from "./modules/background/background.module.js";
 import { WINDOW_PROVIDERS } from "./modules/core/global-window.provider.js";
 import { httpInterceptorProviders } from "./modules/core/http-interceptors/index.js";
 import { OverwolfModule } from "./modules/core/overwolf/overwolf.module.js";
-import { DesktopModule } from "./modules/desktop/desktop.module.js";
 import { DevelopmentToolsModule } from "./modules/development-tools/development-tools.module.js";
 import { NoopDevelopmentToolsModule } from "./modules/development-tools/noop-development-tools.module.js";
 import { MiniInventoryWindowModule } from "./modules/HUD/mini-inventory/mini-inventory.module.js";
-import { InGameWindowModule } from "./modules/in-game/in-game.module.js";
+import { LobbyStatusWindowModule } from "./modules/lobby-status/lobby-status.module";
+import { MainModule } from "./modules/main/main.module.js";
 
 @NgModule({
     declarations: [AppComponent],
     imports: [
         BackgroundModule,
         BrowserModule,
-        DesktopModule,
         environment.allowDevTools ? DevelopmentToolsModule : NoopDevelopmentToolsModule,
         HttpClientModule,
-        InGameWindowModule,
+        LobbyStatusWindowModule,
+        MainModule,
         MiniInventoryWindowModule,
         OverwolfModule,
     ],

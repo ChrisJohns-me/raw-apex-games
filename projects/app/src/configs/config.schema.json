@@ -5,9 +5,6 @@
         "featureFlags": {
             "type": "object",
             "properties": {
-                "enableInGameWindow": {
-                    "type": "boolean"
-                },
                 "enableMiniInventoryWindow": {
                     "type": "boolean"
                 },
@@ -19,7 +16,6 @@
                 }
             },
             "required": [
-                "enableInGameWindow",
                 "enableMiniInventoryWindow",
                 "enableMatchSummaryWindow",
                 "enableVideoCapture"

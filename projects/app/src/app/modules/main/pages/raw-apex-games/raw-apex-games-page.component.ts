@@ -1,6 +1,5 @@
 import { Hotkey } from "#app/models/hotkey.js";
 import { MatchGameModePlaylist } from "#app/models/match/game-mode/game-mode-playlist.enum.js";
-import { MatchGameModeGenericId } from "#app/models/match/game-mode/game-mode.enum.js";
 import { OverwolfWindowName } from "#app/models/overwolf-window.js";
 import { GameplayInputService } from "#app/modules/core/gameplay-input.service.js";
 import { OverwolfUtilsService } from "#app/modules/core/overwolf/overwolf-utils.service";
@@ -15,12 +14,12 @@ import { addDays } from "date-fns";
 import { filter, Observable, Subject, switchMap, takeUntil, tap } from "rxjs";
 
 @Component({
-    selector: "app-in-game-window",
-    templateUrl: "./in-game-window.component.html",
-    styleUrls: ["./in-game-window.component.scss"],
+    selector: "app-raw-apex-games-page",
+    templateUrl: "./raw-apex-games-page.component.html",
+    styleUrls: ["./raw-apex-games-page.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InGameWindowComponent implements OnInit, OnDestroy {
+export class RawApexGamesPageComponent implements OnInit, OnDestroy {
     @ViewChild("controllerWarningModal") private controllerWarningModal?: ElementRef;
 
     /** Is the window full size? */
@@ -78,11 +77,9 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
         if (!myName || !myOriginId) throw new Error("Missing player name or origin ID; play a Trios BR game first");
         const lobby = new RawGameLobby({
             lobbyCode: joinCode,
-            gameModeGenericId: MatchGameModeGenericId.FiringRange,
             gameModePlaylist: MatchGameModePlaylist.Sandbox,
             organizerOriginId: myOriginId,
             organizerPlayerName: myName,
-            playerOriginIds: [myOriginId],
             isJoinable: true,
             isStarted: false,
             startDate: new Date(),
@@ -142,8 +139,7 @@ export class InGameWindowComponent implements OnInit, OnDestroy {
     }
 
     private showControllerWarningModal(): void {
-        const showBackdrop = this.isHUDExpanded; // Show backdrop only when HUD is expanded
-        const getConfirmModal = () => new Modal(this.controllerWarningModal?.nativeElement, { backdrop: showBackdrop });
+        const getConfirmModal = () => new Modal(this.controllerWarningModal?.nativeElement);
         this.controllerWarningModal?.nativeElement.addEventListener("hidden.bs.modal", () => {
             // Modal was closed
         });

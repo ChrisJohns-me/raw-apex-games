@@ -46,6 +46,7 @@ testem.log
 
 # Firebase
 firebase-export*
+emulator-data/
 
 # System Files
 .DS_Store

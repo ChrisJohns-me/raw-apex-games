@@ -1,5 +1,4 @@
 import { MatchGameModePlaylist } from "#app/models/match/game-mode/game-mode-playlist.enum.js";
-import { MatchGameModeGenericId } from "#app/models/match/game-mode/game-mode.enum.js";
 import { sanitizePlayerName } from "#shared/utilities/player.js";
 import { parseBoolean } from "#shared/utilities/primitives/boolean.js";
 import { removeNonAlphaNumeric, removeNonAlphaNumericHyphenUnderscore, removeNonNumeric } from "#shared/utilities/primitives/string.js";
@@ -12,10 +11,9 @@ interface RawGameLobbyConstructor {
     lobbyId: string; // UUID
     lobbyCode: string;
     gameModePlaylist: MatchGameModePlaylist;
-    gameModeGenericId: MatchGameModeGenericId;
     organizerOriginId: string;
     organizerPlayerName: string;
-    playerOriginIds: string[];
+    // playerOriginIds: string[]; // Future
     isJoinable: boolean;
     isStarted: boolean;
     startDate?: Optional<Date>;
@@ -30,10 +28,9 @@ export class RawGameLobby {
     public lobbyId: string;
     public lobbyCode: string;
     public gameModePlaylist: MatchGameModePlaylist;
-    public gameModeGenericId: MatchGameModeGenericId;
     public organizerOriginId: string;
     public organizerPlayerName: string;
-    public playerOriginIds: string[];
+    // public playerOriginIds: string[];
     public isJoinable: boolean;
     public isStarted: boolean;
     public startDate?: Optional<Date>;
@@ -43,15 +40,11 @@ export class RawGameLobby {
         this.lobbyId = removeNonAlphaNumericHyphenUnderscore(ctor?.lobbyId ?? uuid());
         this.lobbyCode = removeNonAlphaNumeric(ctor?.lobbyCode ?? "");
         this.gameModePlaylist = $enum(MatchGameModePlaylist).getValueOrDefault(ctor?.gameModePlaylist, MatchGameModePlaylist.Sandbox);
-        this.gameModeGenericId = $enum(MatchGameModeGenericId).getValueOrDefault(
-            ctor?.gameModeGenericId,
-            MatchGameModeGenericId.FiringRange
-        );
         this.organizerOriginId = removeNonNumeric(ctor?.organizerOriginId ?? "");
         this.organizerPlayerName = sanitizePlayerName(ctor?.organizerPlayerName ?? "");
-        this.playerOriginIds = (ctor?.playerOriginIds && Array.isArray(ctor.playerOriginIds) ? ctor.playerOriginIds : []).map(
-            (playerOriginId) => removeNonNumeric(playerOriginId?.toString() ?? "")
-        );
+        // this.playerOriginIds = (ctor?.playerOriginIds && Array.isArray(ctor.playerOriginIds) ? ctor.playerOriginIds : []).map(
+        //     (playerOriginId) => removeNonNumeric(playerOriginId?.toString() ?? "")
+        // );
         this.isJoinable = parseBoolean(ctor?.isJoinable);
         this.isStarted = parseBoolean(ctor?.isStarted);
         this.startDate = ctor?.startDate && isDate(ctor.startDate) ? new Date(ctor.startDate) : undefined;
@@ -72,13 +65,9 @@ export class RawGameLobby {
                         data.gameModePlaylist?.toString(),
                         MatchGameModePlaylist.Sandbox
                     ),
-                    gameModeGenericId: $enum(MatchGameModeGenericId).getValueOrDefault(
-                        data.gameModeGenericId?.toString(),
-                        MatchGameModeGenericId.FiringRange
-                    ),
                     organizerOriginId: data.organizerOriginId?.toString() ?? "",
                     organizerPlayerName: data.organizerPlayerName?.toString() ?? "",
-                    playerOriginIds: Array.isArray(data.playerOriginIds) ? data.playerOriginIds : [],
+                    // playerOriginIds: Array.isArray(data.playerOriginIds) ? data.playerOriginIds : [],
                     isJoinable: parseBoolean(data.isJoinable),
                     isStarted: parseBoolean(data.isStarted),
                     startDate: isDate(data.startDate) ? Timestamp.fromDate(new Date(data.startDate as string)) : Timestamp.now(),

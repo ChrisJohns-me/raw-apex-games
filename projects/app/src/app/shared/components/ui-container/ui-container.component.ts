@@ -5,9 +5,9 @@ import { SettingKey } from "#app/models/settings.js";
 import { GoogleAnalyticsService } from "#app/modules/core/google-analytics.service.js";
 import { OverwolfGameDataService } from "#app/modules/core/overwolf/index.js";
 import { SettingsService } from "#app/modules/core/settings.service.js";
-import { MainPage } from "#app/modules/desktop/pages/main-page.js";
-import { DesktopWindowService } from "#app/modules/desktop/windows/desktop-window.service.js";
-import { InGameWindowService } from "#app/modules/in-game/windows/in-game-window.service.js";
+import { MainPage } from "#app/modules/main/pages/main-page";
+import { MainDesktopWindowService } from "#app/modules/main/windows/main-desktop-window.service";
+import { MainInGameWindowService } from "#app/modules/main/windows/main-ingame-window.service";
 import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 import { mathClamp } from "#shared/utilities/primitives/math.js";
 import {
@@ -98,8 +98,8 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly googleAnalytics: GoogleAnalyticsService,
-        private readonly desktopWindow: DesktopWindowService,
-        private readonly inGameWindow: InGameWindowService,
+        private readonly mainDesktopWindow: MainDesktopWindowService,
+        private readonly mainInGameWindow: MainInGameWindowService,
         private readonly overwolfGameData: OverwolfGameDataService,
         private readonly settings: SettingsService,
         private readonly titleService: Title
@@ -141,7 +141,8 @@ export class UIContainerComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     public onSettingsButtonClick(): void {
-        this.desktopWindow.goToPage(MainPage.Settings);
+        this.mainDesktopWindow.goToPage(MainPage.Settings);
+        this.mainInGameWindow.goToPage(MainPage.Settings);
     }
 
     public onMinimizeButtonClick(): void {

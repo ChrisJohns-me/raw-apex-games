@@ -1,0 +1,10 @@
+@import "window-styles";
+
+$hud-button-size: 100px;
+
+.in-game-container {
+    height: calc(100% - #{$hud-button-size});
+    width: 100%;
+    background-color: #222222;
+}
+

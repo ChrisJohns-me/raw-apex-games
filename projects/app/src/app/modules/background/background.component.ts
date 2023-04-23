@@ -3,15 +3,15 @@ import { APP_NAME } from "#app/models/app.js";
 import { HotkeyEnum } from "#app/models/hotkey.js";
 import { SettingKey } from "#app/models/settings.js";
 import { SettingsService } from "#app/modules/core/settings.service.js";
-import { InGameWindowService } from "#app/modules/in-game/windows/in-game-window.service.js";
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from "@angular/core";
 import { Title } from "@angular/platform-browser";
 import { Subject } from "rxjs";
 import { map, switchMap, takeUntil } from "rxjs/operators";
 import { GameProcessService } from "../core/game-process.service.js";
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service.js";
-import { DesktopWindowService } from "../desktop/windows/desktop-window.service.js";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service.js";
+import { MainDesktopWindowService } from "../main/windows/main-desktop-window.service.js";
+import { MainInGameWindowService } from "../main/windows/main-ingame-window.service.js";
 import { BackgroundService } from "./background.service.js";
 import { CaptureControllerService } from "./capture-controller.service.js";
 import { HotkeyService } from "./hotkey.service.js";
@@ -34,8 +34,8 @@ export class BackgroundComponent implements OnInit, OnDestroy {
         private readonly gameProcess: GameProcessService,
         private readonly hotkey: HotkeyService,
         private readonly hudWindowController: HUDWindowControllerService,
-        private readonly desktopWindow: DesktopWindowService,
-        private readonly inGameWindow: InGameWindowService,
+        private readonly mainDesktopWindow: MainDesktopWindowService,
+        private readonly mainInGameWindow: MainInGameWindowService,
         private readonly overwolfExtensions: OverwolfExtensionsService,
         private readonly settings: SettingsService,
         private readonly systemTray: SystemTrayService,
@@ -64,8 +64,10 @@ export class BackgroundComponent implements OnInit, OnDestroy {
             this.developmentToolsWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
         }
 
-        this.desktopWindow.setIsStarting(true);
-        this.desktopWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
+        this.mainDesktopWindow.setIsStarting(true);
+        this.mainInGameWindow.setIsStarting(true);
+        this.mainDesktopWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
+        this.mainInGameWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     private setupSystemTray(): void {
@@ -110,13 +112,13 @@ export class BackgroundComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this.destroy$),
                 map((minimizeToTraySetting) => minimizeToTraySetting?.value ?? false),
-                switchMap((minimizeToTray) => this.desktopWindow.toggle(minimizeToTray))
+                switchMap((minimizeToTray) => this.mainDesktopWindow.toggle(minimizeToTray))
             )
             .subscribe();
     }
 
-    // private toggleMainInGameWindow(): void {
-    //     this.inGameWindow.toggle(true).pipe(takeUntil(this.destroy$)).subscribe();
-    // }
+    private toggleMainInGameWindow(): void {
+        this.mainInGameWindow.toggle(true).pipe(takeUntil(this.destroy$)).subscribe();
+    }
     //#endregion
 }

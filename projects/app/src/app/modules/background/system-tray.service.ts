@@ -10,12 +10,12 @@ import { catchError, takeUntil } from "rxjs/operators";
 import { OWSystemTrayMenuItem } from "../core/overwolf/index.js";
 import { OverwolfExtensionsService } from "../core/overwolf/overwolf-extensions.service.js";
 import { OverwolfSystemTrayService } from "../core/overwolf/overwolf-system-tray.service.js";
-import { MainPage } from "../desktop/pages/main-page.js";
-import { DesktopWindowService } from "../desktop/windows/desktop-window.service.js";
 import { DevelopmentToolsWindowService } from "../development-tools/windows/development-tools-window.service.js";
+import { MainPage } from "../main/pages/main-page.js";
+import { MainDesktopWindowService } from "../main/windows/main-desktop-window.service.js";
 
 export enum SystemTrayItemKey {
-    Main = "main",
+    RawApexGames = "rawapexgames",
     DevelopmentTools = "development-tools",
     MatchExplorer = "matchexplorer",
     Charting = "charting",
@@ -27,13 +27,13 @@ export enum SystemTrayItemKey {
 
 const MENUITEMS: OWSystemTrayMenuItem[] = [
     {
-        label: "Main",
-        id: SystemTrayItemKey.Main,
+        label: "Raw Apex Games",
+        id: SystemTrayItemKey.RawApexGames,
     },
-    {
-        label: "Match Explorer",
-        id: SystemTrayItemKey.MatchExplorer,
-    },
+    // {
+    //     label: "Match Explorer",
+    //     id: SystemTrayItemKey.MatchExplorer,
+    // },
     {
         label: "Settings",
         id: SystemTrayItemKey.Settings,
@@ -63,7 +63,7 @@ const FOOTER_MENUITEMS: OWSystemTrayMenuItem[] = [
 
 @Injectable({
     providedIn: "root",
-    deps: [DevelopmentToolsWindowService, DesktopWindowService, OverwolfExtensionsService, OverwolfSystemTrayService],
+    deps: [DevelopmentToolsWindowService, MainDesktopWindowService, OverwolfExtensionsService, OverwolfSystemTrayService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("SystemTrayService", SystemTrayService, deps),
 })
 export class SystemTrayService extends BaseService {
@@ -71,7 +71,7 @@ export class SystemTrayService extends BaseService {
 
     constructor(
         private readonly developmentToolsWindow: DevelopmentToolsWindowService,
-        private readonly desktopWindow: DesktopWindowService,
+        private readonly mainDesktopWindow: MainDesktopWindowService,
         private readonly overwolfExtensions: OverwolfExtensionsService,
         private readonly overwolfSystemTray: OverwolfSystemTrayService
     ) {
@@ -107,25 +107,25 @@ export class SystemTrayService extends BaseService {
     private onSystemTrayIconClicked(): void {}
 
     private onSystemTrayIconDoubleClicked(): void {
-        this.desktopWindow.restore().pipe(takeUntil(this.destroy$)).subscribe();
+        this.mainDesktopWindow.restore().pipe(takeUntil(this.destroy$)).subscribe();
     }
 
     private onMenuItemClicked(menuItem: SystemTrayItemKey): void {
         switch (menuItem) {
-            case SystemTrayItemKey.Main:
-                this.desktopWindow.open(MainPage.Dashboard).pipe(takeUntil(this.destroy$)).subscribe();
+            case SystemTrayItemKey.RawApexGames:
+                this.mainDesktopWindow.open(MainPage.RawApexGames).pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.DevelopmentTools:
                 this.developmentToolsWindow.open().pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.MatchExplorer:
-                this.desktopWindow.open(MainPage.MatchExplorer).pipe(takeUntil(this.destroy$)).subscribe();
+                this.mainDesktopWindow.open(MainPage.MatchExplorer).pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.Charting:
-                this.desktopWindow.open(MainPage.Charting).pipe(takeUntil(this.destroy$)).subscribe();
+                this.mainDesktopWindow.open(MainPage.Charting).pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.Settings:
-                this.desktopWindow.open(MainPage.Settings).pipe(takeUntil(this.destroy$)).subscribe();
+                this.mainDesktopWindow.open(MainPage.Settings).pipe(takeUntil(this.destroy$)).subscribe();
                 break;
             case SystemTrayItemKey.RestartApp:
                 this.overwolfExtensions.relaunchApp();
@@ -135,7 +135,7 @@ export class SystemTrayService extends BaseService {
                 break;
             case SystemTrayItemKey.ExitApp:
                 console.trace(`[SystemTrayService] Requesting exit from MainWindowService`);
-                this.desktopWindow.requestExit();
+                this.mainDesktopWindow.requestExit();
                 break;
             default:
                 exhaustiveEnumSwitch(menuItem);

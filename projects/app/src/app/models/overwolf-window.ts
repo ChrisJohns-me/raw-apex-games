@@ -23,8 +23,9 @@ export enum OverwolfWindowName {
     Background = "background",
     DevelopmentTools = "development-tools",
     HUDMiniInventory = "hud-mini-inventory",
-    Desktop = "desktop",
-    InGame = "ingame",
+    LobbyStatus = "lobby-status",
+    MainDesktop = "main-desktop",
+    MainInGame = "main-ingame",
 }
 
 export class OverwolfWindow {

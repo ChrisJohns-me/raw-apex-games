@@ -9,12 +9,9 @@ import { FileService } from "#app/modules/core/file.service.js";
 import { WINDOW } from "#app/modules/core/global-window.provider.js";
 import { LocalDatabaseService } from "#app/modules/core/local-database/local-database.service.js";
 import { SettingsDataStore } from "#app/modules/core/local-database/settings-data-store.js";
-import { OverwolfProfileService } from "#app/modules/core/overwolf/overwolf-profile.service.js";
 import { SessionStorageKeys } from "#app/modules/core/session-storage/session-storage-keys.js";
 import { SessionStorageService } from "#app/modules/core/session-storage/session-storage.service.js";
 import { SettingsService } from "#app/modules/core/settings.service.js";
-import { DesktopWindowService } from "#app/modules/desktop/windows/desktop-window.service.js";
-import { InGameWindowService } from "#app/modules/in-game/windows/in-game-window.service.js";
 import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from "@angular/core";
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from "@angular/forms";
@@ -24,7 +21,9 @@ import "dexie-export-import";
 import { importInto, ImportOptions } from "dexie-export-import";
 import { from, merge, of, Subject } from "rxjs";
 import { debounceTime, finalize, map, switchMap, takeUntil } from "rxjs/operators";
-import { MainPage } from "../main-page.js";
+import { MainDesktopWindowService } from "../../windows/main-desktop-window.service";
+import { MainInGameWindowService } from "../../windows/main-ingame-window.service";
+import { MainPage } from "../main-page";
 
 const SAVE_SETTINGS_DEBOUNCETIME = 1000;
 
@@ -112,9 +111,8 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         private readonly formBuilder: UntypedFormBuilder,
         private readonly hotkey: HotkeyService,
         private readonly localDatabase: LocalDatabaseService,
-        private readonly desktopWindow: DesktopWindowService,
-        private readonly inGameWindow: InGameWindowService,
-        private readonly overwolfProfile: OverwolfProfileService,
+        private readonly mainDesktopWindow: MainDesktopWindowService,
+        private readonly mainInGameWindow: MainInGameWindowService,
         private readonly sessionStorage: SessionStorageService,
         private readonly settings: SettingsService,
         @Inject(WINDOW) private window: Window
@@ -136,7 +134,8 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
     }
 
     public onAboutClick(): void {
-        this.desktopWindow.goToPage(MainPage.About);
+        this.mainDesktopWindow.goToPage(MainPage.About);
+        this.mainInGameWindow.goToPage(MainPage.About);
     }
 
     public exportGameLog(): void {

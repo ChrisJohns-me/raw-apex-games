@@ -1,19 +1,15 @@
-import { OverwolfWindow, OverwolfWindowName } from "#app/models/overwolf-window.js";
-import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
-import { Injectable } from "@angular/core";
+import { OverwolfWindow } from "#app/models/overwolf-window.js";
+import { Injectable, OnDestroy } from "@angular/core";
 import { BehaviorSubject, from, Observable, Subject } from "rxjs";
 import { concatAll, map, takeUntil, tap } from "rxjs/operators";
 import { MainPage } from "../pages/main-page.js";
 
-@Injectable({
-    providedIn: "root",
-    deps: [],
-    useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("DesktopWindowService", DesktopWindowService, deps),
-})
-export class DesktopWindowService {
-    public readonly overwolfWindow = new OverwolfWindow(OverwolfWindowName.Desktop);
+@Injectable()
+export abstract class MainWindowService implements OnDestroy {
+    /** Needs to be defined by the inheriting class */
+    protected overwolfWindow!: OverwolfWindow;
 
-    public mainPage = new BehaviorSubject<MainPage>(MainPage.Dashboard);
+    public mainPage = new BehaviorSubject<MainPage>(MainPage.RawApexGames);
     /** App is still initializing; ie. booting up the app */
     public isStarting$ = new BehaviorSubject<boolean>(false);
     public isRequestingExit$ = new BehaviorSubject<boolean>(false);

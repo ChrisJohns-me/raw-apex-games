@@ -6,15 +6,14 @@ import { BaseService } from "#app/modules/core/base-service.abstract.js";
 import { ConfigurationService } from "#app/modules/core/configuration.service.js";
 import { GameService } from "#app/modules/core/game.service.js";
 import { MatchService } from "#app/modules/core/match/match.service.js";
-import { OverwolfProfileService } from "#app/modules/core/overwolf/overwolf-profile.service.js";
 import { SettingsService } from "#app/modules/core/settings.service.js";
 import { MiniInventoryWindowService } from "#app/modules/HUD/mini-inventory/windows/mini-inventory-window.service.js";
-import { InGameWindowService } from "#app/modules/in-game/windows/in-game-window.service.js";
 import { SingletonServiceProviderFactory } from "#app/singleton-service.provider.factory.js";
 import { isEmpty } from "#shared/utilities/primitives/boolean.js";
 import { Injectable } from "@angular/core";
 import { combineLatest, merge, Observable, Subscription } from "rxjs";
 import { filter, map, switchMap, takeUntil } from "rxjs/operators";
+import { LobbyStatusWindowService } from "../lobby-status/windows/lobby-status-window.service.js";
 
 type HUDTriggers = {
     windowService: { open: () => Observable<void>; close: () => Observable<void> };
@@ -26,23 +25,15 @@ type HUDTriggers = {
 
 @Injectable({
     providedIn: "root",
-    deps: [
-        ConfigurationService,
-        GameService,
-        InGameWindowService,
-        MatchService,
-        MiniInventoryWindowService,
-        OverwolfProfileService,
-        SettingsService,
-    ],
+    deps: [ConfigurationService, GameService, LobbyStatusWindowService, MatchService, MiniInventoryWindowService, SettingsService],
     useFactory: (...deps: unknown[]) => SingletonServiceProviderFactory("HUDWindowControllerService", HUDWindowControllerService, deps),
 })
 export class HUDWindowControllerService extends BaseService {
     private HUDWindows: HUDTriggers[] = [
         {
-            windowService: this.inGameWindow,
-            requiredGamePhases: [GamePhase.Lobby, GamePhase.InGame],
-            requiredConfigurations: [(config) => config.featureFlags.enableInGameWindow],
+            windowService: this.lobbyStatusWindow,
+            requiredGamePhases: [GamePhase.Lobby],
+            requiredConfigurations: [],
             requiredSettings: [],
             requiredGameModes: [],
         },
@@ -67,10 +58,9 @@ export class HUDWindowControllerService extends BaseService {
     constructor(
         private readonly configuration: ConfigurationService,
         private readonly game: GameService,
-        private readonly inGameWindow: InGameWindowService,
+        private readonly lobbyStatusWindow: LobbyStatusWindowService,
         private readonly match: MatchService,
         private readonly miniInventoryWindow: MiniInventoryWindowService,
-        private readonly overwolfProfile: OverwolfProfileService,
         private readonly settings: SettingsService
     ) {
         super();
