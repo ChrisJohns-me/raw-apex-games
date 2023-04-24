@@ -25,21 +25,40 @@
 </div>
 <!-- #endregion -->
 
-<div class="in-game-container p-4">
-    <img class="raw-logo" src="../../../../assets/images/raw-logo-white.png" alt="Raw Apex Games Logo" />
+<div *ngIf="!hasRequiredData">
+    <h1>Play a Match</h1>
+    <p>
+        Raw Apex Games requires some basic data.<br />
+        Please play a match of Apex Legends <strong>Trios in Battle Royale</strong> in to get started.
+    </p>
+</div>
 
-    <div>PlayerName: {{ myName }}</div>
-    <div>OriginId: {{ myOriginId }}</div>
-    <div>Organizer: {{ lobby?.organizerPlayerName }}</div>
-    <button (click)="onCreateLobbyClick()">Create Lobby</button>
-    <button (click)="onLoadLobbiesClick()">Load Lobbies</button>
-    <button (click)="onTempControllerClick()">I'm on Controller</button>
-    <div>
-        <app-lobby-code
-            *ngIf="lobby"
-            [lobbyCode]="lobby.lobbyCode"
-            (lobbyCodeChange)="onLobbyCodeChange($event)"
-            [isEditable]="isOrganizer"
-        ></app-lobby-code>
+<div *ngIf="hasRequiredData" class="in-game-container p-3" appFullHeight [marginBottom]="30">
+    <div class="row pb-3">
+        <div class="col">
+            <button
+                type="button"
+                class="btn btn-primary btn-sm"
+                *ngIf="view !== RawApexGamesView.Main"
+                (click)="view = RawApexGamesView.Main"
+            >
+                <icon [path]="mdiArrowLeft"></icon>
+                Back
+            </button>
+        </div>
+        <div class="col-auto">
+            <img class="raw-logo" src="../../../../assets/images/raw-logo-white.png" alt="Raw Apex Games Logo" />
+        </div>
+        <div class="col"></div>
+    </div>
+
+    <div [ngSwitch]="view">
+        <app-organizer-view *ngSwitchCase="RawApexGamesView.Organizer"></app-organizer-view>
+        <app-player-lobby-view *ngSwitchCase="RawApexGamesView.PlayerLobby" [lobby]="selectedLobby"></app-player-lobby-view>
+        <app-main-view
+            *ngSwitchDefault
+            (selectLobby)="onSelectLobby($event)"
+            (onOrganizerViewClick)="view = RawApexGamesView.Organizer"
+        ></app-main-view>
     </div>
 </div>

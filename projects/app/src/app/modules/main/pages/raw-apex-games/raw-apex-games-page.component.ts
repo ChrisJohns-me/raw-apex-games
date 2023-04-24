@@ -2,16 +2,24 @@ import { Hotkey } from "#app/models/hotkey.js";
 import { MatchGameModePlaylist } from "#app/models/match/game-mode/game-mode-playlist.enum.js";
 import { OverwolfWindowName } from "#app/models/overwolf-window.js";
 import { GameplayInputService } from "#app/modules/core/gameplay-input.service.js";
-import { OverwolfUtilsService } from "#app/modules/core/overwolf/overwolf-utils.service";
 import { PlayerNameService } from "#app/modules/core/player-name.service";
 import { PlayerOriginIdService } from "#app/modules/core/player-origin-id.service";
 import { RawGamesOrganizerService } from "#app/modules/core/raw-games/organizer.service.js";
 import { RawGameLobby } from "#shared/models/raw-games/lobby.js";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
-import { mdiClipboardOutline, mdiEye, mdiEyeOff } from "@mdi/js";
+import {
+    AfterViewChecked,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    OnDestroy,
+    OnInit,
+    ViewChild,
+} from "@angular/core";
+import { mdiArrowLeft } from "@mdi/js";
 import { Modal } from "bootstrap";
-import { addDays } from "date-fns";
-import { filter, Observable, Subject, switchMap, takeUntil, tap } from "rxjs";
+import { filter, Subject, takeUntil } from "rxjs";
+import { RawApexGamesView } from "./views/raw-apex-games-view.enum.js";
 
 @Component({
     selector: "app-raw-apex-games-page",
@@ -19,45 +27,42 @@ import { filter, Observable, Subject, switchMap, takeUntil, tap } from "rxjs";
     styleUrls: ["./raw-apex-games-page.component.scss"],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class RawApexGamesPageComponent implements OnInit, OnDestroy {
+export class RawApexGamesPageComponent implements OnInit, AfterViewChecked, OnDestroy {
     @ViewChild("controllerWarningModal") private controllerWarningModal?: ElementRef;
 
-    /** Is the window full size? */
-    public isHUDExpanded = false;
-
-    public lobby?: Optional<RawGameLobby>;
-
+    public selectedLobby?: Optional<RawGameLobby>;
+    public selectedPlayList?: Optional<MatchGameModePlaylist>;
     public mainHotkey?: Hotkey;
-    public myOriginId?: Optional<string>;
-    public myName?: Optional<string>;
+    public hasRequiredData = false;
     public isOrganizer = false;
 
-    public readonly mdiEye = mdiEye;
-    public readonly mdiEyeOff = mdiEyeOff;
-    public readonly mdiClipboardOutline = mdiClipboardOutline;
+    public view = RawApexGamesView.Main;
+
+    public readonly RawApexGamesView = RawApexGamesView;
     public readonly OverwolfWindowName = OverwolfWindowName;
+    public readonly mdiArrowLeft = mdiArrowLeft;
 
     private destroy$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
         private readonly gameplayInput: GameplayInputService,
-        private readonly overwolfUtils: OverwolfUtilsService,
         private readonly playerName: PlayerNameService,
         private readonly playerOriginId: PlayerOriginIdService,
         private readonly rawGamesOrganizer: RawGamesOrganizerService
-    ) {
-        this.loadLobbies().pipe(takeUntil(this.destroy$)).subscribe();
+    ) {}
+
+    public ngOnInit(): void {
+        this.setupRequiredData();
+        this.watchForController();
         this.rawGamesOrganizer.isUserOrganizer$.pipe(takeUntil(this.destroy$)).subscribe((isUserOrganizer) => {
-            this.isOrganizer = isUserOrganizer; // Might be getting an assertion error here
-            this.cdr.detectChanges();
+            this.isOrganizer = isUserOrganizer;
+            this.refreshUI();
         });
     }
 
-    public ngOnInit(): void {
-        this.setupMyName();
-        this.setupMyOriginId();
-        this.watchForController();
+    public ngAfterViewChecked(): void {
+        this.refreshUI();
     }
 
     // TODO: Remove this
@@ -70,62 +75,20 @@ export class RawApexGamesPageComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    public onCreateLobbyClick(): void {
-        const myName = this.playerName.myName$.value;
-        const myOriginId = this.playerOriginId.myOriginId$.value;
-        const joinCode = "123456"; // TODO: Get from input
-        if (!myName || !myOriginId) throw new Error("Missing player name or origin ID; play a Trios BR game first");
-        const lobby = new RawGameLobby({
-            lobbyCode: joinCode,
-            gameModePlaylist: MatchGameModePlaylist.Sandbox,
-            organizerOriginId: myOriginId,
-            organizerPlayerName: myName,
-            isJoinable: true,
-            isStarted: false,
-            startDate: new Date(),
-            endDate: addDays(new Date(), 1),
-        });
+    public onSelectLobby(lobby: RawGameLobby): void {
+        this.selectedLobby = lobby;
+        this.view = RawApexGamesView.PlayerLobby;
+    }
 
-        this.rawGamesOrganizer
-            .createLobby(lobby)
+    private setupRequiredData(): void {
+        this.playerOriginId.myOriginId$
             .pipe(
                 takeUntil(this.destroy$),
-                tap(() => console.log("Lobby was created", lobby)),
-                switchMap(() => this.loadLobbies())
+                filter((originId): originId is string => !!originId?.length)
             )
-            .subscribe();
-    }
-
-    public onLobbyCodeChange(lobbyCode: string): void {
-        // TODO: Update lobby code
-    }
-
-    public onLoadLobbiesClick(): void {
-        this.loadLobbies().pipe(takeUntil(this.destroy$)).subscribe();
-    }
-
-    private loadLobbies(): Observable<RawGameLobby[]> {
-        return this.rawGamesOrganizer.getLobbies().pipe(
-            tap((lobbies) => {
-                // this.lobbies = lobbies;
-                this.lobby = lobbies[0]; // Grab the first lobby for now; TODO: Allow user to see all lobbies
-                this.cdr.detectChanges();
-            })
-        );
-    }
-
-    private setupMyName(): void {
-        this.playerName.myName$.pipe(takeUntil(this.destroy$)).subscribe((playerName) => {
-            this.myName = playerName;
-            this.cdr.detectChanges();
-        });
-    }
-
-    private setupMyOriginId(): void {
-        this.playerOriginId.myOriginId$.pipe(takeUntil(this.destroy$)).subscribe((playerOriginId) => {
-            this.myOriginId = playerOriginId;
-            this.cdr.detectChanges();
-        });
+            .subscribe((originId) => {
+                this.hasRequiredData = !!originId;
+            });
     }
 
     // #region Controller
@@ -149,4 +112,8 @@ export class RawApexGamesPageComponent implements OnInit, OnDestroy {
         if (confirmModal) confirmModal.show();
     }
     // #endregion
+
+    private refreshUI(): void {
+        this.cdr.detectChanges();
+    }
 }

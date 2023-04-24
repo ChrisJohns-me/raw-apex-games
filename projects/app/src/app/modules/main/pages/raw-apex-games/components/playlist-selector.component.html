@@ -1,0 +1,13 @@
+<div class="row">
+    <div class="col text-center" *ngFor="let playlistItem of playlistItems">
+        <button
+            type="button"
+            class="btn btn-primary playlist-button {{ playlistItem.playlist }}"
+            [ngClass]="{ selected: playlistItem.playlist === selectedPlaylist }"
+            (click)="selectedPlaylistChange.emit(playlistItem.playlist)"
+            [disabled]="!playlistItem.enabled"
+        >
+            <h1 class="playlist-button-title">{{ playlistItem.friendlyName }}</h1>
+        </button>
+    </div>
+</div>

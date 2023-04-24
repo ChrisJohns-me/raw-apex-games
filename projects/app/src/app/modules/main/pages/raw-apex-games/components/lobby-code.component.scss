@@ -7,8 +7,8 @@
 input.lobby-code {
     font-family: monospace;
     font-weight: bolder;
-    font-size: 7.5vw;
-    letter-spacing: 1vw;
+    font-size: 2rem;
+    letter-spacing: 0.35rem;
     text-align: center;
     &:disabled {
         pointer-events: none;

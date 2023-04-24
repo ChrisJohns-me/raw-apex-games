@@ -24,7 +24,7 @@ class LobbyController {
             }
 
             await LobbyService.createLobby(lobbyData);
-            res.status(200);
+            res.status(200).send();
         } catch (e: unknown) {
             console.error(e);
             res.status(500).send({ error: "Problem creating lobby." });
@@ -36,15 +36,25 @@ class LobbyController {
      * TODO: Maybe restrict getLobbybyOriginId(`originId`) to only be accessible by the user with that originId
      */
     public async getLobby(req: Request, res: Response) {
-        const lobbyId = new RawGameLobby({ lobbyId: req.params.lobbyId }).lobbyId;
-        const originId = new RawGameLobby({ organizerOriginId: req.query.originId?.toString() }).organizerOriginId;
+        const lobbyId = req.params.lobbyId ? new RawGameLobby({ lobbyId: req.params.lobbyId }).lobbyId : undefined;
+        const originId = req.query.originId
+            ? new RawGameLobby({ organizerOriginId: req.query.originId.toString() }).organizerOriginId
+            : undefined;
         try {
             if (lobbyId) {
                 const result = await LobbyService.getLobbyByLobbyId(lobbyId);
+                if (!result) {
+                    res.status(404).send({ error: `Lobby with ID "${lobbyId}" not found.` });
+                    return;
+                }
                 res.json(result);
                 return;
             } else if (originId) {
                 const result = await LobbyService.getLobbyByOriginId(originId);
+                if (!result) {
+                    res.status(404).send({ error: `Lobby with origin ID "${originId}" not found.` });
+                    return;
+                }
                 res.json(result);
                 return;
             } else {

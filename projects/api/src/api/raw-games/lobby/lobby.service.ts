@@ -7,7 +7,7 @@ class LobbyService {
 
     public async createLobby(lobbyData: RawGameLobby): Promise<void> {
         // TODO: endDate maybe max of 24hrs from startDate?
-        const docRef = doc(this.firestoreDb, "lobbies", lobbyData.lobbyCode).withConverter(RawGameLobby.firebaseConverter);
+        const docRef = doc(this.firestoreDb, "lobbies", lobbyData.lobbyId).withConverter(RawGameLobby.firebaseConverter);
         return await setDoc(docRef, lobbyData);
     }
 

@@ -2,7 +2,8 @@
 
 ## Left-off
 
-- Reworking Raw Apex Games "in-game" window, moving to "main-in-game" window
+- OrganizerView: UPDATING Lobby information
+- PlayerView: JOINING a lobby
 
 ## Lingering Questions
 

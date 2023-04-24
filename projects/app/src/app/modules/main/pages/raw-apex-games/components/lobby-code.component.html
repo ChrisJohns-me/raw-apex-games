@@ -1,14 +1,17 @@
+<h4 class="mt-3">Join Code</h4>
 <div class="lobby-code-container px-4">
-    <button class="btn btn-outline" type="button" (click)="copyLobbyCode()">
+    <button class="btn btn-outline" type="button" (click)="copyLobbyCode()" [disabled]="!lobbyCode">
         <icon [path]="mdiClipboardOutline" size="1rem"></icon>
     </button>
     <input
         class="form-control lobby-code"
         onclick="this.select()"
         [type]="showLobbyCode ? 'text' : 'password'"
-        [value]="lobbyCode ? lobbyCode : ''"
-        [readonly]="showLobbyCode"
-        [disabled]="!showLobbyCode"
+        [ngModel]="lobbyCode"
+        (ngModelChange)="lobbyCodeChange.emit($event)"
+        [readonly]="showLobbyCode && !isEditable"
+        [disabled]="!showLobbyCode && !isEditable"
+        maxlength="8"
     />
     <button class="btn btn-outline" type="button" (click)="showLobbyCode = !showLobbyCode">
         <icon [path]="mdiEye" size="1rem" *ngIf="!showLobbyCode"></icon>

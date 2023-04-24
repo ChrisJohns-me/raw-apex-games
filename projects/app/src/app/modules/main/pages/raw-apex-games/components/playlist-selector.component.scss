@@ -1,0 +1,60 @@
+
+.playlist-button {
+    position: relative;
+    height: 25vw;
+    width: 25vw;
+    max-width: 250px;
+    max-height: 250px;
+    border-radius: 1vw;
+    color: white;
+    transition: all 200ms;
+
+    &.battle_royale {
+        background: url(../../../.../../../../../assets/images/playlist-select/battle-royale-select.jpg) center / cover no-repeat;
+    }
+
+    &.mixtape {
+        background: url(../../../.../../../../../assets/images/playlist-select/mixtape-select.jpg) center / cover no-repeat;
+    }
+
+    &::before {
+        position: absolute;
+        display: block;
+        content: "";
+        width: calc(100%);
+        height: calc(100% + 1vw);
+        background: linear-gradient(transparent 0%, black 100%);
+        border: 4px solid transparent;
+        border-radius: 1vw;
+        box-shadow: inset 0px 0px 0px 0px rgb(255 255 255 / 0);
+        top: -0.5vw;
+        left: 0;
+        transition: all 200ms;
+    }
+
+    &:hover {
+        &::before {
+            background: linear-gradient(transparent 0%, #860000 100%);
+        }
+    }
+
+    &.selected {
+        &::before {
+            width: calc(100% + 2vw);
+            height: calc(100% + 2vw);
+            background: linear-gradient(transparent 0%, grey 100%);
+            border-color: white;
+            border-radius: 2vw;
+            box-shadow: inset 0px 0px 15px 2px rgba(255 255 255 / 0.35);
+            top: -1vw;
+            left: -1vw;
+        }
+    }
+
+    &-title {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+}

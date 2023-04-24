@@ -8,7 +8,7 @@ import { $enum } from "ts-enum-util";
 import { v4 as uuid } from "uuid";
 
 interface RawGameLobbyConstructor {
-    lobbyId: string; // UUID
+    lobbyId?: Optional<string>; // UUID
     lobbyCode: string;
     gameModePlaylist: MatchGameModePlaylist;
     organizerOriginId: string;

@@ -1,10 +1,16 @@
 @import "window-styles";
 
-$hud-button-size: 100px;
+$hud-button-size: 100px; // TODO: Remove
+
+.raw-logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 40px;
+}
 
 .in-game-container {
-    height: calc(100% - #{$hud-button-size});
+    height: 100%;
     width: 100%;
-    background-color: #222222;
 }
 

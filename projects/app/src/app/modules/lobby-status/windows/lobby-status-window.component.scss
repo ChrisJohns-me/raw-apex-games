@@ -45,13 +45,7 @@
 
 // TODO: Implement raw icon
 
-.raw-logo {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 150px;
-    height: 57px;
-}
+$hud-button-size: 100px;
 
 .raw-hud-button {
     position: absolute;

@@ -21,6 +21,7 @@
     </div>
 </div>
 <!-- #endregion -->
+
 <app-ui-container
     @fadeInOut
     @scaleInOut
@@ -57,7 +58,8 @@
         [enablePageviewTracking]="false"
         [onCloseButtonClick]="onCloseButtonClick"
     >
-        <app-navbar *ngIf="hasSeenFirstRun" (navPage)="goToPage($event)" [currentPage]="activePage"></app-navbar>
+        <!-- TODO: NavBar -->
+        <!-- <app-navbar *ngIf="hasSeenFirstRun" (navPage)="goToPage($event)" [currentPage]="activePage"></app-navbar> -->
         <ng-container [ngSwitch]="activePage">
             <app-about-page *ngSwitchCase="MainPage.About"></app-about-page>
             <app-charting-page *ngSwitchCase="MainPage.Charting"></app-charting-page>

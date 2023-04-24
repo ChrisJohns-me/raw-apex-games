@@ -10,14 +10,12 @@ import { Subject } from "rxjs";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LobbyCodeComponent implements OnDestroy {
-    @Input() public isEditable = false; // TODO: Implement
+    @Input() public isEditable = false;
     @Input() public lobbyCode = "";
     @Output() public lobbyCodeChange = new EventEmitter<string>();
 
     public lobbyCodeMessage = "";
     public showLobbyCode = false;
-
-    public isOrganizer = false;
 
     public readonly mdiEye = mdiEye;
     public readonly mdiEyeOff = mdiEyeOff;
