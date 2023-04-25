@@ -4,9 +4,10 @@ import { PlayerOriginIdService } from "#app/modules/core/player-origin-id.servic
 import { RawGamesOrganizerService } from "#app/modules/core/raw-games/organizer.service";
 import { RawGamesPlayerService } from "#app/modules/core/raw-games/player.service";
 import { RawGameLobby } from "#shared/models/raw-games/lobby";
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { filter, Observable, of, Subject, switchMap, takeUntil, tap } from "rxjs";
-import { iif } from "rxjs/internal/observable/iif";
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, ViewChild } from "@angular/core";
+import { Modal } from "bootstrap";
+import { format, isValid } from "date-fns";
+import { filter, Subject, switchMap, takeUntil } from "rxjs";
 
 @Component({
     selector: "app-organizer-view",
@@ -15,6 +16,8 @@ import { iif } from "rxjs/internal/observable/iif";
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrganizerViewComponent implements OnInit, OnDestroy {
+    @ViewChild("basicModal") private basicModal?: ElementRef;
+
     public myName?: Optional<string>;
     public myOriginId?: Optional<string>;
     public myExistingLobby?: Optional<RawGameLobby>;
@@ -25,6 +28,15 @@ export class OrganizerViewComponent implements OnInit, OnDestroy {
     public canCreate = false;
     public canUpdate = false;
     public canDelete = false;
+    public basicModalData: {
+        title: string;
+        message: string;
+        closeBtnText: string;
+    } = {
+        title: "",
+        message: "",
+        closeBtnText: "OK",
+    };
 
     public get selectedPlaylist(): Optional<MatchGameModePlaylist> {
         return this._selectedPlaylist;
@@ -44,14 +56,14 @@ export class OrganizerViewComponent implements OnInit, OnDestroy {
         return this._startDate;
     }
     public set startDate(value: Optional<Date>) {
-        this._startDate = value;
+        this._startDate = new Date(value as Date);
         this.refreshUI();
     }
     public get endDate(): Optional<Date> {
         return this._endDate;
     }
     public set endDate(value: Optional<Date>) {
-        this._endDate = value;
+        this._endDate = new Date(value as Date);
         this.refreshUI();
     }
 
@@ -73,16 +85,16 @@ export class OrganizerViewComponent implements OnInit, OnDestroy {
             },
         ];
     }
+    public now = new Date();
 
     private _selectedPlaylist?: Optional<MatchGameModePlaylist> = MatchGameModePlaylist.Mixtape;
     private _lobbyCode = "";
     private _startDate?: Optional<Date> = new Date();
     private _endDate?: Optional<Date>;
     private get formDataValid(): boolean {
-        console.log(this.myOriginId, this.selectedPlaylist, this.startDate, this.endDate);
         return !!this.myOriginId && !!this.selectedPlaylist && !!this.startDate && !!this.endDate;
     }
-    private destroy$ = new Subject<void>();
+    private readonly destroy$ = new Subject<void>();
 
     constructor(
         private readonly cdr: ChangeDetectorRef,
@@ -92,6 +104,9 @@ export class OrganizerViewComponent implements OnInit, OnDestroy {
         private readonly rawGamesPlayer: RawGamesPlayerService
     ) {}
 
+    public inputDateTime = (date?: Optional<Date>): Optional<string> =>
+        date && isValid(date) ? format(date, "yyyy-MM-dd'T'HH:mm") : undefined;
+
     public ngOnInit(): void {
         this.setupMyData();
         this.loadMyLobby();
@@ -100,6 +115,90 @@ export class OrganizerViewComponent implements OnInit, OnDestroy {
     public ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    public onCreateLobbyClick(): void {
+        if (!this.formDataValid) throw new Error(`Form data is invalid`);
+        this.isCreating = true;
+        this.isUpdating = false;
+        this.isDeleting = false;
+
+        const newLobby = this.generateLobby(undefined);
+
+        this.rawGamesOrganizer
+            .createLobby(newLobby)
+            .pipe(takeUntil(this.destroy$)) // TODO: Add catchError
+            .subscribe((createdLobby) => {
+                this.myExistingLobby = createdLobby;
+                this.isCreating = false;
+                this.showBasicModal("", "Lobby created");
+                this.refreshUI();
+            });
+    }
+
+    public onUpdateLobbyClick(): void {
+        if (!this.formDataValid) throw new Error(`Form data is invalid`);
+        if (!this.myExistingLobby) throw new Error(`No existing lobby found`);
+        this.isCreating = false;
+        this.isUpdating = true;
+        this.isDeleting = false;
+
+        const updatedLobby = this.generateLobby(this.myExistingLobby.lobbyId);
+
+        this.rawGamesOrganizer
+            .updateLobby(updatedLobby)
+            .pipe(takeUntil(this.destroy$)) // TODO: Add catchError
+            .subscribe((updatedLobby) => {
+                this.myExistingLobby = updatedLobby;
+                this.isUpdating = false;
+                // this.showBasicModal("", "Lobby updated");
+                this.refreshUI();
+            });
+    }
+
+    public onDeleteLobbyClick(): void {
+        if (!this.myExistingLobby) throw new Error(`No existing lobby found to delete`);
+        this.isCreating = false;
+        this.isUpdating = false;
+        this.isDeleting = true;
+
+        const lobbyId = this.myExistingLobby.lobbyId;
+
+        this.rawGamesOrganizer
+            .deleteLobbyByLobbyId(lobbyId)
+            .pipe(takeUntil(this.destroy$)) // TODO: Add catchError
+            .subscribe(() => {
+                this.myExistingLobby = undefined;
+                this.selectedPlaylist = undefined;
+                this.lobbyCode = "";
+                this.startDate = undefined;
+                this.endDate = undefined;
+                this.isDeleting = false;
+                this.showBasicModal("", "Lobby ended successfully");
+                this.refreshUI();
+            });
+    }
+
+    private loadMyLobby(): void {
+        this.isLoadingLobby = true;
+        this.playerOriginId.myOriginId$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((originId): originId is string => !!originId?.length),
+                switchMap((originId) => this.rawGamesPlayer.getLobbyByOriginId(originId))
+            )
+            .subscribe((existingLobby) => {
+                this.isLoadingLobby = false;
+                if (existingLobby) {
+                    console.log("Found existing lobby", existingLobby);
+                    this.myExistingLobby = existingLobby;
+                    this.selectedPlaylist = existingLobby?.gameModePlaylist;
+                    this.lobbyCode = existingLobby?.lobbyCode ?? "";
+                    this.startDate = existingLobby?.startDate;
+                    this.endDate = existingLobby?.endDate;
+                }
+                this.refreshUI();
+            });
     }
 
     private setupMyData(): void {
@@ -123,92 +222,27 @@ export class OrganizerViewComponent implements OnInit, OnDestroy {
             });
     }
 
-    public onCreateLobbyClick(): void {
-        if (!this.formDataValid) throw new Error(`Form data is invalid`);
-        this.isCreating = true;
-        this.isUpdating = false;
-        this.isDeleting = false;
-
-        const newLobby = this.generateLobby(undefined);
-
-        this.rawGamesOrganizer
-            .createLobby(newLobby)
-            .pipe(
-                takeUntil(this.destroy$),
-                switchMap(() => this.getMyLobby(newLobby.lobbyId))
-            ) // TODO: Add catchError
-            .subscribe((createdLobby) => {
-                this.myExistingLobby = createdLobby;
-                this.isCreating = false;
-                this.refreshUI();
-            });
-    }
-
-    public onUpdateLobbyClick(): void {
-        if (!this.formDataValid) throw new Error(`Form data is invalid`);
-        if (!this.myExistingLobby) throw new Error(`No existing lobby found`);
-        this.isCreating = false;
-        this.isUpdating = true;
-        this.isDeleting = false;
-
-        const updatedLobby = this.generateLobby(this.myExistingLobby.lobbyId);
-
-        this.rawGamesOrganizer
-            .updateLobby(updatedLobby)
-            .pipe(
-                takeUntil(this.destroy$),
-                switchMap(() => this.getMyLobby(updatedLobby.lobbyId))
-            ) // TODO: Add catchError
-            .subscribe((updatedLobby) => {
-                this.myExistingLobby = updatedLobby;
-                this.isUpdating = false;
-                this.refreshUI();
-            });
-    }
-
-    private loadMyLobby(): void {
-        this.getMyLobby()
-            .pipe(takeUntil(this.destroy$))
-            .subscribe((lobby) => {
-                this.myExistingLobby = lobby;
-                this.refreshUI();
-            });
-    }
-
     private generateLobby(lobbyId?: Optional<string>): RawGameLobby {
         return new RawGameLobby({
             lobbyId: lobbyId,
-            gameModePlaylist: this.selectedPlaylist!,
+            gameModePlaylist: this.selectedPlaylist,
             lobbyCode: this.lobbyCode,
-            startDate: this.startDate!,
-            endDate: this.endDate!,
-            organizerOriginId: this.myOriginId!,
-            organizerPlayerName: this.myName!,
+            startDate: this.startDate,
+            endDate: this.endDate,
+            organizerOriginId: this.myOriginId,
+            organizerPlayerName: this.myName,
             isJoinable: true,
             isStarted: false,
         });
     }
 
-    /**
-     * Attempts to get the lobby using Lobby ID, if provided, otherwise uses Origin ID.
-     */
-    private getMyLobby(id?: Optional<string>): Observable<Optional<RawGameLobby>> {
-        const setIsLoadingLobby = (isLoading: boolean) => {
-            this.isLoadingLobby = isLoading;
-            this.refreshUI();
-        };
-        const getByLobbyIdObs = (id: string) => this.rawGamesPlayer.getLobbyByLobbyId(id);
-        const getByOriginIdObs = () =>
-            this.playerOriginId.myOriginId$.pipe(
-                filter((originId): originId is string => !!originId?.length),
-                switchMap((originId) => this.rawGamesPlayer.getLobbyByOriginId(originId))
-            );
+    private showBasicModal(title: string, message: string): void {
+        const getBasicModal = () => new Modal(this.basicModal?.nativeElement);
+        this.basicModalData = { title, message, closeBtnText: "OK" };
 
-        return of(null).pipe(
-            tap(() => setIsLoadingLobby(true)),
-            switchMap(() => iif(() => !!id?.length, getByLobbyIdObs(id!), getByOriginIdObs())),
-            tap(() => setIsLoadingLobby(false))
-        );
+        let basicModal = getBasicModal();
+        if (!basicModal) basicModal = getBasicModal();
+        if (basicModal) basicModal.show();
     }
 
     private refreshUI(): void {

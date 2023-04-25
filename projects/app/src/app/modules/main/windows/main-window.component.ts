@@ -2,6 +2,7 @@ import { APP_NAME } from "#app/models/app.js";
 import { FeatureState } from "#app/models/feature-status.js";
 import { Hotkey, HotkeyEnum } from "#app/models/hotkey.js";
 import { OverwolfWindowName } from "#app/models/overwolf-window.js";
+import { FairplayControllerService } from "#app/modules/background/fairplay-controller.service.js";
 import { GoogleAnalyticsService } from "#app/modules/core/google-analytics.service.js";
 import { fadeInOutAnimation } from "#shared/angular/animations/fade-in-out.animation.js";
 import { scaleInOutAnimationFactory } from "#shared/angular/animations/scale-in-out-factory.animation.js";
@@ -47,6 +48,8 @@ const CAPTION_DISPLAY_CHANCE = 0.1;
 export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() public overwolfWindowName?: OverwolfWindowName;
     @ViewChild("confirmExitModal") private confirmExitModal?: ElementRef;
+    @ViewChild("controllerWarningModal") private controllerWarningModal?: ElementRef;
+
     public get activePage(): MainPage {
         return this._activePage;
     }
@@ -76,6 +79,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         private readonly backgroundService: BackgroundService,
         private readonly cdr: ChangeDetectorRef,
         private readonly config: ConfigurationService,
+        private readonly fairplayControllerService: FairplayControllerService,
         private readonly googleAnalytics: GoogleAnalyticsService,
         private readonly hotkey: HotkeyService,
         private readonly localStorage: LocalStorageService,
@@ -92,6 +96,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
         this.setupAppVersion();
         this.setupOverwolfGameEventStatus();
         this.setupHotkeys();
+        this.setupNonMouseWarning();
         this.setupFirstRunRouting();
 
         merge(this.mainDesktopWindow.isStarting$, this.mainInGameWindow.isStarting$)
@@ -209,6 +214,24 @@ export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
                 if (!confirmModal) confirmModal = getConfirmModal();
                 if (confirmModal) confirmModal.show();
                 else this.backgroundService.exitApp();
+            });
+    }
+
+    private setupNonMouseWarning(): void {
+        const getWarningModal = () => new Modal(this.controllerWarningModal?.nativeElement);
+        this.controllerWarningModal?.nativeElement.addEventListener("hidden.bs.modal", () => {
+            // Modal was closed
+        });
+
+        this.fairplayControllerService.isNonMouseInputWarning$
+            .pipe(
+                takeUntil(this.destroy$),
+                filter((isNonMouseInputWarning) => !!isNonMouseInputWarning)
+            )
+            .subscribe(() => {
+                let warningModal = getWarningModal();
+                if (!warningModal) warningModal = getWarningModal();
+                if (warningModal) warningModal.show();
             });
     }
 

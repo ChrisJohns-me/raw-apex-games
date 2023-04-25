@@ -10,7 +10,7 @@
     ],
     "type": "module",
     "scripts": {
-        "preinstall": "npm i -w -g firebase-tools @angular/cli",
+        "preinstall": "npm i -g firebase-tools @angular/cli",
         "db:start-dev": "firebase emulators:start --export-on-exit ./emulator-data",
         "api:compile-dev": "npx tsc -p ./projects/api/tsconfig.json -w",
         "api:server-dev": "npx cross-env NODE_ENV=DEV npx nodemon ./dist/api-out-tsc/projects/api/src/main.js",

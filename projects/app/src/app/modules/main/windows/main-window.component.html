@@ -22,6 +22,32 @@
 </div>
 <!-- #endregion -->
 
+<!-- #region Warning Modal -->
+<div class="modal fade" tabindex="-1" #controllerWarningModal>
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title text-danger">Warning:</h2>
+            </div>
+            <div class="modal-body">
+                <p>
+                    <strong>Raw Apex Games</strong> are created for the <em>raw</em> input of <u>keyboard and mouse</u> players only. Other
+                    inputs other than mouse or keyboard are not allowed in these custom lobbies; please switch to keyboard and mouse before
+                    continuing to play.
+                </p>
+                <p>
+                    Further use of devices other than a keyboard and mouse will result in a temporary suspension or permanent ban from
+                    <strong>Raw Apex Games</strong>.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" aria-label="Close">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- #endregion -->
+
 <app-ui-container
     @fadeInOut
     @scaleInOut

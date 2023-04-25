@@ -4,12 +4,17 @@ import LobbyService from "./lobby.service.js";
 
 class LobbyController {
     public async createLobby(req: Request, res: Response) {
-        const reqLobbyId = new RawGameLobby({ lobbyId: req.params.lobbyId }).lobbyId;
-        const lobbyData = new RawGameLobby(req.body);
+        // TODO: endDate maybe max of 24hrs from startDate?
+
+        const reqLobbyId = new RawGameLobby({ lobbyId: req.params.lobbyId }).lobbyId; // Clean the lobby ID from the request
+        const lobbyData = new RawGameLobby(req.body); // Clean the lobby data from the request
         const userOriginId = req.userData.originId;
         lobbyData.organizerOriginId = userOriginId; // Overwrite the lobby organizer to avoid impersonation
 
-        if (reqLobbyId !== lobbyData.lobbyId) {
+        if (!reqLobbyId) {
+            res.status(400).send({ error: "Lobby ID not provided in request URL." });
+            return;
+        } else if (reqLobbyId !== lobbyData.lobbyId) {
             res.status(400).send({ error: "Lobby ID in request body does not match lobby ID in request URL." });
             return;
         }
@@ -19,12 +24,20 @@ class LobbyController {
             const lobbyIdExistingLobby = await LobbyService.getLobbyByLobbyId(lobbyData.lobbyId);
             if (lobbyIdExistingLobby) {
                 console.log(`Lobby already exists with lobby ID "${lobbyData.lobbyId}", returning existing lobby.`);
-                res.json(lobbyIdExistingLobby);
+                res.status(200).json(lobbyIdExistingLobby);
                 return;
             }
 
-            await LobbyService.createLobby(lobbyData);
-            res.status(200).send();
+            // Organizer can only have one lobby at a time; return existing lobby if it exists
+            const originIdExistingLobby = await LobbyService.getLobbyByOriginId(userOriginId);
+            if (originIdExistingLobby) {
+                console.log(`Organizer already has a lobby with ID "${originIdExistingLobby.lobbyId}", returning existing lobby.`);
+                res.status(200).json(originIdExistingLobby);
+                return;
+            }
+
+            const newLobby = await LobbyService.createLobby(lobbyData);
+            res.status(201).json(newLobby);
         } catch (e: unknown) {
             console.error(e);
             res.status(500).send({ error: "Problem creating lobby." });
@@ -93,8 +106,8 @@ class LobbyController {
                 return;
             }
 
-            await LobbyService.updateLobby(lobbyData);
-            res.status(200);
+            const updatedLobby = await LobbyService.updateLobby(lobbyData);
+            res.status(200).json(updatedLobby);
         } catch (e: unknown) {
             console.error(e);
             res.status(500).send({ error: "Problem updating lobby." });
@@ -111,7 +124,7 @@ class LobbyController {
         try {
             const lobbyByLobbyId = await LobbyService.getLobbyByLobbyId(lobbyId);
             if (!lobbyByLobbyId) {
-                res.status(200); // Already deleted
+                res.status(200).send(); // Already deleted
                 return;
             } else if (lobbyByLobbyId.organizerOriginId !== userOriginId) {
                 res.status(403).send({ error: "Only the organizer of the lobby can delete it." });
@@ -119,7 +132,7 @@ class LobbyController {
             }
 
             await LobbyService.deleteLobbyById(lobbyId);
-            res.status(200);
+            res.status(200).send();
         } catch (e: unknown) {
             console.error(e);
             res.status(500).send({ error: "Problem deleting lobby." });

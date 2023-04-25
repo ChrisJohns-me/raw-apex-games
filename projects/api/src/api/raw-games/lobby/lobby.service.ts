@@ -1,14 +1,13 @@
 import FirebaseUtil from "#api/utils/firebase.util.js";
 import { RawGameLobby } from "#shared/models/raw-games/lobby.js";
-import { collection, doc, getDocs, setDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDocs, setDoc } from "firebase/firestore";
 
 class LobbyService {
     private firestoreDb = FirebaseUtil.firestore;
 
-    public async createLobby(lobbyData: RawGameLobby): Promise<void> {
-        // TODO: endDate maybe max of 24hrs from startDate?
+    public async createLobby(lobbyData: RawGameLobby): Promise<RawGameLobby> {
         const docRef = doc(this.firestoreDb, "lobbies", lobbyData.lobbyId).withConverter(RawGameLobby.firebaseConverter);
-        return await setDoc(docRef, lobbyData);
+        return await setDoc(docRef, lobbyData).then(() => lobbyData);
     }
 
     public async listLobbies(): Promise<RawGameLobby[]> {
@@ -39,14 +38,14 @@ class LobbyService {
         return Promise.resolve(lobby?.data());
     }
 
-    public async updateLobby(lobbyData: RawGameLobby): Promise<void> {
+    public async updateLobby(lobbyData: RawGameLobby): Promise<RawGameLobby> {
         const docRef = doc(this.firestoreDb, "lobbies", lobbyData.lobbyId).withConverter(RawGameLobby.firebaseConverter);
-        return await setDoc(docRef, lobbyData);
+        return await setDoc(docRef, lobbyData).then(() => lobbyData);
     }
 
     public async deleteLobbyById(lobbyId: string): Promise<void> {
         const docRef = doc(this.firestoreDb, "lobbies", lobbyId).withConverter(RawGameLobby.firebaseConverter);
-        return await setDoc(docRef, null);
+        return await deleteDoc(docRef);
     }
 }
 

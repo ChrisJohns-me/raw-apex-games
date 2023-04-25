@@ -1,4 +1,3 @@
-
 .playlist-button {
     position: relative;
     height: 25vw;
@@ -10,18 +9,18 @@
     transition: all 200ms;
 
     &.battle_royale {
-        background: url(../../../.../../../../../assets/images/playlist-select/battle-royale-select.jpg) center / cover no-repeat;
+        background: url(../../../../../../assets/images/playlist-select/battle-royale-select.jpg) center / cover no-repeat;
     }
 
     &.mixtape {
-        background: url(../../../.../../../../../assets/images/playlist-select/mixtape-select.jpg) center / cover no-repeat;
+        background: url(../../../../../../assets/images/playlist-select/mixtape-select.jpg) center / cover no-repeat;
     }
 
     &::before {
         position: absolute;
         display: block;
         content: "";
-        width: calc(100%);
+        width: calc(100% + 0vw);
         height: calc(100% + 1vw);
         background: linear-gradient(transparent 0%, black 100%);
         border: 4px solid transparent;

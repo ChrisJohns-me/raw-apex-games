@@ -5,7 +5,8 @@ import { organizerOriginIds } from "#shared/models/organizer-list.js";
 import { RawGameLobby } from "#shared/models/raw-games/lobby.js";
 import { HttpClient } from "@angular/common/http";
 import { Injectable, OnDestroy } from "@angular/core";
-import { BehaviorSubject, filter, Observable, switchMap, takeUntil } from "rxjs";
+import { BehaviorSubject, filter, Observable, switchMap, takeUntil, throwError } from "rxjs";
+import { v4 as uuid } from "uuid";
 import { PlayerOriginIdService } from "../player-origin-id.service.js";
 
 /**
@@ -32,19 +33,27 @@ export class RawGamesOrganizerService extends BaseService implements OnDestroy {
         // this.setupSocket();
     }
 
-    public createLobby(lobby: RawGameLobby): Observable<void> {
-        const lobbyId = lobby.lobbyId;
+    public createLobby(lobby: RawGameLobby): Observable<RawGameLobby> {
+        lobby.lobbyId = uuid(); // Create LobbyId using uuid
         return this.configuration.config$.pipe(
             takeUntil(this.destroy$),
-            switchMap((config) => this.http.post<void>(`${config.general.apiUrl}raw-games/lobby/${lobbyId}`, lobby))
+            switchMap((config) => this.http.post<RawGameLobby>(`${config.general.apiUrl}raw-games/lobby/${lobby.lobbyId}`, lobby))
         );
     }
 
-    public updateLobby(lobby: RawGameLobby): Observable<void> {
+    public updateLobby(lobby: RawGameLobby): Observable<RawGameLobby> {
         const lobbyId = lobby.lobbyId;
+        if (!lobbyId.length) return throwError(() => new Error("LobbyId is required"));
         return this.configuration.config$.pipe(
             takeUntil(this.destroy$),
-            switchMap((config) => this.http.put<void>(`${config.general.apiUrl}raw-games/lobby/${lobbyId}`, lobby))
+            switchMap((config) => this.http.put<RawGameLobby>(`${config.general.apiUrl}raw-games/lobby/${lobbyId}`, lobby))
+        );
+    }
+
+    public deleteLobbyByLobbyId(lobbyId: RawGameLobby["lobbyId"]): Observable<void> {
+        return this.configuration.config$.pipe(
+            takeUntil(this.destroy$),
+            switchMap((config) => this.http.delete<void>(`${config.general.apiUrl}raw-games/lobby/${lobbyId}`))
         );
     }
 

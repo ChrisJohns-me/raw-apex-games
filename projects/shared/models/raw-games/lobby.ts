@@ -2,13 +2,11 @@ import { MatchGameModePlaylist } from "#app/models/match/game-mode/game-mode-pla
 import { sanitizePlayerName } from "#shared/utilities/player.js";
 import { parseBoolean } from "#shared/utilities/primitives/boolean.js";
 import { removeNonAlphaNumeric, removeNonAlphaNumericHyphenUnderscore, removeNonNumeric } from "#shared/utilities/primitives/string.js";
-import { isDate } from "date-fns";
 import { DocumentData, FirestoreDataConverter, PartialWithFieldValue, QueryDocumentSnapshot, Timestamp } from "firebase/firestore";
 import { $enum } from "ts-enum-util";
-import { v4 as uuid } from "uuid";
 
 interface RawGameLobbyConstructor {
-    lobbyId?: Optional<string>; // UUID
+    lobbyId: string; // UUID
     lobbyCode: string;
     gameModePlaylist: MatchGameModePlaylist;
     organizerOriginId: string;
@@ -37,31 +35,45 @@ export class RawGameLobby {
     public endDate?: Optional<Date>;
 
     constructor(ctor?: ModelCtor<RawGameLobbyConstructor>) {
-        this.lobbyId = removeNonAlphaNumericHyphenUnderscore(ctor?.lobbyId ?? uuid());
-        this.lobbyCode = removeNonAlphaNumeric(ctor?.lobbyCode ?? "");
-        this.gameModePlaylist = $enum(MatchGameModePlaylist).getValueOrDefault(ctor?.gameModePlaylist, MatchGameModePlaylist.Sandbox);
-        this.organizerOriginId = removeNonNumeric(ctor?.organizerOriginId ?? "");
-        this.organizerPlayerName = sanitizePlayerName(ctor?.organizerPlayerName ?? "");
-        // this.playerOriginIds = (ctor?.playerOriginIds && Array.isArray(ctor.playerOriginIds) ? ctor.playerOriginIds : []).map(
+        ctor = ctor ?? {};
+        this.lobbyId = removeNonAlphaNumericHyphenUnderscore(ctor.lobbyId ?? "");
+        this.lobbyCode = removeNonAlphaNumeric(ctor.lobbyCode ?? "");
+        this.gameModePlaylist = $enum(MatchGameModePlaylist).asValueOrDefault(ctor.gameModePlaylist, MatchGameModePlaylist.Sandbox);
+        this.organizerOriginId = removeNonNumeric(ctor.organizerOriginId ?? "");
+        this.organizerPlayerName = sanitizePlayerName(ctor.organizerPlayerName ?? "");
+        // this.playerOriginIds = (ctor.playerOriginIds && Array.isArray(ctor.playerOriginIds) ? ctor.playerOriginIds : []).map(
         //     (playerOriginId) => removeNonNumeric(playerOriginId?.toString() ?? "")
         // );
-        this.isJoinable = parseBoolean(ctor?.isJoinable);
-        this.isStarted = parseBoolean(ctor?.isStarted);
-        this.startDate = ctor?.startDate && isDate(ctor.startDate) ? new Date(ctor.startDate) : undefined;
-        this.endDate = ctor?.endDate && isDate(ctor.endDate) ? new Date(ctor.endDate) : undefined;
+        this.isJoinable = parseBoolean(ctor.isJoinable);
+        this.isStarted = parseBoolean(ctor.isStarted);
+        this.startDate = ctor.startDate ? new Date(ctor.startDate) : undefined;
+        this.endDate = ctor.endDate ? new Date(ctor.endDate) : undefined;
     }
 
     public static get firebaseConverter(): FirestoreDataConverter<RawGameLobby> {
         return {
             fromFirestore: (snap: QueryDocumentSnapshot): RawGameLobby => {
-                const data = snap.data() as RawGameLobby;
+                const data = snap.data();
+                data.startDate =
+                    data.startDate instanceof Timestamp
+                        ? (data.startDate as Timestamp).toDate()
+                        : data.startDate
+                        ? new Date(data.startDate)
+                        : undefined;
+                data.endDate =
+                    data.endDate instanceof Timestamp
+                        ? (data.endDate as Timestamp).toDate()
+                        : data.endDate
+                        ? new Date(data.endDate)
+                        : undefined;
                 const rawGameLobby = new RawGameLobby(data);
                 return rawGameLobby;
             },
             toFirestore: (data: PartialWithFieldValue<RawGameLobby>): DocumentData => {
                 const rawGameLobby: PartialWithFieldValue<RawGameLobby> = {
+                    lobbyId: data.lobbyId?.toString() ?? "",
                     lobbyCode: data.lobbyCode?.toString() ?? "",
-                    gameModePlaylist: $enum(MatchGameModePlaylist).getValueOrDefault(
+                    gameModePlaylist: $enum(MatchGameModePlaylist).asValueOrDefault(
                         data.gameModePlaylist?.toString(),
                         MatchGameModePlaylist.Sandbox
                     ),
@@ -70,8 +82,8 @@ export class RawGameLobby {
                     // playerOriginIds: Array.isArray(data.playerOriginIds) ? data.playerOriginIds : [],
                     isJoinable: parseBoolean(data.isJoinable),
                     isStarted: parseBoolean(data.isStarted),
-                    startDate: isDate(data.startDate) ? Timestamp.fromDate(new Date(data.startDate as string)) : Timestamp.now(),
-                    endDate: isDate(data.endDate) ? Timestamp.fromDate(new Date(data.endDate as string)) : Timestamp.now(),
+                    startDate: data.startDate ? Timestamp.fromDate(new Date(data.startDate as string)) : Timestamp.now(),
+                    endDate: data.endDate ? Timestamp.fromDate(new Date(data.endDate as string)) : Timestamp.now(),
                 };
                 return rawGameLobby;
             },

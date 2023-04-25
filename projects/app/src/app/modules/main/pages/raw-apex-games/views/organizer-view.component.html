@@ -1,3 +1,24 @@
+<!-- #region Basic Modal -->
+<div class="modal fade" tabindex="-1" #basicModal>
+    <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+            <div class="modal-header" *ngIf="basicModal.title.length">
+                <h5 class="modal-title">{{ basicModal.title }}?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>{{ basicModalData.message }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">
+                    {{ basicModalData.closeBtnText }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- #endregion -->
+
 <div *ngIf="isLoadingLobby">
     <h1 class="text-center">Loading Lobby...</h1>
 </div>
@@ -21,11 +42,23 @@
     <div class="row mt-3">
         <div class="col">
             <h5>Start Date</h5>
-            <input type="datetime-local" class="form-control" [(ngModel)]="startDate" />
+            <input
+                type="datetime-local"
+                class="form-control"
+                [min]="inputDateTime(now)"
+                [ngModel]="inputDateTime(startDate)"
+                (ngModelChange)="startDate = $event"
+            />
         </div>
         <div class="col">
             <h5>End Date</h5>
-            <input type="datetime-local" class="form-control" [(ngModel)]="endDate" />
+            <input
+                type="datetime-local"
+                class="form-control"
+                [min]="inputDateTime(startDate)"
+                [ngModel]="inputDateTime(endDate)"
+                (ngModelChange)="endDate = $event"
+            />
         </div>
     </div>
 
@@ -36,10 +69,14 @@
             </button>
         </div>
         <div class="col-auto">
-            <button type="button" class="mt-4 btn btn-info" [disabled]="!canUpdate || isUpdating">Update Lobby</button>
+            <button type="button" class="mt-4 btn btn-info" (click)="onUpdateLobbyClick()" [disabled]="!canUpdate || isUpdating">
+                Update Lobby
+            </button>
         </div>
         <div class="col-auto">
-            <button type="button" class="mt-4 btn btn-danger" [disabled]="!canDelete || isDeleting">End Lobby</button>
+            <button type="button" class="mt-4 btn btn-danger" (click)="onDeleteLobbyClick()" [disabled]="!canDelete || isDeleting">
+                End Lobby
+            </button>
         </div>
     </div>
 </div>

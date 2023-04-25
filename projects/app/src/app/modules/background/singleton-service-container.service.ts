@@ -44,6 +44,7 @@ import { DevelopmentToolsWindowService } from "../development-tools/windows/deve
 import { MainDesktopWindowService } from "../main/windows/main-desktop-window.service.js";
 import { MainInGameWindowService } from "../main/windows/main-ingame-window.service.js";
 import { CaptureControllerService } from "./capture-controller.service.js";
+import { FairplayControllerService } from "./fairplay-controller.service.js";
 import { HotkeyService } from "./hotkey.service.js";
 import { HUDWindowControllerService } from "./hud-window-controller.service.js";
 import { SystemTrayService } from "./system-tray.service.js";
@@ -57,6 +58,7 @@ import { SystemTrayService } from "./system-tray.service.js";
         CaptureControllerService,
         ConfigurationService,
         DevelopmentToolsWindowService,
+        FairplayControllerService,
         FileService,
         GameplayInputService,
         GameProcessService,
@@ -110,6 +112,7 @@ export class SingletonServiceContainerService {
         public readonly CaptureControllerService: CaptureControllerService,
         public readonly ConfigurationService: ConfigurationService,
         public readonly DevelopmentToolsWindowService: DevelopmentToolsWindowService,
+        public readonly FairplayControllerService: FairplayControllerService,
         public readonly FileService: FileService,
         public readonly GameplayInputService: GameplayInputService,
         public readonly GameProcessService: GameProcessService,
