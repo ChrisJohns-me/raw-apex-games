@@ -133,6 +133,11 @@ export class SettingsPageComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
+    public onHomeClick(): void {
+        this.mainDesktopWindow.goToPage(MainPage.RawApexGames);
+        this.mainInGameWindow.goToPage(MainPage.RawApexGames);
+    }
+
     public onAboutClick(): void {
         this.mainDesktopWindow.goToPage(MainPage.About);
         this.mainInGameWindow.goToPage(MainPage.About);

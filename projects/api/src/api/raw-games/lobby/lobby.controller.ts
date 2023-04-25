@@ -14,6 +14,9 @@ class LobbyController {
         if (!reqLobbyId) {
             res.status(400).send({ error: "Lobby ID not provided in request URL." });
             return;
+        } else if (reqLobbyId.length < 32) {
+            res.status(400).send({ error: "Lobby ID must be a UUIDv4" });
+            return;
         } else if (reqLobbyId !== lobbyData.lobbyId) {
             res.status(400).send({ error: "Lobby ID in request body does not match lobby ID in request URL." });
             return;
