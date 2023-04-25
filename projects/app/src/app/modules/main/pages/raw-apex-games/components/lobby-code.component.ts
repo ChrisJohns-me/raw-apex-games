@@ -11,6 +11,7 @@ import { Subject } from "rxjs";
 })
 export class LobbyCodeComponent implements OnDestroy {
     @Input() public isEditable = false;
+    @Input() public lobbyCodeDate?: Optional<Date>;
     @Input() public lobbyCode = "";
     @Output() public lobbyCodeChange = new EventEmitter<string>();
 

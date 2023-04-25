@@ -1,4 +1,9 @@
-<h4 class="mt-3">Join Code</h4>
+<div class="row">
+    <div class="col-auto mt-3">
+        <h4>Join Code</h4>
+    </div>
+    <div class="col mt-3" *ngIf="lobbyCodeDate">(from {{ lobbyCodeDate | date: "hh:mm a" }})</div>
+</div>
 <div class="lobby-code-container px-4">
     <button class="btn btn-outline" type="button" (click)="copyLobbyCode()" [disabled]="!lobbyCode">
         <icon [path]="mdiClipboardOutline" size="1rem"></icon>
