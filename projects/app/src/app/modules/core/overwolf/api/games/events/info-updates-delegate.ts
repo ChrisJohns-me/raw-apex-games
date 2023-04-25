@@ -38,6 +38,7 @@ export class InfoUpdatesDelegate implements OverwolfEventListenerDelegate {
             .pipe(
                 filter((result) => !!result.success),
                 map((result) => result.res),
+                filter((infoResult) => typeof infoResult === "object"),
                 switchMap((infoResult) => from(Object.entries(infoResult) as [overwolf.gep.ApexLegends.GameInfoKey, any][])),
                 map(([key, value]) => ({ feature: key, info: { [key]: value } }))
             )

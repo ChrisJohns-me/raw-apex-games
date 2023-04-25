@@ -1,7 +1,10 @@
+<div *ngIf="isLoadingLobbies">
+    <h1 class="text-center">Loading Lobbies...</h1>
+</div>
 <div>
     <app-playlist-selector [playlistItems]="playlistItems" (selectedPlaylistChange)="onPlaylistSelect($event)"></app-playlist-selector>
     <div class="small text-center" *ngIf="noLobbiesAvailable">No lobbies are available, please check back later</div>
 </div>
 <div class="mt-4 text-center" *ngIf="isOrganizer">
-    <button type="button" class="btn btn-warning btn-lg" (click)="onOrganizerViewClick.emit()">My Organizer Lobby</button>
+    <button type="button" class="btn btn-outline-warning btn-lg" (click)="onOrganizerViewClick.emit()">My Lobby</button>
 </div>

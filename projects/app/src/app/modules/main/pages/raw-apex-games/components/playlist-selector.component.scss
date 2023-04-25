@@ -7,6 +7,7 @@
     border-radius: 1vw;
     color: white;
     transition: all 200ms;
+    cursor: default !important;
 
     &.battle_royale {
         background: url(../../../../../../assets/images/playlist-select/battle-royale-select.jpg) center / cover no-repeat;
@@ -31,9 +32,12 @@
         transition: all 200ms;
     }
 
-    &:hover {
-        &::before {
-            background: linear-gradient(transparent 0%, #860000 100%);
+    &.selectable {
+        cursor: pointer !important;
+        &:hover {
+            &::before {
+                background: linear-gradient(transparent 0%, #860000 100%);
+            }
         }
     }
 
@@ -53,6 +57,13 @@
     &-title {
         position: absolute;
         bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+    &-subtitle {
+        position: absolute;
+        top: 1rem;
         left: 0;
         right: 0;
     }

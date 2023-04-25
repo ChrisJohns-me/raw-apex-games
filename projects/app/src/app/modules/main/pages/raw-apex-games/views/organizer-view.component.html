@@ -27,6 +27,7 @@
     <div class="row">
         <div class="col">
             <app-playlist-selector
+                [isOrganizerView]="true"
                 [playlistItems]="playlistItems"
                 [selectedPlaylist]="selectedPlaylist"
                 (selectedPlaylistChange)="selectedPlaylist = $event"

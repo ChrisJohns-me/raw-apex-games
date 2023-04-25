@@ -2,7 +2,8 @@ import { MatchGameModePlaylist } from "#app/models/match/game-mode/game-mode-pla
 import { RawGamesPlayerService } from "#app/modules/core/raw-games/player.service";
 import { RawGameLobby } from "#shared/models/raw-games/lobby";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from "@angular/core";
-import { Observable, Subject, takeUntil, tap } from "rxjs";
+import { formatDistance } from "date-fns";
+import { interval, Observable, Subject, takeUntil, tap } from "rxjs";
 
 @Component({
     selector: "app-player-lobby-view",
@@ -13,7 +14,10 @@ import { Observable, Subject, takeUntil, tap } from "rxjs";
 export class PlayerLobbyViewComponent implements OnInit, OnDestroy {
     @Input() public lobby?: Optional<RawGameLobby>;
     public lobbies: RawGameLobby[] = [];
-
+    public get timeUntilLobbyEnds(): string {
+        if (!this.lobby?.endDate) return "";
+        return formatDistance(this.lobby.endDate, new Date(), { addSuffix: true });
+    }
     public get playlistItems(): {
         friendlyName: string;
         playlist: MatchGameModePlaylist;
@@ -41,6 +45,9 @@ export class PlayerLobbyViewComponent implements OnInit, OnDestroy {
 
     public ngOnInit(): void {
         this.loadLobbies().pipe(takeUntil(this.destroy$)).subscribe();
+        interval(60 * 1000)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => this.refreshUI());
     }
 
     public ngOnDestroy(): void {
@@ -52,8 +59,12 @@ export class PlayerLobbyViewComponent implements OnInit, OnDestroy {
         return this.rawGamesPlayer.getLobbies().pipe(
             tap((lobbies) => {
                 this.lobbies = lobbies;
-                this.cdr.detectChanges();
+                this.refreshUI();
             })
         );
+    }
+
+    private refreshUI(): void {
+        this.cdr.detectChanges();
     }
 }

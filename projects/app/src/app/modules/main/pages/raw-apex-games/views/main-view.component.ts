@@ -3,7 +3,9 @@ import { RawGamesOrganizerService } from "#app/modules/core/raw-games/organizer.
 import { RawGamesPlayerService } from "#app/modules/core/raw-games/player.service";
 import { RawGameLobby } from "#shared/models/raw-games/lobby";
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output } from "@angular/core";
-import { Observable, Subject, takeUntil, tap } from "rxjs";
+import { defer, Observable, of, repeat, Subject, switchMap, takeUntil, tap } from "rxjs";
+
+const AUTO_REFRESH_LOBBIES_INTERVAL = 60 * 1000;
 
 @Component({
     selector: "app-main-view",
@@ -17,8 +19,7 @@ export class MainViewComponent implements OnInit, OnDestroy {
     public set lobbies(lobbies: RawGameLobby[]) {
         this._lobbies = lobbies;
         this.playlistItems.forEach((playlistItem) => {
-            // Only enable the playlist if there is a lobby that is joinable
-            playlistItem.enabled = lobbies.some((lobby) => lobby.gameModePlaylist === playlistItem.playlist && lobby.isJoinable);
+            playlistItem.gameLobbies = lobbies.filter((lobby) => lobby.gameModePlaylist === playlistItem.playlist);
         });
     }
     public get lobbies(): RawGameLobby[] {
@@ -26,17 +27,18 @@ export class MainViewComponent implements OnInit, OnDestroy {
     }
 
     public get noLobbiesAvailable(): boolean {
-        return this._lobbies.filter((l) => l.isJoinable).length === 0;
+        return !this._lobbies.filter((l) => l.isJoinable).length;
     }
+    public isLoadingLobbies = false;
 
     public selectedLobby?: Optional<RawGameLobby>;
     public playlistItems: {
         friendlyName: string;
         playlist: MatchGameModePlaylist;
-        enabled: boolean;
+        gameLobbies: RawGameLobby[];
     }[] = [
-        { friendlyName: "Battle Royale", playlist: MatchGameModePlaylist.BattleRoyale, enabled: false },
-        { friendlyName: "Mixtape", playlist: MatchGameModePlaylist.Mixtape, enabled: false },
+        { friendlyName: "Battle Royale", playlist: MatchGameModePlaylist.BattleRoyale, gameLobbies: [] },
+        { friendlyName: "Mixtape", playlist: MatchGameModePlaylist.Mixtape, gameLobbies: [] },
     ];
     public isOrganizer = false;
 
@@ -51,10 +53,13 @@ export class MainViewComponent implements OnInit, OnDestroy {
 
     public ngOnInit(): void {
         this.rawGamesOrganizer.isUserOrganizer$.pipe(takeUntil(this.destroy$)).subscribe((isUserOrganizer) => {
-            this.isOrganizer = isUserOrganizer; // Might be getting an assertion error here
+            this.isOrganizer = isUserOrganizer;
             this.cdr.detectChanges();
         });
-        this.loadLobbies().pipe(takeUntil(this.destroy$)).subscribe();
+
+        defer(() => this.loadLobbies())
+            .pipe(takeUntil(this.destroy$), repeat({ delay: AUTO_REFRESH_LOBBIES_INTERVAL }))
+            .subscribe();
     }
 
     public ngOnDestroy(): void {
@@ -69,11 +74,22 @@ export class MainViewComponent implements OnInit, OnDestroy {
     }
 
     private loadLobbies(): Observable<RawGameLobby[]> {
-        return this.rawGamesPlayer.getLobbies().pipe(
+        return of(null).pipe(
+            tap(() => {
+                console.debug("Refreshing lobbies");
+                this.isLoadingLobbies = true;
+                this.refreshUI();
+            }),
+            switchMap(() => this.rawGamesPlayer.getLobbies()),
             tap((lobbies) => {
                 this.lobbies = lobbies;
-                this.cdr.detectChanges();
+                this.isLoadingLobbies = false;
+                this.refreshUI();
             })
         );
+    }
+
+    private refreshUI(): void {
+        this.cdr.detectChanges();
     }
 }

@@ -1,4 +1,28 @@
-<div>
-    <app-playlist-selector [playlistItems]="playlistItems"></app-playlist-selector>
-    <app-lobby-code *ngIf="lobby" [lobbyCode]="lobby.lobbyCode"></app-lobby-code>
+<div *ngIf="!lobby">
+    <h4>An error occurred.</h4>
+    <p>Lobby removed.</p>
+</div>
+<div *ngIf="lobby">
+    <h2>{{ lobby.organizerPlayerName }}'s Lobby</h2>
+    <div class="row">
+        <div class="col">
+            <app-playlist-selector [playlistItems]="playlistItems" [isPlayerLobbyView]="true"></app-playlist-selector>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <app-lobby-code *ngIf="lobby" [lobbyCode]="lobby.lobbyCode"></app-lobby-code>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col">
+            <h5>Start</h5>
+            {{ lobby.startDate | date: "MM/dd/yyyy hh:mm a" }}
+        </div>
+        <div class="col">
+            <h5>Ends</h5>
+            {{ timeUntilLobbyEnds ? timeUntilLobbyEnds : "" }}
+        </div>
+    </div>
 </div>

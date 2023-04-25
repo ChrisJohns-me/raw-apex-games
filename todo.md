@@ -2,8 +2,7 @@
 
 ## Left-off
 
-- OrganizerView: UPDATING Lobby information
-- PlayerView: JOINING a lobby
+- PlayerView: Refrehs lobby data every minute
 
 ## Lingering Questions
 

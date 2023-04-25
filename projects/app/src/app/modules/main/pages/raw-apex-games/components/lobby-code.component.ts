@@ -30,14 +30,28 @@ export class LobbyCodeComponent implements OnDestroy {
         this.destroy$.complete();
     }
 
+    public onLobbyCodeChange(lobbyCode: string): void {
+        this.lobbyCodeChange.emit(lobbyCode);
+        this.refreshUI();
+    }
+
+    public toggleShowLobbyCode(): void {
+        this.showLobbyCode = !this.showLobbyCode;
+        this.refreshUI();
+    }
+
     public copyLobbyCode(): void {
         if (!this.lobbyCode) return;
         this.overwolfUtils.copyToClipboard(this.lobbyCode);
         this.lobbyCodeMessage = "Lobby code copied to clipboard!";
-        this.cdr.detectChanges();
+        this.refreshUI();
         setTimeout(() => {
             this.lobbyCodeMessage = "";
-            this.cdr.detectChanges();
+            this.refreshUI();
         }, 5000);
+    }
+
+    private refreshUI(): void {
+        this.cdr.detectChanges();
     }
 }

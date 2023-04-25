@@ -13,7 +13,7 @@
         [disabled]="!showLobbyCode && !isEditable"
         maxlength="8"
     />
-    <button class="btn btn-outline" type="button" (click)="showLobbyCode = !showLobbyCode">
+    <button class="btn btn-outline" type="button" (click)="toggleShowLobbyCode()">
         <icon [path]="mdiEye" size="1rem" *ngIf="!showLobbyCode"></icon>
         <icon [path]="mdiEyeOff" size="1rem" *ngIf="showLobbyCode"></icon>
     </button>

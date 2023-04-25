@@ -1,6 +1,5 @@
 import { MatchGameModePlaylist } from "#app/models/match/game-mode/game-mode-playlist.enum.js";
 import { sanitizePlayerName } from "#shared/utilities/player.js";
-import { parseBoolean } from "#shared/utilities/primitives/boolean.js";
 import { removeNonAlphaNumeric, removeNonAlphaNumericHyphenUnderscore, removeNonNumeric } from "#shared/utilities/primitives/string.js";
 import { DocumentData, FirestoreDataConverter, PartialWithFieldValue, QueryDocumentSnapshot, Timestamp } from "firebase/firestore";
 import { $enum } from "ts-enum-util";
@@ -12,8 +11,6 @@ interface RawGameLobbyConstructor {
     organizerOriginId: string;
     organizerPlayerName: string;
     // playerOriginIds: string[]; // Future
-    isJoinable: boolean;
-    isStarted: boolean;
     startDate?: Optional<Date>;
     endDate?: Optional<Date>;
 }
@@ -22,6 +19,17 @@ interface RawGameLobbyConstructor {
  * Represents an Apex Legends Custom/Private Lobby for Raw Apex Games.
  */
 export class RawGameLobby {
+    /** Has started, but not ended */
+    public get isJoinable(): boolean {
+        return this.hasStarted && !this.hasEnded;
+    }
+    public get hasStarted(): boolean {
+        return this.startDate ? this.startDate <= new Date() : false;
+    }
+    public get hasEnded(): boolean {
+        return this.endDate ? this.endDate <= new Date() : false;
+    }
+
     /** Main identifier for the lobby; Auto-generated if one isn't provided */
     public lobbyId: string;
     public lobbyCode: string;
@@ -29,8 +37,6 @@ export class RawGameLobby {
     public organizerOriginId: string;
     public organizerPlayerName: string;
     // public playerOriginIds: string[];
-    public isJoinable: boolean;
-    public isStarted: boolean;
     public startDate?: Optional<Date>;
     public endDate?: Optional<Date>;
 
@@ -44,8 +50,6 @@ export class RawGameLobby {
         // this.playerOriginIds = (ctor.playerOriginIds && Array.isArray(ctor.playerOriginIds) ? ctor.playerOriginIds : []).map(
         //     (playerOriginId) => removeNonNumeric(playerOriginId?.toString() ?? "")
         // );
-        this.isJoinable = parseBoolean(ctor.isJoinable);
-        this.isStarted = parseBoolean(ctor.isStarted);
         this.startDate = ctor.startDate ? new Date(ctor.startDate) : undefined;
         this.endDate = ctor.endDate ? new Date(ctor.endDate) : undefined;
     }
@@ -80,8 +84,6 @@ export class RawGameLobby {
                     organizerOriginId: data.organizerOriginId?.toString() ?? "",
                     organizerPlayerName: data.organizerPlayerName?.toString() ?? "",
                     // playerOriginIds: Array.isArray(data.playerOriginIds) ? data.playerOriginIds : [],
-                    isJoinable: parseBoolean(data.isJoinable),
-                    isStarted: parseBoolean(data.isStarted),
                     startDate: data.startDate ? Timestamp.fromDate(new Date(data.startDate as string)) : Timestamp.now(),
                     endDate: data.endDate ? Timestamp.fromDate(new Date(data.endDate as string)) : Timestamp.now(),
                 };

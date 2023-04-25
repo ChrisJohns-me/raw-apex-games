@@ -70,19 +70,10 @@ export class OrganizerViewComponent implements OnInit, OnDestroy {
     public get playlistItems(): {
         friendlyName: string;
         playlist: MatchGameModePlaylist;
-        enabled: boolean;
     }[] {
         return [
-            {
-                friendlyName: "Battle Royale",
-                playlist: MatchGameModePlaylist.BattleRoyale,
-                enabled: true,
-            },
-            {
-                friendlyName: "Mixtape",
-                playlist: MatchGameModePlaylist.Mixtape,
-                enabled: true,
-            },
+            { friendlyName: "Battle Royale", playlist: MatchGameModePlaylist.BattleRoyale },
+            { friendlyName: "Mixtape", playlist: MatchGameModePlaylist.Mixtape },
         ];
     }
     public now = new Date();
@@ -190,7 +181,6 @@ export class OrganizerViewComponent implements OnInit, OnDestroy {
             .subscribe((existingLobby) => {
                 this.isLoadingLobby = false;
                 if (existingLobby) {
-                    console.log("Found existing lobby", existingLobby);
                     this.myExistingLobby = existingLobby;
                     this.selectedPlaylist = existingLobby?.gameModePlaylist;
                     this.lobbyCode = existingLobby?.lobbyCode ?? "";
@@ -231,8 +221,6 @@ export class OrganizerViewComponent implements OnInit, OnDestroy {
             endDate: this.endDate,
             organizerOriginId: this.myOriginId,
             organizerPlayerName: this.myName,
-            isJoinable: true,
-            isStarted: false,
         });
     }
 

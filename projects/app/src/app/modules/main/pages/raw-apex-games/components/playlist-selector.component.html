@@ -3,10 +3,14 @@
         <button
             type="button"
             class="btn btn-primary playlist-button {{ playlistItem.playlist }}"
-            [ngClass]="{ selected: playlistItem.playlist === selectedPlaylist }"
-            (click)="selectedPlaylistChange.emit(playlistItem.playlist)"
-            [disabled]="!playlistItem.enabled"
+            [ngClass]="{
+                selected: playlistItem.playlist === selectedPlaylist,
+                selectable: isPlaylistSelectable(playlistItem),
+            }"
+            (click)="onPlaylistChange(playlistItem.playlist)"
+            [disabled]="isPlaylistDisabled(playlistItem)"
         >
+            <h6 class="playlist-button-subtitle">{{ getSubTitle(playlistItem) }}</h6>
             <h1 class="playlist-button-title">{{ playlistItem.friendlyName }}</h1>
         </button>
     </div>
